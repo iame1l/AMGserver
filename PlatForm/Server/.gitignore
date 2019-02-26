@@ -1,0 +1,13 @@
+*.bat
+*.sdf
+*.suo
+*.opensdf
+*.swp
+
+*/Release
+
+*/Template
+
+*/Debug
+
+/ipch

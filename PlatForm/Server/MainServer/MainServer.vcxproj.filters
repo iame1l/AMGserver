@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="GameLogonManage.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="gamemanagemodule.cpp">
+      <Filter>与G服务器通讯</Filter>
+    </ClCompile>
+    <ClCompile Include="gamemanagesocket.cpp">
+      <Filter>与G服务器通讯</Filter>
+    </ClCompile>
+    <ClCompile Include="HNHandleGMessage.cpp">
+      <Filter>处理G服务器消息</Filter>
+    </ClCompile>
+    <ClCompile Include="HNCreateRoom.cpp">
+      <Filter>创建房间</Filter>
+    </ClCompile>
+    <ClCompile Include="ServiceDataBaseHandle.cpp" />
+    <ClCompile Include="BankService4Z.cpp">
+      <Filter>银行</Filter>
+    </ClCompile>
+    <ClCompile Include="DistriManager.cpp">
+      <Filter>与A服务器通讯</Filter>
+    </ClCompile>
+    <ClCompile Include="GameListCtrl.cpp">
+      <Filter>游戏列表</Filter>
+    </ClCompile>
+    <ClCompile Include="GameListCtrl0.cpp">
+      <Filter>游戏列表</Filter>
+    </ClCompile>
+    <ClCompile Include="IMService.cpp">
+      <Filter>好友</Filter>
+    </ClCompile>
+    <ClCompile Include="UserCustomLogo.cpp">
+      <Filter>自定义头像</Filter>
+    </ClCompile>
+    <ClCompile Include="ContestServer4Z.cpp">
+      <Filter>比赛</Filter>
+    </ClCompile>
+    <ClCompile Include="MainServer.cpp">
+      <Filter>启动程序</Filter>
+    </ClCompile>
+    <ClCompile Include="MainServerDlg.cpp">
+      <Filter>启动程序</Filter>
+    </ClCompile>
+    <ClCompile Include="SysInfoList.cpp">
+      <Filter>启动程序</Filter>
+    </ClCompile>
+    <ClCompile Include="TrayIcon.cpp">
+      <Filter>启动程序</Filter>
+    </ClCompile>
+    <ClCompile Include="RegisteServer.cpp">
+      <Filter>注册</Filter>
+    </ClCompile>
+    <ClCompile Include="LogonServer.cpp">
+      <Filter>登录</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateUserInfoServer.cpp">
+      <Filter>用户信息修改</Filter>
+    </ClCompile>
+    <ClCompile Include="SmsServer.cpp">
+      <Filter>短信</Filter>
+    </ClCompile>
+    <ClCompile Include="HNClub.cpp">
+      <Filter>俱乐部</Filter>
+    </ClCompile>
+    <ClCompile Include="HNMail.cpp">
+      <Filter>邮件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameLogonDT.h" />
+    <ClInclude Include="GameLogonManage.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="gamemanagemodule.h">
+      <Filter>与G服务器通讯</Filter>
+    </ClInclude>
+    <ClInclude Include="gamemanagesocket.h">
+      <Filter>与G服务器通讯</Filter>
+    </ClInclude>
+    <ClInclude Include="HNHandleGMessage.h">
+      <Filter>处理G服务器消息</Filter>
+    </ClInclude>
+    <ClInclude Include="HNCreateRoom.h">
+      <Filter>创建房间</Filter>
+    </ClInclude>
+    <ClInclude Include="ServiceDataBaseHandle.h" />
+    <ClInclude Include="BankService4Z.h">
+      <Filter>银行</Filter>
+    </ClInclude>
+    <ClInclude Include="DistriManager.h">
+      <Filter>与A服务器通讯</Filter>
+    </ClInclude>
+    <ClInclude Include="GameListCtrl.h">
+      <Filter>游戏列表</Filter>
+    </ClInclude>
+    <ClInclude Include="GameListCtrl0.h">
+      <Filter>游戏列表</Filter>
+    </ClInclude>
+    <ClInclude Include="IMService.h">
+      <Filter>好友</Filter>
+    </ClInclude>
+    <ClInclude Include="UserCustomLogo.h">
+      <Filter>自定义头像</Filter>
+    </ClInclude>
+    <ClInclude Include="ContestServer4Z.h">
+      <Filter>比赛</Filter>
+    </ClInclude>
+    <ClInclude Include="MainServer.h">
+      <Filter>启动程序</Filter>
+    </ClInclude>
+    <ClInclude Include="MainServerDlg.h">
+      <Filter>启动程序</Filter>
+    </ClInclude>
+    <ClInclude Include="TrayIcon.h">
+      <Filter>启动程序</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>启动程序</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisteServer.h">
+      <Filter>注册</Filter>
+    </ClInclude>
+    <ClInclude Include="LogonServer.h">
+      <Filter>登录</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateUserInfoServer.h">
+      <Filter>用户信息修改</Filter>
+    </ClInclude>
+    <ClInclude Include="SmsServer.h">
+      <Filter>短信</Filter>
+    </ClInclude>
+    <ClInclude Include="HNClub.h">
+      <Filter>俱乐部</Filter>
+    </ClInclude>
+    <ClInclude Include="HNMail.h">
+      <Filter>邮件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\MainServer.ico">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\MainServer.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="与G服务器通讯">
+      <UniqueIdentifier>{a09b3cf1-f422-40c3-9305-16d101363829}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="创建房间">
+      <UniqueIdentifier>{1f851623-d933-4894-bde4-48a883407531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="处理G服务器消息">
+      <UniqueIdentifier>{c26bb0a7-a267-4ae9-80a6-a60743259b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="银行">
+      <UniqueIdentifier>{c723d18c-4552-4815-ad24-1d89322dcaa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="与A服务器通讯">
+      <UniqueIdentifier>{dbac8a34-b456-468a-998a-c646d393ec84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="游戏列表">
+      <UniqueIdentifier>{060ef735-21a8-4284-bd6d-461f9fcf9bc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="好友">
+      <UniqueIdentifier>{e1bcefe1-4efb-4856-9cd4-a6148f2fdb1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="自定义头像">
+      <UniqueIdentifier>{6851b18d-ec9c-46bb-a1c1-8749cc757f35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="比赛">
+      <UniqueIdentifier>{6d3252a0-98d1-4b12-a18a-c3f5203e6707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GM管理">
+      <UniqueIdentifier>{f8bad203-21b4-445b-a4b6-406984e3422b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="启动程序">
+      <UniqueIdentifier>{213b3d57-18d8-4e95-95f2-ea2477053800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{808139d7-72ef-4159-a957-1a22f5f2c4d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="登录">
+      <UniqueIdentifier>{5c9f1df0-05a9-4e44-b734-8f0308f1cafb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="注册">
+      <UniqueIdentifier>{3a28f344-de33-4889-bcce-83fb2a12694d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="用户信息修改">
+      <UniqueIdentifier>{e9c3dc68-2839-4c96-835e-eaeeb8fa65e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="短信">
+      <UniqueIdentifier>{0a843cc1-297e-4ae0-a75b-2c0ff9c750df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="俱乐部">
+      <UniqueIdentifier>{9809aedb-077f-4b37-8a24-4f7fe227d915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="邮件">
+      <UniqueIdentifier>{9ff12e12-cb5f-451b-96ff-35137f8e7988}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MainServer.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

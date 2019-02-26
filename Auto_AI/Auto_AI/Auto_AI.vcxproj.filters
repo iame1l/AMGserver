@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\Common">
+      <UniqueIdentifier>{12230829-6893-4241-9cc1-38bace80f644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\GameLogic">
+      <UniqueIdentifier>{190b38e8-d1c0-47df-9227-09de47e3f4dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\PlatformLogic">
+      <UniqueIdentifier>{ec4b23a0-14f1-4679-8ff4-a723c87e75b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\GameLogic">
+      <UniqueIdentifier>{bfd6da8e-2411-4eee-ade8-c5df81b8c6d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Common">
+      <UniqueIdentifier>{d519799b-bac0-4de6-8edd-3f42fc0f19a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\PlatformLogic">
+      <UniqueIdentifier>{91ac4c58-2568-452e-b9aa-1fbcafdb3576}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\UI">
+      <UniqueIdentifier>{6c9f715a-02e9-4fe0-8322-a83ef0ae6856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\UI">
+      <UniqueIdentifier>{3c1b244f-9412-4f92-86c3-87c84a8e874f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="res\Auto_AI.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\Auto_AI.ico">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Auto_AI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\AIComFunction.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Platconfig.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Platglobaldata.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Platlock.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\PlatLog.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\DialogTaskEdit.h">
+      <Filter>头文件\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\DiaogTaskList.h">
+      <Filter>头文件\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformLogic\BaseRoom.h">
+      <Filter>头文件\PlatformLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformLogic\Auto_AIDlg.h">
+      <Filter>头文件\PlatformLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformLogic\GameRoomEx.h">
+      <Filter>头文件\PlatformLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformLogic\gameusermanage.h">
+      <Filter>头文件\PlatformLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformLogic\clientcomstruct.h">
+      <Filter>头文件\PlatformLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformLogic\GameFrameDlg.h">
+      <Filter>头文件\PlatformLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformLogic\GameListCtrl.h">
+      <Filter>头文件\PlatformLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\DialogMsgInfo.h">
+      <Filter>头文件\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLogic\ClientGameDlg.h">
+      <Filter>头文件\GameLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLogic\CMD_Fish.h">
+      <Filter>头文件\GameLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLogic\UpGradeLogic.h">
+      <Filter>头文件\GameLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLogic\UpgradeMessage.h">
+      <Filter>头文件\GameLogic</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Auto_AI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformLogic\Auto_AIDlg.cpp">
+      <Filter>源文件\PlatformLogic</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformLogic\GameRoomEx.cpp">
+      <Filter>源文件\PlatformLogic</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformLogic\GameListCtrl.cpp">
+      <Filter>源文件\PlatformLogic</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformLogic\BaseRoom.cpp">
+      <Filter>源文件\PlatformLogic</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformLogic\gameframedlg.cpp">
+      <Filter>源文件\PlatformLogic</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformLogic\GameUserManage.cpp">
+      <Filter>源文件\PlatformLogic</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\DialogTaskEdit.cpp">
+      <Filter>源文件\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\DiaogTaskList.cpp">
+      <Filter>源文件\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\AIComFunction.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Platglobaldata.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Platconfig.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\PlatLog.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\DialogMsgInfo.cpp">
+      <Filter>源文件\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLogic\clientgamedlg.cpp">
+      <Filter>源文件\GameLogic</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLogic\UpGradeLogic.cpp">
+      <Filter>源文件\GameLogic</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Auto_AI.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="AutoAllotDesk.cpp" />
+    <ClCompile Include="BankService.cpp" />
+    <ClCompile Include="GameDataBaseHandle.cpp" />
+    <ClCompile Include="GameDesk.cpp" />
+    <ClCompile Include="GameMainManage.cpp" />
+    <ClCompile Include="GameManage.cpp" />
+    <ClCompile Include="PropService.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="UserInfo.cpp" />
+    <ClCompile Include="..\..\..\SDK\include\ServerCommon\mainserversocket.cpp">
+      <Filter>与M服务器通讯</Filter>
+    </ClCompile>
+    <ClCompile Include="HNHandleMSMessage.cpp">
+      <Filter>处理M服务器消息</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\SDK\include\common\CommonFunction.h" />
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\BankService.h" />
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\GameDataBaseHandle.h" />
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\GameMainManage.h" />
+    <ClInclude Include="AutoAllotDesk.h" />
+    <ClInclude Include="GameManage.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\mainserversocket.h">
+      <Filter>与M服务器通讯</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\HNHandleMSMessage.h">
+      <Filter>处理M服务器消息</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GameManage.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="与M服务器通讯">
+      <UniqueIdentifier>{d4093030-8f12-4770-add6-d46ac9fad686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="处理M服务器消息">
+      <UniqueIdentifier>{0a6e8760-8a0e-406a-be41-092d9ecbda9c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

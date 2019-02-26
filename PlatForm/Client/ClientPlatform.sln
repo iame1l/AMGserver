@@ -1,0 +1,17 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AfcSocket", "AfcSocket\AfcSocket.vcxproj", "{B0DCE420-58A7-4D4C-9C7D-F956B9DEDA58}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B0DCE420-58A7-4D4C-9C7D-F956B9DEDA58}.Release|Win32.ActiveCfg = Release|Win32
+		{B0DCE420-58A7-4D4C-9C7D-F956B9DEDA58}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

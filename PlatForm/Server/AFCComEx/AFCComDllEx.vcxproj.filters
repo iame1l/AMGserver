@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\SDK\include\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="AFCComDllEx.cpp" />
+    <ClCompile Include="AFCDataBase.cpp" />
+    <ClCompile Include="AFCException.cpp" />
+    <ClCompile Include="AFCLock.cpp" />
+    <ClCompile Include="AFCSocket.cpp" />
+    <ClCompile Include="DataLine.cpp" />
+    <ClCompile Include="MainManage.cpp" />
+    <ClCompile Include="MainManageForZ.cpp" />
+    <ClCompile Include="MD5.cpp" />
+    <ClCompile Include="ProcessManage.cpp" />
+    <ClCompile Include="SocketInit.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="..\Common\WriteLog.cpp" />
+    <ClCompile Include="HNFilter.cpp">
+      <Filter>屏蔽敏感词</Filter>
+    </ClCompile>
+    <ClCompile Include="HNTree.cpp">
+      <Filter>屏蔽敏感词</Filter>
+    </ClCompile>
+    <ClCompile Include="HNTreeNode.cpp">
+      <Filter>屏蔽敏感词</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerServer.cpp">
+      <Filter>屏蔽敏感词</Filter>
+    </ClCompile>
+    <ClCompile Include="HNRC4.cpp" />
+    <ClCompile Include="yxyDES.cpp" />
+    <ClCompile Include="HNLog.cpp" />
+    <ClCompile Include="fastlz.cpp" />
+    <ClCompile Include="AFCWebSocket.cpp" />
+    <ClCompile Include="MainManageForWeb.cpp" />
+    <ClCompile Include="..\..\..\SDK\include\common\Base64.cpp" />
+    <ClCompile Include="..\..\..\SDK\include\common\sha1.cpp" />
+    <ClCompile Include="..\..\..\SDK\include\common\WebSocketAssitInterface.cpp" />
+    <ClCompile Include="HNSmtp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\AFCDataBase.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\AFCException.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\AFCFunction.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\AFCInterface.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\AFCLock.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\AFCPtrArray.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\AFCSocket.h" />
+    <ClInclude Include="..\..\..\sdk\include\common\basemessage.h" />
+    <ClInclude Include="..\..\..\sdk\include\common\cfgengine.h" />
+    <ClInclude Include="..\..\..\sdk\include\common\CommonUse.h" />
+    <ClInclude Include="..\..\..\sdk\include\common\comstruct.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\DataLine.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\GameDesk.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\GameMainManage.h" />
+    <ClInclude Include="..\..\..\sdk\include\common\gameplacemessage.h" />
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\GameRoomLogonDT.h" />
+    <ClInclude Include="..\..\..\sdk\include\common\gameroommessage.h" />
+    <ClInclude Include="..\..\..\sdk\include\common\IMMessage.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\MainManage.h" />
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\MainManageForZ.h" />
+    <ClInclude Include="..\..\..\sdk\include\common\MD5.h" />
+    <ClInclude Include="ProcessManage.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\PropService.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\PublicDefine.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="SocketInit.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\SQLEngine.h" />
+    <ClInclude Include="Stdafx.h" />
+    <ClInclude Include="..\..\..\sdk\include\ServerCommon\TalkMessageFilter.h" />
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\HNTreeNode.h">
+      <Filter>屏蔽敏感词</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\HNFilter.h">
+      <Filter>屏蔽敏感词</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\HNTree.h">
+      <Filter>屏蔽敏感词</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerServer.h">
+      <Filter>屏蔽敏感词</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SDK\include\common\HNRC4.h" />
+    <ClInclude Include="..\..\..\SDK\include\common\yxyDES.h" />
+    <ClInclude Include="..\..\..\SDK\include\common\HNLog.h" />
+    <ClInclude Include="..\..\..\SDK\include\common\fastlz.h" />
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\AFCWebSocket.h" />
+    <ClInclude Include="..\..\..\SDK\include\ServerCommon\MainManageForWeb.h" />
+    <ClInclude Include="..\..\..\SDK\include\common\HNSmtp.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AFCComDllEx.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AFCComDllEx.def" />
+    <None Include="res\AFCComDllEx.rc2" />
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="屏蔽敏感词">
+      <UniqueIdentifier>{3b070051-b032-49d8-bdba-cbeb91002178}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

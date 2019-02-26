@@ -1,0 +1,317 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 中文(简体，中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)\r\n"
+    "LANGUAGE 4, 2\r\n"
+    "#pragma code_page(936)\r\n"
+    "#include ""res\\Auto_AI.rc2""  // 非 Microsoft Visual C++ 编辑的资源\r\n"
+    "#include ""afxres.rc""     // 标准组件\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\Auto_AI.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_AUTO_AI_DIALOG DIALOGEX 0, 0, 601, 433
+STYLE DS_SETFONT | WS_POPUP | WS_VISIBLE | WS_BORDER | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+FONT 9, "宋体", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_STATIC,7,29,230,134,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | NOT WS_TABSTOP
+    LTEXT           "机器人",IDC_STATIC_TILEHEAD,7,16,103,8
+    LTEXT           "登陆人数：",IDC_STATIC_LOGINCOUNT,265,29,41,8
+    EDITTEXT        IDC_EDIT_LOGINCOUNT,308,27,52,14,ES_AUTOHSCROLL
+    LTEXT           "名称前缀：",IDC_STATIC_HEADNAME,265,52,41,8
+    EDITTEXT        IDC_EDIT_HEADNAME,308,50,52,14,ES_AUTOHSCROLL
+    LTEXT           "起始序号：",IDC_STATIC_BEGINNO,265,72,41,8
+    EDITTEXT        IDC_EDIT_BEGINNO,308,70,52,14,ES_AUTOHSCROLL
+    LTEXT           "取钱阙值(0不取)：",IDC_STATIC_CHECKOUT,240,92,67,8
+    EDITTEXT        IDC_EDIT_CHECKOUT,308,90,52,14,ES_AUTOHSCROLL
+    LTEXT           "存钱阙值(0不存)：",IDC_STATIC_CHECKIN,240,114,65,8
+    EDITTEXT        IDC_EDIT_CHECKIN,308,112,52,14,ES_AUTOHSCROLL
+    LTEXT           "每桌机器人最多个数：",IDC_STATIC_ONDESKROBOTNO,381,28,80,8
+    EDITTEXT        IDC_EDIT_ONEDESKROBOTNO,465,25,44,14,ES_AUTOHSCROLL
+    CONTROL         "是否允许与真人同桌",IDC_CHECK_ALLOWROBOTWITHPLAYER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,383,53,121,10
+    PUSHBUTTON      "登陆",IDC_BUTTON_LOGIN,380,145,50,14
+    PUSHBUTTON      "取消",IDC_BUTTON_CANCEL,451,145,50,14
+    PUSHBUTTON      "最小化",IDC_BUTTON_MIN,533,23,50,14
+    PUSHBUTTON      "关闭",IDC_BUTTON_CLOSE,533,48,50,14
+    PUSHBUTTON      "保存",IDC_BUTTON_SAVE,380,124,50,14
+    PUSHBUTTON      "恢复",IDC_BUTTON_RESET,452,123,50,14
+    EDITTEXT        IDC_EDIT_KEEPINDESK,309,148,51,14,ES_AUTOHSCROLL
+    LTEXT           "等待开始时长(s)：",IDC_STATIC_KEEPINDESK,238,153,65,8
+    LTEXT           "游戏结束站起概率(%)：",IDC_STATIC_GAMEENDLEAVE,382,77,79,8
+    EDITTEXT        IDC_EDIT_GAMEENDLEAVE,465,75,46,14,ES_AUTOHSCROLL
+    LTEXT           "未知",IDC_STATIC_ROOMNAME,159,16,77,8
+    LTEXT           "房间名称：",IDC_STATIC_ROOM,115,15,41,8
+    LTEXT           "捕鱼多久离桌(m)",IDC_STATIC_TIMEFISHGAME,240,135,66,8
+    EDITTEXT        IDC_EDIT_TIMEFISHGAME,309,131,50,14,ES_AUTOHSCROLL
+    LTEXT           "当前任务",IDC_STATIC_TASKINFO,266,7,65,11
+    PUSHBUTTON      "任务管理",IDC_BUTTON_TASKLIST,421,7,54,14
+    PUSHBUTTON      "大厅消息",IDC_BUTTON_HALLINFO,476,179,50,14
+    PUSHBUTTON      "房间消息",IDC_BUTTON_ROOMINFO,544,179,50,14
+    CONTROL         "",IDC_LIST_STATUS,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,213,587,203
+    CONTROL         "停止更新",IDC_CHECK_STOPSTATUS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,195,63,10
+    LTEXT           "连接状态",IDC_STATIC_LOGINSTATUS,167,181,249,10
+    EDITTEXT        IDC_EDIT_CHECKBEGINNO,57,195,40,14,ES_AUTOHSCROLL
+    LTEXT           "-",IDC_STATIC_TILEHEAD,99,199,8,8
+    EDITTEXT        IDC_EDIT_CHECKENDNO,107,196,40,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "设置",IDC_BUTTON_ADDTASK,151,196,50,14
+END
+
+IDD_GAME_ROOM DIALOGEX 0, 0, 186, 95
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+END
+
+IDD_GAME_FRAME DIALOGEX 0, 0, 186, 95
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+END
+
+IDD_DIALOG_TASKLIST DIALOGEX 0, 0, 316, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "任务列表"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST_TASKLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,28,302,148
+    PUSHBUTTON      "添加任务",IDC_BUTTON_ADDTASK,7,7,50,14
+    PUSHBUTTON      "删除任务",IDC_BUTTON_DELTASK,69,7,50,14
+    PUSHBUTTON      "修改任务",IDC_BUTTON_MODTASK,133,7,50,14
+END
+
+IDD_DIALOG_TASK_EDIT DIALOGEX 0, 0, 316, 238
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "管理任务"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,133,217,50,14
+    PUSHBUTTON      "取消",IDCANCEL,191,217,50,14
+    COMBOBOX        IDC_COMBO_HOUR,33,15,48,86,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "时:",IDC_STATIC_HOUR,18,18,12,8
+    LTEXT           "分:",IDC_STATIC_MINITUE,86,17,12,8
+    COMBOBOX        IDC_COMBO_MINUTE,103,14,48,88,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "登陆人数:",IDC_STATIC_LOGONCOUNT,18,42,37,8
+    EDITTEXT        IDC_EDIT_LOGINCOUNT,61,38,85,14,ES_AUTOHSCROLL
+    LTEXT           "昵称前缀:",IDC_STATIC_HEADNAME,18,65,38,8
+    EDITTEXT        IDC_EDIT_HEADNAME,61,62,84,14,ES_AUTOHSCROLL
+    LTEXT           "起始序号:",IDC_STATIC_BEGINNO,18,86,37,8
+    EDITTEXT        IDC_EDIT_BEGINNO,61,82,84,14,ES_AUTOHSCROLL
+    LTEXT           "取钱阙值(0不取):",IDC_STATIC_CHECKOUT,7,109,60,8
+    EDITTEXT        IDC_EDIT_CHECKOUT2,73,105,72,14,ES_AUTOHSCROLL
+    LTEXT           "存钱阙值(0不存):",IDC_STATIC_CHECKIN,7,136,64,8
+    EDITTEXT        IDC_EDIT_CHECKIN2,74,132,71,14,ES_AUTOHSCROLL
+    LTEXT           "捕鱼多久离桌(m):",IDC_STATIC_FISHGAMELEAVE,7,162,64,8
+    EDITTEXT        IDC_EDIT_FISHGAMELEAVE,74,158,70,14,ES_AUTOHSCROLL
+    LTEXT           "等待开始时长(s):",IDC_STATIC_WAITTIME,7,188,65,8
+    EDITTEXT        IDC_EDIT_WAITTIME,75,185,68,14,ES_AUTOHSCROLL
+    LTEXT           "每桌机器人个数:",IDC_STATIC_AINUMBER,161,41,63,8
+    EDITTEXT        IDC_EDIT_AINUMBER,230,39,64,14,ES_AUTOHSCROLL
+    CONTROL         "是否允许与真人同桌",IDC_CHECK_ALLOWWITHPLAYER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,161,64,133,10
+    LTEXT           "游戏结束站起概率(%):",IDC_STATIC_GAMEENDLEAVE,161,84,84,8
+    EDITTEXT        IDC_EDIT_GAMEENDLEAVE,249,79,45,14,ES_AUTOHSCROLL
+END
+
+IDD_DIALOG_MSGINFO DIALOGEX 0, 0, 325, 206
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "消息"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "仅显示错误消息",IDC_CHECK_ERRORINFO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,15,90,10
+    CONTROL         "停止更新",IDC_CHECK_STOPUPDATEINFO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,152,14,112,10
+    EDITTEXT        IDC_EDIT_MSGINFO,7,34,311,165,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | WS_HSCROLL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,2
+ PRODUCTVERSION 1,0,0,2
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080403a8"
+        BEGIN
+            VALUE "CompanyName", "红鸟网络科技"
+            VALUE "FileDescription", "<机器人加载器>"
+            VALUE "FileVersion", "1.0.0.2"
+            VALUE "InternalName", "Auto_AI.exe"
+            VALUE "LegalCopyright", "红鸟网络科技"
+            VALUE "OriginalFilename", "Auto_AI.exe"
+            VALUE "ProductName", "<机器人登陆器>"
+            VALUE "ProductVersion", "1.0.0.2"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 936
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_AUTO_AI_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 594
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 416
+    END
+
+    IDD_GAME_ROOM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_GAME_FRAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_DIALOG_TASKLIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_DIALOG_TASK_EDIT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 231
+    END
+
+    IDD_DIALOG_MSGINFO, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 318
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 199
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDP_SOCKETS_INIT_FAILED "Windows 套接字初始化失败。"
+END
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE 4, 2
+#pragma code_page(936)
+#include "res\Auto_AI.rc2"  // 非 Microsoft Visual C++ 编辑的资源
+#include "afxres.rc"     // 标准组件
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
