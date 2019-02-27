@@ -3,6 +3,8 @@
 *.suo
 *.opensdf
 *.swp
+*.aps
+*.bcf
 
 ****/Release
 

@@ -237,7 +237,7 @@ bool CZServerManager::OnSocketRead(NetMessageHead * pNetHead, void * pData, UINT
 	if (pNetHead->bMainID == MDM_ZD_PACKAGE)
 	{
 		//Z服务器信息
-		if(pNetHead->bAssistantID == ASS_ZD_CONNECT)
+		if(pNetHead->bAssistantID == ASS_ZD_CONNECT)//链接
 		{
 			sockaddr_in socket;
 			CString szIP = m_TCPSocket.GetServerInfo(uIndex).c_str();

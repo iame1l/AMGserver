@@ -33,7 +33,7 @@ reserves the right to pursue its legal liability.
 ///开发库版本
 #define DEV_LIB_VER				1									///开发库版本
 ///全局版权，固定在程序里，无法修改
-#define TMLcopyright			TEXT("开发:深圳市红鸟网络科技有限公司www.hn78.com")				///版权
+#define TMLcopyright			TEXT("广告")				///版权
 
 ///常量定义
 #define MAX_PEOPLE				180									///最大游戏人数 百家乐 modify 8 -> 180 by wlr 20090714
