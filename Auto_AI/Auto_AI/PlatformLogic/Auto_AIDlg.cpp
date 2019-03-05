@@ -280,7 +280,9 @@ void	CAuto_AIDlg::OnStartRobot()
     GLOBALDATA->bConnectToWitchServer = 0;
 
     m_ShowBeginNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo);
-    m_ShowEndNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo + 10);
+	//Eil @ ÐÞ¸´
+    //m_ShowEndNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo + 10);
+	m_ShowEndNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo + GLOBALDATA->CurDynamicConfig.nLogonCount);
 
     ((CEdit*)GetDlgItem(IDC_EDIT_CHECKBEGINNO))->SetWindowText(m_ShowBeginNo);
     ((CEdit*)GetDlgItem(IDC_EDIT_CHECKENDNO))->SetWindowText(m_ShowEndNo);
