@@ -462,10 +462,12 @@ void CServerGameDesk::OnHandleBibei(BYTE byStation,void * pData, UINT uSize)
 	m_i64UserMoney-=iBibeiMoney;
 	G_i64Pond+=iBibeiMoney;
 	
+	//比大小的范围
 	int iTempResult=0;
 	for(int i=0;i<200;i++)
 	{
-		srand(GetTickCount()+i);
+		//srand(GetTickCount()+i);//i控制了种子池
+		srand(GetTickCount());//正常种子池
 		int irand=rand()%100;
 		iTempResult=rand()%2+1;
 		if(iTempResult==m_iBibeiType)
@@ -476,7 +478,9 @@ void CServerGameDesk::OnHandleBibei(BYTE byStation,void * pData, UINT uSize)
 		{
 			iWinMoney=0;
 		}
-		if((irand >= 0)&& (irand <= 85))
+		//if((irand >= 0)&& (irand <= 85))//85以下的概率(因为有i),但15的能赢不变
+
+		if((irand >= 0)&& (irand <= 49))//正常的概率
 		{
 			if(iWinMoney == 0)
 			{
@@ -485,6 +489,7 @@ void CServerGameDesk::OnHandleBibei(BYTE byStation,void * pData, UINT uSize)
 		}
 		else
 		{
+			//奖池有钱的情况下才给
 			if(G_i64Pond - iWinMoney>0)//保证奖池为正
 			{
 				break;
