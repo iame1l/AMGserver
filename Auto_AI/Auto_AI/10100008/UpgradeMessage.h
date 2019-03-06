@@ -51,53 +51,82 @@ NameID：51300280
 
 #define TYPE_PLAY_GAME					10000			// 是玩家
 
+#define MAX_GAME_TURNS					64
+
 
 
 #define TAG_INIT(tagName) \
     tagName(){Clear();} \
     void Clear()
 
+//Num Defs
+#define NUM_HAND_CARDS_NUM				2//手牌数量
+#define NUM_COMMUNITY_CARDS_NUM			5//公共牌数量
+#define NUM_CARDS_NUM					52//使用牌的数量
+
+#define NUM_ONE_SECOND_MS				1000//1s=1000ms
+
+
 //******************************************************************************************
 //数据包处理辅助标识
 //******************************************************************************************
 
-#define ASS_UG_USER_SET					50				//用户设置游戏
-#define ASS_UG_USER_SET_CHANGE			51				//玩家设置更改
+#define ASS_UG_USER_SET					50				//用户设置游戏(未使用)
+#define ASS_UG_USER_SET_CHANGE			51				//玩家设置更改(未使用)
 
-#define ASS_GAME_BEGIN					120				//升级游戏开始
-#define ASS_SYS_DESK_CFG				121				//确定定注结果消息
+#define ASS_GAME_BEGIN					120				//游戏开始
+#define ASS_SYS_DESK_CFG				121				//系统设定桌面配置
 #define ASS_CFG_DESK					122				//玩家设置底注
-#define ASS_DESK_CFG					123				//确定定注结果消息
-#define ASS_AGREE_DESK_CFG				124             //同意底注
-#define ASS_BET							125             //玩家下注信息
-#define ASS_SEND_A_CARD					130				//发1张牌信息
-#define ASS_SEND_3_CARD					131				//发3张牌信息
-#define ASS_SEND_4_5_CARD				132				//发4,5张牌信息
+#define ASS_DESK_CFG					123				//玩家设定桌面配置
+#define ASS_AGREE_DESK_CFG				124             //同意桌面配置(使用，但无影响)
+#define ASS_BET							125             //玩家下注
+#define ASS_SEND_A_CARD					130				//发底牌2张
+#define ASS_SEND_3_CARD					131				//发翻牌3张
+#define ASS_SEND_4_5_CARD				132				//发转牌或者河牌1张
 #define ASS_SEND_CARD_FINISH			133				//发牌结束
 #define ASS_BETPOOL_UP					134				//边池更新
-#define ASS_BET_REQ						135				//下注请求
+#define ASS_BET_REQ						135				//下注请求(未使用)
 #define ASS_BET_INFO					136				//下注消息
-#define ASS_NEW_USER					137				//下一个玩家操作
-#define ASS_PASS_USER					138				//弃牌的玩家操作
+#define ASS_NEW_USER					137				//下一个玩家操作(未使用)
+#define ASS_PASS_USER					138				//弃牌的玩家操作(未使用)
 #define ASS_SUB_MENOY                   139             //代入金币限制
 #define ASS_COMPARE_CARD                140             //比牌信息
 
-#define ASS_CALLMANDATE				    141				//跟注托管
-#define ASS_CHECKMANDATE                142             //过牌托管
-#define ASS_CALLANYMANDATE              143				//跟任何注托管
-#define ASS_PASSABANDONMANDATE          144             //过牌或弃牌托管
+#define ASS_CALLMANDATE				    141				//跟注托管(未使用)
+#define ASS_CHECKMANDATE                142             //过牌托管(未使用)
+#define ASS_CALLANYMANDATE              143				//跟任何注托管(未使用)
+#define ASS_PASSABANDONMANDATE          144             //过牌或弃牌托管(未使用)
 
-#define ASS_USER_LEFT_DESK              145             ///
+#define ASS_USER_LEFT_DESK              145             //用户离开
 
 #define ASS_SORT_OUT					170				//清理图片
 
 #define ASS_TOKEN						186				//令牌信息
+#define ASS_REMAINING_GAME_COUNT		189				//剩余局数
+#define ASS_CALCULATE_BOARD				190				//大结算
 #define ASS_RESULT						191				//回合算分
 #define ASS_SHOW_IN_MONEY				192				//显示代入金额
-#define ASS_LOOK_CARD					193				//看牌
-#define ASS_CAN_SHOW_CARD				194				//能展示牌的消息
-#define ASS_SHOW_CARD					195				//展示牌的消息
+#define ASS_LOOK_CARD					193				//看牌(暂未使用)
+#define ASS_CAN_SHOW_CARD				194				//能展示牌的消息(暂未使用)
+#define ASS_SHOW_CARD					195				//展示牌的消息(暂未使用)
 
+
+//房卡场新增消息
+#define ASS_RC_OPTION					200				//房卡选项
+#define ASS_RC_CUR_MONEY				201				//当前货币
+#define ASS_RC_CUR_CAN_BUYIN_REQ		202				//当前可买入请求[暂时无效]
+#define ASS_RC_CUR_CAN_BUYIN_RSP		203				//当前可买入应答[暂时无效]
+#define ASS_RC_CUR_BUYIN_REQ			204				//当前买入请求[暂时无效]
+#define ASS_RC_CUR_BUYIN_RSP			205				//当前买入应答[暂时无效]
+#define ASS_RC_CANNOT_PLAY_LACK_MONEY	206				//缺乏货币不能玩耍[暂时无效]
+
+//新增新超端消息
+#define ASS_SUPER_SET_CARD_REQ			220				//超端设置牌请求
+#define ASS_SUPER_SET_CARD_RSP			221				//超端设置牌应答
+
+#define ASS_USERS_WIN_TOTAL_INFO		230				//玩家输赢统计信息
+
+#define ASS_SET_ACTION_PROB	            240				//设定行为概率
 
 //异常类消息
 #define ASS_NO_PLAYER					155				//没有玩家进行游戏
@@ -159,6 +188,14 @@ enum emToken
 	TO_CHECKMANDATE				= 2,    // 过牌托管按钮
 	TO_CALLANYMANDATE			= 3,    // 跟任何注按钮
 	TO_PASSABANDONMANDAT		= 4,    // 过牌/弃牌托管按钮
+};
+
+//Enum Def
+enum ENUM_SET_ACTION_STATUS
+{
+	ENUM_SET_ACTION_STATUS_Big = 0,
+	ENUM_SET_ACTION_STATUS_Small,
+	ENUM_SET_ACTION_STATUS_Max,
 };
 
 #pragma pack(1)
@@ -365,6 +402,8 @@ struct TToken
 	bool	  bNewTurns;                                // 是否为新的一轮开始
 	int		  nTurnNums;								// 当前游戏活动的圈数
 	__int64   nCallMoney;                               // 当前可以跟注的金币
+	__int64   iMinBetOrRaiseMoney;						// 最小下注/加注的金币
+	__int64   iMaxBetOrRaiseMoney;						// 最大下注/加注的金币(暂时不使用)
 
     TAG_INIT(TToken)
     {
@@ -376,6 +415,8 @@ struct TToken
 		nCallMoney = 0;
 		nTurnNums = 0;
         memset(iSelPoints,0,sizeof(iSelPoints));	// 加注值选择表
+		iMinBetOrRaiseMoney = 0;
+		iMaxBetOrRaiseMoney = 0;
     }
 };
 
@@ -405,17 +446,43 @@ struct TResult
 	__int64  nMoneyEx[PLAY_COUNT];          //输赢金币 
     __int64  nSubMoney[PLAY_COUNT];  		//当前每个玩家代入金币
     __int64  nSelfMoney[PLAY_COUNT]; 		//自己的金币更新: 客户端获取的金币有可能还没有刷新, 所以在这里发下去
+	//__int64  iTotalMoney[PLAY_COUNT];		//玩家累计输赢
 	bool bWin[PLAY_COUNT];       			//记录赢家
-	bool bExit;                  			//true:玩家需要退出, false:不需要退出
+	bool bExit;                  			//true:玩家需要退出-, false:不需要退出
 	BYTE bOrder[PLAY_COUNT];                //玩家排名, 按金币最多的排
+	BYTE mRemainingGameCount;				// 剩余局数
 
     TResult()
     {
         ::memset(this, 0, sizeof(TResult));
 		::memset(nUserBet, 0, sizeof(nUserBet));
 		::memset(nMoneyEx, 0, sizeof(nMoneyEx));
-		::memset(bOrder, 255, sizeof(bOrder)); 
+		::memset(bOrder, 255, sizeof(bOrder));
+		mRemainingGameCount = 0;
     }
+};
+
+struct CalculateBoardData
+{
+	int  iUserID;				//玩家ID
+	//char szName[61];			//玩家昵称
+	//char szHeadUrl[256];		//头像URL
+	//bool gameFinish;			// 是否游戏结束
+	bool bWinner;				// 是否大赢家
+	__int64 iMaxWinMoney;		// 单据最多赢钱数
+	int iMaxContinueCount;		// 最高连胜数
+	int iWinCount;				// 胜局
+	__int64 i64WinMoney;		// 输赢金币
+
+	TAG_INIT(CalculateBoardData)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+struct RemainingGameCount
+{
+	int gameCount;
 };
 
 //新的一回合请求包
@@ -474,6 +541,251 @@ struct TMoneyLack
 	}
 };
 
+//Added by QiWang 20180329
+//房卡选项带入倍率
+struct TRCOptionLimit
+{
+	__int64	iSmallBlindNoteMax;		//最大小盲注
+	__int64	iAllInMoneySmallRate;	//AllIn最低倍率(大盲注基数)
+	__int64	iAllInMoneyBigRate;		//AllIn最高倍率(小盲注基数)
+
+	TAG_INIT(TRCOptionLimit)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+//Added by QiWang 20180313, 房卡场新增消息对应结构体
+//房卡选项
+struct TRCOption
+{
+	int iPlayerCount;			//人数,暂时无效
+	__int64	iSmallBlindNote;	//小盲注
+	__int64	iBigBlindNote;		//大盲注=小盲注*2
+	__int64	iBaseTakeInMoney;	//记分带入,暂时无效
+	__int64	iSmallTakeInMoney;	//最低带入,暂时无效
+	__int64	iBigTakeInMoney;	//最高带入,暂时无效
+	__int64	iAllInMoneyLimit;	//AllIn限制金额
+
+	TAG_INIT(TRCOption)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+struct TRCCurMoneyInfo
+{
+	__int64	iCurMoney;				//当前货币[包含此次买入]
+	__int64	iHadBuyInMoney;			//已买入[包含此次买入],暂时无效
+	__int64	iTheBuyInMoney;			//此次买入[显示动画使用],暂时无效
+	__int64	iNextRoundBuyInMoney;	//下把准备买入,暂时无效
+
+	TAG_INIT(TRCCurMoneyInfo)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+//当前货币
+struct TRCCurMoney
+{
+	TRCCurMoneyInfo tCurMoneyInfoArr[PLAY_COUNT];
+
+	TAG_INIT(TRCCurMoney)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+//当前可买入请求, !!不使用!!
+struct TRCCurCanBuyInReq
+{
+	int nbyUser;
+
+	TAG_INIT(TRCCurCanBuyInReq)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+//当前可买入应答
+struct TRCCurCanBuyInRsp
+{
+	__int64	iSmallBuyInMoney;		//最低买入
+	__int64	iBigBuyInMoney;			//最高买入
+	__int64	iHadBuyInMoney;			//已买入
+
+	TAG_INIT(TRCCurCanBuyInRsp)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+//当前买入请求
+struct TRCCurBuyInReq
+{
+	//请求值为房卡选项最低带入的整数倍
+	//否则服务器自动寻找(低于该值的最低带入的最大整数倍)或者(剩余可买入)
+	__int64	iBuyInMoney;		//买入
+
+	TAG_INIT(TRCCurBuyInReq)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+//当前买入应答
+struct TRCCurBuyInRsp
+{
+	int nbyUser;				//买入位置
+	bool bBuyInSuccess;			//买入成功与否
+	__int64	iBuyInMoney;		//买入货币
+	bool bEffectImediately;		//是否立即生效
+								//[游戏未开始时买入会立即生效]
+								//[立即生效会广播，否则单独回复]
+	__int64	iCurMoneyBuyInUser;	//买入位置当前货币[立即生效时，玩家的当前货币会变动]
+
+	TAG_INIT(TRCCurBuyInRsp)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+//买入相关信息
+struct TRCCurBuyInInfo
+{
+	TRCCurCanBuyInRsp tRCCurCanBuyIn;
+	__int64	iLimitBuyInMoney;		//买入限制
+	__int64	iNextRoundBuyInMoney;	//下把准备买入
+
+	TAG_INIT(TRCCurBuyInInfo)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+//Added by QiWang 20180411, 新增新超端消息
+//底牌、手牌结构体
+struct THandCards
+{
+	int  iUserID;	//玩家ID
+	bool bSetHandCard; //设定玩家手牌与否(因为玩家ID可以是任意值)
+	BYTE byCard[NUM_HAND_CARDS_NUM]; //手牌
+	//BYTE byNumSetHandCard; //设定手牌张数(1-NUM_HAND_CARDS_NUM,其他值均认为是NUM_HAND_CARDS_NUM)
+
+	TAG_INIT(THandCards)
+	{
+		memset(this, 0, sizeof(*this));
+		iUserID = -1;
+		//byNumSetHandCard = 1;
+	}
+};
+
+//超端设置牌请求
+struct TSuperSetCardReq
+{
+	THandCards tPlayerHandCards[PLAY_COUNT]; //所有玩家手牌
+	BYTE byComCards[NUM_COMMUNITY_CARDS_NUM]; //设定公共牌
+	//BYTE byNumSetComCards; //设定公共牌张数(1-NUM_COMMUNITY_CARDS_NUM,其他值均认为是NUM_COMMUNITY_CARDS_NUM)
+
+	TAG_INIT(TSuperSetCardReq)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+enum ENUM_SuperSetCard_ErrorReason
+{
+	ENUM_SuperSetCard_ErrorReason_RepeatedCard = 1, //重复牌
+	ENUM_SuperSetCard_ErrorReason_ErrorHandCard,	//错误手牌
+	ENUM_SuperSetCard_ErrorReason_ErrorComCard,		//错误公共牌
+	ENUM_SuperSetCard_ErrorReason_Max,//未知错误
+};
+//超端设置牌应答
+struct TSuperSetCardRsp
+{
+	bool bSuccess; //设定成功与否
+	int iErrorReason; //设定失败原因
+
+	TAG_INIT(TSuperSetCardRsp)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+//玩家输赢统计信息
+struct TUersWinTotalInfo
+{
+	__int64 iTotalMoney[PLAY_COUNT]; //玩家累计输赢
+
+	TAG_INIT(TUersWinTotalInfo)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+//设定行为概率
+struct SetActionProb
+{
+	BYTE byProbFold[ENUM_SET_ACTION_STATUS_Max];	//弃牌概率
+	BYTE byProbFollow[ENUM_SET_ACTION_STATUS_Max];	//跟注概率
+	BYTE byProbRaise[ENUM_SET_ACTION_STATUS_Max];	//加注概率
+	BYTE byProbAllIn[ENUM_SET_ACTION_STATUS_Max];	//全下概率
+
+	//bool bIsVirtualArr[PLAY_COUNT]; //是否AI
+
+	SetActionProb()
+	{
+		Clear();
+	}
+
+	void Clear()
+	{
+		memset(this, 0, sizeof(*this));
+		byProbFollow[ENUM_SET_ACTION_STATUS_Big] = 100;
+		byProbFold[ENUM_SET_ACTION_STATUS_Small] = 100;
+	}
+
+	void ReSet(ENUM_SET_ACTION_STATUS nEnum)
+	{
+		if (nEnum < ENUM_SET_ACTION_STATUS_Big || nEnum >= ENUM_SET_ACTION_STATUS_Max)
+
+		byProbFold[nEnum] = 0;
+		byProbFollow[nEnum] = 0;
+		byProbRaise[nEnum] = 0;
+		byProbAllIn[nEnum] = 0;
+
+		switch (nEnum)
+		{
+		case ENUM_SET_ACTION_STATUS_Big:
+			byProbFollow[ENUM_SET_ACTION_STATUS_Big] = 100;
+			break;
+		case ENUM_SET_ACTION_STATUS_Small:
+			byProbFold[ENUM_SET_ACTION_STATUS_Small] = 100;
+			break;
+		default:
+			break;
+		}
+	}
+
+	void ReSetAI()
+	{
+		//memset(bIsVirtualArr, true, sizeof(bIsVirtualArr));
+	}
+};
+
+//游戏开始信息
+struct GameBeginInfo
+{
+	bool bPlaying[PLAY_COUNT]; //游戏中与否
+
+	TAG_INIT(GameBeginInfo)
+	{
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+
 //******************************************************************************************
 // 游戏状态定义
 //******************************************************************************************
@@ -519,6 +831,7 @@ struct TGSWaitAgree : public TGSBase
 {
 	bool	  bReady[PLAY_COUNT];               //是否准备
     __int64   nSubMoney[PLAY_COUNT];            //每个玩家代入的金币
+	//__int64   iTotalMoney[PLAY_COUNT];			//玩家累计输赢
 
     TAG_INIT(TGSWaitAgree)
     {
@@ -529,11 +842,13 @@ struct TGSWaitAgree : public TGSBase
 //游戏状态包：游戏中
 struct TGSPlaying : public TGSBase 
 {
+	GameBeginInfo	tPlayInfo;				//游戏开始信息
     BYTE  byHandCard[PLAY_COUNT][2];	    //玩家手上的扑克
     int   nHandCardNums;		            //玩家手上扑克数目
 
     BYTE  byCards[5];                       //桌面上公共牌
     int   nCardsCount;                      //桌面公共牌数
+	int   nCardsCountToMobile;              //桌面公共牌数（手游使用）
 	int   nID[5];							//五个金额按钮
     __int64   nBetMoney[PLAY_COUNT][8];     //下注金币
     bool  bNoBet[PLAY_COUNT];               //记录不可下注的玩家位置
@@ -544,6 +859,8 @@ struct TGSPlaying : public TGSBase
     BYTE  bySmallBlind;                     //小盲家
     BYTE  byBigBlind;                       //大肓家
 	__int64	  nCallMoney;					//跟注金币
+	__int64   iMinBetOrRaiseMoney;			//最小下注/加注的金币
+	__int64   iMaxBetOrRaiseMoney;			//最大下注/加注的金币(暂时不使用)
 
     BYTE  byVerbFlag;                       //操作属性
     bool  bNewTurn;                         //新的一轮操作
@@ -551,6 +868,7 @@ struct TGSPlaying : public TGSBase
 
     __int64   nBetPools[8];			        //下注边池金币
     __int64   nSubMoney[PLAY_COUNT];        //每个玩家代入的金币
+	//__int64   iTotalMoney[PLAY_COUNT];		//玩家累计输赢
 
 	int   iUserStation ;
  
@@ -567,7 +885,7 @@ struct TGSWaitNextRound : public TGSBase
 
     TAG_INIT(TGSWaitNextRound)
     {
-        ::memset(this,0,sizeof(TGSPlaying));
+        ::memset(this,0,sizeof(TGSWaitNextRound));
     }
 };
 struct UserLeftDeskStruct
@@ -605,10 +923,31 @@ struct ShowCardStruct
 
 struct SuperSet
 {
-	BYTE	byWinUserID;
+	DWORD	byWinUserID;
 	SuperSet()
 	{
 		::memset(this,0,sizeof(SuperSet));
+	}
+};
+
+//保存游戏信息，用于重新玩(基本只是用于大结算)
+struct GameInfForReplay
+{
+	bool bLatestWinner;
+
+	// 玩家累计输赢
+	__int64 iTotalMoney;
+	int iContinuouslyWin;
+	int iMaxContinuouslyWin;
+	__int64 iMaxWinningMoney;
+	int iWinCount;
+
+	//房卡场(时间场)新需求
+	__int64 iCurMoney; //玩家拥有金币
+
+	GameInfForReplay()
+	{
+		memset(this,0,sizeof(GameInfForReplay));
 	}
 };
 

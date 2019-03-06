@@ -8,6 +8,9 @@
 #include "UserDataCliObject.h"
 //#include "MidiSample.h"
 
+#include <time.h>
+#include <sys/timeb.h>
+
 #define MAST_PEOPLE			-1											// 是否为管理员
 //消息定义
 #define IDM_BEGIN			WM_USER+120									// 开始按钮消息
@@ -59,6 +62,10 @@
 #define				 IDT_MONEY_LACK				118						// 踢出不可带玩家定时器
 #define				 IDT_CANCEL_TIME			119						// 机器人退出定时器
 #define				 IDT_IN_MONEY_TIMERS		120						// 机器人自动带入金额定时器
+#define				 IDT_RECOME_TTOKEN			121						// 游戏中途断线重连说话处理
+
+//Num Defs
+#define NUM_GET_ARR(a)	(sizeof(a)/sizeof(a[0]))
 
 //游戏框架类 
 class CClientGameDlg : public CLoveSendClass//CGameFrameDlg
@@ -93,6 +100,11 @@ public:
 	BYTE					m_iDeskCardCount[PLAY_COUNT];				// 每人桌面扑克的数目
 	BYTE					m_UserCard[PLAY_COUNT][10];					// 用户扑克
 	BYTE                    m_iUpBullCard[PLAY_COUNT][3];				// 升起的牛牌
+	TCards					m_tUserCardActionProb;						// 所有人扑克信息, 服务器发送给机器人
+	BYTE					m_byResultCardsActionProb[PLAY_COUNT][5];	// 每个玩家最终牌型数据, 判断行动概率使用
+	bool					m_bGotUserCardActionProb;					// 获得判断行动概率扑克与否
+	TToken					m_tRecomeTToken;							// 游戏中途重新加入令牌信息
+	__int64					m_iMinBetOrRaiseMoney;						// 最小加注金额
 	//运行信息
 	BYTE				    	m_bCurrentOperationStation;				// 現在叫分者
 	BYTE						m_bTimeOutCount;						// 超时
@@ -114,6 +126,13 @@ public:
 	HWND					m_hMciWnd1;									// 背景音乐(出牌)
 	HWND					m_hMciWnd2;									// 背景音乐(场景)
 	BYTE                    m_GameType;
+
+	//机器人行为概率相关
+private:
+	SetActionProb			m_tSetActionProb;	//设定行为概率
+	bool					m_bSetActionProbRecv;//设定行为概率接收与否
+	bool					m_bSelectActionProb;//选择行为概率与否
+	ENUM_SET_ACTION_STATUS	m_nEnumActionStatus;//选择哪种Status
 
 	//函数定义
 public:
@@ -354,6 +373,19 @@ public:
 	BYTE GetLastUserStation(BYTE byStation, BOOL bIsAll = TRUE);
 	//获取随机下注额
 	__int64 GetRandBetValue();
+
+	//玩家根据设定动作概率下注
+	bool UserNoteAccordingToActionProb(const BYTE byVerbFlag);
+	//判断实时行为概率
+	bool JudgeRTActionProb();
+	//分析最大牌
+	bool AnalysisBiggestCards();
+
+	//处理令牌信息
+	void OnHandleTToken(TToken* pToken);
+
+	//获得所有已下注金额总值
+	__int64 GetTotalBetMoney();
 private:
 	// 初始化数据
 	void InitData();

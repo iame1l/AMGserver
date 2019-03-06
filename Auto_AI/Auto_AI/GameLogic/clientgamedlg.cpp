@@ -37,6 +37,9 @@ CClientGameDlg::CClientGameDlg() : CLoveSendClass(IDD_GAME_FRAME)
 	m_iThisTurnLimit=0;				//本轮限注
 	::memset(m_iDeskCardCount,0,sizeof(m_iDeskCardCount));
 	::memset(m_iUpBullCard,1,sizeof(m_iUpBullCard));
+	m_tUserCardActionProb.Clear();
+	memset(m_byResultCardsActionProb,0,sizeof(m_byResultCardsActionProb));
+	m_bGotUserCardActionProb = false;
 	m_bBgSound=true;
 	m_GameType = 0;
 	m_hMciWnd1=NULL;
@@ -73,6 +76,11 @@ CClientGameDlg::CClientGameDlg() : CLoveSendClass(IDD_GAME_FRAME)
 	m_nRobotInAllCardNum = 0;	
 
 	m_iFollowNum = 0;  //机器人跟注次数
+
+	m_tSetActionProb.Clear();
+	m_bSetActionProbRecv = false;
+	m_bSelectActionProb = false;
+	m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Max;
 }
 
 //析构函数
@@ -154,6 +162,8 @@ void CClientGameDlg::InitData()
 //设置游戏状态
 bool CClientGameDlg::SetGameStation(void * pStationData, UINT uDataSize)
 {
+	ResetGameStation(0);
+
 	const TGSBase* pGSBase = (TGSBase*)pStationData;
 
 	m_byMeStation = GetMeUserInfo()->bDeskStation;
@@ -245,6 +255,22 @@ bool CClientGameDlg::SetGameStation(void * pStationData, UINT uDataSize)
 			toKen.byUser	 = pGSPlaying->byTokenUser;
 			toKen.byVerbFlag = pGSPlaying->byVerbFlag;
 			toKen.nCallMoney = pGSPlaying->nCallMoney;
+			m_iMinBetOrRaiseMoney = toKen.iMinBetOrRaiseMoney = pGSPlaying->nCallMoney;
+			m_tRecomeTToken = toKen;
+
+			//行动概率相关
+			m_tUserCardActionProb.Clear();
+			memcpy(m_tUserCardActionProb.byCards, pGSPlaying->byHandCard, sizeof(pGSPlaying->byHandCard));
+			memcpy(m_tUserCardActionProb.byPubCards, pGSPlaying->byCards, sizeof(pGSPlaying->byCards));
+			
+			m_bGotUserCardActionProb = true;
+			AnalysisBiggestCards();
+
+
+			if (m_tRecomeTToken.byUser == m_byMeStation)
+			{
+				SetGameTimer(m_byMeStation, 2, IDT_RECOME_TTOKEN);
+			}
 		}
 		break;
 	default:{break;}
@@ -266,6 +292,22 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 				SetStationParameter(GS_PLAY_GAME);
 				// 初始化数据
 				InitData();
+				return true;
+			}
+		case ASS_SET_ACTION_PROB:
+			{
+				if (uDataSize != sizeof(SetActionProb))
+				{
+					return true;
+				}
+
+				if (NULL == pNetData)
+				{
+					return true;
+				}
+
+				m_tSetActionProb = *(SetActionProb*)pNetData;
+				m_bSetActionProbRecv = true;
 				return true;
 			}
 		case ASS_SYS_DESK_CFG:
@@ -316,7 +358,17 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 					return false;
 				}
 
-				m_nTypeCard = pCards->nTypeCard;	
+				if (NULL == pCards)
+				{
+					return true;
+				}
+
+				//行动概率相关
+				m_tUserCardActionProb = *pCards;
+				m_bGotUserCardActionProb = true;
+				AnalysisBiggestCards();
+
+				m_nTypeCard = pCards->nTypeCard;
 
 				// 自己的牌数据
 				::memcpy(m_iUserDataCard, pCards->byCards[GetMeUserInfo()->bDeskStation], MAX_HANDCARDS_NUM);
@@ -408,97 +460,7 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 				//收到令牌消息，激活用户
 				TToken* pToken = (TToken*)pNetData;
 
-				//更新数据
-				m_byTokenUser = pToken->byUser;
-
-				// 允许动作标志
-				BYTE byVerbFlag = pToken->byVerbFlag;
-
-				int iWeight = 0;
-				int nRandByWeight = 0;
-
-				// 模拟下注消息
-				if (m_byTokenUser == m_byMeStation)
-				{
-					if (m_nRobotInAllCardNum >= 2)
-					{
-						iWeight = m_Logic.RobotHandCardAnalysis(m_byRobotInAllCard,m_nRobotInAllCardNum);
-
-						if ((byVerbFlag & UD_VF_BET) && (byVerbFlag & UD_VF_CHECK) && (byVerbFlag & UD_VF_FOLD))
-						{
-							nRandByWeight = GetRandBetByWeight(iWeight);
-						}
-						else if ((byVerbFlag & UD_VF_ADD) && (byVerbFlag & UD_VF_CALL) && (byVerbFlag & UD_VF_FOLD))
-						{
-							nRandByWeight = GetRandAddByWeight(iWeight);
-						}
-						else if ((byVerbFlag & UD_VF_ALLIN) && (byVerbFlag & UD_VF_FOLD))
-						{
-							nRandByWeight = GetRandAllinByWeight(iWeight);
-						}
-					}
-
-					switch (byVerbFlag & nRandByWeight)
-					{
-					case UD_VF_BET:		// 允许下注
-						{
-							srand((unsigned) time (NULL) + m_byMeStation);
-							int iRandTime = rand() % 3 + 1;
-							SetGameTimer(m_byMeStation,iRandTime,IDT_BET_TIMER);
-							break;
-						}
-					case UD_VF_CALL:	// 允许跟注
-						{
-							m_iFollowNum++;			//机器人跟注次数
-							m_nCallMoney = pToken->nCallMoney;
-							srand((unsigned) time (NULL) + m_byMeStation);
-							int iRandTime = rand() % 3 + 1;
-							SetGameTimer(m_byMeStation,iRandTime,IDT_CALL_TIMER);
-							break;
-						}
-					case UD_VF_ADD:		// 允许加注
-						{
-							m_nCallMoney = pToken->nCallMoney;
-							srand((unsigned) time (NULL) + m_byMeStation);
-							int iRandTime = rand() % 3 + 1;
-							SetGameTimer(m_byMeStation,iRandTime,IDT_RAISE_TIMER);
-							break;
-						}
-					case UD_VF_CHECK:  // 允许过牌
-						{
-							srand((unsigned) time (NULL) + m_byMeStation);
-							int iRandTime = rand() % 3 + 1;
-							SetGameTimer(m_byMeStation,iRandTime,IDT_CHECK_TIMER);
-							break;
-						}
-					case UD_VF_FOLD:   // 允许弃牌
-						{
-							srand((unsigned) time (NULL) + m_byMeStation);
-							int iRandTime = rand() % 3 + 1;
-							SetGameTimer(m_byMeStation,iRandTime,IDT_FOLO_TIMER);
-							break;
-						}
-					case UD_VF_ALLIN:  // 允许全下
-						{
-							__int64 nMoney = m_nBetMoney[GetLastUserStation(m_byMeStation)] - m_nBetMoney[m_byMeStation];
-
-							if (m_iMoneys[m_byMeStation] <= nMoney)
-							{
-								srand((unsigned) time (NULL) + m_byMeStation);
-								int iRandTime = rand() % 3 + 1;
-
-								SetGameTimer(m_byMeStation,iRandTime,IDT_ALLIN_TIMER);
-							}
-							break;
-						}
-					default:
-						{
-							OutputDebugString("jan: 未知操作\n");
-							SetGameTimer(m_byMeStation,1,IDT_FOLO_TIMER);
-							break;
-						}
-					}	
-				}
+				OnHandleTToken(pToken);
 
 				return true;
 			}
@@ -747,9 +709,26 @@ bool CClientGameDlg::OnGameTimer(BYTE bDeskStation, UINT uTimeID, UINT uTimeCoun
 		{
 			KillTimer(IDT_BET_TIMER);
 
+			struct timeb timeSeed;
+			ftime(&timeSeed);
+			srand((UINT)(timeSeed.time * NUM_ONE_SECOND_MS + timeSeed.millitm));  // milli time
+			const __int64 iTotalBetMoney = GetTotalBetMoney();
+			double iPercentBetMoney = iTotalBetMoney / 100.0;
+			int iRandomTemp = rand() % 71 + 30;
+			__int64 iBetMoney = iPercentBetMoney * iRandomTemp;
+			if (m_tagDeskCfg.dz.iBigBlindNote > 0)
+			{
+				iBetMoney = (iBetMoney / m_tagDeskCfg.dz.iBigBlindNote) * m_tagDeskCfg.dz.iBigBlindNote;;
+			}
+
+			if (iBetMoney < m_iMinBetOrRaiseMoney)
+			{
+				iBetMoney = m_iMinBetOrRaiseMoney;
+			}
+
 			TBet tagBet;
 			tagBet.nType = ET_BET;
-			tagBet.nMoney = m_tagDeskCfg.dz.iMinMoney;
+			tagBet.nMoney = iBetMoney;
 			SendGameData(&tagBet, sizeof(tagBet), MDM_GM_GAME_NOTIFY, ASS_BET, 0);	
 			break;
 		}
@@ -766,10 +745,37 @@ bool CClientGameDlg::OnGameTimer(BYTE bDeskStation, UINT uTimeID, UINT uTimeCoun
 	case IDT_RAISE_TIMER:			// 加注定时器
 		{
 			KillTimer(IDT_RAISE_TIMER);
+
+			struct timeb timeSeed;
+			ftime(&timeSeed);
+			srand((UINT)(timeSeed.time * NUM_ONE_SECOND_MS + timeSeed.millitm));  // milli time
+			const __int64 iTotalBetMoney = GetTotalBetMoney();
+			__int64 iBetMoney = 0;
+			if (m_iMinBetOrRaiseMoney * 10 < iTotalBetMoney)
+			{
+				double iPercentBetMoney = iTotalBetMoney / 100.0;
+				int iRandomTemp = rand() % 71 + 30;
+				iBetMoney = iPercentBetMoney * iRandomTemp;
+				if (m_tagDeskCfg.dz.iBigBlindNote > 0)
+				{
+					iBetMoney = (iBetMoney / m_tagDeskCfg.dz.iBigBlindNote) * m_tagDeskCfg.dz.iBigBlindNote;;
+				}
+			} else 
+			{
+				iBetMoney = m_iMinBetOrRaiseMoney * (rand() % 9 + 2);
+			}
+			
+
+			if (iBetMoney < m_iMinBetOrRaiseMoney)
+			{
+				iBetMoney = m_iMinBetOrRaiseMoney;
+			}
+
 			TBet tagBet;
 			tagBet.nType = ET_ADDNOTE;
 			//tagBet.nMoney = m_nCallMoney + 500;
-			tagBet.nMoney = m_nCallMoney +GetRandBetValue();
+			//tagBet.nMoney = m_nCallMoney + GetRandBetValue();
+			tagBet.nMoney = m_nCallMoney + iBetMoney;
 			SendGameData(&tagBet, sizeof(tagBet), MDM_GM_GAME_NOTIFY, ASS_BET, 0);
 			break;
 		}
@@ -796,6 +802,12 @@ bool CClientGameDlg::OnGameTimer(BYTE bDeskStation, UINT uTimeID, UINT uTimeCoun
 			tagBet.nType = ET_ALLIN;
 			tagBet.nMoney = m_iMoneys[m_byMeStation];
 			SendGameData(&tagBet, sizeof(tagBet), MDM_GM_GAME_NOTIFY, ASS_BET, 0);	
+			break;
+		}
+	case IDT_RECOME_TTOKEN:
+		{
+			KillTimer(IDT_RECOME_TTOKEN);
+			OnHandleTToken(&m_tRecomeTToken);	
 			break;
 		}
 	default:{break;}
@@ -918,10 +930,18 @@ void CClientGameDlg::ResetGameStation(int iGameStation)
 	m_iNowOutPeople=-1;
 	m_iFirstOutPeople=-1;
 	::memset(m_iUpBullCard,1,sizeof(m_iUpBullCard));
+	m_tUserCardActionProb.Clear();
+	memset(m_byResultCardsActionProb,0,sizeof(m_byResultCardsActionProb));
+	m_bGotUserCardActionProb = false;
 	::memset(m_iTotalGameNote,0,sizeof(m_iTotalGameNote));
 	::memset(m_iThisGameNote,0,sizeof(m_iThisGameNote));
 	//桌上牌情况
 	::memset(m_iDeskCardCount,0,sizeof(m_iDeskCardCount));
+
+	m_tSetActionProb.Clear();
+	m_bSetActionProbRecv = false;
+	m_bSelectActionProb = false;
+	m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Max;
 
 	return;
 }
@@ -1081,7 +1101,7 @@ BOOL CClientGameDlg::ModifyNote(BYTE iViewStation,int iCurNote,BOOL bExtVal)
 //	extendname=f.GetKeyVal(key,"extendname",".wav");
 //	TCHAR Val[50];
 //	srand(GetCurrentTime());
-//	int count =f.GetKeyVal(key,"count",1);
+//	int count =f.GetKeyVal(key,"count",1);-
 //	switch(bNoteStyle)
 //	{
 //		/*case TYPE_OPENCARD:
@@ -2018,4 +2038,417 @@ int CClientGameDlg::GetRandAllinByWeight(int iWeight)
 	}
 
 	return UD_VF_FOLD;
+}
+
+//玩家根据设定动作概率下注
+bool CClientGameDlg::UserNoteAccordingToActionProb(const BYTE byVerbFlag)
+{
+	//未选择行为概率策略，返回
+	if (!m_bSelectActionProb)
+	{
+		return false;
+	}
+
+	//选择错误的行为概率策略，返回
+	if (m_nEnumActionStatus < ENUM_SET_ACTION_STATUS_Big
+		|| m_nEnumActionStatus >= ENUM_SET_ACTION_STATUS_Max)
+	{
+		return false;
+	}
+
+	//不是机器人说话，返回
+	if (m_byTokenUser != m_byMeStation)
+	{
+		return false;
+	}
+
+	//随机确定策略
+	//srand(GetTickCount()+GetMeUserInfo()->bDeskStation);
+	struct timeb timeSeed;
+	ftime(&timeSeed);
+	srand((UINT)(timeSeed.time * NUM_ONE_SECOND_MS + timeSeed.millitm));  // milli time
+	BYTE iRandNumTemp = 0;
+	iRandNumTemp = rand() % 100;
+	BYTE byProbFold = m_tSetActionProb.byProbFold[m_nEnumActionStatus];
+	BYTE byProbFollow = byProbFold + m_tSetActionProb.byProbFollow[m_nEnumActionStatus];
+	BYTE byProbRaise = byProbFollow + m_tSetActionProb.byProbRaise[m_nEnumActionStatus];
+	BYTE byProbAllIn = byProbRaise + m_tSetActionProb.byProbAllIn[m_nEnumActionStatus];
+	BYTE bySelectActionTemp = 0;
+	if (iRandNumTemp < byProbFold)
+	{
+		bySelectActionTemp = UD_VF_FOLD;
+	} 
+	else if (iRandNumTemp < byProbFollow)
+	{
+		bySelectActionTemp = UD_VF_CALL;
+	} 
+	else if (iRandNumTemp < byProbRaise)
+	{
+		bySelectActionTemp = UD_VF_ADD;
+	} 
+	else if (iRandNumTemp < byProbAllIn)
+	{
+		bySelectActionTemp = UD_VF_ALLIN;
+	}
+
+	const static BYTE bVerbFlagCheckArr[] =
+	{
+		UD_VF_ALLIN,
+		UD_VF_ADD,
+		UD_VF_BET,
+		UD_VF_CALL,
+		UD_VF_CHECK,
+	};
+
+	//特殊情况修改
+	if (0 == (byVerbFlag & bySelectActionTemp))
+	{
+		//如果没有可选行为，即寻找同级或下级行为
+		bool bSelectGotReplace = false;
+		switch(bySelectActionTemp)
+		{
+		case UD_VF_ALLIN:
+			for (int i=0; i < NUM_GET_ARR(bVerbFlagCheckArr); i++)
+			{
+				if (byVerbFlag & bVerbFlagCheckArr[i])
+				{
+					bySelectActionTemp = bVerbFlagCheckArr[i];
+					bSelectGotReplace = true;
+					break;
+				}
+			}
+			break;
+		case UD_VF_ADD:
+			for (int i=2; i >= 0; i--)
+			{
+				if (byVerbFlag & bVerbFlagCheckArr[i])
+				{
+					bySelectActionTemp = bVerbFlagCheckArr[i];
+					bSelectGotReplace = true;
+					break;
+				}
+			}
+
+			if (!bSelectGotReplace)
+			{
+				for (int i=3; i < NUM_GET_ARR(bVerbFlagCheckArr); i++)
+				{
+					if (byVerbFlag & bVerbFlagCheckArr[i])
+					{
+						bySelectActionTemp = bVerbFlagCheckArr[i];
+						bSelectGotReplace = true;
+						break;
+					}
+				}
+			}
+			break;
+		case UD_VF_CALL:
+			for (int i=4; i < NUM_GET_ARR(bVerbFlagCheckArr); i++)
+			{
+				if (byVerbFlag & bVerbFlagCheckArr[i])
+				{
+					bySelectActionTemp = bVerbFlagCheckArr[i];
+					bSelectGotReplace = true;
+					break;
+				}
+			}
+
+			if (!bSelectGotReplace)
+			{
+				for (int i=0; i >= 0; i--)
+				{
+					if (byVerbFlag & bVerbFlagCheckArr[i])
+					{
+						bySelectActionTemp = bVerbFlagCheckArr[i];
+						bSelectGotReplace = true;
+						break;
+					}
+				}
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		if (!bSelectGotReplace)
+		{
+			bySelectActionTemp = UD_VF_FOLD;
+		}
+	}
+
+	bool bGotAction = false;
+	int iRandTime = rand() % 3 + 1;
+	switch(byVerbFlag & bySelectActionTemp)
+	{
+	case UD_VF_BET:		// 允许下注
+		{
+			SetGameTimer(m_byMeStation,iRandTime,IDT_BET_TIMER);
+			bGotAction = true;
+			break;
+		}
+	case UD_VF_CALL:	// 允许跟注
+		{
+			m_iFollowNum++;			//机器人跟注次数
+			SetGameTimer(m_byMeStation,iRandTime,IDT_CALL_TIMER);
+			bGotAction = true;
+			break;
+		}
+	case UD_VF_ADD:		// 允许加注
+		{
+			SetGameTimer(m_byMeStation,iRandTime,IDT_RAISE_TIMER);
+			bGotAction = true;
+			break;
+		}
+	case UD_VF_CHECK:  // 允许过牌
+		{
+			SetGameTimer(m_byMeStation,iRandTime,IDT_CHECK_TIMER);
+			bGotAction = true;
+			break;
+		}
+	case UD_VF_FOLD:   // 允许弃牌
+		{
+			SetGameTimer(m_byMeStation,iRandTime,IDT_FOLO_TIMER);
+			bGotAction = true;
+			break;
+		}
+	case UD_VF_ALLIN:  // 允许全下
+		{
+			SetGameTimer(m_byMeStation,iRandTime,IDT_ALLIN_TIMER);
+			bGotAction = true;
+			break;
+		}
+	default:
+		{
+			break;
+		}
+	}
+
+	//没有成功执行返回错误
+	if (!bGotAction)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+// 判断实时行为概率
+bool CClientGameDlg::JudgeRTActionProb()
+{
+	m_bSelectActionProb = false;
+	m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Max;
+
+	//m_pUserInfo[0];
+	CPtrArray PlayPtrArray;
+	CPtrArray WatchPtrArray;
+	if (NULL != m_pGameInfo && NULL != m_pGameInfo->pIFindUser)
+	{
+		m_pGameInfo->pIFindUser->FindOnLineUser(GetMeUserInfo()->bDeskNO,PlayPtrArray,WatchPtrArray);
+	}
+
+	UserItemStruct* pUserInfo[PLAY_COUNT] = {NULL};	//游戏玩家信息
+	int iSizeTemp = PlayPtrArray.GetSize();
+	if (iSizeTemp >= 2)
+	{
+		for (int i=0; i < PLAY_COUNT && i < iSizeTemp; ++i)
+		{
+			pUserInfo[i] = (UserItemStruct *)PlayPtrArray.GetAt(i);
+		}
+	}
+
+	if (m_bSetActionProbRecv && m_bGotUserCardActionProb)
+	{
+		//检测是否有还没弃牌的真人
+		bool bGotRealPlayer = false;
+		const BYTE bMeDeskStation = GetMeUserInfo()->bDeskStation;
+		BYTE bDeskStationTemp = 0;
+		int iResultTemp = 0;
+		const int nCardCount = m_iDeskCardCount[GetMeUserInfo()->bDeskStation];
+		for (int i=0; i < PLAY_COUNT; ++i)
+		{
+
+			if (NULL != pUserInfo[i])
+			{
+				bDeskStationTemp = pUserInfo[i]->GameUserInfo.bDeskStation;
+				if (bDeskStationTemp < PLAY_COUNT && bDeskStationTemp != bMeDeskStation)
+				{
+					if (!m_bGiveUp[i] && !pUserInfo[i]->GameUserInfo.isVirtual)
+					{
+						//找到未放弃的真人
+						bGotRealPlayer = true;
+						m_bSelectActionProb = true;
+						iResultTemp = m_Logic.CompareCard(m_byResultCardsActionProb[bMeDeskStation], 5, 
+														  m_byResultCardsActionProb[bDeskStationTemp], 5);
+						//如果有就需要判断使用哪种行为策略
+						if (iResultTemp < 0)
+						{
+							m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Small;
+						} else 
+						{
+							if (m_nEnumActionStatus != ENUM_SET_ACTION_STATUS_Small)
+							{
+								m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Big;
+							}
+						}
+
+						if (ENUM_SET_ACTION_STATUS_Small == m_nEnumActionStatus)
+						{
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+//分析最大牌
+bool CClientGameDlg::AnalysisBiggestCards()
+{
+	if (m_bGotUserCardActionProb)
+	{
+		return false;
+	}
+
+	for (int i=0; i < PLAY_COUNT; ++i)
+	{
+		if (0 != m_tUserCardActionProb.byCards[i][0]) //有效牌
+		{
+			m_Logic.AnalysisCard(m_tUserCardActionProb.byCards[i], 2, 
+								 m_tUserCardActionProb.byPubCards, 5, 
+								 m_byResultCardsActionProb[i]);
+		}
+	}
+
+	return true;
+}
+
+//处理令牌信息
+void CClientGameDlg::OnHandleTToken(TToken* pToken)
+{
+	KillTimer(IDT_RECOME_TTOKEN);
+
+	if (NULL == pToken)
+	{
+		return;
+	}
+
+	//更新数据
+	m_byTokenUser = pToken->byUser;
+
+	// 允许动作标志
+	BYTE byVerbFlag = pToken->byVerbFlag;
+
+	m_iMinBetOrRaiseMoney = pToken->iMinBetOrRaiseMoney;
+
+	int iWeight = 0;
+	int nRandByWeight = 0;
+
+	// 模拟下注消息
+	if (m_byTokenUser == m_byMeStation)
+	{
+		JudgeRTActionProb();
+		m_nCallMoney = pToken->nCallMoney;
+		if (UserNoteAccordingToActionProb(byVerbFlag))
+		{
+			//Do Nothing
+		} else //行为概率下注策略如果失败，使用旧下注策略
+		{
+			if (m_nRobotInAllCardNum >= 2)
+			{
+				iWeight = m_Logic.RobotHandCardAnalysis(m_byRobotInAllCard,m_nRobotInAllCardNum);
+
+				if ((byVerbFlag & UD_VF_BET) && (byVerbFlag & UD_VF_CHECK) && (byVerbFlag & UD_VF_FOLD))
+				{
+					nRandByWeight = GetRandBetByWeight(iWeight);
+				}
+				else if ((byVerbFlag & UD_VF_ADD) && (byVerbFlag & UD_VF_CALL) && (byVerbFlag & UD_VF_FOLD))
+				{
+					nRandByWeight = GetRandAddByWeight(iWeight);
+				}
+				else if ((byVerbFlag & UD_VF_ALLIN) && (byVerbFlag & UD_VF_FOLD))
+				{
+					nRandByWeight = GetRandAllinByWeight(iWeight);
+				}
+			}
+
+			switch (byVerbFlag & nRandByWeight)
+			{
+			case UD_VF_BET:		// 允许下注
+				{
+					srand((unsigned) time (NULL) + m_byMeStation);
+					int iRandTime = rand() % 3 + 1;
+					SetGameTimer(m_byMeStation,iRandTime,IDT_BET_TIMER);
+					break;
+				}
+			case UD_VF_CALL:	// 允许跟注
+				{
+					m_iFollowNum++;			//机器人跟注次数
+					m_nCallMoney = pToken->nCallMoney;
+					srand((unsigned) time (NULL) + m_byMeStation);
+					int iRandTime = rand() % 3 + 1;
+					SetGameTimer(m_byMeStation,iRandTime,IDT_CALL_TIMER);
+					break;
+				}
+			case UD_VF_ADD:		// 允许加注
+				{
+					m_nCallMoney = pToken->nCallMoney;
+					srand((unsigned) time (NULL) + m_byMeStation);
+					int iRandTime = rand() % 3 + 1;
+					SetGameTimer(m_byMeStation,iRandTime,IDT_RAISE_TIMER);
+					break;
+				}
+			case UD_VF_CHECK:  // 允许过牌
+				{
+					srand((unsigned) time (NULL) + m_byMeStation);
+					int iRandTime = rand() % 3 + 1;
+					SetGameTimer(m_byMeStation,iRandTime,IDT_CHECK_TIMER);
+					break;
+				}
+			case UD_VF_FOLD:   // 允许弃牌
+				{
+					srand((unsigned) time (NULL) + m_byMeStation);
+					int iRandTime = rand() % 3 + 1;
+					SetGameTimer(m_byMeStation,iRandTime,IDT_FOLO_TIMER);
+					break;
+				}
+			case UD_VF_ALLIN:  // 允许全下
+				{
+					//__int64 nMoney = m_nBetMoney[GetLastUserStation(m_byMeStation)] - m_nBetMoney[m_byMeStation];
+
+					//if (m_iMoneys[m_byMeStation] <= nMoney)
+					{
+						srand((unsigned) time (NULL) + m_byMeStation);
+						int iRandTime = rand() % 3 + 1;
+
+						SetGameTimer(m_byMeStation,iRandTime,IDT_ALLIN_TIMER);
+					}
+					break;
+				}
+			default:
+				{
+					OutputDebugString("jan: 未知操作\n");
+					SetGameTimer(m_byMeStation,1,IDT_FOLO_TIMER);
+					break;
+				}
+			}	
+		}
+	}
+}
+
+//获得所有已下注金额总值
+__int64 CClientGameDlg::GetTotalBetMoney()
+{
+	__int64 iTotalBetMoney = 0;
+
+	for (int i = 0; i < PLAY_COUNT; i++)
+	{
+		// 显示下注金币
+		iTotalBetMoney += m_nBetMoney[i];
+	}
+
+	return iTotalBetMoney;
 }
