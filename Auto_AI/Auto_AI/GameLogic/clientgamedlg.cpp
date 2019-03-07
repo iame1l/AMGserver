@@ -468,6 +468,8 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 			{
 				//比牌消息
 				TCompareCard *pCmd = (TCompareCard*)pNetData;
+				//没了?
+
 
 				return true;
 			}

@@ -109,6 +109,8 @@ struct	TGameBaseData
 	int                 m_NoteKinds[4];                     //下注时选择的四种注型
 	int                 m_iNoteCount[E_CHOUMA_COUNT][2];
 
+
+	
 	TGameBaseData()
 	{
 		InitAllData();

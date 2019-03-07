@@ -1350,7 +1350,9 @@ bool CServerGameDesk::OnSubExchangeFishScore(BYTE bDeskStation, bool increase)
 			exchange_fish_score.exchange_fish_score = exchange_fish_score_[chair_id];
 			exchange_fish_score.user_leave_score = m_pUserInfo[chair_id]->m_UserData.i64Money - 
 				exchange_fish_score_[chair_id] * exchange_ratio_userscore_ / exchange_ratio_fishscore_;
+
 			SendDataToAllPlayers(&exchange_fish_score, sizeof(CMD_S_ExchangeFishScore),SUB_S_EXCHANGE_FISHSCORE);
+
 			SendWatchData(m_bMaxPeople,&exchange_fish_score, sizeof(CMD_S_ExchangeFishScore),MDM_GM_GAME_NOTIFY,SUB_S_EXCHANGE_FISHSCORE,0);
 			////////////////////////////////////////////////////////////////////////
 			return true;
