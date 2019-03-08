@@ -320,19 +320,19 @@ BOOL	CServerGameDesk::LoadIni()
 	m_iBeilu_40_20=f.GetKeyVal(key,"Beilu_40_20",20);
 
 	m_iSmallFruits=f.GetKeyVal(key,"SmallFruits",40);
-	if(m_iSmallFruits < 40)
+	if(m_iSmallFruits < 0)
 		m_iSmallFruits = 40;
 
 	m_iBigFruits=f.GetKeyVal(key,"BigFruits",30);
-	if(m_iBigFruits < 30)
+	if(m_iBigFruits < 0)
 		m_iBigFruits = 30;
 
 	m_LuckEgg=f.GetKeyVal(key,"LuckEgg",20);
-	if(m_LuckEgg < 20)
+	if(m_LuckEgg < 0)
 		m_LuckEgg = 20;
 
 	m_iBar=f.GetKeyVal(key,"Bar",10);
-	if(m_iBar < 10)
+	if(m_iBar < 0)
 		m_iBar = 10;
 
 	return true;
@@ -552,7 +552,7 @@ void CServerGameDesk::OnHandleBibei(BYTE byStation,void * pData, UINT uSize)
 	}
 }
 
-//产生结果
+//产生结果//幸运蛋的送灯
 void  CServerGameDesk::ProduceResult(int iranddigit) //伪随机数，所以添加一个参数做随机数的种子
 {
 	m_lvOpenResult.swap(vector<int>());

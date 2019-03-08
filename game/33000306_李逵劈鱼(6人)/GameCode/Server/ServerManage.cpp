@@ -1033,6 +1033,8 @@ bool CServerGameDesk::OnSubCatchFish(BYTE bDeskStation, int fish_id, BulletKind 
 
 	int change_probability = -1;
 	//if (!m_pUserInfo[bDeskStation]->m_UserData.isVirtual) //sdp机器人和真人一样消耗子弹2014.05.08
+
+	//change_probability 0：黑名单  1 白名单 -1 正常
 	change_probability = CheckUserFilter(bDeskStation);
 	//double probability = static_cast<double>((rand() % 1000 + 1)) / 1000;
 	double probability = static_cast<double>((rand_Mersense(0, 1000) + 1)) / 1000;
@@ -1054,14 +1056,18 @@ bool CServerGameDesk::OnSubCatchFish(BYTE bDeskStation, int fish_id, BulletKind 
 	if (fish_trace_info->fish_kind == FISH_KIND_20 && m_pUserInfo[bDeskStation]->m_UserData.isVirtual) 
 		fish_probability = 0.02;
 
+	//黑名单会 0.2 概率
 	if (change_probability == 0) 
 	{
 		fish_probability *= 0.2;
 	} 
+
+	//白名单
 	else if (change_probability == 1) 
 	{
 		fish_probability *= 1.3;
 	}
+
 	if (special_scene_ && (fish_trace_info->fish_kind == FISH_KIND_1 || fish_trace_info->fish_kind == FISH_KIND_2)) 
 		fish_probability *= 0.7;
 
@@ -1173,7 +1179,11 @@ bool CServerGameDesk::OnSubCatchFish(BYTE bDeskStation, int fish_id, BulletKind 
 			g_stock_score_ -= fish_score;
 
 		CMD_S_CatchFish catch_fish;
-		catch_fish.bullet_ion = fish_multiple >= 15 && (rand() % 100 < 10);
+
+		//Eil @ 能量炮概率
+		//catch_fish.bullet_ion = fish_multiple >= 15 && (rand() % 100 < 10);
+		catch_fish.bullet_ion = fish_multiple >= 15 && (rand() % 100 < 5);
+
 		catch_fish.chair_id = bDeskStation;
 		catch_fish.fish_id = fish_id;
 		catch_fish.fish_kind = fish_trace_info->fish_kind;
@@ -1625,13 +1635,15 @@ bool CServerGameDesk::OnTimerBuildFish19Trace()
 //创建第20号鱼轨迹
 bool CServerGameDesk::OnTimerBuildFish20Trace() 
 {
-	BuildFishTrace(1, FISH_KIND_20, FISH_KIND_20);
+	//企鹅
+	//BuildFishTrace(1, FISH_KIND_20, FISH_KIND_20);
 	return true;
 }
 
 //创建李逵轨迹
 bool CServerGameDesk::OnTimerBuildFishLKTrace() 
 {
+	/*
 	CMD_S_FishTrace fish_trace;
 	m_iFishNum += 1;
 	DWORD build_tick = GetTickCount();
@@ -1652,7 +1664,7 @@ bool CServerGameDesk::OnTimerBuildFishLKTrace()
 	current_fish_lk_multiple_ = fish_multiple_[FISH_KIND_21];
 	fish_id_LK = fish_trace_info->fish_id;
 	SetTimer(kLKScoreTimer, kLKScoreElasped * 1000);
-
+	*/
 	return true;
 }
 
@@ -1665,19 +1677,22 @@ int CServerGameDesk::GetNewFishID()
 
 bool CServerGameDesk::OnTimerBuildFishBombTrace() 
 {
-	BuildFishTrace(1, FISH_KIND_23, FISH_KIND_23);
+	//水浒传
+	//BuildFishTrace(1, FISH_KIND_23, FISH_KIND_23);
 	return true;
 }
 
 bool CServerGameDesk::OnTimerBuildFishLockBombTrace() 
 {
-	BuildFishTrace(1, FISH_KIND_22, FISH_KIND_22);
+	//忠义堂
+	//BuildFishTrace(1, FISH_KIND_22, FISH_KIND_22);
 	return true;
 }
 
 bool CServerGameDesk::OnTimerBuildFishSuperBombTrace() 
 {
-	BuildFishTrace(1, FISH_KIND_24, FISH_KIND_24);
+	//超级炸弹
+	//BuildFishTrace(1, FISH_KIND_24, FISH_KIND_24);
 	return true;
 }
 
@@ -2250,7 +2265,11 @@ void CServerGameDesk::BuildSceneKind1()
 	switch_scene->fish_count += 15;
 
 	FishTraceInfo* fish_trace_info = ActiveFishTrace();
-	fish_trace_info->fish_kind = FISH_KIND_20;
+
+	//场景有企鹅
+	fish_trace_info->fish_kind = FISH_KIND_6;
+	//fish_trace_info->fish_kind = FISH_KIND_20;
+
 	fish_trace_info->build_tick = build_tick;
 	fish_trace_info->fish_id = GetNewFishID();
 	OutputDebugString("dwjlkpy2::BuildSceneKind1-8");

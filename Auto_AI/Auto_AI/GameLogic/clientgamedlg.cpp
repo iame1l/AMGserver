@@ -468,7 +468,12 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 			{
 				//比牌消息
 				TCompareCard *pCmd = (TCompareCard*)pNetData;
-				//没了?
+				//Eli @ 尝试修复
+
+
+
+
+
 
 
 				return true;
@@ -2079,16 +2084,13 @@ bool CClientGameDlg::UserNoteAccordingToActionProb(const BYTE byVerbFlag)
 	if (iRandNumTemp < byProbFold)
 	{
 		bySelectActionTemp = UD_VF_FOLD;
-	} 
-	else if (iRandNumTemp < byProbFollow)
+	} else if (iRandNumTemp < byProbFollow)
 	{
 		bySelectActionTemp = UD_VF_CALL;
-	} 
-	else if (iRandNumTemp < byProbRaise)
+	} else if (iRandNumTemp < byProbRaise)
 	{
 		bySelectActionTemp = UD_VF_ADD;
-	} 
-	else if (iRandNumTemp < byProbAllIn)
+	} else if (iRandNumTemp < byProbAllIn)
 	{
 		bySelectActionTemp = UD_VF_ALLIN;
 	}
