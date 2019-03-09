@@ -963,7 +963,7 @@ bool CGameDesk::CleanCutGameInfo(BYTE bDeskStation)
 	return true;
 }
 
-//记录游戏信息
+//记录游戏信息//战绩存入的点
 bool CGameDesk::RecoderGameInfo(__int64 *ChangeMoney)
 {
 	if ((m_pDataManage->m_InitData.dwRoomRule&GRR_RECORD_GAME)!=0L/* && !m_bAllRobot*/)
@@ -1196,7 +1196,7 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 	/// 更新m_pInfo里各玩家数据，供游戏中读取到正确的值
 	/// 统一把所有玩家的结算结果存入数据库
 	/// 发送消息到客户端，表示有人输钱或赢钱了
-
+	//Eil
 	if (m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST)
 	{
 		return ChangeUserPointContest(arPoint, bCut, nTaxIndex);

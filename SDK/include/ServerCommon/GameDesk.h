@@ -26,6 +26,7 @@ reserves the right to pursue its legal liability.
 #define GFF_DISSMISS_FINISH			13										///< 解散桌子结束
 
 ///开始模式
+//Eil
 #define FULL_BEGIN					0x00									///< 满人才开始
 #define ALL_ARGEE					0x01									///< 所有人同意就开始
 #define SYMMETRY_ARGEE				0x02									///< 对称同意开始
