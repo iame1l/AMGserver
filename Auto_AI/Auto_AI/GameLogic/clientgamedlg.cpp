@@ -468,13 +468,6 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 			{
 				//±ÈÅÆÏûÏ¢
 				TCompareCard *pCmd = (TCompareCard*)pNetData;
-				//Eli @ ³¢ÊÔĞŞ¸´
-
-
-
-
-
-
 
 				return true;
 			}
