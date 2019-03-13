@@ -48,6 +48,7 @@ public:
 		}
 	};
 
+	//玩家信息
 	struct sGameUserInf:sBaseUserInf
 	{	
 		int					  iNomalScore;								//输赢分							

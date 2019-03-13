@@ -36,6 +36,7 @@ bool SendCardPlayerListener::countScore()
 {
 	//是否全是机器人
 	bool bHaveUser = false;
+	//宏
 	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
 	DataManage::sGameUserInf userinf;
 	
@@ -258,6 +259,20 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 	}
 
 	//真人最少的赢钱区域，让真人赢
+	//Eil @ 2019 1.三个区域筹码一样会先判断 和 2.和的倍率比龙和虎的大
+	/*
+	if(i64MoneyHe >= i64MoneyLong == i64MoneyHu)
+	{
+		
+		emWinAreaType tWinQuYu = Area_Invalid;
+	}
+	else
+	{
+		__int64 tempMin=min(i64MoneyHe,i64MoneyLong);
+		tempMin=min(tempMin,i64MoneyHu);
+		emWinAreaType tWinQuYu = Area_Invalid;
+	}
+	*///
 	__int64 tempMin=min(i64MoneyHe,i64MoneyLong);
 	tempMin=min(tempMin,i64MoneyHu);
 	emWinAreaType tWinQuYu = Area_Invalid;

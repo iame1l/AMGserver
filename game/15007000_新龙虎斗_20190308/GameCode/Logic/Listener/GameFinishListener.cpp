@@ -27,6 +27,7 @@ void GameFinishListener::OnAdd()
 	
 }
 
+//结算
 bool GameFinishListener::countScore()
 {
  	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
@@ -38,7 +39,9 @@ bool GameFinishListener::countScore()
  		if(!exDataMgr->getUserInfo(i,userinf))continue;
  		if (exDataMgr->byWinQuYu ==3)
  		{
- 			userinf.iScore = userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
+			//Eil @ 20190312 出和时,龙虎区只返还一半
+ 			//userinf.iScore = userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
+			userinf.iScore = userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[1]/2-userinf.i64UserXiaZhuData[0]/2;
 			i_WinPoint[i] = userinf.i64UserXiaZhuData[2]*8;
  			if (userinf.i64UserXiaZhuData[0] == 0 && userinf.i64UserXiaZhuData[1] == 0)
  			{
