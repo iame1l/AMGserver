@@ -106,14 +106,17 @@ bool GameFinishListener::countScore()
  	for(int i=0; i<PLAY_COUNT; i++)
  	{
  		if(!exDataMgr->getUserInfo(i,userinf))continue;
+		//录入赢的钱
  		i_ChangePoint[i] = userinf.iScore;
  		LOGGER_FILE(m_Context,"玩家"<<i<<","<<userinf.userID<<"结算"<<i_ChangePoint[i]<<\
  			", 分数"<<userinf.iScore<<" 总分数"<<userinf.iTotalScore); 
  	}
  	// 服务器写入数据库
  	bool temp_cut[PLAY_COUNT] = {0};
+	//给Mserver统计
  	m_Context->GetGameDesk()->ChangeUserPointint64(i_ChangePoint, temp_cut);
 	m_Context->GetGameDesk()->gameinfo();
+
  	exDataMgr->updateUserMoney();
  	exDataMgr->updateDataMoney();
  	exDataMgr->ProcessData(Noti.userMaxMoney);

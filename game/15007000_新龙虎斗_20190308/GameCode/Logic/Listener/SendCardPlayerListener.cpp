@@ -113,9 +113,12 @@ bool SendCardPlayerListener::countScore()
 			if(!exDataMgr->getUserInfo(i,userinf))continue;
 			if (userinf.bIsVirtual) continue;
 
+			//Eil @ 20190313 规则改变
 			if(exDataMgr->byWinQuYu==3)  //和
 			{
-				i64Money += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
+				//i64Money += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
+				//龙虎区 各返还一半
+				i64Money += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[0]/2-userinf.i64UserXiaZhuData[1]/2;
 			}
 			else if(exDataMgr->byWinQuYu==1)
 			{
@@ -146,6 +149,7 @@ bool SendCardPlayerListener::countScore()
 	return true;
 }
 
+//系统lose
 bool SendCardPlayerListener::CountUesrLoseMoney()
 {
 	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
@@ -160,8 +164,11 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 	{
 		if(!exDataMgr->getUserInfo(i,userinf))continue;
 		if (userinf.bIsVirtual) continue;
+
+		//i64MoneyHe += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
+		//Eil @ 20190313 龙虎区返一半,所以算法扣龙虎区各一半
 		//和
-		i64MoneyHe += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
+		i64MoneyHe += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[0]/2-userinf.i64UserXiaZhuData[1]/2;
 
 		//龙
 		i64MoneyLong += userinf.i64UserXiaZhuData[0]*2-userinf.i64UserXiaZhuData[1]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[0];
@@ -237,6 +244,7 @@ void SendCardPlayerListener::GenerateByType(emWinAreaType emType)
 	}
 }
 
+//系统win
 bool SendCardPlayerListener::CountUesrWinMoney()
 {
 	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
@@ -248,8 +256,10 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 	{
 		if(!exDataMgr->getUserInfo(i,userinf))continue;
 		if (userinf.bIsVirtual) continue;
+		//Eil @ 20190313 规则改变 开和的算法重写.
 		//和
-		i64MoneyHe += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
+		//i64MoneyHe += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
+		i64MoneyHe += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[0]/2-userinf.i64UserXiaZhuData[1]/2;
 
 		//龙
 		i64MoneyLong += userinf.i64UserXiaZhuData[0]*2-userinf.i64UserXiaZhuData[1]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[0];
@@ -272,7 +282,7 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 		tempMin=min(tempMin,i64MoneyHu);
 		emWinAreaType tWinQuYu = Area_Invalid;
 	}
-	*///
+	*/
 	__int64 tempMin=min(i64MoneyHe,i64MoneyLong);
 	tempMin=min(tempMin,i64MoneyHu);
 	emWinAreaType tWinQuYu = Area_Invalid;
@@ -297,6 +307,7 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 	return true;
 }
 
+//mark
 void SendCardPlayerListener::DelaySendCardOver(void **data, int dataCnt)
 {
 	SendCardPlayerListener *p = (SendCardPlayerListener *)data[0];
@@ -316,6 +327,7 @@ void SendCardPlayerListener::DelaySendCardOver(void **data, int dataCnt)
 	{
 		exDataMgr->byRunHuCount++;
 	}
+
 	exDataMgr->byRunSeq[exDataMgr->byGameBeen]=exDataMgr->byWinQuYu;
 	Noti.byRunHeCount = exDataMgr->byRunHeCount;
 	Noti.byWinQuYu = exDataMgr->byWinQuYu;

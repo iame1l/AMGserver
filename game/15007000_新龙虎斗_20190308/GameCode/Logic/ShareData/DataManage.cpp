@@ -365,7 +365,7 @@ void myErase(vector<CardBase> &src,vector<CardBase> &v)
 		}
 	}
 }
-
+//mark
 bool DataManage::shuffleCard()
 {
 	_cardHeap.Clear();
