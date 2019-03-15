@@ -112,7 +112,7 @@ void PlayCardListener::Listen( uchar playerPos, uint msgID, void* msgData ,uint 
 PlayCardListener::~PlayCardListener()
 {
 }
-
+//读取筹码区
 void PlayCardListener::notiXiaZhu(uchar playerPos,C_S_UserNote *message)
 {
 	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
@@ -124,27 +124,29 @@ void PlayCardListener::notiXiaZhu(uchar playerPos,C_S_UserNote *message)
 		user.iXiaZhuMoney += message->iChouMaValues;
 		exDataMgr->i64QuYuZhu[message->byQuYu-1] += message->iChouMaValues;
 		C_S_UserNoteResult Noti;
-		if (message->iChouMaValues == 1)
+
+		//无效代码?
+		if (message->iChouMaValues == /*1*/1000)
 		{
 			exDataMgr->rAresData[message->byQuYu-1][0] += 1;
 		}
-		else if(message->iChouMaValues == 10)
+		else if(message->iChouMaValues ==/*10*/10000)
 		{
 			exDataMgr->rAresData[message->byQuYu-1][1] += 1;
 		}										   
-		else if(message->iChouMaValues == 50)		   
+		else if(message->iChouMaValues ==/*50*/50000)		   
 		{										   
 			exDataMgr->rAresData[message->byQuYu-1][2] += 1;
 		}										   
-		else if(message->iChouMaValues == 100)	   
+		else if(message->iChouMaValues ==/*100*/100000)	   
 		{										   
 			exDataMgr->rAresData[message->byQuYu-1][3] += 1;
 		}										  
-		else if(message->iChouMaValues == 500)	  
+		else if(message->iChouMaValues ==/*500*/500000)	  
 		{										  
 			exDataMgr->rAresData[message->byQuYu-1][4] += 1;
 		}										   
-		else if(message->iChouMaValues == 1000)	   
+		else if(message->iChouMaValues ==/*1000*/1000000)	   
 		{										   
 			exDataMgr->rAresData[message->byQuYu-1][5] += 1;
 		}

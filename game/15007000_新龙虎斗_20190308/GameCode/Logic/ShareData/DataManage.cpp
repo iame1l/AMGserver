@@ -371,6 +371,7 @@ bool DataManage::shuffleCard()
 	_cardHeap.Clear();
 	_cardHeap.addOnePairCard();
 	_cardHeap.randCard();
+	//¸³Öµ
 	vSendCard.assign(_cardHeap.getArray().begin(),
 		_cardHeap.getArray().begin() + ONE_HAND_CARD_COUNT);
 

@@ -102,11 +102,15 @@ bool GameFinishListener::countScore()
  		exDataMgr->alterUserInfo(i, userinf);
  	}
  	S_C_GameResult Noti;
- 
+ 	bool flag[PLAY_COUNT];//能够扣台费的标志
+	memset(flag, 0, sizeof(flag));
  	for(int i=0; i<PLAY_COUNT; i++)
  	{
  		if(!exDataMgr->getUserInfo(i,userinf))continue;
-		//录入赢的钱
+		if (userinf.iXiaZhuMoney != 0)
+		{
+			flag[i] = true;//有玩就标记
+		}
  		i_ChangePoint[i] = userinf.iScore;
  		LOGGER_FILE(m_Context,"玩家"<<i<<","<<userinf.userID<<"结算"<<i_ChangePoint[i]<<\
  			", 分数"<<userinf.iScore<<" 总分数"<<userinf.iTotalScore); 
@@ -115,6 +119,7 @@ bool GameFinishListener::countScore()
  	bool temp_cut[PLAY_COUNT] = {0};
 	//给Mserver统计
  	m_Context->GetGameDesk()->ChangeUserPointint64(i_ChangePoint, temp_cut);
+	//m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin(i_ChangePoint, temp_cut, flag);//newnew
 	m_Context->GetGameDesk()->gameinfo();
 
  	exDataMgr->updateUserMoney();

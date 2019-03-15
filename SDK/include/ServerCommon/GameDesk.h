@@ -18,6 +18,7 @@ reserves the right to pursue its legal liability.
 #include "AFCSocket.h"
 #include "GameMainManage.h"
 #include "../common/PropMessage.h"
+#include "../common/writelog.h"
 ///#include "GameRoomLogonDT.h"
 
 ///游戏结束标志
@@ -26,7 +27,6 @@ reserves the right to pursue its legal liability.
 #define GFF_DISSMISS_FINISH			13										///< 解散桌子结束
 
 ///开始模式
-//Eil
 #define FULL_BEGIN					0x00									///< 满人才开始
 #define ALL_ARGEE					0x01									///< 所有人同意就开始
 #define SYMMETRY_ARGEE				0x02									///< 对称同意开始
@@ -250,7 +250,7 @@ public:
 	/// 该函数会修改m_dwChangeMoney[]数组成员的值
 	/// 游戏服务器程序调用完此函数的，可通过RecordGameInfo函数获取该值
 	bool ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex = -1,int iCount=-1);
-
+    bool ChangeUserPointint64_IsJoin(__int64 *arPoint, bool *bCut, bool *IsJoin,int nTaxIndex = -1,int iCount=-1);//IsJoin 用户是否下注  0 ：否     1： 是
 	bool ChangeUserPointContest(__int64 *arPoint, bool *bCut, int nTaxIndex = -1);
 
 	bool ChangeUserPointContest(int *arPoint, bool *bCut, int nTaxIndex = -1);

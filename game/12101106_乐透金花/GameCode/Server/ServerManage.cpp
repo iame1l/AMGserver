@@ -67,7 +67,7 @@ void	CServerGameDesk::LoadIni()
 	m_TGameData.m_byThinkTime	= f.GetKeyVal(key,"ThinkTime",20);
 
 	m_TGameData.m_iDiZhu		= f.GetKeyVal(key,"DiZhu",10);				//最小单注下注
-	m_TGameData.m_i64DingZhu	= f.GetKeyVal(key,"DingZhu",100000);		//最大总注
+	m_TGameData.m_i64DingZhu	= f.GetKeyVal(key,"DingZhu",1000000000);		//最大总注//mark
 	m_TGameData.m_iGuoDi		= f.GetKeyVal(key,"GuoDi",10);				//底注
 	//m_TGameData.m_i64ShangXian	= f.GetKeyVal(key,"ShangXian",10000);		//一轮最大下注
 	m_TGameData.m_NoteKinds[0]  = f.GetKeyVal(key, "NoteKind1", 50);
@@ -672,6 +672,7 @@ void	CServerGameDesk::OnHandleUserFollow(BYTE byDeskStation,void * pData)
 		i64XiaZhuNum = m_TGameData.m_i64CurrZhuBase;
 	}
   
+	//mark
 	//如果当前下注达到了封顶 那么就要限制下  因为最高下注不能超过封顶
 	if ((m_TGameData.m_i64XiaZhuData[byDeskStation] + i64XiaZhuNum) > GetUserMoney()/*m_i64ThisDingZhu*/)
 	{
@@ -1569,7 +1570,7 @@ BOOL CServerGameDesk::SendCard()
 	return TRUE;
 }
 /*------------------------------------------------------------------*/
-//游戏开始-开始下注
+//游戏开始-开始下注(第一轮的)
 BOOL CServerGameDesk::BeginPlayUpGrade()
 {
 	KillTimer(TIME_BEGIN_PLAY);
@@ -1601,15 +1602,19 @@ BOOL CServerGameDesk::BeginPlayUpGrade()
 		{
 			i64XiaZhuNum = G_iChouMaMoney[i];
 		}
+
 		if ((m_TGameData.m_i64XiaZhuData[m_TGameData.m_byCurrHandleDesk] + i64XiaZhuNum) <= GetUserMoney()/*m_i64ThisDingZhu*/)
 		{
 			m_TGameData.m_bCanAdd[i] = true;
 		}
 		else
 		{
+			//m_TGameData.m_bCanAdd[i] = false;
 			break;
 		}
 	}
+
+
 
 
 	S_C_BeginPlay TBeginPlay;
@@ -1663,6 +1668,7 @@ void	CServerGameDesk::NoticeUserAction()
 
 	__int64	i64XiaZhuNum = 0;
 
+	//Eil @ 
 	//是否可以跟注	
 	m_TGameData.m_bCanFollow	=   (!m_TGameData.m_bFirstNote);
 
@@ -1683,17 +1689,21 @@ void	CServerGameDesk::NoticeUserAction()
 		{
 			i64XiaZhuNum = G_iChouMaMoney[i];
 		}
-		if (((m_TGameData.m_i64XiaZhuData[m_TGameData.m_byCurrHandleDesk] + i64XiaZhuNum) <= GetUserMoney()/*m_i64ThisDingZhu*/))
+
+		//
+		if ((m_TGameData.m_i64XiaZhuData[m_TGameData.m_byCurrHandleDesk] + i64XiaZhuNum) <= GetUserMoney()/*m_i64ThisDingZhu*/)
 		{
-			m_TGameData.m_bCanAdd[i] = true;
+			m_TGameData.m_bCanAdd[i] = true;  
 		}
 		else
 		{
+			//m_TGameData.m_bCanAdd[i] = false;  
 			break;
 		}
 	}
 	
-	//查询当前是否有足够的钱下注,如果不够,则默认为放弃状态
+	//mark
+	//查询当前是否有足够的钱下注,如果不够,则默认为放弃状态	
 	if (!CanXiZhu())
 	{
 		AutoGiveUp();
@@ -2301,6 +2311,7 @@ int CServerGameDesk::GetGameRemainTime()
 	return ((int)lTime);
 }
 
+//mark
 //能否下注
 bool CServerGameDesk::CanXiZhu()
 {
@@ -2308,6 +2319,7 @@ bool CServerGameDesk::CanXiZhu()
 	//查询当前是否有足够的钱下注,如果不够,则默认为放弃状态
 	if (m_TGameData.m_iUserState[m_TGameData.m_byCurrHandleDesk] == STATE_LOOK)
 	{
+		//钱够了就翻倍
 		i64XiaZhuNum = m_TGameData.m_i64CurrZhuBase*2;
 	}
 	else

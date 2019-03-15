@@ -27,6 +27,7 @@ private:
 	*/
 	bool checkPlayCardFinish(uchar playPos);
 
+	//读取筹码
 	void notiXiaZhu(uchar playerPos,C_S_UserNote *message);
 	/*
 	*@brief:通知牌分

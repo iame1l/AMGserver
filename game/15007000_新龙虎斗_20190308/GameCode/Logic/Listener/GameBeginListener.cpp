@@ -20,6 +20,7 @@ void GameBeginListener::OnAdd()
 	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
 	__super::OnAdd();
 
+	//正常游戏的开始,
 	exDataMgr->shuffleCard();
 	exDataMgr->LoadConfCardUser();
 	//超端换牌

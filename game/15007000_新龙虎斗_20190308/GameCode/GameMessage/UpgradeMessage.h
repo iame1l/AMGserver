@@ -43,8 +43,9 @@
 const	int	BET_ARES = 3;	//3个下注区域    下标0表示龙区域  1虎   2 和
 const   int CHOUMA_NUM= 6;  
 const   int USER_MAX_MONEY_NUM = 6; //下标0、2、4 代表金币最多的玩家 下标 1、3、5代表神算子玩家
-//5个筹码值
-const	__int64	G_i64ChouMaValues[6] = {1,10,50,100,500,1000};
+//Eil @ 20190313
+//6个筹码值
+const	__int64	G_i64ChouMaValues[6] = {1000, 10000, 50000, 100000, 500000,1000000};
 
 
 struct GameStation

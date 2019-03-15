@@ -177,12 +177,19 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 		i64MoneyHu += userinf.i64UserXiaZhuData[1]*2-userinf.i64UserXiaZhuData[0]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[1];
 	}
 
+	//无限开龙的概率
 	emWinAreaType byLoseQuYu = Area_Invalid;
-	if(i64MoneyLong > 0 && exDataMgr->m_i64AIHaveWinMoney - i64MoneyLong > 0)
+	//Eil @ 20190314 @ 解决点3区域有概率开和现象
+	if(i64MoneyLong == i64MoneyHu && exDataMgr->m_i64AIHaveWinMoney - i64MoneyLong >0)
+	{
+		byLoseQuYu=rand()%2?Area_Long:Area_Hu;
+	}
+	//
+	else if(i64MoneyLong > 0 && exDataMgr->m_i64AIHaveWinMoney - i64MoneyLong >0)
 	{
 		byLoseQuYu = Area_Long;
 	}
-	else if(i64MoneyHu > 0 && exDataMgr->m_i64AIHaveWinMoney - i64MoneyHu > 0)
+	else if(i64MoneyHu > 0 && exDataMgr->m_i64AIHaveWinMoney - i64MoneyHu >0)
 	{
 		byLoseQuYu = Area_Hu;
 	}
@@ -269,7 +276,7 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 	}
 
 	//真人最少的赢钱区域，让真人赢
-	//Eil @ 2019 1.三个区域筹码一样会先判断 和 2.和的倍率比龙和虎的大
+	//Eil @ 2019 1.三个区域筹码一样会先判断 和 
 	/*
 	if(i64MoneyHe >= i64MoneyLong == i64MoneyHu)
 	{
@@ -283,9 +290,14 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 		emWinAreaType tWinQuYu = Area_Invalid;
 	}
 	*/
-	__int64 tempMin=min(i64MoneyHe,i64MoneyLong);
-	tempMin=min(tempMin,i64MoneyHu);
-	emWinAreaType tWinQuYu = Area_Invalid;
+
+		__int64 tempMin=min(i64MoneyHe,i64MoneyLong);
+		tempMin=min(tempMin,i64MoneyHu);
+		emWinAreaType tWinQuYu = Area_Invalid;
+
+
+
+
 	if (tempMin==i64MoneyHe)
 	{
 		tWinQuYu = Area_He;

@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ServerManage.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="UpGradeDLL.cpp" />
+    <ClCompile Include="..\Logic\Card\CardArrayBase.cpp">
+      <Filter>Logic\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Card\CardBase.cpp">
+      <Filter>Logic\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\GameBeginListener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\GameFinishListener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\Listener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\ListenerController.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\TuoGuanListener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\UserLeaveListener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\WaitBeginListener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\ShareData\DataManage.cpp">
+      <Filter>Logic\ShareData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Extension\ExtensionObject\ExtensionID.cpp">
+      <Filter>Extension\ExtensionObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Extension\ExtensionObject\ExtensionObject.cpp">
+      <Filter>Extension\ExtensionObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Extension\GameContext\GameContext.cpp">
+      <Filter>Extension\GameContext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Extension\GameContext\GameContextCreator.cpp">
+      <Filter>Extension\GameContext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Extension\Log\ExtensionLogger.cpp">
+      <Filter>Extension\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Extension\Log\Logger.cpp">
+      <Filter>Extension\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Extension\Config\Config.cpp">
+      <Filter>Extension\Config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Extension\Timer\ExtensionTimer.cpp">
+      <Filter>Extension\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Extension\Timer\Timer.cpp">
+      <Filter>Extension\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\SendCardPlayerListener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\DismissRoomListener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Card\CardPickUp.cpp">
+      <Filter>Logic\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Extension\ActionDelegate\PlayerActionDelegate.cpp">
+      <Filter>Extension\ActionDelegate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\CallListener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\FindFriendListener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logic\Listener\PlayCardListener.cpp">
+      <Filter>Logic\Listen</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ServerManage.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="..\Logic\Card\CardArrayBase.h">
+      <Filter>Logic\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Card\CardBase.h">
+      <Filter>Logic\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Card\CardDefine.h">
+      <Filter>Logic\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\GameBeginListener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\GameFinishListener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\Listener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\ListenerController.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\TuoGuanListener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\WaitBeginListener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Base\GameDefine.h">
+      <Filter>Logic\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\ShareData\DataManage.h">
+      <Filter>Logic\ShareData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\ExtensionObject\ExtensionID.h">
+      <Filter>Extension\ExtensionObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\ExtensionObject\ExtensionObject.h">
+      <Filter>Extension\ExtensionObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\GameContext\GameContext.h">
+      <Filter>Extension\GameContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\GameContext\GameContextCreator.h">
+      <Filter>Extension\GameContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\GameContext\GameContextCreatorImpl.h">
+      <Filter>Extension\GameContext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\Log\ExtensionLogger.h">
+      <Filter>Extension\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\Log\Logger.h">
+      <Filter>Extension\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\Config\Config.h">
+      <Filter>Extension\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\util\Algorithm.h">
+      <Filter>Extension\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\util\dbghelp.h">
+      <Filter>Extension\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\util\RefCntObj.h">
+      <Filter>Extension\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\Timer\ExtensionTimer.h">
+      <Filter>Extension\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\Timer\Timer.h">
+      <Filter>Extension\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\SendCardPlayerListener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\DismissRoomListener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Card\CardPickUp.h">
+      <Filter>Logic\Card</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\ActionDelegate\PlayerActionDelegate.h">
+      <Filter>Extension\ActionDelegate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Extension\ActionDelegate\PlayerActionDelegateListener.h">
+      <Filter>Extension\ActionDelegate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameMessage\UpgradeMessage.h">
+      <Filter>Logic\msg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\CallListener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\FindFriendListener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\PlayCardListener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logic\Listener\UserLeaveListener.h">
+      <Filter>Logic\Listen</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="UpGradeDLL.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Logic">
+      <UniqueIdentifier>{e3b58cf7-6fd2-4a30-b8dd-fbdd1b5232ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Card">
+      <UniqueIdentifier>{1ea0cdf9-1cf6-4ccc-8546-9e0528de59ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Listen">
+      <UniqueIdentifier>{18831f78-d689-47ea-96ac-87f55c4ad274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\ShareData">
+      <UniqueIdentifier>{922a8daa-3ea5-455a-81ed-1bede484b799}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Base">
+      <UniqueIdentifier>{38d61cce-3156-402a-bcf6-7e6acff24d28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\msg">
+      <UniqueIdentifier>{a8f001b0-a548-4901-87cc-bc475f38f382}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension">
+      <UniqueIdentifier>{3ccd65f6-a2fe-4eeb-a083-74fcfe3306c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension\ExtensionObject">
+      <UniqueIdentifier>{42505064-4ad9-4932-b488-f6fe15be56a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension\GameContext">
+      <UniqueIdentifier>{43616e98-6fb6-4157-93cb-2a461fe3e38c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension\Log">
+      <UniqueIdentifier>{5a01469c-a327-4d78-a7f1-9694e57cb30a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension\Timer">
+      <UniqueIdentifier>{6f6f5ba5-8387-4abe-a586-19f7a91b92a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension\util">
+      <UniqueIdentifier>{aeaa83ac-f47a-4c97-93a0-9ebe07d7cb56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension\Config">
+      <UniqueIdentifier>{92fc22e3-010f-4ebb-9274-1402d23d04d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension\ActionDelegate">
+      <UniqueIdentifier>{6986f434-17c0-41d4-963b-2d497d4aa10a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
+</Project>
