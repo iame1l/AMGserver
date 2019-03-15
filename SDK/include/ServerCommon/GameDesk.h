@@ -250,7 +250,9 @@ public:
 	/// 该函数会修改m_dwChangeMoney[]数组成员的值
 	/// 游戏服务器程序调用完此函数的，可通过RecordGameInfo函数获取该值
 	bool ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex = -1,int iCount=-1);
+	//设置是否有花钱玩游戏
     bool ChangeUserPointint64_IsJoin(__int64 *arPoint, bool *bCut, bool *IsJoin,int nTaxIndex = -1,int iCount=-1);//IsJoin 用户是否下注  0 ：否     1： 是
+
 	bool ChangeUserPointContest(__int64 *arPoint, bool *bCut, int nTaxIndex = -1);
 
 	bool ChangeUserPointContest(int *arPoint, bool *bCut, int nTaxIndex = -1);
