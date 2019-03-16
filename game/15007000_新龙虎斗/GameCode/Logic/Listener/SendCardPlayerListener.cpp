@@ -113,7 +113,7 @@ bool SendCardPlayerListener::countScore()
 			if(!exDataMgr->getUserInfo(i,userinf))continue;
 			if (userinf.bIsVirtual) continue;
 
-			//Eil @ 20190313 规则改变
+			// 规则改变
 			if(exDataMgr->byWinQuYu==3)  //和
 			{
 				//i64Money += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
@@ -160,6 +160,12 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 	__int64 i64MoneyLong=0;
 	__int64 i64MoneyHu=0;
 	__int64 i64MoneyHe=0;
+
+	//Eil @ 统筹一下筹码个数
+	__int64 longChipCount=0;
+	__int64 huChipCount=0;
+	__int64 heChipCount=0;
+	
 	for(int i=0; i<PLAY_COUNT; i++)
 	{
 		if(!exDataMgr->getUserInfo(i,userinf))continue;
@@ -169,23 +175,24 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 		//Eil @ 20190313 龙虎区返一半,所以算法扣龙虎区各一半
 		//和
 		i64MoneyHe += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[0]/2-userinf.i64UserXiaZhuData[1]/2;
-
+		
 		//龙
 		i64MoneyLong += userinf.i64UserXiaZhuData[0]*2-userinf.i64UserXiaZhuData[1]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[0];
 
 		//虎
 		i64MoneyHu += userinf.i64UserXiaZhuData[1]*2-userinf.i64UserXiaZhuData[0]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[1];
+
+		//统计筹码个数
+		heChipCount+=userinf.i64UserXiaZhuData[2];
+		huChipCount+=userinf.i64UserXiaZhuData[1];
+		longChipCount+=userinf.i64UserXiaZhuData[0];
 	}
 
-	//无限开龙的概率
+	//一直开和的概率
 	emWinAreaType byLoseQuYu = Area_Invalid;
-	//Eil @ 20190314 @ 解决点3区域有概率开和现象
-	if(i64MoneyLong == i64MoneyHu && exDataMgr->m_i64AIHaveWinMoney - i64MoneyLong >0)
-	{
-		byLoseQuYu=rand()%2?Area_Long:Area_Hu;
-	}
-	//
-	else if(i64MoneyLong > 0 && exDataMgr->m_i64AIHaveWinMoney - i64MoneyLong >0)
+
+	
+	if(i64MoneyLong > 0 && exDataMgr->m_i64AIHaveWinMoney - i64MoneyLong >0)
 	{
 		byLoseQuYu = Area_Long;
 	}
@@ -197,6 +204,15 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 	{
 		byLoseQuYu = Area_He;
 	}
+	
+	//Eil @ 20190315 @ 解决点3区域有概率开和现象	
+	if(huChipCount==longChipCount || huChipCount==heChipCount || longChipCount==heChipCount) 
+	{
+		if(0!=huChipCount) {	byLoseQuYu = Area_Hu; }
+		else if(0!=longChipCount) {	byLoseQuYu = Area_Long; }
+		
+	}
+	//
 
 	if(Area_Invalid == byLoseQuYu)
 	{
@@ -263,7 +279,7 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 	{
 		if(!exDataMgr->getUserInfo(i,userinf))continue;
 		if (userinf.bIsVirtual) continue;
-		//Eil @ 20190313 规则改变 开和的算法重写.
+		//统计和的钱
 		//和
 		//i64MoneyHe += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
 		i64MoneyHe += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[0]/2-userinf.i64UserXiaZhuData[1]/2;
@@ -276,29 +292,18 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 	}
 
 	//真人最少的赢钱区域，让真人赢
-	//Eil @ 2019 1.三个区域筹码一样会先判断 和 
-	/*
-	if(i64MoneyHe >= i64MoneyLong == i64MoneyHu)
+	__int64 tempMin=min(i64MoneyHe,i64MoneyLong);
+	tempMin=min(tempMin,i64MoneyHu);
+	emWinAreaType tWinQuYu = Area_Invalid;
+
+	//Eil @ 随机
+	//
+	if (i64MoneyHu == i64MoneyLong)
 	{
-		
-		emWinAreaType tWinQuYu = Area_Invalid;
+		tWinQuYu = rand()%2?Area_He:Area_Long;
 	}
-	else
-	{
-		__int64 tempMin=min(i64MoneyHe,i64MoneyLong);
-		tempMin=min(tempMin,i64MoneyHu);
-		emWinAreaType tWinQuYu = Area_Invalid;
-	}
-	*/
-
-		__int64 tempMin=min(i64MoneyHe,i64MoneyLong);
-		tempMin=min(tempMin,i64MoneyHu);
-		emWinAreaType tWinQuYu = Area_Invalid;
-
-
-
-
-	if (tempMin==i64MoneyHe)
+	//
+	else if (tempMin==i64MoneyHe)
 	{
 		tWinQuYu = Area_He;
 	}
