@@ -283,7 +283,7 @@ void	CAuto_AIDlg::OnStartRobot()
 	//Eil @ 修复
     //m_ShowEndNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo + 10);
 	m_ShowEndNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo + GLOBALDATA->CurDynamicConfig.nLogonCount);
-
+	
     ((CEdit*)GetDlgItem(IDC_EDIT_CHECKBEGINNO))->SetWindowText(m_ShowBeginNo);
     ((CEdit*)GetDlgItem(IDC_EDIT_CHECKENDNO))->SetWindowText(m_ShowEndNo);
 
@@ -670,7 +670,7 @@ bool CAuto_AIDlg::OnLogonMessage(NetMessageHead * pNetHead, void * pNetData, UIN
                 MSERVER_LOG_ERROR("%s 没有找到UI信息", m_CurPlaceUserInfo.szName);
             }
         }
-
+		//存钱入口
         // 先进行一次银行存取操作
         AiControlBank();
 
@@ -1162,6 +1162,8 @@ void CAuto_AIDlg::EnterGameRoom(int roomid)
 	return;
 }
 
+
+//mark
 //机器人根据金币操作银行
 void CAuto_AIDlg::AiControlBank()
 {

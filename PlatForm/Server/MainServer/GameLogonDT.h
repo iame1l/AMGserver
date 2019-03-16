@@ -1336,8 +1336,8 @@ struct DL_O_HALL_Mail_Update
 struct DL_O_HALL_SysMsg
 {
 	DataBaseResultLine					ResultHead;
-	bool								bBroadcast;
-	MSG_GP_O_SysMsg						_data;
+	bool								bBroadcast;//是否能广播
+	MSG_GP_O_SysMsg						_data;//广播信息
 
 	DL_O_HALL_SysMsg()
 	{
