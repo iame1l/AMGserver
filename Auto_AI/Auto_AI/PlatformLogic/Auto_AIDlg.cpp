@@ -31,17 +31,17 @@
 
 
 CAuto_AIDlg::CAuto_AIDlg( CWnd * pParent)
-: CBaseRoom(IDD_AUTO_AI_DIALOG)//Dialog(CAuto_AIDlg::IDD, pParent)
+	: CBaseRoom(IDD_AUTO_AI_DIALOG)//Dialog(CAuto_AIDlg::IDD, pParent)
 {
-    m_ShowBeginNo = "";
-    m_ShowEndNo = "";
-    m_bExit = false;
+	m_ShowBeginNo = "";
+	m_ShowEndNo = "";
+	m_bExit = false;
 
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
-    m_iLogonIndex = -2;
+	m_iLogonIndex = -2;
 
-    PLATLOG->Init();
+	PLATLOG->Init();
 	//初始化 SOCKET
 	if (!AfxSocketInit())
 	{
@@ -53,14 +53,14 @@ CAuto_AIDlg::CAuto_AIDlg( CWnd * pParent)
 CAuto_AIDlg::~CAuto_AIDlg()
 {
 
-    PLATLOG->UnInit();
+	PLATLOG->UnInit();
 	::WSACleanup();
 }
 
 void CAuto_AIDlg::DoDataExchange(CDataExchange* pDX)
 {
-    CDialog::DoDataExchange(pDX);
-    DDX_Control(pDX, IDC_LIST_STATUS, m_ListUserStatus);
+	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST_STATUS, m_ListUserStatus);
 }
 
 BEGIN_MESSAGE_MAP(CAuto_AIDlg, CDialog)
@@ -73,18 +73,18 @@ BEGIN_MESSAGE_MAP(CAuto_AIDlg, CDialog)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONDBLCLK()
 
-    ON_BN_CLICKED(IDC_BUTTON_LOGIN, &CAuto_AIDlg::OnBnClickedButtonLogin)
-    ON_BN_CLICKED(IDC_BUTTON_CANCEL, &CAuto_AIDlg::OnBnClickedButtonCancel)
-    ON_BN_CLICKED(IDC_BUTTON_CLOSE, &CAuto_AIDlg::OnBnClickedButtonClose)
-    ON_BN_CLICKED(IDC_BUTTON_MIN, &CAuto_AIDlg::OnBnClickedButtonMin)
-    ON_BN_CLICKED(IDC_BUTTON_SAVE, &CAuto_AIDlg::OnBnClickedButtonSave)
-    ON_BN_CLICKED(IDC_BUTTON_RESET, &CAuto_AIDlg::OnBnClickedButtonReset)
-    ON_WM_CTLCOLOR()
-    ON_BN_CLICKED(IDC_BUTTON_TASKLIST, &CAuto_AIDlg::OnBnClickedButtonTasklist)
-    ON_BN_CLICKED(IDC_BUTTON_HALLINFO, &CAuto_AIDlg::OnBnClickedButtonHallinfo)
-    ON_BN_CLICKED(IDC_BUTTON_ROOMINFO, &CAuto_AIDlg::OnBnClickedButtonRoominfo)
-    ON_NOTIFY(LVN_COLUMNCLICK, IDC_LIST_STATUS, &CAuto_AIDlg::OnLvnColumnclickListStatus)
-    ON_BN_CLICKED(IDC_BUTTON_ADDTASK, &CAuto_AIDlg::OnBnClickedButtonAddtask)
+	ON_BN_CLICKED(IDC_BUTTON_LOGIN, &CAuto_AIDlg::OnBnClickedButtonLogin)
+	ON_BN_CLICKED(IDC_BUTTON_CANCEL, &CAuto_AIDlg::OnBnClickedButtonCancel)
+	ON_BN_CLICKED(IDC_BUTTON_CLOSE, &CAuto_AIDlg::OnBnClickedButtonClose)
+	ON_BN_CLICKED(IDC_BUTTON_MIN, &CAuto_AIDlg::OnBnClickedButtonMin)
+	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CAuto_AIDlg::OnBnClickedButtonSave)
+	ON_BN_CLICKED(IDC_BUTTON_RESET, &CAuto_AIDlg::OnBnClickedButtonReset)
+	ON_WM_CTLCOLOR()
+	ON_BN_CLICKED(IDC_BUTTON_TASKLIST, &CAuto_AIDlg::OnBnClickedButtonTasklist)
+	ON_BN_CLICKED(IDC_BUTTON_HALLINFO, &CAuto_AIDlg::OnBnClickedButtonHallinfo)
+	ON_BN_CLICKED(IDC_BUTTON_ROOMINFO, &CAuto_AIDlg::OnBnClickedButtonRoominfo)
+	ON_NOTIFY(LVN_COLUMNCLICK, IDC_LIST_STATUS, &CAuto_AIDlg::OnLvnColumnclickListStatus)
+	ON_BN_CLICKED(IDC_BUTTON_ADDTASK, &CAuto_AIDlg::OnBnClickedButtonAddtask)
 END_MESSAGE_MAP()
 
 
@@ -96,92 +96,92 @@ BOOL CAuto_AIDlg::OnInitDialog()
 
 	::SetWindowLong(m_hWnd,GWL_STYLE,GetWindowLong(m_hWnd,GWL_STYLE)|WS_MINIMIZEBOX);
 
-    //建立树型例表
-    GLOBALDATA->GameList.Create(TVS_HASBUTTONS | TVS_HASLINES | TVS_DISABLEDRAGDROP | TVS_TRACKSELECT | WS_VISIBLE | WS_TABSTOP,  CRect(0, 0,200,200), this, 200);
-    GLOBALDATA->GameList.ShowWindow(SW_HIDE);
-    GLOBALDATA->GameList.Init();
+	//建立树型例表
+	GLOBALDATA->GameList.Create(TVS_HASBUTTONS | TVS_HASLINES | TVS_DISABLEDRAGDROP | TVS_TRACKSELECT | WS_VISIBLE | WS_TABSTOP,  CRect(0, 0,200,200), this, 200);
+	GLOBALDATA->GameList.ShowWindow(SW_HIDE);
+	GLOBALDATA->GameList.Init();
 
-    {
-        AutoPlatLock lock(&PLATCONFIG->m_DynamicSection);
-        auto it = PLATCONFIG->m_DynamicConfigs.begin();
-        while(it != PLATCONFIG->m_DynamicConfigs.end())
-        {
-            CString errorMsg;
-            if(!it->second.IsValid(errorMsg))
-            {
-                MSERVER_LOG_ERROR("任务%s错误：%s", it->second.strTime, errorMsg);
-                CString ErrorTip;
-                ErrorTip.Format("任务%s错误:%s", it->second.strTime, errorMsg);
-                MessageBox(ErrorTip);
-                PostQuitMessage(0);
-                return false;
-            }
-            it++;
-        }
-    }
-    
+	{
+		AutoPlatLock lock(&PLATCONFIG->m_DynamicSection);
+		auto it = PLATCONFIG->m_DynamicConfigs.begin();
+		while(it != PLATCONFIG->m_DynamicConfigs.end())
+		{
+			CString errorMsg;
+			if(!it->second.IsValid(errorMsg))
+			{
+				MSERVER_LOG_ERROR("任务%s错误：%s", it->second.strTime, errorMsg);
+				CString ErrorTip;
+				ErrorTip.Format("任务%s错误:%s", it->second.strTime, errorMsg);
+				MessageBox(ErrorTip);
+				PostQuitMessage(0);
+				return false;
+			}
+			it++;
+		}
+	}
+
 
 	// 设置此对话框的图标。当应用程序主窗口不是对话框时，框架将自动
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图
 
-    SetWindowText(PLATCONFIG->strTitleText);
+	SetWindowText(PLATCONFIG->strTitleText);
 
-    // 展示静态参数
-    GetDlgItem(IDC_STATIC_TILEHEAD)->SetWindowText(PLATCONFIG->strTitleText);
-    CString strStaticTip = _T("");
-    CString strTmp = _T("");
-    strStaticTip.Format(_T("%s游戏类别:%d\r\n\r\n"), strTmp, PLATCONFIG->KindID);
-    strTmp = strStaticTip;
-    strStaticTip.Format(_T("%s游戏ID  :%d\r\n\r\n"), strTmp, PLATCONFIG->NameID);
-    strTmp = strStaticTip;
-    strStaticTip.Format(_T("%s房间ID  :%d\r\n\r\n"), strTmp, PLATCONFIG->RoomID);
-    strTmp = strStaticTip;
-    strStaticTip.Format(_T("%s中心地址:%s:%d\r\n\r\n"), strTmp, PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort);
-    strTmp = strStaticTip;
-    strStaticTip.Format(_T("%s登陆密码:%s\r\n\r\n"), strTmp, PLATCONFIG->strAIPWD);
-    strTmp = strStaticTip;
-    if(PLATCONFIG->bFishGame)
-        strStaticTip.Format(_T("%s捕鱼类游戏:是\r\n\r\n"), strTmp);
-    else
-        strStaticTip.Format(_T("%s捕鱼类游戏:否\r\n\r\n"), strTmp);
-    strTmp = strStaticTip;
-    SYSTEMTIME lTime;
-    GetLocalTime(&lTime);
-    strStaticTip.Format(_T("%s启动时间:%04d-%02d-%02d %02d:%02d:%02d\r\n\r\n"), strTmp, lTime.wYear, lTime.wMonth, lTime.wDay, lTime.wHour, lTime.wMinute, lTime.wSecond);
-    strTmp = strStaticTip;
-    GetDlgItem(IDC_EDIT_STATIC)->SetWindowText(strStaticTip);
+	// 展示静态参数
+	GetDlgItem(IDC_STATIC_TILEHEAD)->SetWindowText(PLATCONFIG->strTitleText);
+	CString strStaticTip = _T("");
+	CString strTmp = _T("");
+	strStaticTip.Format(_T("%s游戏类别:%d\r\n\r\n"), strTmp, PLATCONFIG->KindID);
+	strTmp = strStaticTip;
+	strStaticTip.Format(_T("%s游戏ID  :%d\r\n\r\n"), strTmp, PLATCONFIG->NameID);
+	strTmp = strStaticTip;
+	strStaticTip.Format(_T("%s房间ID  :%d\r\n\r\n"), strTmp, PLATCONFIG->RoomID);
+	strTmp = strStaticTip;
+	strStaticTip.Format(_T("%s中心地址:%s:%d\r\n\r\n"), strTmp, PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort);
+	strTmp = strStaticTip;
+	strStaticTip.Format(_T("%s登陆密码:%s\r\n\r\n"), strTmp, PLATCONFIG->strAIPWD);
+	strTmp = strStaticTip;
+	if(PLATCONFIG->bFishGame)
+		strStaticTip.Format(_T("%s捕鱼类游戏:是\r\n\r\n"), strTmp);
+	else
+		strStaticTip.Format(_T("%s捕鱼类游戏:否\r\n\r\n"), strTmp);
+	strTmp = strStaticTip;
+	SYSTEMTIME lTime;
+	GetLocalTime(&lTime);
+	strStaticTip.Format(_T("%s启动时间:%04d-%02d-%02d %02d:%02d:%02d\r\n\r\n"), strTmp, lTime.wYear, lTime.wMonth, lTime.wDay, lTime.wHour, lTime.wMinute, lTime.wSecond);
+	strTmp = strStaticTip;
+	GetDlgItem(IDC_EDIT_STATIC)->SetWindowText(strStaticTip);
 
-    ((CEdit*)GetDlgItem(IDC_EDIT_STATIC))->SetSel(-1,0);
+	((CEdit*)GetDlgItem(IDC_EDIT_STATIC))->SetSel(-1,0);
 
-    if(NextTask())
-    {
-        // 展示动态参数
-        ResetConfig();
-    }
+	if(NextTask())
+	{
+		// 展示动态参数
+		ResetConfig();
+	}
 
-    MSERVER_LOG_INFO("启动机器人%s",PLATCONFIG->strTitleText);
-    ((CButton*)GetDlgItem(IDC_BUTTON_SAVE))->EnableWindow(FALSE);
-    ((CButton*)GetDlgItem(IDC_BUTTON_RESET))->EnableWindow(FALSE);
-    ((CButton*)GetDlgItem(IDC_BUTTON_CANCEL))->EnableWindow(FALSE);
+	MSERVER_LOG_INFO("启动机器人%s",PLATCONFIG->strTitleText);
+	((CButton*)GetDlgItem(IDC_BUTTON_SAVE))->EnableWindow(FALSE);
+	((CButton*)GetDlgItem(IDC_BUTTON_RESET))->EnableWindow(FALSE);
+	((CButton*)GetDlgItem(IDC_BUTTON_CANCEL))->EnableWindow(FALSE);
 
-    SetTimer(TIMER_CHECK_MODIFY_PARA, 10*1000, NULL);
+	SetTimer(TIMER_CHECK_MODIFY_PARA, 10*1000, NULL);
 
-    DWORD dwStyle = m_ListUserStatus.GetExtendedStyle();
-    dwStyle |= LVS_EX_FULLROWSELECT|LVS_EX_GRIDLINES;
-    m_ListUserStatus.SetExtendedStyle(dwStyle);
-    m_ListUserStatus.ModifyStyle(0, LVS_REPORT);
-    m_ListUserStatus.InsertColumn(COL_USRNAME, _T("用户名"), LVCFMT_LEFT,120);
-    m_ListUserStatus.InsertColumn(COL_NICKNAME, _T("昵称"), LVCFMT_LEFT,120);
-    m_ListUserStatus.InsertColumn(COL_GSERVERLOGIN, _T("登陆"), LVCFMT_LEFT,60);
-    m_ListUserStatus.InsertColumn(COL_ROOMID, _T("房间ID"), LVCFMT_LEFT,60);
-    m_ListUserStatus.InsertColumn(COL_DESKNO, _T("桌子号"), LVCFMT_LEFT,60);
-    m_ListUserStatus.InsertColumn(COL_DESKSTATION, _T("座位号"), LVCFMT_LEFT,60);
-    m_ListUserStatus.InsertColumn(COL_USERSTATE, _T("游戏状态"), LVCFMT_LEFT,60);
-    m_ListUserStatus.InsertColumn(COL_TASKINFO, _T("任务信息"), LVCFMT_LEFT,300);
-    ShowUserStatus();
-    SetTimer(TIMER_UPDATE_USERSTATUS, 5000, NULL);
+	DWORD dwStyle = m_ListUserStatus.GetExtendedStyle();
+	dwStyle |= LVS_EX_FULLROWSELECT|LVS_EX_GRIDLINES;
+	m_ListUserStatus.SetExtendedStyle(dwStyle);
+	m_ListUserStatus.ModifyStyle(0, LVS_REPORT);
+	m_ListUserStatus.InsertColumn(COL_USRNAME, _T("用户名"), LVCFMT_LEFT,120);
+	m_ListUserStatus.InsertColumn(COL_NICKNAME, _T("昵称"), LVCFMT_LEFT,120);
+	m_ListUserStatus.InsertColumn(COL_GSERVERLOGIN, _T("登陆"), LVCFMT_LEFT,60);
+	m_ListUserStatus.InsertColumn(COL_ROOMID, _T("房间ID"), LVCFMT_LEFT,60);
+	m_ListUserStatus.InsertColumn(COL_DESKNO, _T("桌子号"), LVCFMT_LEFT,60);
+	m_ListUserStatus.InsertColumn(COL_DESKSTATION, _T("座位号"), LVCFMT_LEFT,60);
+	m_ListUserStatus.InsertColumn(COL_USERSTATE, _T("游戏状态"), LVCFMT_LEFT,60);
+	m_ListUserStatus.InsertColumn(COL_TASKINFO, _T("任务信息"), LVCFMT_LEFT,300);
+	ShowUserStatus();
+	SetTimer(TIMER_UPDATE_USERSTATUS, 5000, NULL);
 
 	int argc = __argc;
 	if(argc >= 2)
@@ -239,147 +239,147 @@ void CAuto_AIDlg::OnOK()
 }
 void CAuto_AIDlg::OnCancel()
 {
-    if(ModifyPara())
-    {
-        CString strTip;
-        strTip.Format(_T("是否保存修改?"));
-        if(IDOK == MessageBox(strTip, _T("参数修改"), MB_OKCANCEL))
-        {
-            SaveConfig();
-        }
-    }
-    CString strTip;
-    strTip.Format(_T("确认退出%s?"), PLATCONFIG->strTitleText);
-    if(IDOK == MessageBox(strTip, _T("退出"), MB_OKCANCEL))
-    {
-        MSERVER_LOG_INFO("关闭机器人%s",PLATCONFIG->strTitleText);
-        // TODO: 在此添加控件通知处理程序代码\
-        //add by 20090211zht修改关闭时先将正在游戏中的机器人退出
-        bool bExit = true;
-        for (int i=0; i< GLOBALDATA->CurDynamicConfig.nLogonCount; i++)
-        {
-            if (GLOBALDATA->RoomInfo[i].pGameRoomWnd != NULL)
-            {
-                bExit = false;
-                ::PostMessage(GLOBALDATA->RoomInfo[i].pGameRoomWnd->GetSafeHwnd(),IDM_CLOSE,0,0);
-            }
-        }
-        KillTimer(TIMER_CHECK_MODIFY_PARA);
-        m_bExit = true;
-        if(bExit) PostQuitMessage(0);
-        //add by 20090211zht修改关闭时先将正在游戏中的机器人退出
-    }
+	if(ModifyPara())
+	{
+		CString strTip;
+		strTip.Format(_T("是否保存修改?"));
+		if(IDOK == MessageBox(strTip, _T("参数修改"), MB_OKCANCEL))
+		{
+			SaveConfig();
+		}
+	}
+	CString strTip;
+	strTip.Format(_T("确认退出%s?"), PLATCONFIG->strTitleText);
+	if(IDOK == MessageBox(strTip, _T("退出"), MB_OKCANCEL))
+	{
+		MSERVER_LOG_INFO("关闭机器人%s",PLATCONFIG->strTitleText);
+		// TODO: 在此添加控件通知处理程序代码\
+		//add by 20090211zht修改关闭时先将正在游戏中的机器人退出
+		bool bExit = true;
+		for (int i=0; i< GLOBALDATA->CurDynamicConfig.nLogonCount; i++)
+		{
+			if (GLOBALDATA->RoomInfo[i].pGameRoomWnd != NULL)
+			{
+				bExit = false;
+				::PostMessage(GLOBALDATA->RoomInfo[i].pGameRoomWnd->GetSafeHwnd(),IDM_CLOSE,0,0);
+			}
+		}
+		KillTimer(TIMER_CHECK_MODIFY_PARA);
+		m_bExit = true;
+		if(bExit) PostQuitMessage(0);
+		//add by 20090211zht修改关闭时先将正在游戏中的机器人退出
+	}
 }
 
 void	CAuto_AIDlg::OnStartRobot()
 {
-    InitUI(false);
-    MSERVER_LOG_INFO("StartRobot");
-    ((CButton*)GetDlgItem(IDC_BUTTON_LOGIN))->EnableWindow(FALSE);
-    ((CButton*)GetDlgItem(IDC_BUTTON_CANCEL))->EnableWindow(TRUE);
-    GLOBALDATA->bConnectToWitchServer = 0;
+	InitUI(false);
+	MSERVER_LOG_INFO("StartRobot");
+	((CButton*)GetDlgItem(IDC_BUTTON_LOGIN))->EnableWindow(FALSE);
+	((CButton*)GetDlgItem(IDC_BUTTON_CANCEL))->EnableWindow(TRUE);
+	GLOBALDATA->bConnectToWitchServer = 0;
 
-    m_ShowBeginNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo);
+	m_ShowBeginNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo);
 	//Eil @ 修复
-    //m_ShowEndNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo + 10);
+	//m_ShowEndNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo + 10);
 	m_ShowEndNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo + GLOBALDATA->CurDynamicConfig.nLogonCount);
-	
-    ((CEdit*)GetDlgItem(IDC_EDIT_CHECKBEGINNO))->SetWindowText(m_ShowBeginNo);
-    ((CEdit*)GetDlgItem(IDC_EDIT_CHECKENDNO))->SetWindowText(m_ShowEndNo);
 
-    OnConnectToCenterServer();
-    SetTimer(TIMER_CHECK_UNCONNECT_ACCOUNT, 5000, NULL);
+	((CEdit*)GetDlgItem(IDC_EDIT_CHECKBEGINNO))->SetWindowText(m_ShowBeginNo);
+	((CEdit*)GetDlgItem(IDC_EDIT_CHECKENDNO))->SetWindowText(m_ShowEndNo);
+
+	OnConnectToCenterServer();
+	SetTimer(TIMER_CHECK_UNCONNECT_ACCOUNT, 5000, NULL);
 }
 
 void CAuto_AIDlg::OnStopRobot()
 {
-    CString strTip;
-    strTip.Format(_T("确认取消登陆%s?"), PLATCONFIG->strTitleText);
-    if(IDOK == MessageBox(strTip, _T("退出"), MB_OKCANCEL))
-    {
-        MSERVER_LOG_INFO("StopRobot");
-        m_TCPSocket->CloseSocket(TRUE);
-        ((CButton*)GetDlgItem(IDC_BUTTON_LOGIN))->EnableWindow(TRUE);
-        ((CButton*)GetDlgItem(IDC_BUTTON_CANCEL))->EnableWindow(FALSE);
-        KillTimer(TIMER_CHECK_UNCONNECT_ACCOUNT);
-        m_iLogonIndex = -2;
-        GLOBALDATA->ReInit();
-        UIDATA->ReInit();
-        // TODO: 在此添加控件通知处理程序代码\
-        //add by 20090211zht修改关闭时先将正在游戏中的机器人退出
-        for (int i=0; i < MAX_GAME_ROOM; i++)
-        {
-            if (GLOBALDATA->RoomInfo[i].pGameRoomWnd != NULL)
-                ::PostMessage(GLOBALDATA->RoomInfo[i].pGameRoomWnd->GetSafeHwnd(),IDM_CLOSE,0,0);
-        }
+	CString strTip;
+	strTip.Format(_T("确认取消登陆%s?"), PLATCONFIG->strTitleText);
+	if(IDOK == MessageBox(strTip, _T("退出"), MB_OKCANCEL))
+	{
+		MSERVER_LOG_INFO("StopRobot");
+		m_TCPSocket->CloseSocket(TRUE);
+		((CButton*)GetDlgItem(IDC_BUTTON_LOGIN))->EnableWindow(TRUE);
+		((CButton*)GetDlgItem(IDC_BUTTON_CANCEL))->EnableWindow(FALSE);
+		KillTimer(TIMER_CHECK_UNCONNECT_ACCOUNT);
+		m_iLogonIndex = -2;
+		GLOBALDATA->ReInit();
+		UIDATA->ReInit();
+		// TODO: 在此添加控件通知处理程序代码\
+		//add by 20090211zht修改关闭时先将正在游戏中的机器人退出
+		for (int i=0; i < MAX_GAME_ROOM; i++)
+		{
+			if (GLOBALDATA->RoomInfo[i].pGameRoomWnd != NULL)
+				::PostMessage(GLOBALDATA->RoomInfo[i].pGameRoomWnd->GetSafeHwnd(),IDM_CLOSE,0,0);
+		}
 
-        GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText("连接状态");
-        //add by 20090211zht修改关闭时先将正在游戏中的机器人退出
-        if(NextTask())
-        {
-            // 展示动态参数
-            ResetConfig();
-        }
-        InitUI(true);
-        UIQueueGame(true);
-    }
+		GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText("连接状态");
+		//add by 20090211zht修改关闭时先将正在游戏中的机器人退出
+		if(NextTask())
+		{
+			// 展示动态参数
+			ResetConfig();
+		}
+		InitUI(true);
+		UIQueueGame(true);
+	}
 }
 
 
 //连接AServer
 void CAuto_AIDlg::OnConnectToCenterServer()
 {
-    KillTimer(TIME_CONNECT_ASERVER);
-    SetTimer(TIME_CONNECT_ASERVER, 1000, NULL);
+	KillTimer(TIME_CONNECT_ASERVER);
+	SetTimer(TIME_CONNECT_ASERVER, 1000, NULL);
 }
 
 void CAuto_AIDlg::DoOnConnectToCenterServer()
 {
-    if (m_TCPSocket != NULL)
-    {
-        delete m_TCPSocket;
-    }
-    m_TCPSocket = new CTCPClientSocket(this);
-    CString str;
-    str.Format("正在连接AServer %s:%d", PLATCONFIG->CenterServerIPAddr,PLATCONFIG->CenterServerPort);
-    GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
-    if(m_TCPSocket->Connect(PLATCONFIG->CenterServerIPAddr,PLATCONFIG->CenterServerPort)==false)
-    {// 连接失败,重新启动连接
-        MSERVER_LOG_ERROR("连接AServer失败%s:%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort);
-        CString str;
-        str.Format("连接AServer失败 %s:%d", PLATCONFIG->CenterServerIPAddr,PLATCONFIG->CenterServerPort);
-        GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
-        OnConnectToCenterServer();
-    }
+	if (m_TCPSocket != NULL)
+	{
+		delete m_TCPSocket;
+	}
+	m_TCPSocket = new CTCPClientSocket(this);
+	CString str;
+	str.Format("正在连接AServer %s:%d", PLATCONFIG->CenterServerIPAddr,PLATCONFIG->CenterServerPort);
+	GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
+	if(m_TCPSocket->Connect(PLATCONFIG->CenterServerIPAddr,PLATCONFIG->CenterServerPort)==false)
+	{// 连接失败,重新启动连接
+		MSERVER_LOG_ERROR("连接AServer失败%s:%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort);
+		CString str;
+		str.Format("连接AServer失败 %s:%d", PLATCONFIG->CenterServerIPAddr,PLATCONFIG->CenterServerPort);
+		GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
+		OnConnectToCenterServer();
+	}
 }
 
 //连接MServer
 void CAuto_AIDlg::OnConnectToLogonServer()
 {
 
-    KillTimer(TIME_CONNECT_MSERVER);
-    SetTimer(TIME_CONNECT_MSERVER, 1000, NULL);
-	
+	KillTimer(TIME_CONNECT_MSERVER);
+	SetTimer(TIME_CONNECT_MSERVER, 1000, NULL);
+
 }
 
 void CAuto_AIDlg::DoOnConnectToLogonServer()
 {
-    SetTimer(TIMER_PLC_CLOSE_SOCKET, 30*1000, NULL);
-    if (m_TCPSocket != NULL)
-    {
-        delete m_TCPSocket;
-    }
-    m_TCPSocket = new CTCPClientSocket(this);
-    CString str;
-    str.Format("正在连接MServer %s:%d", GLOBALDATA->MainServerIPAddr,GLOBALDATA->MainServerPort);
-    GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
-    if(m_TCPSocket->Connect(GLOBALDATA->MainServerIPAddr,GLOBALDATA->MainServerPort)==false)
-    {// 连接失败,重新启动连接
-        MSERVER_LOG_ERROR("连接MServer失败%s:%d", GLOBALDATA->MainServerIPAddr,GLOBALDATA->MainServerPort);
-        CString str;
-        str.Format("连接MServer失败 %s:%d", GLOBALDATA->MainServerIPAddr,GLOBALDATA->MainServerPort);
-        GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
-    }
+	SetTimer(TIMER_PLC_CLOSE_SOCKET, 30*1000, NULL);
+	if (m_TCPSocket != NULL)
+	{
+		delete m_TCPSocket;
+	}
+	m_TCPSocket = new CTCPClientSocket(this);
+	CString str;
+	str.Format("正在连接MServer %s:%d", GLOBALDATA->MainServerIPAddr,GLOBALDATA->MainServerPort);
+	GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
+	if(m_TCPSocket->Connect(GLOBALDATA->MainServerIPAddr,GLOBALDATA->MainServerPort)==false)
+	{// 连接失败,重新启动连接
+		MSERVER_LOG_ERROR("连接MServer失败%s:%d", GLOBALDATA->MainServerIPAddr,GLOBALDATA->MainServerPort);
+		CString str;
+		str.Format("连接MServer失败 %s:%d", GLOBALDATA->MainServerIPAddr,GLOBALDATA->MainServerPort);
+		GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
+	}
 }
 
 
@@ -408,12 +408,12 @@ bool CAuto_AIDlg::OnSocketReadEvent(NetMessageHead * pNetHead, void * pNetData, 
 		}
 	case MDM_GP_REQURE_GAME_PARA:	//中心服务全局参数//请求游戏全局参数
 		{
-            GLOBALDATA->bConnectToWitchServer = 1;
+			GLOBALDATA->bConnectToWitchServer = 1;
 			CenterServerMsg * msg=(CenterServerMsg *)pNetData;
-			
-            MSERVER_LOG_INFO("%s:%d AServer应答全局参数信息 MServer:%s-%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort,msg->m_strMainserverIPAddr, msg->m_iMainserverPort);
-            GLOBALDATA->MainServerIPAddr = msg->m_strMainserverIPAddr;
-            GLOBALDATA->MainServerPort = msg->m_iMainserverPort;
+
+			MSERVER_LOG_INFO("%s:%d AServer应答全局参数信息 MServer:%s-%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort,msg->m_strMainserverIPAddr, msg->m_iMainserverPort);
+			GLOBALDATA->MainServerIPAddr = msg->m_strMainserverIPAddr;
+			GLOBALDATA->MainServerPort = msg->m_iMainserverPort;
 
 			m_TCPSocket->CloseSocket (true);		
 
@@ -431,31 +431,31 @@ bool CAuto_AIDlg::OnSocketReadEvent(NetMessageHead * pNetHead, void * pNetData, 
 		{
 			if (!EnterContestRoom(pNetHead,pNetData,uDataSize,pClientSocket))
 			{
-                m_TCPSocket->CloseSocket(true);
-                return false;
+				m_TCPSocket->CloseSocket(true);
+				return false;
 			}
 			return true;
 		}
-    default:
-        {
-            CString strKey;
-            strKey.Format("%d_%d", pNetHead->bMainID, pNetHead->bAssistantID);
-            SYSTEMTIME sysTime;
-            GetLocalTime(&sysTime);
-            if(m_notHandleMsgs.find(strKey) != m_notHandleMsgs.end())
-            {
-                if(m_notHandleMsgs[strKey] == sysTime.wHour)
-                {
-                    break;
-                }
-            }
-            {
-                MSERVER_LOG_INFO("%s 未处理消息 %d:%d", m_CurPlaceUserInfo.szName, pNetHead->bMainID, pNetHead->bAssistantID);
-                m_notHandleMsgs[strKey] = sysTime.wHour;
-            }
-        }
-        
-        break;
+	default:
+		{
+			CString strKey;
+			strKey.Format("%d_%d", pNetHead->bMainID, pNetHead->bAssistantID);
+			SYSTEMTIME sysTime;
+			GetLocalTime(&sysTime);
+			if(m_notHandleMsgs.find(strKey) != m_notHandleMsgs.end())
+			{
+				if(m_notHandleMsgs[strKey] == sysTime.wHour)
+				{
+					break;
+				}
+			}
+			{
+				MSERVER_LOG_INFO("%s 未处理消息 %d:%d", m_CurPlaceUserInfo.szName, pNetHead->bMainID, pNetHead->bAssistantID);
+				m_notHandleMsgs[strKey] = sysTime.wHour;
+			}
+		}
+
+		break;
 	}
 	return true;
 }
@@ -465,57 +465,57 @@ bool CAuto_AIDlg::OnSocketConnectEvent(UINT uErrorCode, CTCPClientSocket * pClie
 {
 	if(GLOBALDATA->bConnectToWitchServer == 0)//中心服务器
 	{
-        if(uErrorCode == 0)
-        {
-            MSERVER_LOG_INFO("连接AServer事件%s:%d-%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort,uErrorCode);
-            CString str;
-            str.Format("连接AServer成功 %s:%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort);
-            GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
-        }
-        else
-        {
-            MSERVER_LOG_ERROR("连接AServer事件%s:%d-%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort,uErrorCode);
-            CString str;
-            str.Format("连接AServer失败 %s:%d-%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort,uErrorCode);
-            GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
-            OnConnectToCenterServer();
-        }
+		if(uErrorCode == 0)
+		{
+			MSERVER_LOG_INFO("连接AServer事件%s:%d-%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort,uErrorCode);
+			CString str;
+			str.Format("连接AServer成功 %s:%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort);
+			GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
+		}
+		else
+		{
+			MSERVER_LOG_ERROR("连接AServer事件%s:%d-%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort,uErrorCode);
+			CString str;
+			str.Format("连接AServer失败 %s:%d-%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort,uErrorCode);
+			GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
+			OnConnectToCenterServer();
+		}
 	}
 	else if (GLOBALDATA->bConnectToWitchServer ==1)
 	{
-        if(uErrorCode == 0)
-        {
-            MSERVER_LOG_INFO("连接MServer事件%s:%d-%d", GLOBALDATA->MainServerIPAddr, GLOBALDATA->MainServerPort,uErrorCode);
-            CString str;
-            str.Format("连接MServer成功 %s:%d", GLOBALDATA->MainServerIPAddr, GLOBALDATA->MainServerPort);
-            GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
-        }
-        else
-        {
-            MSERVER_LOG_ERROR("连接MServer事件%s:%d-%d", GLOBALDATA->MainServerIPAddr, GLOBALDATA->MainServerPort,uErrorCode);
-            CString str;
-            str.Format("连接MServer失败 %s:%d-%d", GLOBALDATA->MainServerIPAddr, GLOBALDATA->MainServerPort,uErrorCode);
-            GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
-            OnConnectToLogonServer();
-        }
+		if(uErrorCode == 0)
+		{
+			MSERVER_LOG_INFO("连接MServer事件%s:%d-%d", GLOBALDATA->MainServerIPAddr, GLOBALDATA->MainServerPort,uErrorCode);
+			CString str;
+			str.Format("连接MServer成功 %s:%d", GLOBALDATA->MainServerIPAddr, GLOBALDATA->MainServerPort);
+			GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
+		}
+		else
+		{
+			MSERVER_LOG_ERROR("连接MServer事件%s:%d-%d", GLOBALDATA->MainServerIPAddr, GLOBALDATA->MainServerPort,uErrorCode);
+			CString str;
+			str.Format("连接MServer失败 %s:%d-%d", GLOBALDATA->MainServerIPAddr, GLOBALDATA->MainServerPort,uErrorCode);
+			GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
+			OnConnectToLogonServer();
+		}
 	}
-    else
-    {
-        MSERVER_LOG_ERROR("未知连接事件");
-    }
+	else
+	{
+		MSERVER_LOG_ERROR("未知连接事件");
+	}
 	return true;
 }
 
 //网络关闭消息
 bool CAuto_AIDlg::OnSocketCloseEvent()
 {    
-    {
-        if(GLOBALDATA->bConnectToWitchServer == 0)
-        {
-            OnConnectToCenterServer();
-        }
-        m_iLogonIndex = -1;
-    }
+	{
+		if(GLOBALDATA->bConnectToWitchServer == 0)
+		{
+			OnConnectToCenterServer();
+		}
+		m_iLogonIndex = -1;
+	}
 	return true;
 }
 
@@ -537,31 +537,31 @@ bool CAuto_AIDlg::OnConnectMessage(NetMessageHead * pNetHead, void * pNetData, U
 
 		if(GLOBALDATA->bConnectToWitchServer == 0)//中心服务器
 		{
-            MSERVER_LOG_INFO("向AServer请求全局参数信息%s:%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort);
+			MSERVER_LOG_INFO("向AServer请求全局参数信息%s:%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort);
 			m_TCPSocket->SendData(NULL,0,MDM_GP_REQURE_GAME_PARA,0,0);
 			return true;
 		}
 		LoginMServer();
 		return true;
 	}
-    else
-    {
-        CString strKey;
-        strKey.Format("%d_%d", pNetHead->bMainID, pNetHead->bAssistantID);
-        SYSTEMTIME sysTime;
-        GetLocalTime(&sysTime);
-        if(m_notHandleMsgs.find(strKey) != m_notHandleMsgs.end())
-        {
-            if(m_notHandleMsgs[strKey] == sysTime.wHour)
-            {
-                return false;
-            }
-        }
-        {
-            MSERVER_LOG_INFO("%s 未处理消息 %d:%d", m_CurPlaceUserInfo.szName, pNetHead->bMainID, pNetHead->bAssistantID);
-            m_notHandleMsgs[strKey] = sysTime.wHour;
-        }
-    }
+	else
+	{
+		CString strKey;
+		strKey.Format("%d_%d", pNetHead->bMainID, pNetHead->bAssistantID);
+		SYSTEMTIME sysTime;
+		GetLocalTime(&sysTime);
+		if(m_notHandleMsgs.find(strKey) != m_notHandleMsgs.end())
+		{
+			if(m_notHandleMsgs[strKey] == sysTime.wHour)
+			{
+				return false;
+			}
+		}
+		{
+			MSERVER_LOG_INFO("%s 未处理消息 %d:%d", m_CurPlaceUserInfo.szName, pNetHead->bMainID, pNetHead->bAssistantID);
+			m_notHandleMsgs[strKey] = sysTime.wHour;
+		}
+	}
 	return false;
 }
 
@@ -655,24 +655,24 @@ bool CAuto_AIDlg::OnLogonMessage(NetMessageHead * pNetHead, void * pNetData, UIN
 
 		wsprintf(m_CurPlaceUserInfo.szMD5Pass,"%s",PLATCONFIG->strAIPWD);
 
-        MSERVER_LOG_INFO("%s 登陆成功", m_CurPlaceUserInfo.szName);
-        {
+		MSERVER_LOG_INFO("%s 登陆成功", m_CurPlaceUserInfo.szName);
+		{
 
-            AutoPlatLock lock(&UIDATA->uiSection);
-            auto it = UIDATA->usrInfos.find(m_CurPlaceUserInfo.szName);
-            if(it != UIDATA->usrInfos.end())
-            {
-                it->second.strUserName = m_CurPlaceUserInfo.szName;
-                it->second.strNickName = m_CurPlaceUserInfo.nickName;
-            }
-            else
-            {
-                MSERVER_LOG_ERROR("%s 没有找到UI信息", m_CurPlaceUserInfo.szName);
-            }
-        }
+			AutoPlatLock lock(&UIDATA->uiSection);
+			auto it = UIDATA->usrInfos.find(m_CurPlaceUserInfo.szName);
+			if(it != UIDATA->usrInfos.end())
+			{
+				it->second.strUserName = m_CurPlaceUserInfo.szName;
+				it->second.strNickName = m_CurPlaceUserInfo.nickName;
+			}
+			else
+			{
+				MSERVER_LOG_ERROR("%s 没有找到UI信息", m_CurPlaceUserInfo.szName);
+			}
+		}
 		//存钱入口
-        // 先进行一次银行存取操作
-        AiControlBank();
+		// 先进行一次银行存取操作
+		AiControlBank();
 
 		//获取游戏列表
 		return GetGameRoomList();
@@ -731,36 +731,36 @@ bool CAuto_AIDlg::OnLogonMessage(NetMessageHead * pNetHead, void * pNetData, UIN
 		default:strMessage=TEXT("系统登录出现错误！请与管理员联系！");
 		}
 
-        char  szLogonName[61] = {0};
-        sprintf(szLogonName, "%s", m_CurPlaceUserInfo.szName);
-        MSERVER_LOG_ERROR("%s 登陆失败%d %s", szLogonName, pNetHead->bHandleCode, strMessage);
-	
+		char  szLogonName[61] = {0};
+		sprintf(szLogonName, "%s", m_CurPlaceUserInfo.szName);
+		MSERVER_LOG_ERROR("%s 登陆失败%d %s", szLogonName, pNetHead->bHandleCode, strMessage);
+
 		m_TCPSocket->CloseSocket(true);
 		return true;
 	}
-    else
-    {
-        CString strKey;
-        strKey.Format("%d_%d", pNetHead->bMainID, pNetHead->bAssistantID);
-        SYSTEMTIME sysTime;
-        GetLocalTime(&sysTime);
-        if(m_notHandleMsgs.find(strKey) != m_notHandleMsgs.end())
-        {
-            if(m_notHandleMsgs[strKey] == sysTime.wHour)
-            {
-                return true;
-            }
-        }
-        MSERVER_LOG_INFO("%s 未处理消息 %d:%d", m_CurPlaceUserInfo.szName, pNetHead->bMainID, pNetHead->bAssistantID);
-        m_notHandleMsgs[strKey] = sysTime.wHour;
-    }
+	else
+	{
+		CString strKey;
+		strKey.Format("%d_%d", pNetHead->bMainID, pNetHead->bAssistantID);
+		SYSTEMTIME sysTime;
+		GetLocalTime(&sysTime);
+		if(m_notHandleMsgs.find(strKey) != m_notHandleMsgs.end())
+		{
+			if(m_notHandleMsgs[strKey] == sysTime.wHour)
+			{
+				return true;
+			}
+		}
+		MSERVER_LOG_INFO("%s 未处理消息 %d:%d", m_CurPlaceUserInfo.szName, pNetHead->bMainID, pNetHead->bAssistantID);
+		m_notHandleMsgs[strKey] = sysTime.wHour;
+	}
 	return true;
 }
 
 //获取游戏列表
 bool CAuto_AIDlg::GetGameRoomList()
 {
-    MSERVER_LOG_INFO("%s 请求游戏列表", m_CurPlaceUserInfo.szName);
+	MSERVER_LOG_INFO("%s 请求游戏列表", m_CurPlaceUserInfo.szName);
 	m_TCPSocket->SendData(MDM_GP_LIST,ASS_GP_LIST_KIND,0);//请求游戏列表
 	return true;
 }
@@ -772,14 +772,14 @@ bool CAuto_AIDlg::OnListMessage(NetMessageHead * pNetHead, void * pNetData, UINT
 	{
 	case ASS_GP_LIST_KIND:		//获取的是游戏类型
 		{
-            MSERVER_LOG_INFO("%s 成功获取游戏类型ASS_GP_LIST_KIND", m_CurPlaceUserInfo.szName);
+			MSERVER_LOG_INFO("%s 成功获取游戏类型ASS_GP_LIST_KIND", m_CurPlaceUserInfo.szName);
 			//处理数据
 			GLOBALDATA->GameList.HandleKindData((ComKindInfo *)pNetData,uDataSize/sizeof(ComKindInfo));//在树上加入游戏类型
 			return true;
 		}
 	case ASS_GP_LIST_NAME:		//获取的游戏名字
 		{
-            MSERVER_LOG_INFO("%s 成功获取游戏名字ASS_GP_LIST_NAME", m_CurPlaceUserInfo.szName);
+			MSERVER_LOG_INFO("%s 成功获取游戏名字ASS_GP_LIST_NAME", m_CurPlaceUserInfo.szName);
 			//处理数据
 			GLOBALDATA->GameList.HandleNameData((ComNameInfo *)pNetData,uDataSize/sizeof(ComNameInfo));
 
@@ -797,11 +797,11 @@ bool CAuto_AIDlg::OnListMessage(NetMessageHead * pNetHead, void * pNetData, UINT
 		{
 			//效验数据 
 			if (uDataSize<sizeof(MSG_GP_SR_GetRoomStruct))
-            {
-                MSERVER_LOG_ERROR("%s MSG_GP_SR_GetRoomStruct 结构体不一致", m_CurPlaceUserInfo.szName);
+			{
+				MSERVER_LOG_ERROR("%s MSG_GP_SR_GetRoomStruct 结构体不一致", m_CurPlaceUserInfo.szName);
 				return false;
-            }
-            MSERVER_LOG_INFO("%s 成功获取房间信息ASS_GP_LIST_ROOM", m_CurPlaceUserInfo.szName);
+			}
+			MSERVER_LOG_INFO("%s 成功获取房间信息ASS_GP_LIST_ROOM", m_CurPlaceUserInfo.szName);
 			MSG_GP_SR_GetRoomStruct * pNetRoomBuf=(MSG_GP_SR_GetRoomStruct *)pNetData;
 			//处理数据
 			GLOBALDATA->GameList.HandleRoomData((ComRoomInfo *)((char *)pNetData+sizeof(MSG_GP_SR_GetRoomStruct)),
@@ -813,33 +813,33 @@ bool CAuto_AIDlg::OnListMessage(NetMessageHead * pNetHead, void * pNetData, UINT
 				CAFCRoomItem *pGameRoomItem = GLOBALDATA->GameList.FindRoomItem(PLATCONFIG->RoomID);
 				if (NULL == pGameRoomItem)
 				{
-                    MSERVER_LOG_ERROR("%s 未获取到指定房间信息", m_CurPlaceUserInfo.szName);
+					MSERVER_LOG_ERROR("%s 未获取到指定房间信息", m_CurPlaceUserInfo.szName);
 					return false;
 				}
 
-                {
-                    AutoPlatLock lock(&UIDATA->uiSection);
-                    UIDATA->roomInfo = pGameRoomItem->m_RoomInfo;
-                    GetDlgItem(IDC_STATIC_ROOMNAME)->SetWindowText(pGameRoomItem->m_RoomInfo.szGameRoomName);
-                }
+				{
+					AutoPlatLock lock(&UIDATA->uiSection);
+					UIDATA->roomInfo = pGameRoomItem->m_RoomInfo;
+					GetDlgItem(IDC_STATIC_ROOMNAME)->SetWindowText(pGameRoomItem->m_RoomInfo.szGameRoomName);
+				}
 
-                if (IsContestGame(pGameRoomItem->m_RoomInfo.dwRoomRule))
-                {
-                    UIQueueGame(false);
-                    GetContestRoomID(pGameRoomItem->m_RoomInfo.uRoomID);
-                }
-                else
-                {
-                    if((pGameRoomItem->m_RoomInfo.dwRoomRule &GRR_QUEUE_GAME) != 0)
-                    {
-                        UIQueueGame(false);
-                    }
-                    else
-                    {
-                        UIQueueGame(true);
-                    }
-                    EnterGameRoom(pGameRoomItem->m_RoomInfo.uRoomID);
-                }
+				if (IsContestGame(pGameRoomItem->m_RoomInfo.dwRoomRule))
+				{
+					UIQueueGame(false);
+					GetContestRoomID(pGameRoomItem->m_RoomInfo.uRoomID);
+				}
+				else
+				{
+					if((pGameRoomItem->m_RoomInfo.dwRoomRule &GRR_QUEUE_GAME) != 0)
+					{
+						UIQueueGame(false);
+					}
+					else
+					{
+						UIQueueGame(true);
+					}
+					EnterGameRoom(pGameRoomItem->m_RoomInfo.uRoomID);
+				}
 			}
 			return true;
 		}
@@ -847,24 +847,24 @@ bool CAuto_AIDlg::OnListMessage(NetMessageHead * pNetHead, void * pNetData, UINT
 		{
 			return true;
 		}
-    default:
-        {
+	default:
+		{
 
-            CString strKey;
-            strKey.Format("%d_%d", pNetHead->bMainID, pNetHead->bAssistantID);
-            SYSTEMTIME sysTime;
-            GetLocalTime(&sysTime);
-            if(m_notHandleMsgs.find(strKey) != m_notHandleMsgs.end())
-            {
-                if(m_notHandleMsgs[strKey] == sysTime.wHour)
-                {
-                    break;;
-                }
-            }
-            MSERVER_LOG_INFO("%s 未处理消息 %d:%d", m_CurPlaceUserInfo.szName, pNetHead->bMainID, pNetHead->bAssistantID);
-            m_notHandleMsgs[strKey] = sysTime.wHour;
-        }
-        break;
+			CString strKey;
+			strKey.Format("%d_%d", pNetHead->bMainID, pNetHead->bAssistantID);
+			SYSTEMTIME sysTime;
+			GetLocalTime(&sysTime);
+			if(m_notHandleMsgs.find(strKey) != m_notHandleMsgs.end())
+			{
+				if(m_notHandleMsgs[strKey] == sysTime.wHour)
+				{
+					break;;
+				}
+			}
+			MSERVER_LOG_INFO("%s 未处理消息 %d:%d", m_CurPlaceUserInfo.szName, pNetHead->bMainID, pNetHead->bAssistantID);
+			m_notHandleMsgs[strKey] = sysTime.wHour;
+		}
+		break;
 	}
 	return TRUE;
 }
@@ -876,60 +876,60 @@ void CAuto_AIDlg::OnTimer(UINT_PTR nIDEvent)
 	{
 	case TIME_CONNECT_ASERVER:
 		{
-            KillTimer(nIDEvent);
+			KillTimer(nIDEvent);
 			DoOnConnectToCenterServer();
 			break;
 		}
-    case TIME_CONNECT_MSERVER:
-        {
-            KillTimer(nIDEvent);
-            DoOnConnectToLogonServer();
-            break;
-        }
-    case TIMER_CHECK_UNCONNECT_ACCOUNT:
-        {
-            if(m_iLogonIndex != -1 || GLOBALDATA->bConnectToWitchServer == 0 || m_iLogonIndex == -2) break;
-            m_iLogonIndex = FindNextLogonIndex();
-            if(m_iLogonIndex != -1)
-            {// 有帐号需要登陆
-                OnConnectToLogonServer();
-            }
-        }
-        break;
-    case TIMER_CHECK_MODIFY_PARA:
-        if(ModifyPara())
-        {
-            ((CButton*)GetDlgItem(IDC_BUTTON_SAVE))->EnableWindow(TRUE);
-            ((CButton*)GetDlgItem(IDC_BUTTON_RESET))->EnableWindow(TRUE);
-        }
-        else
-        {
-            ((CButton*)GetDlgItem(IDC_BUTTON_SAVE))->EnableWindow(FALSE);
-            ((CButton*)GetDlgItem(IDC_BUTTON_RESET))->EnableWindow(FALSE);
-        }
-        break;
-    case TIMER_UPDATE_USERSTATUS:
-        if(((CButton*)GetDlgItem(IDC_CHECK_STOPSTATUS))->GetCheck()) return;
-        ShowUserStatus();
-        break;
-    case TIMER_SORT_USERSTATUS:
-        KillTimer(nIDEvent);
-        m_ListUserStatus.SortItems(CompareProc, (DWORD_PTR)this);//排序第二个参数是比较函数的第三个参数
-        break;
-    case TIMER_PLC_CLOSE_SOCKET:
-        {
-            KillTimer(nIDEvent);
-            if (NULL != m_TCPSocket)
-            {
-                //获取大厅数据超时，断开连接
-                m_TCPSocket->CloseSocket(true);
-                OnConnectToLogonServer();
-            }
-        }
-        break;
-    default:
-        MSERVER_LOG_ERROR("未处理定时器 %d", nIDEvent);
-        break;
+	case TIME_CONNECT_MSERVER:
+		{
+			KillTimer(nIDEvent);
+			DoOnConnectToLogonServer();
+			break;
+		}
+	case TIMER_CHECK_UNCONNECT_ACCOUNT:
+		{
+			if(m_iLogonIndex != -1 || GLOBALDATA->bConnectToWitchServer == 0 || m_iLogonIndex == -2) break;
+			m_iLogonIndex = FindNextLogonIndex();
+			if(m_iLogonIndex != -1)
+			{// 有帐号需要登陆
+				OnConnectToLogonServer();
+			}
+		}
+		break;
+	case TIMER_CHECK_MODIFY_PARA:
+		if(ModifyPara())
+		{
+			((CButton*)GetDlgItem(IDC_BUTTON_SAVE))->EnableWindow(TRUE);
+			((CButton*)GetDlgItem(IDC_BUTTON_RESET))->EnableWindow(TRUE);
+		}
+		else
+		{
+			((CButton*)GetDlgItem(IDC_BUTTON_SAVE))->EnableWindow(FALSE);
+			((CButton*)GetDlgItem(IDC_BUTTON_RESET))->EnableWindow(FALSE);
+		}
+		break;
+	case TIMER_UPDATE_USERSTATUS:
+		if(((CButton*)GetDlgItem(IDC_CHECK_STOPSTATUS))->GetCheck()) return;
+		ShowUserStatus();
+		break;
+	case TIMER_SORT_USERSTATUS:
+		KillTimer(nIDEvent);
+		m_ListUserStatus.SortItems(CompareProc, (DWORD_PTR)this);//排序第二个参数是比较函数的第三个参数
+		break;
+	case TIMER_PLC_CLOSE_SOCKET:
+		{
+			KillTimer(nIDEvent);
+			if (NULL != m_TCPSocket)
+			{
+				//获取大厅数据超时，断开连接
+				m_TCPSocket->CloseSocket(true);
+				OnConnectToLogonServer();
+			}
+		}
+		break;
+	default:
+		MSERVER_LOG_ERROR("未处理定时器 %d", nIDEvent);
+		break;
 	}
 	return __super::OnTimer(nIDEvent);
 }
@@ -940,55 +940,55 @@ LRESULT CAuto_AIDlg::OnCloseGameRoom(WPARAM wparam, LPARAM lparam)
 	RoomInfoStruct * pRoomInfo=(RoomInfoStruct *)wparam;
 	if ((pRoomInfo!=NULL)&&(pRoomInfo->bAccess)&&(pRoomInfo->pGameRoomWnd!=NULL)&&(IsWindow(pRoomInfo->pGameRoomWnd->GetSafeHwnd())))
 	{
-		
+
 		for (int i = 0; i < MAX_GAME_ROOM; i++)
 		{
 			if (GLOBALDATA->Robots[i].iUserID == lparam)
 			{
 				GLOBALDATA->Robots[i].pRoomItem = NULL;
-                break;
+				break;
 			}
 		}
 		delete pRoomInfo->pGameRoomWnd;
 		pRoomInfo->pGameRoomWnd = NULL;
 		memset(pRoomInfo,0,sizeof(RoomInfoStruct));
 	}
-    if(!m_bExit) return 0;
-    for (int i = 0; i < MAX_GAME_ROOM; i++)
-    {
-        if(GLOBALDATA->Robots[i].pRoomItem != NULL)
-        {
-            return 0;
-        }
-        else
-        {
-            if(i + 1 ==  MAX_GAME_ROOM)
-            {
-                m_bExit = false;
-                PostQuitMessage(0);
-            }
-        }
-    }
+	if(!m_bExit) return 0;
+	for (int i = 0; i < MAX_GAME_ROOM; i++)
+	{
+		if(GLOBALDATA->Robots[i].pRoomItem != NULL)
+		{
+			return 0;
+		}
+		else
+		{
+			if(i + 1 ==  MAX_GAME_ROOM)
+			{
+				m_bExit = false;
+				PostQuitMessage(0);
+			}
+		}
+	}
 	return 0;
 }
 
 bool CAuto_AIDlg::EnterContestRoom(NetMessageHead * pNetHead, void * pNetData, UINT uDataSize, CTCPClientSocket * pClientSocket)
 {
-    if(pNetHead->bAssistantID != ASS_GP_GET_CONTEST_ROOMID)
-    {
-        return true;
-    }
+	if(pNetHead->bAssistantID != ASS_GP_GET_CONTEST_ROOMID)
+	{
+		return true;
+	}
 	if (0 != pNetHead->bHandleCode)
 	{
 		MSERVER_LOG_INFO("%s 获取比赛房间信息错误 %d", m_CurPlaceUserInfo.szName, pNetHead->bHandleCode);
 		return false;
 	}
 
-    if(uDataSize != sizeof(MSG_GP_GetContestRoomID_Result))
-    {
-        MSERVER_LOG_ERROR("MSG_GP_GetContestRoomID_Result 结构体不一致");
-        return false;
-    }
+	if(uDataSize != sizeof(MSG_GP_GetContestRoomID_Result))
+	{
+		MSERVER_LOG_ERROR("MSG_GP_GetContestRoomID_Result 结构体不一致");
+		return false;
+	}
 
 	MSG_GP_GetContestRoomID_Result *pContestRoom = (MSG_GP_GetContestRoomID_Result*)pNetData;
 
@@ -1025,7 +1025,7 @@ void CAuto_AIDlg::LoginMServer()
 	TML_SN += "";
 
 	CString MatchineCode= coreGetCode();	//取得本机机器码 zxj 2009-11-12 锁定机器
-	
+
 
 	MSG_GP_S_LogonByNameStruct LogonByName;///定义一个结构
 	::memset(&LogonByName,0,sizeof(LogonByName));
@@ -1033,26 +1033,26 @@ void CAuto_AIDlg::LoginMServer()
 	lstrcpy(LogonByName.TML_SN,TML_SN);
 	lstrcpy(LogonByName.szName, LogonName);//结构的用户名
 	wsprintf(LogonByName.szMD5Pass,"%s",PLATCONFIG->strAIPWD);
-/*	lstrcpy(LogonByName.szMathineCode, MatchineCode);*/	//锁定机器，把本机机器码传递到登录数据包里 zxj 2009-11-12
+	/*	lstrcpy(LogonByName.szMathineCode, MatchineCode);*/	//锁定机器，把本机机器码传递到登录数据包里 zxj 2009-11-12
 	//LogonByName.gsqPs = 5471;
 	m_TCPSocket->SendData(&LogonByName,sizeof(LogonByName),MDM_GP_LOGON,ASS_GP_LOGON_BY_NAME,0);
-    MSERVER_LOG_INFO("%s 登陆Mserver", LogonName);
+	MSERVER_LOG_INFO("%s 登陆Mserver", LogonName);
 
-    
-    {
-        AutoPlatLock lock(&UIDATA->uiSection);
-        auto it = UIDATA->usrInfos.find(LogonByName.szName);
-        if(it != UIDATA->usrInfos.end())
-        {
-            it->second.cof = GLOBALDATA->CurDynamicConfig;
-        }
-        else
-        {
-            UserItemUIInfo itemInfo;
-            itemInfo.cof = GLOBALDATA->CurDynamicConfig;
-            UIDATA->usrInfos[LogonByName.szName] = itemInfo;
-        }
-    }
+
+	{
+		AutoPlatLock lock(&UIDATA->uiSection);
+		auto it = UIDATA->usrInfos.find(LogonByName.szName);
+		if(it != UIDATA->usrInfos.end())
+		{
+			it->second.cof = GLOBALDATA->CurDynamicConfig;
+		}
+		else
+		{
+			UserItemUIInfo itemInfo;
+			itemInfo.cof = GLOBALDATA->CurDynamicConfig;
+			UIDATA->usrInfos[LogonByName.szName] = itemInfo;
+		}
+	}
 }
 
 //获取合适的比赛房间ID
@@ -1061,10 +1061,10 @@ void CAuto_AIDlg::GetContestRoomID(int roomid)
 	CAFCRoomItem *pGameRoomItem = GLOBALDATA->GameList.FindRoomItem(roomid);
 	if (!IsContestGame(pGameRoomItem->m_RoomInfo.dwRoomRule))
 	{
-        MSERVER_LOG_ERROR("%s 非比赛房间信息%d", m_CurPlaceUserInfo.szName, roomid);
+		MSERVER_LOG_ERROR("%s 非比赛房间信息%d", m_CurPlaceUserInfo.szName, roomid);
 		return;
 	}
-    MSERVER_LOG_INFO("%s 获取比赛房间信息 %d", m_CurPlaceUserInfo.szName, pGameRoomItem->m_RoomInfo.iContestID);
+	MSERVER_LOG_INFO("%s 获取比赛房间信息 %d", m_CurPlaceUserInfo.szName, pGameRoomItem->m_RoomInfo.iContestID);
 	MSG_GP_GetContestRoomID getContestRoomID;
 	getContestRoomID.iUserID = m_CurPlaceUserInfo.dwUserID;
 	getContestRoomID.iContestID = pGameRoomItem->m_RoomInfo.iContestID;
@@ -1079,19 +1079,19 @@ void CAuto_AIDlg::EnterGameRoom(int roomid)
 	if (pGameRoomItem == NULL) 
 	{
 		MSERVER_LOG_ERROR("%s 获取不到房间信息%d", m_CurPlaceUserInfo.szName, roomid);
-        m_TCPSocket->CloseSocket(true);
+		m_TCPSocket->CloseSocket(true);
 		return;
 	}
-    
 
-    MSERVER_LOG_INFO("%s 建立GameRoomEx", m_CurPlaceUserInfo.szName);
+
+	MSERVER_LOG_INFO("%s 建立GameRoomEx", m_CurPlaceUserInfo.szName);
 
 	//判断是否特殊房间
 	ComRoomInfo * pComRoomInfo=&pGameRoomItem->m_RoomInfo;
 	if (((pComRoomInfo->uComType!=TY_NORMAL_GAME)&&(pComRoomInfo->uComType!=TY_MATCH_GAME)
 		&&(pComRoomInfo->uComType!=TY_MONEY_GAME)))
 	{
-        MSERVER_LOG_ERROR("%s 不支持房间%d", m_CurPlaceUserInfo.szName, roomid);
+		MSERVER_LOG_ERROR("%s 不支持房间%d", m_CurPlaceUserInfo.szName, roomid);
 		m_TCPSocket->CloseSocket(true);
 		AfxGetApp( )->m_pMainWnd->DestroyWindow ();
 		return;		
@@ -1103,23 +1103,23 @@ void CAuto_AIDlg::EnterGameRoom(int roomid)
 
 
 	//进入游戏大厅
-    int index = m_iLogonIndex;
+	int index = m_iLogonIndex;
 	RoomInfoStruct *pRoomInfoItem=&GLOBALDATA->RoomInfo[index];
 
 	try
 	{
-        {
-            AutoPlatLock lock(&UIDATA->uiSection);
-            auto it = UIDATA->usrInfos.find(m_CurPlaceUserInfo.szName);
-            if(it != UIDATA->usrInfos.end())
-            {
-                it->second.roomID = roomid;
-            }
-            else
-            {
-                MSERVER_LOG_ERROR("%s 没有找到UI信息", m_CurPlaceUserInfo.szName);
-            }
-        }
+		{
+			AutoPlatLock lock(&UIDATA->uiSection);
+			auto it = UIDATA->usrInfos.find(m_CurPlaceUserInfo.szName);
+			if(it != UIDATA->usrInfos.end())
+			{
+				it->second.roomID = roomid;
+			}
+			else
+			{
+				MSERVER_LOG_ERROR("%s 没有找到UI信息", m_CurPlaceUserInfo.szName);
+			}
+		}
 		pRoomInfoItem->bAccess=true;
 		pRoomInfoItem->stComRoomInfo=*pComRoomInfo;
 		lstrcpy(pRoomInfoItem->szProcessName,szProessName);
@@ -1133,32 +1133,32 @@ void CAuto_AIDlg::EnterGameRoom(int roomid)
 
 		CGameRoomEx * pGameRoom = (CGameRoomEx *)pRoomInfoItem->pGameRoomWnd;
 
-        if(index >= 0 && index < MAX_GAME_ROOM)
-        {
-		    GLOBALDATA->Robots[index].pRoomItem = pRoomInfoItem;
-		    GLOBALDATA->Robots[index].iUserID = m_CurPlaceUserInfo.dwUserID;
-        }
-        else
-        {
-            MSERVER_LOG_ERROR("不合法索引%d", index);
-            throw TEXT("建立A新组件失败");
-        }
+		if(index >= 0 && index < MAX_GAME_ROOM)
+		{
+			GLOBALDATA->Robots[index].pRoomItem = pRoomInfoItem;
+			GLOBALDATA->Robots[index].iUserID = m_CurPlaceUserInfo.dwUserID;
+		}
+		else
+		{
+			MSERVER_LOG_ERROR("不合法索引%d", index);
+			throw TEXT("建立A新组件失败");
+		}
 
 		if (pRoomInfoItem->pGameRoomWnd->Create(IDD_GAME_ROOM,this)==FALSE) 
 			throw TEXT("建立A新组件失败");
 	}
 	catch (...)
 	{
-        MSERVER_LOG_ERROR("%s 建立GameRoomEx异常", m_CurPlaceUserInfo.szName);
+		MSERVER_LOG_ERROR("%s 建立GameRoomEx异常", m_CurPlaceUserInfo.szName);
 		//清理信息
 		delete pRoomInfoItem->pGameRoomWnd;
 		memset(pRoomInfoItem,0,sizeof(RoomInfoStruct));
-        m_TCPSocket->CloseSocket(true);
+		m_TCPSocket->CloseSocket(true);
 		return; 
 	}
 
-    KillTimer(TIMER_PLC_CLOSE_SOCKET);
-    m_TCPSocket->CloseSocket(true);
+	KillTimer(TIMER_PLC_CLOSE_SOCKET);
+	m_TCPSocket->CloseSocket(true);
 	return;
 }
 
@@ -1167,136 +1167,230 @@ void CAuto_AIDlg::EnterGameRoom(int roomid)
 //机器人根据金币操作银行
 void CAuto_AIDlg::AiControlBank()
 {
-    if (GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney != 0 && m_CurPlaceUserInfo.i64Money < GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney)
-    {// 取钱
-        __int64 i64RandMoney = ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 2 +  GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) - m_CurPlaceUserInfo.i64Money;
-        if(rand()%2 == 0)
-        {
-            i64RandMoney -= (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
-        }
-        else
-        {
-            i64RandMoney += (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
-        }
-        if(i64RandMoney > m_CurPlaceUserInfo.i64Bank)
-        {
-            i64RandMoney = m_CurPlaceUserInfo.i64Bank;
-        }
-        if(i64RandMoney > 0)			
-            CheckMoney(i64RandMoney, 1);			
-    }
-    else if (GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney != 0 && m_CurPlaceUserInfo.i64Money >  GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney)
-    {// 存钱
-        __int64 i64RandMoney = m_CurPlaceUserInfo.i64Money - ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney -GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 2 +  GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney);
-        if(rand()%2 == 0)
-        {
-            i64RandMoney -= (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
-        }
-        else
-        {
-            i64RandMoney += (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
-        }
-        if(i64RandMoney > 0)
-            CheckMoney(i64RandMoney, 2);	
-    }
+	if (GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney != 0 && m_CurPlaceUserInfo.i64Money < GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney)
+	{// 取钱
+		//取一个在 取钱和存钱的区间
+		__int64 i64RandMoney = ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 2 + 
+			GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) - m_CurPlaceUserInfo.i64Money;
+		/*
+		if(rand()%2 == 0)
+		{
+		i64RandMoney -= (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
+		}
+		else
+		{
+		i64RandMoney += (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
+		}
+		*/
+		//Eil @ 20190318
+		//增加随机
+		int rand_number=rand()%3;
+		switch(rand_number)
+		{
+		case 0:
+			{
+				if(rand()%2 == 0)
+				{
+					i64RandMoney -= (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 5));
+				}
+				else
+				{
+					i64RandMoney += (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 5));
+				}
+				break;
+			}		
+		case 1:
+			{
+				if(rand()%2 == 0)
+				{
+					i64RandMoney -= (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
+				}
+				else
+				{
+					i64RandMoney += (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
+				}
+				break;
+			}
+		case 2:
+			{
+				if(rand()%2 == 0)
+				{
+					i64RandMoney -= (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 3));
+				}
+				else
+				{
+					i64RandMoney += (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 3));
+				}
+				break;
+			}
+		default:
+			break;
+		}
+		//
+		if(i64RandMoney > m_CurPlaceUserInfo.i64Bank)
+		{
+			i64RandMoney = m_CurPlaceUserInfo.i64Bank;
+		}
+		if(i64RandMoney > 0)			
+			CheckMoney(i64RandMoney, 1);			
+	}
+	else if (GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney != 0 && m_CurPlaceUserInfo.i64Money >  GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney)
+	{// 存钱
+		__int64 i64RandMoney = m_CurPlaceUserInfo.i64Money - ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney -GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 2 + 
+			GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney);
+		/*
+		if(rand()%2 == 0)
+		{
+		i64RandMoney -= (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
+		}
+		else
+		{
+		i64RandMoney += (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
+		}
+		*/
+		//Eil @ 20190318
+		//增加随机
+		int rand_number=rand()%3;
+		switch(rand_number)
+		{
+		case 0:
+			{
+				if(rand()%2 == 0)
+				{
+					i64RandMoney -= (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 5));
+				}
+				else
+				{
+					i64RandMoney += (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 5));
+				}
+			}
+		case 1:
+			{
+				if(rand()%2 == 0)
+				{
+					i64RandMoney -= (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
+				}
+				else
+				{
+					i64RandMoney += (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 4));
+				}
+			}
+		case 2:
+			{
+				if(rand()%2 == 0)
+				{
+					i64RandMoney -= (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 3));
+				}
+				else
+				{
+					i64RandMoney += (rand() % ((GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney - GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney) / 3));
+				}
+			}
+		default:
+			break;
+		}
+		//
+		if(i64RandMoney > 0)
+			CheckMoney(i64RandMoney, 2);	
+	}
 }
 
 void CAuto_AIDlg::CheckMoney(__int64 iMoney, int type)
 {
-    TMSG_GP_BankCheck checkMoney;
-    checkMoney._game_id = 0;
-    checkMoney._money = iMoney;
-    checkMoney._operate_type = type;
-    checkMoney._user_id = m_CurPlaceUserInfo.dwUserID;
-    memcpy(checkMoney._szMD5Pass,m_CurPlaceUserInfo.szMD5Pass,sizeof(m_CurPlaceUserInfo.szMD5Pass));
-    m_TCPSocket->SendData(&checkMoney, sizeof(TMSG_GP_BankCheck), MDM_GP_BANK, ASS_GP_BANK_CHECK, 0);
+	TMSG_GP_BankCheck checkMoney;
+	checkMoney._game_id = 0;
+	checkMoney._money = iMoney;
+	checkMoney._operate_type = type;
+	checkMoney._user_id = m_CurPlaceUserInfo.dwUserID;
+	memcpy(checkMoney._szMD5Pass,m_CurPlaceUserInfo.szMD5Pass,sizeof(m_CurPlaceUserInfo.szMD5Pass));
+	m_TCPSocket->SendData(&checkMoney, sizeof(TMSG_GP_BankCheck), MDM_GP_BANK, ASS_GP_BANK_CHECK, 0);
 }
 
 bool CAuto_AIDlg::NextTask()
 {
-    SYSTEMTIME lTime;
-    GetLocalTime(&lTime);
-    CString key;
-    key.Format("%02d%02d", lTime.wHour, lTime.wMinute);
-    DynamicConfig cof;
-    cof.nLogonCount = -1;
-    
-    {
-        AutoPlatLock lock(&PLATCONFIG->m_DynamicSection);
-        auto it = PLATCONFIG->m_DynamicConfigs.begin();
-        while(it != PLATCONFIG->m_DynamicConfigs.end())
-        {
-            if(it->first <= key.GetBuffer())
-            {
-                cof = it->second;
-            }
-            else
-            {// 找到
-                if(GLOBALDATA->CurDynamicConfig.strTime != cof.strTime)
-                {
-                    MSERVER_LOG_INFO("Start Task %s", cof.strTime);
-                    GLOBALDATA->CurDynamicConfig = cof;
-                    CString strInfo;
-                    strInfo.Format("当前任务:%s", GLOBALDATA->CurDynamicConfig.strTime);
-                    GetDlgItem(IDC_STATIC_TASKINFO)->SetWindowText(strInfo);
-                    ResetConfig();
-                    return true;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            it++;
-        }
-    }
-    if(cof.nLogonCount != -1 && GLOBALDATA->CurDynamicConfig.strTime != cof.strTime)
-    {// 找到
-        MSERVER_LOG_INFO("Start Task %s", cof.strTime);
-        GLOBALDATA->CurDynamicConfig = cof;
-        CString strInfo;
-        strInfo.Format("当前任务:%s", GLOBALDATA->CurDynamicConfig.strTime);
-        GetDlgItem(IDC_STATIC_TASKINFO)->SetWindowText(strInfo);
-        ResetConfig();
-        return true;
-    }
-    
-    return false;
+	SYSTEMTIME lTime;
+	GetLocalTime(&lTime);
+	CString key;
+	key.Format("%02d%02d", lTime.wHour, lTime.wMinute);
+	DynamicConfig cof;
+	cof.nLogonCount = -1;
+
+	{
+		AutoPlatLock lock(&PLATCONFIG->m_DynamicSection);
+		auto it = PLATCONFIG->m_DynamicConfigs.begin();
+		while(it != PLATCONFIG->m_DynamicConfigs.end())
+		{
+			if(it->first <= key.GetBuffer())
+			{
+				cof = it->second;
+			}
+			else
+			{// 找到
+				if(GLOBALDATA->CurDynamicConfig.strTime != cof.strTime)
+				{
+					MSERVER_LOG_INFO("Start Task %s", cof.strTime);
+					GLOBALDATA->CurDynamicConfig = cof;
+					CString strInfo;
+					strInfo.Format("当前任务:%s", GLOBALDATA->CurDynamicConfig.strTime);
+					GetDlgItem(IDC_STATIC_TASKINFO)->SetWindowText(strInfo);
+					ResetConfig();
+					return true;
+				}
+				else
+				{
+					break;
+				}
+			}
+			it++;
+		}
+	}
+	if(cof.nLogonCount != -1 && GLOBALDATA->CurDynamicConfig.strTime != cof.strTime)
+	{// 找到
+		MSERVER_LOG_INFO("Start Task %s", cof.strTime);
+		GLOBALDATA->CurDynamicConfig = cof;
+		CString strInfo;
+		strInfo.Format("当前任务:%s", GLOBALDATA->CurDynamicConfig.strTime);
+		GetDlgItem(IDC_STATIC_TASKINFO)->SetWindowText(strInfo);
+		ResetConfig();
+		return true;
+	}
+
+	return false;
 }
 
 int	CAuto_AIDlg::FindNextLogonIndex()
 {
-    static int s_index = -1;
-    if(NextTask())
-    {
-        s_index = -1;
-    }
-    int i = s_index + 1;
-    if(i >= GLOBALDATA->CurDynamicConfig.nLogonCount) i = 0;
+	static int s_index = -1;
+	if(NextTask())
+	{
+		s_index = -1;
+	}
+	int i = s_index + 1;
+	if(i >= GLOBALDATA->CurDynamicConfig.nLogonCount) i = 0;
 
 	for (; i < GLOBALDATA->CurDynamicConfig.nLogonCount; i++)
 	{
 		if (GLOBALDATA->Robots[i].pRoomItem == NULL)
 		{
-            s_index = i;
-            ZeroMemory(m_CurPlaceUserInfo.szName, sizeof(m_CurPlaceUserInfo.szName));
-            sprintf_s(m_CurPlaceUserInfo.szName, "%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, i + GLOBALDATA->CurDynamicConfig.nBeginSequenceNo);
+			s_index = i;
+			ZeroMemory(m_CurPlaceUserInfo.szName, sizeof(m_CurPlaceUserInfo.szName));
+			sprintf_s(m_CurPlaceUserInfo.szName, "%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, i + GLOBALDATA->CurDynamicConfig.nBeginSequenceNo);
 			return i;
 		}
 	}
-    if( i == GLOBALDATA->CurDynamicConfig.nLogonCount)
-    {
-        for (i = 0; i <= s_index; i++)
-        {
-            if (GLOBALDATA->Robots[i].pRoomItem == NULL)
-            {
-                s_index = i;
-                ZeroMemory(m_CurPlaceUserInfo.szName, sizeof(m_CurPlaceUserInfo.szName));
-                sprintf_s(m_CurPlaceUserInfo.szName, "%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, i + GLOBALDATA->CurDynamicConfig.nBeginSequenceNo);
-                return i;
-            }
-        }
-    }
+	if( i == GLOBALDATA->CurDynamicConfig.nLogonCount)
+	{
+		for (i = 0; i <= s_index; i++)
+		{
+			if (GLOBALDATA->Robots[i].pRoomItem == NULL)
+			{
+				s_index = i;
+				ZeroMemory(m_CurPlaceUserInfo.szName, sizeof(m_CurPlaceUserInfo.szName));
+				sprintf_s(m_CurPlaceUserInfo.szName, "%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, i + GLOBALDATA->CurDynamicConfig.nBeginSequenceNo);
+				return i;
+			}
+		}
+	}
 
 	return -1;
 }
@@ -1304,602 +1398,602 @@ int	CAuto_AIDlg::FindNextLogonIndex()
 //保存配置
 void  CAuto_AIDlg::SaveConfig()
 {
-    CString strTmp;
-    bool bAddUser = false;
-    DynamicConfig conf;
-    GetDlgItem(IDC_EDIT_LOGINCOUNT)->GetWindowText(strTmp);
-    if(!IsValidNumber(strTmp))
-    {
-        MessageBox("登陆人数设置错误");
-        return;
-    }
-    if(conf.nLogonCount < atoi(strTmp) ) bAddUser = true;
-    conf.nLogonCount = atoi(strTmp);
-    GetDlgItem(IDC_EDIT_HEADNAME)->GetWindowText(strTmp);
-    conf.strRobotPreName = strTmp;
-    GetDlgItem(IDC_EDIT_BEGINNO)->GetWindowText(strTmp);
-    if(!IsValidNumber(strTmp))
-    {
-        MessageBox("起始序列设置错误");
-        return;
-    }
-    conf.nBeginSequenceNo = atoi(strTmp);
-    GetDlgItem(IDC_EDIT_CHECKOUT)->GetWindowText(strTmp);
-    if(!IsValidNumber(strTmp))
-    {
-        MessageBox("取钱阙值设置错误");
-        return;
-    }
-    conf.nCheckOutMinMoney = _atoi64(strTmp);
-    GetDlgItem(IDC_EDIT_CHECKIN)->GetWindowText(strTmp);
-    if(!IsValidNumber(strTmp))
-    {
-        MessageBox("存钱阙值设置错误");
-        return;
-    }
-    conf.nCheckInMaxMoney = _atoi64(strTmp);
+	CString strTmp;
+	bool bAddUser = false;
+	DynamicConfig conf;
+	GetDlgItem(IDC_EDIT_LOGINCOUNT)->GetWindowText(strTmp);
+	if(!IsValidNumber(strTmp))
+	{
+		MessageBox("登陆人数设置错误");
+		return;
+	}
+	if(conf.nLogonCount < atoi(strTmp) ) bAddUser = true;
+	conf.nLogonCount = atoi(strTmp);
+	GetDlgItem(IDC_EDIT_HEADNAME)->GetWindowText(strTmp);
+	conf.strRobotPreName = strTmp;
+	GetDlgItem(IDC_EDIT_BEGINNO)->GetWindowText(strTmp);
+	if(!IsValidNumber(strTmp))
+	{
+		MessageBox("起始序列设置错误");
+		return;
+	}
+	conf.nBeginSequenceNo = atoi(strTmp);
+	GetDlgItem(IDC_EDIT_CHECKOUT)->GetWindowText(strTmp);
+	if(!IsValidNumber(strTmp))
+	{
+		MessageBox("取钱阙值设置错误");
+		return;
+	}
+	conf.nCheckOutMinMoney = _atoi64(strTmp);
+	GetDlgItem(IDC_EDIT_CHECKIN)->GetWindowText(strTmp);
+	if(!IsValidNumber(strTmp))
+	{
+		MessageBox("存钱阙值设置错误");
+		return;
+	}
+	conf.nCheckInMaxMoney = _atoi64(strTmp);
 
-    GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->GetWindowText(strTmp);
-    if(!IsValidNumber(strTmp))
-    {
-        MessageBox("每桌机器人个数设置错误");
-        return;
-    }
-    conf.bMachineDeskCount = atoi(strTmp);
-    GetDlgItem(IDC_EDIT_TIMEFISHGAME)->GetWindowText(strTmp);
-    if(!IsValidNumber(strTmp))
-    {
-        MessageBox("捕鱼游戏多久离桌设置错误");
-        return;
-    }
-    conf.nFishGameTimeLeave = atoi(strTmp);
-    GetDlgItem(IDC_EDIT_KEEPINDESK)->GetWindowText(strTmp);
-    if(!IsValidNumber(strTmp))
-    {
-        MessageBox("等待游戏开始时长设置错误");
-        return;
-    }
-    conf.nKeepInDeskSeconds = atoi(strTmp);
-    GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->GetWindowText(strTmp);
-    if(!IsValidNumber(strTmp))
-    {
-        MessageBox("游戏结束离开概率设置错误");
-        return;
-    }
-    conf.nGameEndLeaveDesk = atoi(strTmp);
-    if(((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->GetCheck() == 1)
-    {
-        conf.bMachineAndPlayer = true;
-    }
-    else
-    {
-        conf.bMachineAndPlayer = false;
-    }
-    CString errorMsg;
-    if(!conf.IsValid(errorMsg))
-    {
-        MessageBox(errorMsg);
-        return;
-    }
-    conf.strTime = GLOBALDATA->CurDynamicConfig.strTime;
-    GLOBALDATA->CurDynamicConfig = conf;
-    {
-        AutoPlatLock lock(&PLATCONFIG->m_DynamicSection);
-        auto it = PLATCONFIG->m_DynamicConfigs.find(GLOBALDATA->CurDynamicConfig.strTime.GetBuffer());
-        if(it != PLATCONFIG->m_DynamicConfigs.end())
-        {
-            it->second = GLOBALDATA->CurDynamicConfig;
-        }
-    }
+	GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->GetWindowText(strTmp);
+	if(!IsValidNumber(strTmp))
+	{
+		MessageBox("每桌机器人个数设置错误");
+		return;
+	}
+	conf.bMachineDeskCount = atoi(strTmp);
+	GetDlgItem(IDC_EDIT_TIMEFISHGAME)->GetWindowText(strTmp);
+	if(!IsValidNumber(strTmp))
+	{
+		MessageBox("捕鱼游戏多久离桌设置错误");
+		return;
+	}
+	conf.nFishGameTimeLeave = atoi(strTmp);
+	GetDlgItem(IDC_EDIT_KEEPINDESK)->GetWindowText(strTmp);
+	if(!IsValidNumber(strTmp))
+	{
+		MessageBox("等待游戏开始时长设置错误");
+		return;
+	}
+	conf.nKeepInDeskSeconds = atoi(strTmp);
+	GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->GetWindowText(strTmp);
+	if(!IsValidNumber(strTmp))
+	{
+		MessageBox("游戏结束离开概率设置错误");
+		return;
+	}
+	conf.nGameEndLeaveDesk = atoi(strTmp);
+	if(((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->GetCheck() == 1)
+	{
+		conf.bMachineAndPlayer = true;
+	}
+	else
+	{
+		conf.bMachineAndPlayer = false;
+	}
+	CString errorMsg;
+	if(!conf.IsValid(errorMsg))
+	{
+		MessageBox(errorMsg);
+		return;
+	}
+	conf.strTime = GLOBALDATA->CurDynamicConfig.strTime;
+	GLOBALDATA->CurDynamicConfig = conf;
+	{
+		AutoPlatLock lock(&PLATCONFIG->m_DynamicSection);
+		auto it = PLATCONFIG->m_DynamicConfigs.find(GLOBALDATA->CurDynamicConfig.strTime.GetBuffer());
+		if(it != PLATCONFIG->m_DynamicConfigs.end())
+		{
+			it->second = GLOBALDATA->CurDynamicConfig;
+		}
+	}
 
-    PLATCONFIG->Save();
+	PLATCONFIG->Save();
 
-    if(bAddUser && GLOBALDATA->bConnectToWitchServer == 1)
-    {// 增加用户，启动登陆
-        OnConnectToLogonServer();
-    }
+	if(bAddUser && GLOBALDATA->bConnectToWitchServer == 1)
+	{// 增加用户，启动登陆
+		OnConnectToLogonServer();
+	}
 }
 //恢复修改
 void  CAuto_AIDlg::ResetConfig()
 {
-    if(GLOBALDATA->CurDynamicConfig.nLogonCount == -1)
-    {
-        CString strTmp = "";
-        GetDlgItem(IDC_STATIC_TASKINFO)->SetWindowText("当前任务");
-        GetDlgItem(IDC_EDIT_LOGINCOUNT)->SetWindowText(strTmp);
-        GetDlgItem(IDC_EDIT_HEADNAME)->SetWindowText(strTmp);
-        GetDlgItem(IDC_EDIT_BEGINNO)->SetWindowText(strTmp);
-        GetDlgItem(IDC_EDIT_CHECKOUT)->SetWindowText(strTmp);
-        GetDlgItem(IDC_EDIT_CHECKIN)->SetWindowText(strTmp);
-        GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->SetWindowText(strTmp);
-        GetDlgItem(IDC_EDIT_TIMEFISHGAME)->SetWindowText(strTmp);
-        GetDlgItem(IDC_EDIT_KEEPINDESK)->SetWindowText(strTmp);
-        GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->SetWindowText(strTmp);
-        ((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->SetCheck(0);
-        return;
-    }
+	if(GLOBALDATA->CurDynamicConfig.nLogonCount == -1)
+	{
+		CString strTmp = "";
+		GetDlgItem(IDC_STATIC_TASKINFO)->SetWindowText("当前任务");
+		GetDlgItem(IDC_EDIT_LOGINCOUNT)->SetWindowText(strTmp);
+		GetDlgItem(IDC_EDIT_HEADNAME)->SetWindowText(strTmp);
+		GetDlgItem(IDC_EDIT_BEGINNO)->SetWindowText(strTmp);
+		GetDlgItem(IDC_EDIT_CHECKOUT)->SetWindowText(strTmp);
+		GetDlgItem(IDC_EDIT_CHECKIN)->SetWindowText(strTmp);
+		GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->SetWindowText(strTmp);
+		GetDlgItem(IDC_EDIT_TIMEFISHGAME)->SetWindowText(strTmp);
+		GetDlgItem(IDC_EDIT_KEEPINDESK)->SetWindowText(strTmp);
+		GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->SetWindowText(strTmp);
+		((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->SetCheck(0);
+		return;
+	}
 
-    CString strTmp;
-    strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nLogonCount);
-    GetDlgItem(IDC_EDIT_LOGINCOUNT)->SetWindowText(strTmp);
-    strTmp.Format(_T("%s"),GLOBALDATA->CurDynamicConfig.strRobotPreName);
-    GetDlgItem(IDC_EDIT_HEADNAME)->SetWindowText(strTmp);
-    strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nBeginSequenceNo);
-    GetDlgItem(IDC_EDIT_BEGINNO)->SetWindowText(strTmp);
-    strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney);
-    GetDlgItem(IDC_EDIT_CHECKOUT)->SetWindowText(strTmp);
-    strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney);
-    GetDlgItem(IDC_EDIT_CHECKIN)->SetWindowText(strTmp);
-    strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.bMachineDeskCount);
-    GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->SetWindowText(strTmp);
-    strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nFishGameTimeLeave);
-    GetDlgItem(IDC_EDIT_TIMEFISHGAME)->SetWindowText(strTmp);
-    if(!PLATCONFIG->bFishGame)
-    {
-        GetDlgItem(IDC_EDIT_TIMEFISHGAME)->EnableWindow(FALSE);
-    }
-    strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nKeepInDeskSeconds);
-    GetDlgItem(IDC_EDIT_KEEPINDESK)->SetWindowText(strTmp);
-    if(PLATCONFIG->bFishGame)
-    {
-        GetDlgItem(IDC_EDIT_KEEPINDESK)->EnableWindow(FALSE);
-    }
-    strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nGameEndLeaveDesk);
-    GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->SetWindowText(strTmp);
-    if(PLATCONFIG->bFishGame)
-    {
-        GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->EnableWindow(FALSE);
-    }
-    if(GLOBALDATA->CurDynamicConfig.bMachineAndPlayer)
-    {
-        ((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->SetCheck(1);
-    }
-    else
-    {
-        ((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->SetCheck(0);
-    }
+	CString strTmp;
+	strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nLogonCount);
+	GetDlgItem(IDC_EDIT_LOGINCOUNT)->SetWindowText(strTmp);
+	strTmp.Format(_T("%s"),GLOBALDATA->CurDynamicConfig.strRobotPreName);
+	GetDlgItem(IDC_EDIT_HEADNAME)->SetWindowText(strTmp);
+	strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nBeginSequenceNo);
+	GetDlgItem(IDC_EDIT_BEGINNO)->SetWindowText(strTmp);
+	strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney);
+	GetDlgItem(IDC_EDIT_CHECKOUT)->SetWindowText(strTmp);
+	strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney);
+	GetDlgItem(IDC_EDIT_CHECKIN)->SetWindowText(strTmp);
+	strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.bMachineDeskCount);
+	GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->SetWindowText(strTmp);
+	strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nFishGameTimeLeave);
+	GetDlgItem(IDC_EDIT_TIMEFISHGAME)->SetWindowText(strTmp);
+	if(!PLATCONFIG->bFishGame)
+	{
+		GetDlgItem(IDC_EDIT_TIMEFISHGAME)->EnableWindow(FALSE);
+	}
+	strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nKeepInDeskSeconds);
+	GetDlgItem(IDC_EDIT_KEEPINDESK)->SetWindowText(strTmp);
+	if(PLATCONFIG->bFishGame)
+	{
+		GetDlgItem(IDC_EDIT_KEEPINDESK)->EnableWindow(FALSE);
+	}
+	strTmp.Format(_T("%d"),GLOBALDATA->CurDynamicConfig.nGameEndLeaveDesk);
+	GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->SetWindowText(strTmp);
+	if(PLATCONFIG->bFishGame)
+	{
+		GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->EnableWindow(FALSE);
+	}
+	if(GLOBALDATA->CurDynamicConfig.bMachineAndPlayer)
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->SetCheck(1);
+	}
+	else
+	{
+		((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->SetCheck(0);
+	}
 }
 
 bool CAuto_AIDlg::ModifyPara()
 {
-    if(GLOBALDATA->CurDynamicConfig.nLogonCount == -1) return false;
-    bool bModify = false;
-    /////////////
-    CString strTmp;
-    GetDlgItem(IDC_EDIT_LOGINCOUNT)->GetWindowText(strTmp);
-    if(GLOBALDATA->CurDynamicConfig.nLogonCount != atoi(strTmp))
-    {
-        bModify = true;
-    }
-    GetDlgItem(IDC_STATIC_LOGINCOUNT)->Invalidate();
+	if(GLOBALDATA->CurDynamicConfig.nLogonCount == -1) return false;
+	bool bModify = false;
+	/////////////
+	CString strTmp;
+	GetDlgItem(IDC_EDIT_LOGINCOUNT)->GetWindowText(strTmp);
+	if(GLOBALDATA->CurDynamicConfig.nLogonCount != atoi(strTmp))
+	{
+		bModify = true;
+	}
+	GetDlgItem(IDC_STATIC_LOGINCOUNT)->Invalidate();
 
-    /////////////
-    GetDlgItem(IDC_EDIT_HEADNAME)->GetWindowText(strTmp);
-    if(GLOBALDATA->CurDynamicConfig.strRobotPreName != strTmp)
-    {
-        bModify = true;
-    }
-    GetDlgItem(IDC_STATIC_HEADNAME)->Invalidate();
+	/////////////
+	GetDlgItem(IDC_EDIT_HEADNAME)->GetWindowText(strTmp);
+	if(GLOBALDATA->CurDynamicConfig.strRobotPreName != strTmp)
+	{
+		bModify = true;
+	}
+	GetDlgItem(IDC_STATIC_HEADNAME)->Invalidate();
 
-    ////////////////
-    GetDlgItem(IDC_EDIT_BEGINNO)->GetWindowText(strTmp);
-    if(GLOBALDATA->CurDynamicConfig.nBeginSequenceNo != atoi(strTmp))
-    {
-        bModify = true;
-    }
-    GetDlgItem(IDC_STATIC_BEGINNO)->Invalidate();
+	////////////////
+	GetDlgItem(IDC_EDIT_BEGINNO)->GetWindowText(strTmp);
+	if(GLOBALDATA->CurDynamicConfig.nBeginSequenceNo != atoi(strTmp))
+	{
+		bModify = true;
+	}
+	GetDlgItem(IDC_STATIC_BEGINNO)->Invalidate();
 
-    //////////////
-    GetDlgItem(IDC_EDIT_CHECKOUT)->GetWindowText(strTmp);
-    if(GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney != _atoi64(strTmp))
-    {
-        bModify = true;
-    }
-    GetDlgItem(IDC_STATIC_CHECKOUT)->Invalidate();
+	//////////////
+	GetDlgItem(IDC_EDIT_CHECKOUT)->GetWindowText(strTmp);
+	if(GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney != _atoi64(strTmp))
+	{
+		bModify = true;
+	}
+	GetDlgItem(IDC_STATIC_CHECKOUT)->Invalidate();
 
-    //////////////
-    GetDlgItem(IDC_EDIT_CHECKIN)->GetWindowText(strTmp);
-    if(GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney != _atoi64(strTmp))
-    {
-        bModify = true;
-    }
-    GetDlgItem(IDC_STATIC_CHECKIN)->Invalidate();
+	//////////////
+	GetDlgItem(IDC_EDIT_CHECKIN)->GetWindowText(strTmp);
+	if(GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney != _atoi64(strTmp))
+	{
+		bModify = true;
+	}
+	GetDlgItem(IDC_STATIC_CHECKIN)->Invalidate();
 
-    //////////////
-    GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->GetWindowText(strTmp);
-    if(GLOBALDATA->CurDynamicConfig.bMachineDeskCount != atoi(strTmp))
-    {
-        bModify = true;
-    }
-    GetDlgItem(IDC_STATIC_ONDESKROBOTNO)->Invalidate();
+	//////////////
+	GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->GetWindowText(strTmp);
+	if(GLOBALDATA->CurDynamicConfig.bMachineDeskCount != atoi(strTmp))
+	{
+		bModify = true;
+	}
+	GetDlgItem(IDC_STATIC_ONDESKROBOTNO)->Invalidate();
 
-    /////////////////
-    GetDlgItem(IDC_EDIT_KEEPINDESK)->GetWindowText(strTmp);
-    if(GLOBALDATA->CurDynamicConfig.nKeepInDeskSeconds != atoi(strTmp))
-    {
-        bModify = true;
-    }
-    GetDlgItem(IDC_STATIC_KEEPINDESK)->Invalidate();
+	/////////////////
+	GetDlgItem(IDC_EDIT_KEEPINDESK)->GetWindowText(strTmp);
+	if(GLOBALDATA->CurDynamicConfig.nKeepInDeskSeconds != atoi(strTmp))
+	{
+		bModify = true;
+	}
+	GetDlgItem(IDC_STATIC_KEEPINDESK)->Invalidate();
 
-    /////////////////
-    GetDlgItem(IDC_EDIT_TIMEFISHGAME)->GetWindowText(strTmp);
-    if(GLOBALDATA->CurDynamicConfig.nFishGameTimeLeave != atoi(strTmp))
-    {
-        bModify = true;
-    }
-    GetDlgItem(IDC_STATIC_TIMEFISHGAME)->Invalidate();
+	/////////////////
+	GetDlgItem(IDC_EDIT_TIMEFISHGAME)->GetWindowText(strTmp);
+	if(GLOBALDATA->CurDynamicConfig.nFishGameTimeLeave != atoi(strTmp))
+	{
+		bModify = true;
+	}
+	GetDlgItem(IDC_STATIC_TIMEFISHGAME)->Invalidate();
 
-    /////////////////
-    GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->GetWindowText(strTmp);
-    if(GLOBALDATA->CurDynamicConfig.nGameEndLeaveDesk != atoi(strTmp))
-    {
-        bModify = true;
-    }
-    GetDlgItem(IDC_STATIC_GAMEENDLEAVE)->Invalidate();
+	/////////////////
+	GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->GetWindowText(strTmp);
+	if(GLOBALDATA->CurDynamicConfig.nGameEndLeaveDesk != atoi(strTmp))
+	{
+		bModify = true;
+	}
+	GetDlgItem(IDC_STATIC_GAMEENDLEAVE)->Invalidate();
 
-    //////////////////
-    bool b;
-    if(((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->GetCheck() == 1)
-    {
-        b = true;
-    }
-    else
-    {
-        b = false;
-    }
-    if(b != GLOBALDATA->CurDynamicConfig.bMachineAndPlayer)
-    {
-        bModify = true;
-    }
-    GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER)->Invalidate();
+	//////////////////
+	bool b;
+	if(((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->GetCheck() == 1)
+	{
+		b = true;
+	}
+	else
+	{
+		b = false;
+	}
+	if(b != GLOBALDATA->CurDynamicConfig.bMachineAndPlayer)
+	{
+		bModify = true;
+	}
+	GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER)->Invalidate();
 
-    return bModify;
+	return bModify;
 }
 
 void CAuto_AIDlg::InitUI(bool bEnable)
 {
-    GetDlgItem(IDC_EDIT_HEADNAME)->EnableWindow(bEnable);
-    GetDlgItem(IDC_EDIT_BEGINNO)->EnableWindow(bEnable);
-    if(PLATCONFIG->bFishGame) GetDlgItem(IDC_EDIT_TIMEFISHGAME)->EnableWindow(bEnable);
+	GetDlgItem(IDC_EDIT_HEADNAME)->EnableWindow(bEnable);
+	GetDlgItem(IDC_EDIT_BEGINNO)->EnableWindow(bEnable);
+	if(PLATCONFIG->bFishGame) GetDlgItem(IDC_EDIT_TIMEFISHGAME)->EnableWindow(bEnable);
 }
 
 void CAuto_AIDlg::UIQueueGame(bool bEnable)
 {
-    GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->EnableWindow(bEnable);
-    if(PLATCONFIG->bFishGame)   GetDlgItem(IDC_EDIT_TIMEFISHGAME)->EnableWindow(bEnable);
-    GetDlgItem(IDC_EDIT_KEEPINDESK)->EnableWindow(bEnable);
-    GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->EnableWindow(bEnable);
-    GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER)->EnableWindow(bEnable);
+	GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->EnableWindow(bEnable);
+	if(PLATCONFIG->bFishGame)   GetDlgItem(IDC_EDIT_TIMEFISHGAME)->EnableWindow(bEnable);
+	GetDlgItem(IDC_EDIT_KEEPINDESK)->EnableWindow(bEnable);
+	GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->EnableWindow(bEnable);
+	GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER)->EnableWindow(bEnable);
 }
 
 void CAuto_AIDlg::OnBnClickedButtonLogin()
 {
-    // TODO: 在此添加控件通知处理程序代码
+	// TODO: 在此添加控件通知处理程序代码
 	GLOBALDATA->bLoginEnable = true;
-    OnStartRobot();
+	OnStartRobot();
 }
 
 
 void CAuto_AIDlg::OnBnClickedButtonCancel()
 {
-    // TODO: 在此添加控件通知处理程序代码
+	// TODO: 在此添加控件通知处理程序代码
 	GLOBALDATA->bLoginEnable = false;
-    OnStopRobot();
+	OnStopRobot();
 }
 
 
 void CAuto_AIDlg::OnBnClickedButtonClose()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    OnCancel();
+	// TODO: 在此添加控件通知处理程序代码
+	OnCancel();
 }
 
 
 void CAuto_AIDlg::OnBnClickedButtonMin()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    ::SendMessage(GetSafeHwnd(),WM_SYSCOMMAND,SC_MINIMIZE,0);
+	// TODO: 在此添加控件通知处理程序代码
+	::SendMessage(GetSafeHwnd(),WM_SYSCOMMAND,SC_MINIMIZE,0);
 }
 
 
 void CAuto_AIDlg::OnBnClickedButtonSave()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    SaveConfig();
+	// TODO: 在此添加控件通知处理程序代码
+	SaveConfig();
 }
 
 
 void CAuto_AIDlg::OnBnClickedButtonReset()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    ResetConfig();
+	// TODO: 在此添加控件通知处理程序代码
+	ResetConfig();
 }
 
 void CAuto_AIDlg::OnLButtonDown(UINT nFlags,CPoint point)
 {
-    PostMessage(WM_NCLBUTTONDOWN,HTCAPTION,MAKELPARAM(point.x,point.y));
+	PostMessage(WM_NCLBUTTONDOWN,HTCAPTION,MAKELPARAM(point.x,point.y));
 }
 
 
 HBRUSH CAuto_AIDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
-    HBRUSH hbr = CBaseRoom::OnCtlColor(pDC, pWnd, nCtlColor);
-    if(GLOBALDATA->CurDynamicConfig.nLogonCount < 0) return hbr;
-    CString strTmp;
-    bool b;
-    switch(pWnd->GetDlgCtrlID())
-    {
-    case IDC_STATIC_LOGINCOUNT:
-        GetDlgItem(IDC_EDIT_LOGINCOUNT)->GetWindowText(strTmp);
-        if(GLOBALDATA->CurDynamicConfig.nLogonCount != atoi(strTmp))
-        {
-            pDC->SetTextColor(RGB(255,0,0));
-        }
-        break;
-    case IDC_STATIC_HEADNAME:
-        GetDlgItem(IDC_EDIT_HEADNAME)->GetWindowText(strTmp);
-        if(GLOBALDATA->CurDynamicConfig.strRobotPreName != strTmp)
-        {
-            pDC->SetTextColor(RGB(255,0,0));
-        }
-        break;
-    case IDC_STATIC_BEGINNO:
-        GetDlgItem(IDC_EDIT_BEGINNO)->GetWindowText(strTmp);
-        if(GLOBALDATA->CurDynamicConfig.nBeginSequenceNo != atoi(strTmp))
-        {
-            pDC->SetTextColor(RGB(255,0,0));
-        }
-        break;
-    case IDC_STATIC_CHECKOUT:
-        GetDlgItem(IDC_EDIT_CHECKOUT)->GetWindowText(strTmp);
-        if(GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney != _atoi64(strTmp))
-        {
-            pDC->SetTextColor(RGB(255,0,0));
-        }
-        break;
-    case IDC_STATIC_CHECKIN:
-        GetDlgItem(IDC_EDIT_CHECKIN)->GetWindowText(strTmp);
-        if(GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney != _atoi64(strTmp))
-        {
-            pDC->SetTextColor(RGB(255,0,0));
-        }
-        break;
-    case IDC_STATIC_ONDESKROBOTNO:
-        GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->GetWindowText(strTmp);
-        if(GLOBALDATA->CurDynamicConfig.bMachineDeskCount != atoi(strTmp))
-        {
-            pDC->SetTextColor(RGB(255,0,0));
-        }
-        break;
-    case IDC_STATIC_TIMEFISHGAME:
-        GetDlgItem(IDC_EDIT_TIMEFISHGAME)->GetWindowText(strTmp);
-        if(GLOBALDATA->CurDynamicConfig.nFishGameTimeLeave != atoi(strTmp))
-        {
-            pDC->SetTextColor(RGB(255,0,0));
-        }
-        break;
-    case IDC_STATIC_KEEPINDESK:
-        GetDlgItem(IDC_EDIT_KEEPINDESK)->GetWindowText(strTmp);
-        if(GLOBALDATA->CurDynamicConfig.nKeepInDeskSeconds != atoi(strTmp))
-        {
-            pDC->SetTextColor(RGB(255,0,0));
-        }
-        break;
-    case IDC_STATIC_GAMEENDLEAVE:
-        GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->GetWindowText(strTmp);
-        if(GLOBALDATA->CurDynamicConfig.nGameEndLeaveDesk != atoi(strTmp))
-        {
-            pDC->SetTextColor(RGB(255,0,0));
-        }
-        break;
-    case IDC_CHECK_ALLOWROBOTWITHPLAYER:
-        if(((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->GetCheck() == 1)
-        {
-            b = true;
-        }
-        else
-        {
-            b = false;
-        }
-        if(b != GLOBALDATA->CurDynamicConfig.bMachineAndPlayer)
-        {
-            pDC->SetTextColor(RGB(255,0,0));
-        }
-        break;
-    default:
-        break;
-    }
+	HBRUSH hbr = CBaseRoom::OnCtlColor(pDC, pWnd, nCtlColor);
+	if(GLOBALDATA->CurDynamicConfig.nLogonCount < 0) return hbr;
+	CString strTmp;
+	bool b;
+	switch(pWnd->GetDlgCtrlID())
+	{
+	case IDC_STATIC_LOGINCOUNT:
+		GetDlgItem(IDC_EDIT_LOGINCOUNT)->GetWindowText(strTmp);
+		if(GLOBALDATA->CurDynamicConfig.nLogonCount != atoi(strTmp))
+		{
+			pDC->SetTextColor(RGB(255,0,0));
+		}
+		break;
+	case IDC_STATIC_HEADNAME:
+		GetDlgItem(IDC_EDIT_HEADNAME)->GetWindowText(strTmp);
+		if(GLOBALDATA->CurDynamicConfig.strRobotPreName != strTmp)
+		{
+			pDC->SetTextColor(RGB(255,0,0));
+		}
+		break;
+	case IDC_STATIC_BEGINNO:
+		GetDlgItem(IDC_EDIT_BEGINNO)->GetWindowText(strTmp);
+		if(GLOBALDATA->CurDynamicConfig.nBeginSequenceNo != atoi(strTmp))
+		{
+			pDC->SetTextColor(RGB(255,0,0));
+		}
+		break;
+	case IDC_STATIC_CHECKOUT:
+		GetDlgItem(IDC_EDIT_CHECKOUT)->GetWindowText(strTmp);
+		if(GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney != _atoi64(strTmp))
+		{
+			pDC->SetTextColor(RGB(255,0,0));
+		}
+		break;
+	case IDC_STATIC_CHECKIN:
+		GetDlgItem(IDC_EDIT_CHECKIN)->GetWindowText(strTmp);
+		if(GLOBALDATA->CurDynamicConfig.nCheckInMaxMoney != _atoi64(strTmp))
+		{
+			pDC->SetTextColor(RGB(255,0,0));
+		}
+		break;
+	case IDC_STATIC_ONDESKROBOTNO:
+		GetDlgItem(IDC_EDIT_ONEDESKROBOTNO)->GetWindowText(strTmp);
+		if(GLOBALDATA->CurDynamicConfig.bMachineDeskCount != atoi(strTmp))
+		{
+			pDC->SetTextColor(RGB(255,0,0));
+		}
+		break;
+	case IDC_STATIC_TIMEFISHGAME:
+		GetDlgItem(IDC_EDIT_TIMEFISHGAME)->GetWindowText(strTmp);
+		if(GLOBALDATA->CurDynamicConfig.nFishGameTimeLeave != atoi(strTmp))
+		{
+			pDC->SetTextColor(RGB(255,0,0));
+		}
+		break;
+	case IDC_STATIC_KEEPINDESK:
+		GetDlgItem(IDC_EDIT_KEEPINDESK)->GetWindowText(strTmp);
+		if(GLOBALDATA->CurDynamicConfig.nKeepInDeskSeconds != atoi(strTmp))
+		{
+			pDC->SetTextColor(RGB(255,0,0));
+		}
+		break;
+	case IDC_STATIC_GAMEENDLEAVE:
+		GetDlgItem(IDC_EDIT_GAMEENDLEAVE)->GetWindowText(strTmp);
+		if(GLOBALDATA->CurDynamicConfig.nGameEndLeaveDesk != atoi(strTmp))
+		{
+			pDC->SetTextColor(RGB(255,0,0));
+		}
+		break;
+	case IDC_CHECK_ALLOWROBOTWITHPLAYER:
+		if(((CButton*)GetDlgItem(IDC_CHECK_ALLOWROBOTWITHPLAYER))->GetCheck() == 1)
+		{
+			b = true;
+		}
+		else
+		{
+			b = false;
+		}
+		if(b != GLOBALDATA->CurDynamicConfig.bMachineAndPlayer)
+		{
+			pDC->SetTextColor(RGB(255,0,0));
+		}
+		break;
+	default:
+		break;
+	}
 
-    // TODO:  在此更改 DC 的任何特性
+	// TODO:  在此更改 DC 的任何特性
 
-    // TODO:  如果默认的不是所需画笔，则返回另一个画笔
-    return hbr;
+	// TODO:  如果默认的不是所需画笔，则返回另一个画笔
+	return hbr;
 }
 
 
 
 void CAuto_AIDlg::OnBnClickedButtonTasklist()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    CDiaogTaskList taskDlg;
-    taskDlg.DoModal();
-    if(GLOBALDATA->bConnectToWitchServer != 1)
-    {
-        if(GLOBALDATA->CurDynamicConfig.nLogonCount != -1)
-        {
-            {
-                AutoPlatLock lock(&PLATCONFIG->m_DynamicSection);
-                auto it = PLATCONFIG->m_DynamicConfigs.find(GLOBALDATA->CurDynamicConfig.strTime.GetBuffer());
-                if(it != PLATCONFIG->m_DynamicConfigs.end())
-                {
-                    GLOBALDATA->CurDynamicConfig = it->second;
-                }
-                else
-                {
-                    GLOBALDATA->CurDynamicConfig.nLogonCount = -1;
-                }
-            }
-            NextTask();
-            ResetConfig();
-        }
-        else
-        {
-            if(NextTask())
-            {
-                ResetConfig();
-            }
-        }
-        
-    }
+	// TODO: 在此添加控件通知处理程序代码
+	CDiaogTaskList taskDlg;
+	taskDlg.DoModal();
+	if(GLOBALDATA->bConnectToWitchServer != 1)
+	{
+		if(GLOBALDATA->CurDynamicConfig.nLogonCount != -1)
+		{
+			{
+				AutoPlatLock lock(&PLATCONFIG->m_DynamicSection);
+				auto it = PLATCONFIG->m_DynamicConfigs.find(GLOBALDATA->CurDynamicConfig.strTime.GetBuffer());
+				if(it != PLATCONFIG->m_DynamicConfigs.end())
+				{
+					GLOBALDATA->CurDynamicConfig = it->second;
+				}
+				else
+				{
+					GLOBALDATA->CurDynamicConfig.nLogonCount = -1;
+				}
+			}
+			NextTask();
+			ResetConfig();
+		}
+		else
+		{
+			if(NextTask())
+			{
+				ResetConfig();
+			}
+		}
+
+	}
 }
 
 
 void CAuto_AIDlg::OnBnClickedButtonHallinfo()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    CDialogMsgInfo dlg(CDialogMsgInfo::Hall_Msg, this);
-    dlg.DoModal();
+	// TODO: 在此添加控件通知处理程序代码
+	CDialogMsgInfo dlg(CDialogMsgInfo::Hall_Msg, this);
+	dlg.DoModal();
 }
 
 
 void CAuto_AIDlg::OnBnClickedButtonRoominfo()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    CDialogMsgInfo dlg(CDialogMsgInfo::Room_Msg, this);
-    dlg.DoModal();
+	// TODO: 在此添加控件通知处理程序代码
+	CDialogMsgInfo dlg(CDialogMsgInfo::Room_Msg, this);
+	dlg.DoModal();
 }
 
 void CAuto_AIDlg::ShowUserStatus()
 {
-    std::map<string, UserItemUIInfo> usrInfos;
-    {
-        AutoPlatLock lock(&UIDATA->uiSection);
-        usrInfos = UIDATA->usrInfos;
-    }
-    m_ListUserStatus.SetRedraw(FALSE); // 防止闪烁 
-    m_ListUserStatus.DeleteAllItems();
-    auto it = usrInfos.begin();
-    int nRow = 0;
-    while(it != usrInfos.end())
-    {
-        if(m_ShowBeginNo > CString(it->second.strUserName.c_str()))
-        {
-            it++;
-            continue;
-        }
-        if(m_ShowEndNo < CString(it->second.strUserName.c_str()))
-        {
-            it++;
-            continue;
-        }
-        CString strTmp;
-        m_ListUserStatus.InsertItem(nRow, "USERINFO");
-        m_ListUserStatus.SetItemData(nRow,nRow);
-        m_ListUserStatus.SetItemText(nRow, COL_USRNAME, it->first.c_str());
-        m_ListUserStatus.SetItemText(nRow, COL_NICKNAME, it->second.strNickName.c_str());
-        switch(it->second.GLoginStatus)
-        {
-        case 0:
-            strTmp.Format(_T("未登陆(%d)"),it->second.GLoginStatus);
-            break;
-        case 1:
-            strTmp.Format(_T("正在登陆(%d)"),it->second.GLoginStatus);
-            break;
-        case 2:
-            strTmp.Format(_T("已登陆(%d)"),it->second.GLoginStatus);
-            break;
-        case 3:
-            strTmp.Format(_T("登陆失败(%d)"),it->second.GLoginStatus);
-            break;
-        default:
-            strTmp.Format(_T("未知(%d)"),it->second.GLoginStatus);
-            break;
-        }
-        m_ListUserStatus.SetItemText(nRow, COL_GSERVERLOGIN, strTmp);
-        strTmp.Format("%d", it->second.roomID);
-        m_ListUserStatus.SetItemText(nRow, COL_ROOMID, strTmp);
-        strTmp.Format("%d", it->second.bDeskNo);
-        m_ListUserStatus.SetItemText(nRow, COL_DESKNO, strTmp);
-        strTmp.Format("%d", it->second.bDeskStation);
-        m_ListUserStatus.SetItemText(nRow, COL_DESKSTATION, strTmp);
-        switch(it->second.bUserState)
-        {
-        case USER_NO_STATE:
-            strTmp.Format(_T("未知(%d)"), it->second.bUserState);
-            break;
-        case USER_SITTING:
-            strTmp.Format(_T("坐下(%d)"), it->second.bUserState);
-            break;
-        case USER_ARGEE:
-            strTmp.Format(_T("准备(%d)"), it->second.bUserState);
-            break;
-        case USER_CUT_GAME:
-            strTmp.Format(_T("断线(%d)"), it->second.bUserState);
-            break;
-        case USER_PLAY_GAME:
-            strTmp.Format(_T("游戏中(%d)"), it->second.bUserState);
-            break;
-        default:
-            strTmp.Format(_T("未知(%d)"), it->second.bUserState);
-            break;
-        }
-        m_ListUserStatus.SetItemText(nRow, COL_USERSTATE, strTmp);
-        strTmp.Format("任务时间:%s,存取阙值:%lld-%lld,捕鱼离桌:%d,等待开始:%d,允许真人同桌:%d,每桌机器人个数:%d,结束站起:%d",it->second.cof.strTime
-            ,it->second.cof.nCheckOutMinMoney,it->second.cof.nCheckInMaxMoney
-            ,it->second.cof.nFishGameTimeLeave,it->second.cof.nKeepInDeskSeconds
-            ,it->second.cof.bMachineAndPlayer,it->second.cof.bMachineDeskCount
-            ,it->second.cof.nGameEndLeaveDesk);
-        m_ListUserStatus.SetItemText(nRow, COL_TASKINFO, strTmp);
-        nRow++;
-        it++;
-    }
-    m_ListUserStatus.SetRedraw(TRUE); 
-    SetTimer(TIMER_SORT_USERSTATUS, 10, NULL);
+	std::map<string, UserItemUIInfo> usrInfos;
+	{
+		AutoPlatLock lock(&UIDATA->uiSection);
+		usrInfos = UIDATA->usrInfos;
+	}
+	m_ListUserStatus.SetRedraw(FALSE); // 防止闪烁 
+	m_ListUserStatus.DeleteAllItems();
+	auto it = usrInfos.begin();
+	int nRow = 0;
+	while(it != usrInfos.end())
+	{
+		if(m_ShowBeginNo > CString(it->second.strUserName.c_str()))
+		{
+			it++;
+			continue;
+		}
+		if(m_ShowEndNo < CString(it->second.strUserName.c_str()))
+		{
+			it++;
+			continue;
+		}
+		CString strTmp;
+		m_ListUserStatus.InsertItem(nRow, "USERINFO");
+		m_ListUserStatus.SetItemData(nRow,nRow);
+		m_ListUserStatus.SetItemText(nRow, COL_USRNAME, it->first.c_str());
+		m_ListUserStatus.SetItemText(nRow, COL_NICKNAME, it->second.strNickName.c_str());
+		switch(it->second.GLoginStatus)
+		{
+		case 0:
+			strTmp.Format(_T("未登陆(%d)"),it->second.GLoginStatus);
+			break;
+		case 1:
+			strTmp.Format(_T("正在登陆(%d)"),it->second.GLoginStatus);
+			break;
+		case 2:
+			strTmp.Format(_T("已登陆(%d)"),it->second.GLoginStatus);
+			break;
+		case 3:
+			strTmp.Format(_T("登陆失败(%d)"),it->second.GLoginStatus);
+			break;
+		default:
+			strTmp.Format(_T("未知(%d)"),it->second.GLoginStatus);
+			break;
+		}
+		m_ListUserStatus.SetItemText(nRow, COL_GSERVERLOGIN, strTmp);
+		strTmp.Format("%d", it->second.roomID);
+		m_ListUserStatus.SetItemText(nRow, COL_ROOMID, strTmp);
+		strTmp.Format("%d", it->second.bDeskNo);
+		m_ListUserStatus.SetItemText(nRow, COL_DESKNO, strTmp);
+		strTmp.Format("%d", it->second.bDeskStation);
+		m_ListUserStatus.SetItemText(nRow, COL_DESKSTATION, strTmp);
+		switch(it->second.bUserState)
+		{
+		case USER_NO_STATE:
+			strTmp.Format(_T("未知(%d)"), it->second.bUserState);
+			break;
+		case USER_SITTING:
+			strTmp.Format(_T("坐下(%d)"), it->second.bUserState);
+			break;
+		case USER_ARGEE:
+			strTmp.Format(_T("准备(%d)"), it->second.bUserState);
+			break;
+		case USER_CUT_GAME:
+			strTmp.Format(_T("断线(%d)"), it->second.bUserState);
+			break;
+		case USER_PLAY_GAME:
+			strTmp.Format(_T("游戏中(%d)"), it->second.bUserState);
+			break;
+		default:
+			strTmp.Format(_T("未知(%d)"), it->second.bUserState);
+			break;
+		}
+		m_ListUserStatus.SetItemText(nRow, COL_USERSTATE, strTmp);
+		strTmp.Format("任务时间:%s,存取阙值:%lld-%lld,捕鱼离桌:%d,等待开始:%d,允许真人同桌:%d,每桌机器人个数:%d,结束站起:%d",it->second.cof.strTime
+			,it->second.cof.nCheckOutMinMoney,it->second.cof.nCheckInMaxMoney
+			,it->second.cof.nFishGameTimeLeave,it->second.cof.nKeepInDeskSeconds
+			,it->second.cof.bMachineAndPlayer,it->second.cof.bMachineDeskCount
+			,it->second.cof.nGameEndLeaveDesk);
+		m_ListUserStatus.SetItemText(nRow, COL_TASKINFO, strTmp);
+		nRow++;
+		it++;
+	}
+	m_ListUserStatus.SetRedraw(TRUE); 
+	SetTimer(TIMER_SORT_USERSTATUS, 10, NULL);
 }
 int CAuto_AIDlg::CompareProc(LPARAM p1, LPARAM p2, LPARAM p3)
 {
-    CAuto_AIDlg *pDialog = (CAuto_AIDlg*)p3;
-    if(pDialog != NULL)
-        return pDialog->CompareFunc(p1, p2);
-    return 0;
+	CAuto_AIDlg *pDialog = (CAuto_AIDlg*)p3;
+	if(pDialog != NULL)
+		return pDialog->CompareFunc(p1, p2);
+	return 0;
 }
 
 int CAuto_AIDlg::CompareFunc(LPARAM p1, LPARAM p2)
 {
-    if(m_sort_column == -1) return 0;
-    int row1 = (int)p1;
-    int row2 =(int)p2;
-    CString lp1 = m_ListUserStatus.GetItemText(row1,m_sort_column);
-    CString lp2 = m_ListUserStatus.GetItemText(row2,m_sort_column);
+	if(m_sort_column == -1) return 0;
+	int row1 = (int)p1;
+	int row2 =(int)p2;
+	CString lp1 = m_ListUserStatus.GetItemText(row1,m_sort_column);
+	CString lp2 = m_ListUserStatus.GetItemText(row2,m_sort_column);
 
-    if(lp1 == lp2) return 0;
-    if(lp1 < lp2)
-    {
-        if(!m_bDescSort) return -1;
-        return 1;
-    }
-    if(!m_bDescSort) return 1;
-    return -1;
+	if(lp1 == lp2) return 0;
+	if(lp1 < lp2)
+	{
+		if(!m_bDescSort) return -1;
+		return 1;
+	}
+	if(!m_bDescSort) return 1;
+	return -1;
 }
 
 void CAuto_AIDlg::OnLvnColumnclickListStatus(NMHDR *pNMHDR, LRESULT *pResult)
 {
-    LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-    // TODO: 在此添加控件通知处理程序代码
-    *pResult = 0;
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	*pResult = 0;
 
-    m_bDescSort = !m_bDescSort;
+	m_bDescSort = !m_bDescSort;
 
-    m_sort_column = pNMLV->iSubItem;  
+	m_sort_column = pNMLV->iSubItem;  
 
-    SetTimer(TIMER_SORT_USERSTATUS, 3000, NULL);
-    *pResult =0;
+	SetTimer(TIMER_SORT_USERSTATUS, 3000, NULL);
+	*pResult =0;
 }
 
 
 void CAuto_AIDlg::OnBnClickedButtonAddtask()
 {
-    // TODO: 在此添加控件通知处理程序代码
-    ((CEdit*)GetDlgItem(IDC_EDIT_CHECKBEGINNO))->GetWindowText(m_ShowBeginNo);
-    ((CEdit*)GetDlgItem(IDC_EDIT_CHECKENDNO))->GetWindowText(m_ShowEndNo);
+	// TODO: 在此添加控件通知处理程序代码
+	((CEdit*)GetDlgItem(IDC_EDIT_CHECKBEGINNO))->GetWindowText(m_ShowBeginNo);
+	((CEdit*)GetDlgItem(IDC_EDIT_CHECKENDNO))->GetWindowText(m_ShowEndNo);
 }
