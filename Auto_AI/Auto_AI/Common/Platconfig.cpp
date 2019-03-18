@@ -199,7 +199,7 @@ CPlatConfig::CPlatConfig()
         cof.nKeepInDeskSeconds = GetPrivateProfileInt(DYNAMIC_SECTION, key, 30, CONFIG_FILENAME);
         // 游戏结束站起概率
         key.Format("GameEndLeaveDes_%d", i);
-        cof.nGameEndLeaveDesk = GetPrivateProfileInt(DYNAMIC_SECTION, key, 30, CONFIG_FILENAME);
+        cof.nGameEndLeaveDesk = GetPrivateProfileInt(DYNAMIC_SECTION, key,/*30*/ 10, CONFIG_FILENAME);//mark
         m_DynamicConfigs[strMapKey.GetBuffer()] = cof;
     }    
 }

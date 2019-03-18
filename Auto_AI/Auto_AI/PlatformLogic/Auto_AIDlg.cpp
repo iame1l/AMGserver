@@ -1167,6 +1167,7 @@ void CAuto_AIDlg::EnterGameRoom(int roomid)
 //机器人根据金币操作银行
 void CAuto_AIDlg::AiControlBank()
 {
+	srand((unsigned int)time(NULL));
 	if (GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney != 0 && m_CurPlaceUserInfo.i64Money < GLOBALDATA->CurDynamicConfig.nCheckOutMinMoney)
 	{// 取钱
 		//取一个在 取钱和存钱的区间
