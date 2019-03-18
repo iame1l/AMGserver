@@ -2311,8 +2311,10 @@ void	CServerGameDesk::CountFen()
 		{
 			i64Sum += m_i64UserXiaZhuData[i][j];
 		}
-		//有下注就标记
-		if (i64Sum != 0)
+
+		//mark
+		//有下注就标记(包括庄家)
+		if (i64Sum != 0 || i==m_iNowNtStation)
 		{
 			flag[i] = true;
 		}
@@ -2348,20 +2350,27 @@ void	CServerGameDesk::CountFen()
 	bool temp_cut[PLAY_COUNT];
 	memset(&temp_cut, 0, sizeof(temp_cut)); //庄家列表总的庄家位置
 	//有下注就交费
+	//Eil 庄没结算
 	ChangeUserPointint64_IsJoin(m_i64UserFen, temp_cut, flag);
+	
 	/*
 	if (m_iNtTax == 0)				//是否只扣庄家的税
 	{
 		if(-1 != m_iNowNtStation)
 		{
-			ChangeUserPointint64(m_i64UserFen, temp_cut, m_iNowNtStation);
+			//ChangeUserPointint64(m_i64UserFen, temp_cut, m_iNowNtStation);
+			ChangeUserPointint64_IsJoin(m_i64UserFen, temp_cut, flag, m_iNowNtStation);
 		}
 	}
 	else
 	{
-		ChangeUserPointint64(m_i64UserFen, temp_cut);
+		//ChangeUserPointint64(m_i64UserFen, temp_cut);
+		ChangeUserPointint64_IsJoin(m_i64UserFen, temp_cut, flag);
 	}
 	*/
+
+
+	
 	__super::RecoderGameInfo(m_i64UserMoney);
 
 

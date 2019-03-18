@@ -2013,6 +2013,8 @@ BOOL CServerGameDesk::LoadDeskCfg(int iRoomID, bool bConfigRC)
 
 	pDeskCfg->dz.iBigBlindNote = pDeskCfg->dz.iLower;		             // 大盲注底注
 	pDeskCfg->dz.iSmallBlindNote = pDeskCfg->dz.iLower / 2;		         // 小盲注底注
+	//pDeskCfg->dz.iBigBlindNote = 20000;
+	//pDeskCfg->dz.iSmallBlindNote = 10000;
 
 	pDeskCfg->dz.bIsRoomSubMoney = f.GetKeyVal(strSeg, "RoomSubMoney", 0);  // 房间代入金币  0: 此房间不需要代入金币  1: 此房间需要代入金币
 	pDeskCfg->dz.iSubMinMoney = f.GetKeyVal(strSeg, "SubMinMoney",  1000);  // 房间最低代入金币
