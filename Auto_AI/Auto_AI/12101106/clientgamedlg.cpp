@@ -164,6 +164,7 @@ bool CClientGameDlg::SetGameStation(void * pBuffer, UINT nLen)
 }
 /*--------------------------------------------------------------------------*/
 //游戏消息处理函数
+//mark
 bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * buffer, UINT nLen, CTCPClientSocket * pClientSocket)
 {
 
@@ -277,6 +278,7 @@ void	CClientGameDlg::OnHandleSendCard(void * buffer,int nLen)
 			m_TCGameData.m_byUserCard[i][0],
 			m_TCGameData.m_byUserCard[i][1],
 			m_TCGameData.m_byUserCard[i][2],
+			//获取每个人牌型//mark
 			m_Logic.GetCardShape(m_TCGameData.m_byUserCard[i],m_TCGameData.m_byUserCardCount[i]));
 		OutputDebugString(log);
 	}
@@ -310,6 +312,7 @@ void	CClientGameDlg::OnHandleBeginPlay(void * buffer,int nLen)
 
 	if(m_TCGameData.m_byCurrHandleDesk == GetMeUserInfo()->bDeskStation)
 	{
+		//mark
 		//如果是自己 那么就启动计时器  1/3的概率看牌
 		int iRand = (rand()+GetMeUserInfo()->bDeskStation)%3;
 		int iTime=1;
@@ -329,6 +332,7 @@ void	CClientGameDlg::OnHandleBeginPlay(void * buffer,int nLen)
 			{
 				iTime = ((rand()+GetMeUserInfo()->bDeskStation)%(m_TCGameData.m_byThinkTime))+1;
 			} 
+			//加注
 			SetGameTimer(GetMeUserInfo()->bDeskStation,iTime,TIME_ADD_NOTE);
 		}
 	}
@@ -411,8 +415,8 @@ void	CClientGameDlg::OnHandleNoticeAction(void * buffer,int nLen)
 	{
 		int iRand = (rand()+GetMeUserInfo()->bDeskStation)%5;
 		int iTime=1;
-		//如果还没看牌
-		if (m_TCGameData.m_iUserState[GetMeUserInfo()->bDeskStation] == STATE_NORMAL)
+		
+		if (m_TCGameData.m_iUserState[GetMeUserInfo()->bDeskStation] == STATE_NORMAL)//如果还没看牌
 		{
 			//跟注或者加注了两次就看牌或者比牌
 			bool LookEarlier = false;
@@ -484,6 +488,7 @@ void	CClientGameDlg::OnHandleNoticeAction(void * buffer,int nLen)
 			bool bHaveA = false;
 			for(int i=0; i<MAX_CARD_COUNT; i++)
 			{
+				//是否持有A
 				if (	m_TCGameData.m_byUserCard[GetMeUserInfo()->bDeskStation][i] == 0x0D 
 					||	m_TCGameData.m_byUserCard[GetMeUserInfo()->bDeskStation][i] == 0x1D
 					||	m_TCGameData.m_byUserCard[GetMeUserInfo()->bDeskStation][i] == 0x2D
@@ -502,13 +507,19 @@ void	CClientGameDlg::OnHandleNoticeAction(void * buffer,int nLen)
 				}
 				else
 				{
+					//散排有机率弃掉
 					if(!bHaveA && m_iMyCardShape == SH_OTHER) bGiveUp = (0 == rand()%2);
-					if(bHaveA && m_iMyCardShape == SH_OTHER) bGiveUp = (0 == rand()%3);
+
+					//Eil @ 20190322 单排有A不弃
+					//if(bHaveA && m_iMyCardShape == SH_OTHER) bGiveUp = (0 == rand()%3);
+
+					//对子以上
 					if(m_iMyCardShape >= SH_DOUBLE) bGiveUp = false;
 				}
 			}
 			else
 			{		
+				//对子以上不弃
 				if(m_iMyCardShape >= SH_DOUBLE) bGiveUp = false;
 			}
 
@@ -670,20 +681,21 @@ void	CClientGameDlg::OnHandleLookCardResult(void * buffer,int nLen)
 				OutputDebugString(log);
 			}
 			bool bGiveUp = true;
-			if(bMaxIsAi)
+			
+			if(bMaxIsAi)//抓大牌的是AI(随便玩)
 			{
-				if(bMaxUser == GetMeUserInfo()->bDeskStation)
+				if(bMaxUser == GetMeUserInfo()->bDeskStation)//是自己的别弃牌
 				{
 					bGiveUp = false;
 				}
 				else
 				{
-					if(!bHaveA && m_iMyCardShape == SH_OTHER) bGiveUp = (0 == rand()%2);
+					if(!bHaveA && m_iMyCardShape == SH_OTHER) bGiveUp = (0 == rand()%2);					
 					if(bHaveA && m_iMyCardShape == SH_OTHER) bGiveUp = (0 == rand()%3);
 					if(m_iMyCardShape >= SH_DOUBLE) bGiveUp = false;
 				}
 			}
-			else
+			else//不是AI抓大牌,弃牌
 			{		
 				if(m_iMyCardShape >= SH_DOUBLE) bGiveUp = false;
 			}
@@ -691,13 +703,13 @@ void	CClientGameDlg::OnHandleLookCardResult(void * buffer,int nLen)
 			if (!bGiveUp)
 			{
 				if(!bMaxIsAi && m_TCGameData.m_bCanOpen && bHasOpenCardObject && rand()%7 <= m_iMyCardShape)
-				{
+				{//还没开牌的状态
 					SetGameTimer(GetMeUserInfo()->bDeskStation,iTime,TIME_OPEN_CARD);
 				}
 				else
-				{
-					int iRand = (rand()+m_iMyCardShape)%7;
-					if (iRand >= 0 && iRand<=2 && m_TCGameData.m_bCanFollow)	//跟注
+				{//开牌的选择
+					int iRand = (rand()+m_iMyCardShape)%7;//随机池
+					if (iRand>=0 && iRand<=2 && m_TCGameData.m_bCanFollow)	//跟注
 					{
 						SetGameTimer(GetMeUserInfo()->bDeskStation,iTime,TIME_FOLLOW_NOTE);
 					}
