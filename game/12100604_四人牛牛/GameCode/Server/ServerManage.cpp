@@ -51,6 +51,7 @@ bool CServerGameDesk::InitDeskGameStation()
 	//加载配置文件
 	LoadIni();
 	//重新加载配置文件里面的
+	//mark
 	LoadExtIni(m_pDataManage->m_InitData.uRoomID);
 	memset(m_TCalculateBoard,0,sizeof(m_TCalculateBoard));
 
@@ -134,6 +135,20 @@ BOOL	CServerGameDesk::LoadIni()
 		}
 	}
 
+	//Eil @ 
+	//奖池配置
+	m_iAIWantWinMoneyA1	= f.GetKeyVal(key,"AIWantWinMoneyA1 ",__int64(500000));		/**<机器人赢钱区域1  */
+	m_iAIWantWinMoneyA2	= f.GetKeyVal(key,"AIWantWinMoneyA2 ",__int64(5000000));	/**<机器人赢钱区域2  */
+	m_iAIWantWinMoneyA3	= f.GetKeyVal(key,"AIWantWinMoneyA3 ",__int64(50000000));	/**<机器人赢钱区域3  */
+	m_iAIWinLuckyAtA1	= f.GetKeyVal(key,"AIWinLuckyAtA1 ",95);				/**<机器人在区域1赢钱的概率  */
+	m_iAIWinLuckyAtA2	= f.GetKeyVal(key,"AIWinLuckyAtA2 ",95);				/**<机器人输赢控制：机器人在区域2赢钱的概率  */
+	m_iAIWinLuckyAtA3	= f.GetKeyVal(key,"AIWinLuckyAtA3 ",95);				/**<机器人输赢控制：机器人在区域3赢钱的概率  */
+	m_iAIWinLuckyAtA4	= f.GetKeyVal(key,"AIWinLuckyAtA4 ",95);				/**<机器人输赢控制：机器人在区域4赢钱的概率  */
+	G_iAIHaveWinMoney	= f.GetKeyVal(key,"AIHaveWinMoney ",__int64(0));	/**<机器人输赢控制：直接从配置文件中读取机器人已经赢钱的数目  */
+	m_bAIWinAndLostAutoCtrl = f.GetKeyVal(key,"AIWinAndLostAutoCtrl",1);		//机器人输赢控制20121122dwj
+	G_iReSetAIHaveWinMoney	= f.GetKeyVal(key,"ReSetAIHaveWinMoney ",__int64(0)); //记录重置机器人赢钱数，如果游戏过程中改变了就要改变机器人赢钱数
+
+
 	//超端配置
 	key = TEXT("SuperSet");
 	int iSuperCount = f.GetKeyVal(key, "SuperUserCount", 0);
@@ -147,6 +162,7 @@ BOOL	CServerGameDesk::LoadIni()
 		//将所有超端ID 保存到超端容器中
 		m_vlSuperID.push_back(lUserID);
 	}
+
 	return true;
 }
 //根据房间ID加载配置文件
@@ -215,12 +231,12 @@ BOOL CServerGameDesk::LoadExtIni(int iRoomID)
 	m_iAIWantWinMoneyA1	= f.GetKeyVal(key,"AIWantWinMoneyA1 ",__int64(500000));		/**<机器人赢钱区域1  */
 	m_iAIWantWinMoneyA2	= f.GetKeyVal(key,"AIWantWinMoneyA2 ",__int64(5000000));	/**<机器人赢钱区域2  */
 	m_iAIWantWinMoneyA3	= f.GetKeyVal(key,"AIWantWinMoneyA3 ",__int64(50000000));	/**<机器人赢钱区域3  */
-	m_iAIWinLuckyAtA1	= f.GetKeyVal(key,"AIWinLuckyAtA1 ",90);				/**<机器人在区域1赢钱的概率  */
-	m_iAIWinLuckyAtA2	= f.GetKeyVal(key,"AIWinLuckyAtA2 ",70);				/**<机器人输赢控制：机器人在区域2赢钱的概率  */
-	m_iAIWinLuckyAtA3	= f.GetKeyVal(key,"AIWinLuckyAtA3 ",50);				/**<机器人输赢控制：机器人在区域3赢钱的概率  */
-	m_iAIWinLuckyAtA4	= f.GetKeyVal(key,"AIWinLuckyAtA4 ",30);				/**<机器人输赢控制：机器人在区域4赢钱的概率  */
+	m_iAIWinLuckyAtA1	= f.GetKeyVal(key,"AIWinLuckyAtA1 ",95);				/**<机器人在区域1赢钱的概率  */
+	m_iAIWinLuckyAtA2	= f.GetKeyVal(key,"AIWinLuckyAtA2 ",95);				/**<机器人输赢控制：机器人在区域2赢钱的概率  */
+	m_iAIWinLuckyAtA3	= f.GetKeyVal(key,"AIWinLuckyAtA3 ",95);				/**<机器人输赢控制：机器人在区域3赢钱的概率  */
+	m_iAIWinLuckyAtA4	= f.GetKeyVal(key,"AIWinLuckyAtA4 ",95);				/**<机器人输赢控制：机器人在区域4赢钱的概率  */
 	G_iAIHaveWinMoney	= f.GetKeyVal(key,"AIHaveWinMoney ",__int64(0));	/**<机器人输赢控制：直接从配置文件中读取机器人已经赢钱的数目  */
-	m_bAIWinAndLostAutoCtrl = f.GetKeyVal(key,"AIWinAndLostAutoCtrl",0);		//机器人输赢控制20121122dwj
+	m_bAIWinAndLostAutoCtrl = f.GetKeyVal(key,"AIWinAndLostAutoCtrl",1);		//机器人输赢控制20121122dwj
 	G_iReSetAIHaveWinMoney	= f.GetKeyVal(key,"ReSetAIHaveWinMoney ",__int64(0)); //记录重置机器人赢钱数，如果游戏过程中改变了就要改变机器人赢钱数
 	
 	return TRUE;
@@ -951,7 +967,7 @@ bool	CServerGameDesk::GameBegin(BYTE bBeginFlag)
 		if (m_pUserInfo[i])
 		{
 			m_byUserStation[i] = STATE_PLAY_GAME;
-		}
+		}   
 	}
 	//分发扑克
 	m_Logic.RandCard(m_iTotalCard,m_iAllCardCount,m_bHaveKing);
@@ -963,6 +979,7 @@ bool	CServerGameDesk::GameBegin(BYTE bBeginFlag)
 	{
 		for (int i=0; i<20; i++)
 		{
+			//牛七
 			if (GetMaxCardShape(m_iTotalCard,m_iAllCardCount) > UG_BULL_SEVEN)
 			{
 				break;

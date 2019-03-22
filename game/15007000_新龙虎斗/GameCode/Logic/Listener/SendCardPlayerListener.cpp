@@ -161,11 +161,6 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 	__int64 i64MoneyHu=0;
 	__int64 i64MoneyHe=0;
 
-	//Eil @ 统筹一下筹码个数
-	__int64 longChipCount=0;
-	__int64 huChipCount=0;
-	__int64 heChipCount=0;
-	
 	for(int i=0; i<PLAY_COUNT; i++)
 	{
 		if(!exDataMgr->getUserInfo(i,userinf))continue;
@@ -182,16 +177,28 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 		//虎
 		i64MoneyHu += userinf.i64UserXiaZhuData[1]*2-userinf.i64UserXiaZhuData[0]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[1];
 
-		//统计筹码个数
-		heChipCount+=userinf.i64UserXiaZhuData[2];
-		huChipCount+=userinf.i64UserXiaZhuData[1];
-		longChipCount+=userinf.i64UserXiaZhuData[0];
+		
 	}
 
 	//一直开和的概率
 	emWinAreaType byLoseQuYu = Area_Invalid;
+	if(i64MoneyHe <= 0)
+	{
+		int tempmax=max(i64MoneyLong,i64MoneyHu);
 
-	
+		if(tempmax==i64MoneyLong && exDataMgr->m_i64AIHaveWinMoney - i64MoneyLong >0 && tempmax > 0)
+			byLoseQuYu = Area_Long;
+
+		else if(tempmax == i64MoneyHu && exDataMgr->m_i64AIHaveWinMoney - i64MoneyHu >0 && tempmax > 0)
+			byLoseQuYu = Area_Hu;
+	}
+	else 
+	{
+			if(rand()%100 > 90) byLoseQuYu = Area_He;
+
+			else byLoseQuYu=i64MoneyLong>i64MoneyHu?Area_Long:Area_Hu;
+	}
+	/*
 	if(i64MoneyLong > 0 && exDataMgr->m_i64AIHaveWinMoney - i64MoneyLong >0)
 	{
 		byLoseQuYu = Area_Long;
@@ -202,17 +209,12 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 	}
 	else if(i64MoneyHe > 0 && exDataMgr->m_i64AIHaveWinMoney - i64MoneyHe > 0)
 	{
-		byLoseQuYu = Area_He;
-	}
-	
-	//Eil @ 20190315 @ 解决点3区域有概率开和现象	
-	if(huChipCount==longChipCount || huChipCount==heChipCount || longChipCount==heChipCount) 
-	{
-		if(0!=huChipCount) {	byLoseQuYu = Area_Hu; }
-		else if(0!=longChipCount) {	byLoseQuYu = Area_Long; }
+		//Eil @ todo 将"和"的概率再压下去 
 		
+		if(rand()%100 > 90)  byLoseQuYu = Area_He; 		
 	}
-	//
+	*/
+	
 
 	if(Area_Invalid == byLoseQuYu)
 	{

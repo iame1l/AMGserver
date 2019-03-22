@@ -442,6 +442,7 @@ void DataManage::RecordAiWinMoney()
 	{
 		if(!getUserInfo(i,userinf))continue;
 		if (userinf.bIsVirtual) continue;
+		//”√ªß”Æµ√«Æ
 		i64Money += userinf.iScore;
 	}
 

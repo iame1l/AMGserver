@@ -1437,6 +1437,7 @@ void CGameRoomEx::OnTimer(UINT_PTR uIDEvent)
     {
     case TIMER_CONNECT_TO_GSERVER:
         KillTimer(uIDEvent);
+		//Á´½ÓGserver
         DoConnectToGServer();
         break;
     case TIMER_CHECK_USERSTATE:
