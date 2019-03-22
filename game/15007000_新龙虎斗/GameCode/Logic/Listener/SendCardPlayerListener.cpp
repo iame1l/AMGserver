@@ -180,7 +180,7 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 		
 	}
 
-	//一直开和的概率
+	//没人投和的时候给玩家赢
 	emWinAreaType byLoseQuYu = Area_Invalid;
 	if(i64MoneyHe <= 0)
 	{
@@ -192,11 +192,17 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 		else if(tempmax == i64MoneyHu && exDataMgr->m_i64AIHaveWinMoney - i64MoneyHu >0 && tempmax > 0)
 			byLoseQuYu = Area_Hu;
 	}
+	//有人投和的时候需要注意.压低开和的概率
 	else 
 	{
-			if(rand()%100 > 90) byLoseQuYu = Area_He;
+		
+		if(rand()%100 > 85) byLoseQuYu = Area_He;
 
-			else byLoseQuYu=i64MoneyLong>i64MoneyHu?Area_Long:Area_Hu;
+		else if(i64MoneyLong == i64MoneyHu) 
+			byLoseQuYu=rand()%2?Area_Long:Area_Hu;
+
+		else 
+			byLoseQuYu=i64MoneyLong>i64MoneyHu?Area_Long:Area_Hu;
 	}
 	/*
 	if(i64MoneyLong > 0 && exDataMgr->m_i64AIHaveWinMoney - i64MoneyLong >0)
@@ -272,6 +278,7 @@ void SendCardPlayerListener::GenerateByType(emWinAreaType emType)
 //系统win
 bool SendCardPlayerListener::CountUesrWinMoney()
 {
+	
 	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
 	DataManage::sGameUserInf userinf;
 	__int64 i64MoneyLong=0;
@@ -298,12 +305,10 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 	tempMin=min(tempMin,i64MoneyHu);
 	emWinAreaType tWinQuYu = Area_Invalid;
 
-	//Eil @ 随机
 	//
-	if (i64MoneyHu == i64MoneyLong)
-	{
-		tWinQuYu = rand()%2?Area_He:Area_Long;
-	}
+	if(i64MoneyLong == i64MoneyHu && i64MoneyHe > 0 && i64MoneyHu < i64MoneyHe)
+		tWinQuYu=rand()%2?Area_Long:Area_Hu;
+	
 	//
 	else if (tempMin==i64MoneyHe)
 	{
