@@ -146,7 +146,7 @@ struct MSG_GP_R_LogonResult
 	int									dwUserID;							///用户 ID 
 	UINT								dwNowLogonIP;						///现在登陆 IP
 	BYTE								iLogonType;							///登录类型
-	int									bLogoID;							///用户头像
+	int									bLogoID;							///用户头像//mark
 	bool								bBoy;								///性别
 	char								szName[32];							///用户登录名
 	//char								TML_SN[128];						///数字签名
