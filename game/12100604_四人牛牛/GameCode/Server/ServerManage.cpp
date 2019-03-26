@@ -112,10 +112,8 @@ BOOL	CServerGameDesk::LoadIni()
 	m_iCardShape |= ((f.GetKeyVal(key,"Jn",0)<<1)&0xFFFFFFFF);//金牛
 	m_iCardShape |= ((f.GetKeyVal(key,"Bomb",0)<<2)&0xFFFFFFFF);//炸弹
 	m_iCardShape |= ((f.GetKeyVal(key,"Five",0)<<3)&0xFFFFFFFF);//五小
-
-
-
 	m_Logic.SetCardShape(m_iCardShape);
+
 	//牌型赔率配置
 	CString keyName;
 	int base = 0;
@@ -224,12 +222,12 @@ BOOL CServerGameDesk::LoadExtIni(int iRoomID)
 	m_iAIWantWinMoneyA1	= f.GetKeyVal(key,"AIWantWinMoneyA1 ",__int64(500000));		/**<机器人赢钱区域1  */
 	m_iAIWantWinMoneyA2	= f.GetKeyVal(key,"AIWantWinMoneyA2 ",__int64(5000000));	/**<机器人赢钱区域2  */
 	m_iAIWantWinMoneyA3	= f.GetKeyVal(key,"AIWantWinMoneyA3 ",__int64(50000000));	/**<机器人赢钱区域3  */
-	m_iAIWinLuckyAtA1	= f.GetKeyVal(key,"AIWinLuckyAtA1 ",95);				/**<机器人在区域1赢钱的概率  */
-	m_iAIWinLuckyAtA2	= f.GetKeyVal(key,"AIWinLuckyAtA2 ",95);				/**<机器人输赢控制：机器人在区域2赢钱的概率  */
-	m_iAIWinLuckyAtA3	= f.GetKeyVal(key,"AIWinLuckyAtA3 ",95);				/**<机器人输赢控制：机器人在区域3赢钱的概率  */
-	m_iAIWinLuckyAtA4	= f.GetKeyVal(key,"AIWinLuckyAtA4 ",95);				/**<机器人输赢控制：机器人在区域4赢钱的概率  */
+	m_iAIWinLuckyAtA1	= f.GetKeyVal(key,"AIWinLuckyAtA1 ",60);				/**<机器人在区域1赢钱的概率  */
+	m_iAIWinLuckyAtA2	= f.GetKeyVal(key,"AIWinLuckyAtA2 ",60);				/**<机器人输赢控制：机器人在区域2赢钱的概率  */
+	m_iAIWinLuckyAtA3	= f.GetKeyVal(key,"AIWinLuckyAtA3 ",60);				/**<机器人输赢控制：机器人在区域3赢钱的概率  */
+	m_iAIWinLuckyAtA4	= f.GetKeyVal(key,"AIWinLuckyAtA4 ",60);				/**<机器人输赢控制：机器人在区域4赢钱的概率  */
 	G_iAIHaveWinMoney	= f.GetKeyVal(key,"AIHaveWinMoney ",__int64(0));	/**<机器人输赢控制：直接从配置文件中读取机器人已经赢钱的数目  */
-	m_bAIWinAndLostAutoCtrl = f.GetKeyVal(key,"AIWinAndLostAutoCtrl",1);		//机器人输赢控制20121122dwj
+	m_bAIWinAndLostAutoCtrl = f.GetKeyVal(key,"AIWinAndLostAutoCtrl",0);		//机器人输赢控制20121122dwj
 	G_iReSetAIHaveWinMoney	= f.GetKeyVal(key,"ReSetAIHaveWinMoney ",__int64(0)); //记录重置机器人赢钱数，如果游戏过程中改变了就要改变机器人赢钱数
 	
 	return TRUE;
@@ -301,6 +299,7 @@ bool CServerGameDesk::OnTimer(UINT uTimerID)
 			}
 			return TRUE;
 		}
+		//mark
 	case TIME_DOUBLE:	//加倍计时器
 		{
 			KillTimer(TIME_DOUBLE);
@@ -956,6 +955,7 @@ bool	CServerGameDesk::GameBegin(BYTE bBeginFlag)
 	//memset(m_bUserReady,0,sizeof(m_bUserReady));
 	//这里每盘根据房间ID读取下配置文件中的ReSetAIHaveWinMoney 参数 设定下机器人赢了多少钱
 	GetAIContrlSetFromIni(m_pDataManage->m_InitData.uRoomID);
+
 	memset(m_bUserReady,0,sizeof(m_bUserReady));
 	memset(m_iUserCardCount,0,sizeof(m_iUserCardCount));		//用户手中牌数
 	for (int i = 0; i < PLAY_COUNT; i++) 
@@ -1086,6 +1086,7 @@ BOOL	CServerGameDesk::NoticeUserDouble()
 	return TRUE;
 }
 /*---------------------------------------------------------------------------------*/
+//mark
 //用户下注
 BOOL	CServerGameDesk::UserNoteResult(BYTE bDeskStation, BYTE iVerbType,int iNoteType)
 {
@@ -2234,6 +2235,7 @@ BOOL CServerGameDesk::ChangeCard(BYTE bDestStation,BYTE bWinStation)
 	OutputDebugString("err::ChangeCard(0)");
 	for(int i = 0; i < SH_USER_CARD; i ++)
 	{
+		//换一张牌
 		BYTE bTemp = m_iTotalCard[bDestStation * SH_USER_CARD + i];
 		m_iTotalCard[bDestStation * SH_USER_CARD + i ] = m_iTotalCard[bWinStation * SH_USER_CARD + i];
 		m_iTotalCard[bWinStation * SH_USER_CARD + i] = bTemp;
@@ -2665,21 +2667,24 @@ void CServerGameDesk::IAWinAutoCtrl()
 	//CString strInfo;
 	if (bAIWin)
 	{//机器人要赢钱
-		if (CountAIWinMoney() < 0)
+		if (CountAIWinMoney() < 0)//机器人输的话就换牌
 		{
 			for (int i=0;i<PLAY_COUNT;i++)
-			{			
-				ChangeCard(i+1,0);
-				if(CountAIWinMoney()>=0)
-				{
-					break;
-				}
+			{	
+				
+					//todo 换牌(针对庄家,就换庄家的牌)
+					ChangeCard(i+1,0);
+					if(CountAIWinMoney()>=0)
+					{
+						break;
+					}
+				
 			}	
 		}		
 	}
 	else
 	{//机器人要输钱
-		if (CountAIWinMoney() > 0 || (G_iAIHaveWinMoney +CountAIWinMoney())<0)
+		if (CountAIWinMoney() > 0 || (G_iAIHaveWinMoney +CountAIWinMoney())<0)//机器人赢了人的话
 		{
 			for (int i=0;i<PLAY_COUNT;i++)
 			{			
@@ -2695,7 +2700,8 @@ void CServerGameDesk::IAWinAutoCtrl()
 						}
 						// 牌都换完了还是不能满足条件，那么只能重新换牌去让机器人赢了;
 						for (int j = 0; j < PLAY_COUNT;j++)
-						{						
+						{				
+							//todo 换好一点
 							ChangeCard(j+1,0);
 							if (CountAIWinMoney() >=0)
 							{
@@ -2778,9 +2784,9 @@ int CServerGameDesk::CountAIWinMoney()
 	
 	if (m_byUpGradePeople!=255 && m_pUserInfo[m_byUpGradePeople])
 	{
-		int itmpmoney = 0;
+		int itmpmoney = 0;//机器人的钱统计
 		if (m_pUserInfo[m_byUpGradePeople]->m_UserData.isVirtual)
-		{///如果机器人是庄家,计算真实玩家的钱;
+		{///如果机器人是庄家,对比真是玩家的牌型
 			for(int i=0;i<PLAY_COUNT; i++)
 			{
 				if (NULL != m_pUserInfo[i] )
@@ -2807,12 +2813,12 @@ int CServerGameDesk::CountAIWinMoney()
 		else
 		{///如果机器人不是庄家,计算机器人的钱;
 			for(int i=0;i<PLAY_COUNT; i++)
-			{
+			{//遍历把机器人的钱加起来
 				if (NULL != m_pUserInfo[i] )
 				{
 					if (m_pUserInfo[i]->m_UserData.isVirtual)
 					{
-						//20121126dwj 比较机器人庄家与玩家的牌大小;
+						//20121126dwj 比较机器人庄家与玩家的牌大小;(第一个比第二个大就返回1,否侧返回-1)
 						if(m_Logic.CompareCard(iUserCard[i], SH_USER_CARD, iUserCard[m_byUpGradePeople],SH_USER_CARD) == 1)
 						{//机器人的牌型大于庄家的牌，机器人赢钱
 							itmpmoney += m_bCardShapeBase[iShape[i]]*m_iPerJuTotalNote[i];

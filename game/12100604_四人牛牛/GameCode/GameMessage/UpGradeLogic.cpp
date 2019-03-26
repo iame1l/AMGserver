@@ -745,6 +745,7 @@ int CUpGradeGameLogic::CompareCard(BYTE iFirstCard[], int iFirstCount,BYTE iFirs
 	//}
 	return 0;
 }
+//mark
 //比较两手中牌的大小
 int CUpGradeGameLogic::CompareCard(BYTE iFirstCard[], int iFirstCount, BYTE iSecondCard[], int iSecondCount)
 {

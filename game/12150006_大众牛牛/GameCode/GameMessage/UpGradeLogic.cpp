@@ -1409,6 +1409,7 @@ int CUpGradeGameLogic::IsHaveNote( BYTE  iCardList[], int iCardCount )
 	int Note = CanSumIn( iCardList, iCardCount, 3 );
 	return ( Note % 10 );
 }
+//mark
 ///得到手牌中最大的牌( 含花色 )
 /// @param BYTE  iCardList[] 牌列表
 /// @param int iCardCoun 牌张数

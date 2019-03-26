@@ -2275,7 +2275,7 @@ BYTE CServerGameDesk::GetWinPeo( )
 	return byTempPeo;
 }
 
-//计算各家分数
+//计算各家分数//mark
 int CServerGameDesk::ComputePoint( BYTE DeskStation )
 {
 	if (!IsValidPlayer(m_byUpGradePeople)) return 0;
