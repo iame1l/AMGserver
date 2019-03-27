@@ -228,7 +228,6 @@ public:
 	void	IAWinAutoCtrl();
 	///20121122dwj计算当前牌机器人的输赢钱
 	int		CountAIWinMoney();
-
 	//Added by QiWang 20171106, 普通场T人相关
 	void SetTimerCheckReadyInFinish();
 

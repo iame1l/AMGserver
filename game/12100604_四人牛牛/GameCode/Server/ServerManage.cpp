@@ -150,7 +150,6 @@ BOOL	CServerGameDesk::LoadIni()
 	}
 	return true;
 }
-//Eil
 //根据房间ID加载配置文件
 BOOL CServerGameDesk::LoadExtIni(int iRoomID)
 {
@@ -341,7 +340,7 @@ bool CServerGameDesk::OnTimer(UINT uTimerID)
 			}
 			return TRUE;
 		}
-	case TIME_AUTO_BULL:	//自动摆牛计时器
+	case TIME_AUTO_BULL:	//自动摆牛计时器//mark
 		{
 			KillTimer(TIME_AUTO_BULL);
 			// 摆牛前断线（如庄家在其他玩家没下注前断线），系统自动帮其摆牛，
@@ -1183,6 +1182,8 @@ BOOL	CServerGameDesk::SendCard()
 {
 	m_bGameStation = GS_SEND_CARD;
 
+
+	//发扑克的地方
 	//分发扑克牌
 	for(int j = 0 ; j<SH_USER_CARD ;j++)
 	{
@@ -1201,6 +1202,15 @@ BOOL	CServerGameDesk::SendCard()
 		}
 	}
 
+	//todo 将决定发牌权放在这里
+	//if(this->m_bAIWinAndLostAutoCtrl)
+	//{
+	//this->IAWinAutoCtrl_pro();
+	//}
+
+
+
+	//
 
 	//如果超端设置了 就要换牌
 	if (m_SuperSetData.bSetSuccese)
@@ -2203,6 +2213,7 @@ int CServerGameDesk::ComputePoint(BYTE DeskStation)
 	OutputDebugString("err::ComputePoint(1)");
 	return Point;
 }
+//得到最大牌和最小牌,win值为1时得到最大,其它为最小
 BYTE CServerGameDesk::GetIndex(int win)
 {
 	OutputDebugString("err::GetIndex(0)");
@@ -2228,14 +2239,13 @@ BYTE CServerGameDesk::GetIndex(int win)
 	}
 
 }
-
+//mark
 //换牌
 BOOL CServerGameDesk::ChangeCard(BYTE bDestStation,BYTE bWinStation)
 {
 	OutputDebugString("err::ChangeCard(0)");
 	for(int i = 0; i < SH_USER_CARD; i ++)
 	{
-		//换一张牌
 		BYTE bTemp = m_iTotalCard[bDestStation * SH_USER_CARD + i];
 		m_iTotalCard[bDestStation * SH_USER_CARD + i ] = m_iTotalCard[bWinStation * SH_USER_CARD + i];
 		m_iTotalCard[bWinStation * SH_USER_CARD + i] = bTemp;
@@ -2667,18 +2677,17 @@ void CServerGameDesk::IAWinAutoCtrl()
 	//CString strInfo;
 	if (bAIWin)
 	{//机器人要赢钱
-		if (CountAIWinMoney() < 0)//机器人输的话就换牌
+		if (CountAIWinMoney() < 0)//机器人输,就换牌
 		{
 			for (int i=0;i<PLAY_COUNT;i++)
-			{	
-				
-					//todo 换牌(针对庄家,就换庄家的牌)
-					ChangeCard(i+1,0);
-					if(CountAIWinMoney()>=0)
-					{
-						break;
-					}
-				
+			{		
+				//todo
+				//为什么 一定是 0?
+				ChangeCard(i+1,0);
+				if(CountAIWinMoney()>=0)
+				{
+					break;
+				}
 			}	
 		}		
 	}
@@ -2715,6 +2724,7 @@ void CServerGameDesk::IAWinAutoCtrl()
 		}
 	}
 }
+
 	
 //------------------------------------------------------------------------------------
 void CServerGameDesk::RecordAiHaveWinMoney(GameEndStruct *GameEnd)
@@ -2780,7 +2790,7 @@ int CServerGameDesk::CountAIWinMoney()
 		}
 		//保存各玩家的牌型用于比较大小；
 		iShape[i] = m_Logic.GetShape(iUserCard[i],5);
-	}
+	} 
 	
 	if (m_byUpGradePeople!=255 && m_pUserInfo[m_byUpGradePeople])
 	{
@@ -2805,8 +2815,7 @@ int CServerGameDesk::CountAIWinMoney()
 							itmpmoney += m_bCardShapeBase[iShape[m_byUpGradePeople]]*m_iPerJuTotalNote[i];
 						}					
 					}	
-				}
-				
+				}			
 			}
 			money = itmpmoney;
 		}

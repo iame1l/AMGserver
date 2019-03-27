@@ -982,6 +982,9 @@ int CUpGradeGameLogic::GetPoint(int Card)
 //	 return CardPoint;
 
 //}
+
+
+//获取牛一到牛九的//mark
 int CUpGradeGameLogic::GetShape(BYTE iCardList[],int iCardCount,BYTE iUpCard[])
 {
 	for(int i=0;i<3;i++)
@@ -1316,7 +1319,7 @@ BOOL CUpGradeGameLogic::GetBull(BYTE iCardList[],int iCardCount,BYTE iBullCard[]
 			{
 				int temp = GetPoint(iCardList[i]) + GetPoint(iCardList[j]) + GetPoint(iCardList[k]);
 				if (temp == 30 || temp == 10 || temp == 20)
-				{
+				{//是否有牛的存在
 					iBullCard[0]=iCardList[i];
 					iBullCard[1]=iCardList[j];
 					iBullCard[2]=iCardList[k];

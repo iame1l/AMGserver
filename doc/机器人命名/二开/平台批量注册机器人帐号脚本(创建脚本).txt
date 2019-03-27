@@ -1,0 +1,182 @@
+/*----清空原来的内容----*/
+/*----
+delete from tusers
+delete from web_users
+delete from tuserinfo
+----*/
+/*----批量加玩家---*/
+/*--定义变量--*/
+declare @i int                  --控制设置玩家帐号时循环初始值
+declare @j int                  --控制设置VIP,性别时循环初始值
+declare @k int                  --控制设置玩家头像时循环初始值                     
+---------------------------------------------------------------------
+declare @Number int               ---控制加入数量,这个非常重要
+---------------------------------------------------------------------
+declare @BaseID int                  ---控制玩家数据库userid序列号
+declare @StartID int                 ---控制玩家登录ID后缀序列号
+declare @BaseLoginID nvarchar(20)    ---控制玩家登录ID前缀
+declare @BaseNickName nvarchar(20)   ---控制玩家昵称ID前缀
+declare @PassWord nvarchar(50)       ---控制玩家密码
+declare @TwicePassWord nvarchar(50)  ---控制玩家二级密码
+declare @BaseTrueName nvarchar(20)   ---控制玩家真实姓名
+declare @BankMoney float             ---控制玩家银行金币
+declare @PakeageMoney  float         ---控制玩家口袋金币
+
+/*--变量初始化--*/
+/*----密码为"111111"时的MD5值  96e79218965eb72c92a549dd5a330112  ----*/
+/*----密码为"112233"时的MD5值  d0970714757783e6cf17b26fb8e2298f  ----*/
+/*----密码为"000000"时的MD5值  670b14728ad9902aecba32e22fa4f6bd  ----*/
+/*----密码为"123456"时的MD5值  e10adc3949ba59abbe56e057f20f883e  ----*/
+/*	     888888		21218cca77804d2ba1922c33e0151105      */
+set @i = 1
+set @j = 1
+set @k = 0
+set @Number = 1000             ---机器人账号生成数量  (可选择性修改)
+set @BaseID = 1000             ---UserID初始值,机器人用户ID将从此值开始生成并依次排序，必须使用数据库中未使用的UserID。  (可选择性修改)
+set @StartID = 1000            ---用户名后缀初始值，机器人用户名后缀将从此值开始生成并依次排序，第一次默认使用1000即可。
+                               ---必须使用数据库中未使用的用户名后缀序号 (可选择性修改)
+set @BaseLoginID = 'PHQP'     ---用户名前缀  (可选择性修改)
+set @BaseNickName = 'PHQP'    ---昵称前缀  (可选择性修改)
+set @PassWord = 'd0970714757783e6cf17b26fb8e2298f'      --- 此值为一级密码:112233的md5值  (必须修改)
+set @TwicePassWord = 'd0970714757783e6cf17b26fb8e2298f'   --- 此值为二级密码:112233的md5值  (必须修改)
+set @BaseTrueName = '帐号'
+set @BankMoney = 23445000          ---银行金币数量  (可选择性修改)
+set @PakeageMoney = 1567245     ---钱包金币数量  (可选择性修改)
+
+
+/*--开始循环--*/
+
+while @i<=@number
+begin
+/*----此处根据实际Tusers的表结构修改列名-----*/
+insert into Tusers
+           (
+            userid                  
+           ,UserName                 
+           ,pass                    
+           ,twopassword             
+           ,nickname                
+           ,logoid                    /*--玩家头像(取值范围0~11)--*/
+           ,logofilemd5             
+           ,token                   
+           ,onlineflag              
+           ,disabled                
+     --    ,AgencyID
+           ,sex
+           ,IsRobot               /*--0为普通玩家，1为机器人--*/
+           )                     /*--玩家性别(取值范围0,1)--*/
+     values
+           (
+            @BaseID+@i                 
+           ,@BaseLoginID++ltrim(str(@StartID+@i))
+           ,@PassWord         
+           ,@TwicePassWord
+           ,@BaseNickName+ltrim(str(@StartID+@i))
+           ,1
+           ,0
+           ,0
+           ,0
+           ,0
+       --  ,1
+           ,1
+           ,1
+           )
+
+
+/*-----此处根据实际TuserInfo的表结构修改列名-----*/
+insert into TuserInfo         
+           (
+            userid
+           ,member
+           ,matchmember
+           ,master
+           ,gamepower
+           ,GPLimitTime
+           ,WalletMoney
+           ,BankMoney
+           ,Fascination
+           ,Viptime
+           ,DoublePointTime
+           ,ProtectTime
+           ,LastLoginIP
+           ,TimeIsMoney
+           ,AllLoginTime
+           ,LastLoginTM
+           ,TaxCom
+           ) 
+     values
+           (@BaseID+@i
+           ,0
+           ,0
+           ,0
+           ,0
+           ,'1900-1-1 0:00:00'
+           ,@PakeageMoney
+           ,@BankMoney
+           ,0
+           ,0
+           ,0
+           ,0
+           ,'127.0.0.1'
+           ,0
+           ,10
+           ,'2009-11-16 00:00:00'
+           ,4206659
+           )
+
+/*-----此处根据实际Web_Users的表结构修改列名-----*/
+insert into Web_Users 
+           (
+            UserID
+       --    ,UserName
+       --    ,TrueName
+      --     ,ParentAgencyID
+           ,RegisterIP
+           ,RegisterTM
+           ,Email  
+           ,Phone
+           ,WebLoginTime
+           ,Pwd_anw
+           ,Pwd_ques
+           ,ZJ_type
+           ,ZJ_Number
+       --    ,RegGive
+           )
+     VALUES
+           (
+            @BaseID+@i
+     --      ,@BaseLoginID++ltrim(str(@StartID+@i))
+     --      ,@BaseTrueName+ltrim(str(@StartID+@i))
+     --      ,1
+           ,'192.168.0.166'
+           ,'2009-10-28 21:06:17.700'
+           ,'2222222@222.com'
+           ,'22222222'
+           ,30
+           ,111111
+           ,'我的座右铭是？'
+           ,3
+           ,111111
+     --      ,50000
+            )
+
+
+set @i= @i+1
+end
+
+while @j<=@Number
+begin
+
+update  tusers set logoid =6+@k,sex = 0 where userid = @BaseID+@j
+update  tuserinfo set viptime=1326115000 where userid = @BaseID+@j
+
+update  tusers set logoid =0+@k,sex = 1 where userid = @BaseID+@j+1
+update  tuserinfo set viptime=0 where userid = @BaseID+@j+1
+
+set @j=@j+2
+set @k=@k+1
+/*-- logoid 超过 11 或 5 时将 @K 初始化 --*/
+if  @k>5 set @k = 0
+
+end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
