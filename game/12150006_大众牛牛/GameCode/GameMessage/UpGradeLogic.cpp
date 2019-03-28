@@ -1000,6 +1000,7 @@ BYTE CUpGradeGameLogic::RandCard( BYTE iCard[], int iCardCount, bool bhaveKing )
 		//	   n++;
 		//    }
 		//}
+		//是否带大小王
 		if ( bhaveKing )
 		{
 			for ( int i=0;i<iCardCount;i+=54 )
@@ -1014,9 +1015,11 @@ BYTE CUpGradeGameLogic::RandCard( BYTE iCard[], int iCardCount, bool bhaveKing )
 
 		do
 		{
+			//iSend是个推进数	
 			iStation=rand( )%( iCardCount-iSend );
 			iCard[iSend]=iCardList[iStation];
 			iSend++;
+			//将最后一位的扑克补到已经发出去的扑克上
 			iCardList[iStation]=iCardList[iCardCount-iSend];
 		} while ( iSend<iCardCount );
 

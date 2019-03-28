@@ -1051,6 +1051,7 @@ int CUpGradeGameLogic::GetShape(BYTE iCardList[],int iCardCount,BYTE iUpCard[])
 	return UG_NO_POINT;
 
 }
+//牛牛获取点数
 int CUpGradeGameLogic::GetShape(BYTE iCardList[],int iCardCount)
 {
 	if (IsBombBull(iCardList,iCardCount)&&(m_iCardShape&(0x01<<2))) 

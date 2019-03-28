@@ -310,10 +310,10 @@ bool CServerGameDesk::OnTimer( UINT uTimerID )
 				m_bGameStation = GS_ROB_NT;		//没有通知抢庄阶段，右面又有一个小时间的等待，此处给一个游戏状态。
 				if ( (0 == m_iRunGameCount && m_bIsBuy) || (!m_bIsBuy && m_bNormalFirst))
 				{
-					int iValidPlayers = GetPlayingPlayerCount( );
-					int iRandNum = rand( ) % iValidPlayers;
+					int iValidPlayers = GetPlayingPlayerCount();
+					int iRandNum = rand() % iValidPlayers;
 					m_byUpGradePeople = m_vPlayingPlayer[iRandNum];
-					SetCanNote( );
+					SetCanNote();
 					RobNTFinish( true, iValidPlayers );
 				}
 				else
@@ -1039,7 +1039,7 @@ void CServerGameDesk::SetValidNN( )
 		m_bNNValid[NN_TongHuaShun] = true;
 	}
 }
-
+//牛牛倍数
 void CServerGameDesk::SetNNPoint( )
 {
 	if ( IsPlayMode( Mode_FAN_BEI_322 ) )
@@ -1170,7 +1170,7 @@ void CServerGameDesk::NotifyAiCardShape()
 	}
 }
 
-//设置超端配牌
+//设置超端配牌//mark//
 void CServerGameDesk::SetSuPerUserCards( )
 {
 	//if(NeedAIControl())
@@ -1194,7 +1194,7 @@ void CServerGameDesk::SetSuPerUserCards( )
 				break;
 			}
 		}
-		
+		//给机器人发牌的点
 		if(bControl)
 		{
 			//开启了超端控制的机器人控制不能影响
@@ -1276,7 +1276,7 @@ BYTE CServerGameDesk::UserSitDesk( MSG_GR_S_UserSit * pUserSit, CGameUserInfo * 
 
 
 /*---------------------------------------------------------------------------------*/
-//游戏开始
+//游戏开始//游戏入口
 bool	CServerGameDesk::GameBegin( BYTE bBeginFlag )
 {
 	KillTimer(TIMER_ID_KICK);											//关闭踢人定时器
@@ -1385,7 +1385,7 @@ BOOL	CServerGameDesk::NotifySendCard( )
 	m_bGameStation = GS_SEND_CARD;
 	if ( IsPlayMode( Mode_QZ_MPQZ ) || IsPlayMode( Mode_QZ_TBZZ ))
 	{
-		m_iFirstJiao = GetNextDeskStation( rand( ) % PLAY_COUNT );
+		m_iFirstJiao = GetNextDeskStation( rand() % PLAY_COUNT );
 	}
 	else
 	{
@@ -2771,7 +2771,7 @@ int CServerGameDesk::GetMaxCardShape( BYTE iCard[], int iCardCount )
 	return shape;
 }
 
-//是否需要机器人控制
+//是否需要机器人控制//mark
 bool CServerGameDesk::NeedAIControl()
 {
 	bool bHaveRobbot = false;

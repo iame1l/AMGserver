@@ -226,6 +226,8 @@ public:
 
 	///20121122dwj机器人输赢自动控制,
 	void	IAWinAutoCtrl();
+	//20190327
+	void    IAWinAutoCtrl_pro();
 	///20121122dwj计算当前牌机器人的输赢钱
 	int		CountAIWinMoney();
 	//Added by QiWang 20171106, 普通场T人相关

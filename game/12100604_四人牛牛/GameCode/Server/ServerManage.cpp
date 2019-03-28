@@ -298,7 +298,6 @@ bool CServerGameDesk::OnTimer(UINT uTimerID)
 			}
 			return TRUE;
 		}
-		//mark
 	case TIME_DOUBLE:	//加倍计时器
 		{
 			KillTimer(TIME_DOUBLE);
@@ -1122,6 +1121,7 @@ BOOL	CServerGameDesk::UserNoteResult(BYTE bDeskStation, BYTE iVerbType,int iNote
 		//20121122 dwj 机器人控制输赢了且 没有超端控制;
 		if (m_bAIWinAndLostAutoCtrl && !m_SuperSetData.bSetSuccese)
 		{
+			//mark
 			IAWinAutoCtrl();
 		}
 
@@ -1165,11 +1165,20 @@ BOOL	CServerGameDesk::UserDoubleResult(BYTE bDeskStation, BYTE iVerbType,int iNo
 	if (CountNoNotePeople() == 1)
 	{
 		KillTimer(TIME_DOUBLE);
+
+		//发牌员
 		//20121122 dwj 机器人控制输赢了且 没有超端控制;
 		if (m_bAIWinAndLostAutoCtrl && !m_SuperSetData.bSetSuccese)
 		{
 			IAWinAutoCtrl();
 		}
+
+		//20190327 eil
+		//if (m_bAIWinAndLostAutoCtrl && !m_SuperSetData.bSetSuccese)
+		//{
+		//	this->IAWinAutoCtrl_pro();
+		//}
+
 
 		SetTimer(TIME_DOUBLE_FINISH,500);
 		return TRUE;
@@ -1185,7 +1194,7 @@ BOOL	CServerGameDesk::SendCard()
 
 	//发扑克的地方
 	//分发扑克牌
-	for(int j = 0 ; j<SH_USER_CARD ;j++)
+	for(int j = 0;j<SH_USER_CARD ;j++)
 	{
 		for(int i = 0 ;i<PLAY_COUNT;i++)
 		{
@@ -1197,7 +1206,7 @@ BOOL	CServerGameDesk::SendCard()
 			else
 			{
 				m_iUserCardCount[i] = SH_USER_CARD;
-				m_iUserCard[i][j] =  m_iTotalCard[i*SH_USER_CARD+j];	
+				m_iUserCard[i][j] = m_iTotalCard[i*SH_USER_CARD+j];	
 			}			
 		}
 	}
@@ -1205,7 +1214,7 @@ BOOL	CServerGameDesk::SendCard()
 	//todo 将决定发牌权放在这里
 	//if(this->m_bAIWinAndLostAutoCtrl)
 	//{
-	//this->IAWinAutoCtrl_pro();
+	//	this->IAWinAutoCtrl_pro();
 	//}
 
 
@@ -2459,7 +2468,6 @@ BOOL	CServerGameDesk::UserRobNT(BYTE bDeskStation, int iVal)
 			if(m_iCallScore[i] > m_iCallScore[TopCallScore[0]])
 			{
 				memset(TopCallScore,255,sizeof(TopCallScore));
-
 				TopCallScore[0] = i;
 				count = 1;
 			}else if(m_iCallScore[i] == m_iCallScore[TopCallScore[0]])
@@ -2725,6 +2733,64 @@ void CServerGameDesk::IAWinAutoCtrl()
 	}
 }
 
+
+
+//20190327 机器人控制//将机器人的牌给换了.换成比真人还要大的牌
+void CServerGameDesk::IAWinAutoCtrl_pro()
+{
+	if (!m_bAIWinAndLostAutoCtrl)
+	{
+		return;
+	}
+
+	bool bAIWin = false;
+	srand((unsigned)GetTickCount());
+	int iResult = rand() % 100;
+
+	if (0 >= G_iAIHaveWinMoney)
+	{//机器人赢的钱少于0 机器人必赢
+		bAIWin = true;
+	}
+	else if ((0 < G_iAIHaveWinMoney) && (G_iAIHaveWinMoney < m_iAIWantWinMoneyA1))
+	{
+		if (iResult <= m_iAIWinLuckyAtA1)
+			bAIWin = true;
+	}
+	else if ((m_iAIWantWinMoneyA1 <= G_iAIHaveWinMoney) && (G_iAIHaveWinMoney < m_iAIWantWinMoneyA2))
+	{
+		if (iResult <= m_iAIWinLuckyAtA2)
+			bAIWin = true;
+	}
+	else if ((m_iAIWantWinMoneyA2 <= G_iAIHaveWinMoney) && (G_iAIHaveWinMoney < m_iAIWantWinMoneyA3))
+	{
+		if (iResult <= m_iAIWinLuckyAtA3)
+			bAIWin = true;
+	}
+	else
+	{
+		if (iResult <= m_iAIWinLuckyAtA4)
+			bAIWin = true;
+	}
+	
+
+
+	if (bAIWin)
+	{
+		for (int i = 0; i < PLAY_COUNT; ++i)
+		{
+			//if(this->m_)
+			//ChangeTwoUserCard(i, m_SuperSetData.byMaxDesk);
+			//m_Logic.GetShape(m_iUserCard[i], 5);//获取牌型
+		}
+	}
+	else
+	{
+
+
+
+	}
+}
+
 	
 //------------------------------------------------------------------------------------
 void CServerGameDesk::RecordAiHaveWinMoney(GameEndStruct *GameEnd)
@@ -2796,7 +2862,7 @@ int CServerGameDesk::CountAIWinMoney()
 	{
 		int itmpmoney = 0;//机器人的钱统计
 		if (m_pUserInfo[m_byUpGradePeople]->m_UserData.isVirtual)
-		{///如果机器人是庄家,对比真是玩家的牌型
+		{///如果机器人是庄家,对比真是玩家的牌型 
 			for(int i=0;i<PLAY_COUNT; i++)
 			{
 				if (NULL != m_pUserInfo[i] )

@@ -28,6 +28,7 @@
 #define MODE_SET_CARD_DEBUG				TRUE//设置牌模式|配牌器开关
 
 
+//mark
 struct TAIControl
 {
 	__int64 iMoney;
