@@ -86,16 +86,6 @@ protected:
 	int					m_iBasePoint;			//游戏基础分, Added by QiWang 20180226
 	//超端参数
 	vector<long>		m_vlSuperID;				//保存超端玩家的容器
-	//奖池控制参数
-	bool				m_bAIWinAndLostAutoCtrl;	//机器人控制输赢
-	__int64				m_iAIWantWinMoneyA1;		/**<机器人输赢控制：机器人赢钱区域1  */
-	__int64				m_iAIWantWinMoneyA2;		/**<机器人输赢控制：机器人赢钱区域2  */
-	__int64				m_iAIWantWinMoneyA3;		/**<机器人输赢控制：机器人赢钱区域3  */
-	int					m_iAIWinLuckyAtA1;			/**<机器人输赢控制：机器人在区域1赢钱的概率  */
-	int					m_iAIWinLuckyAtA2;			/**<机器人输赢控制：机器人在区域2赢钱的概率  */
-	int					m_iAIWinLuckyAtA3;			/**<机器人输赢控制：机器人在区域3赢钱的概率  */
-	int					m_iAIWinLuckyAtA4;			/**<机器人输赢控制：机器人在区域4赢钱的概率  */
-
 	//一下参数都是可配置的 但是没有写在配置文件中 就是防止客户乱配出现问题
 	int					m_iSendCardTime;		//发牌时间-控制客户端发一张牌的速度
 	BOOL				m_bTurnRule;			//游戏顺序 0-顺时针 1-逆时针
@@ -234,10 +224,6 @@ public:
 	///获取当前牌中最大的牌型，
 	int		GetMaxCardShape(BYTE iCard[], int iCardCount);
 
-	///20121122dwj机器人输赢自动控制,
-	void	IAWinAutoCtrl();
-	//20190327
-	void    IAWinAutoCtrl_pro();
 	///20121122dwj计算当前牌机器人的输赢钱
 	int		CountAIWinMoney();
 	//Added by QiWang 20171106, 普通场T人相关
