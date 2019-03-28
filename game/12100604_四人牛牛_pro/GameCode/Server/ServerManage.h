@@ -23,6 +23,16 @@
 
 #define NUM_ONE_SECOND_MS			1000//1s=1000ms
 
+//201903028 eil
+struct TAIControl
+{
+	__int64 iMoney;
+	int		iLucky;
+	int		iMinBull;
+	int		iMaxBull;
+};
+
+
 
 
 //游戏桌类
@@ -36,7 +46,7 @@ protected:
 	BYTE					m_iTotalCard[52];		//总的牌
 
 	/*---------------------------游戏基础数据每局需要重置的数据----------------*/
-	SuperUserSetData		m_SuperSetData;					//超端设置的数据
+	SuperUserSetData		m_SuperSetData[PLAY_COUNT];			//超端设置的数据
 	bool                    m_bUserReady[PLAY_COUNT] ;			///玩家准备状态
 	BYTE					m_byUpGradePeople;					//庄家位置	
 	BYTE                    m_iFirstJiao;						//第一个抢庄玩家位置	
@@ -268,6 +278,35 @@ private:
 	virtual void UpDataRoomPond(__int64 iAIHaveWinMoney);
 
 	void UpdateCalculateBoard();
+
+//20190328 eil
+private:
+	bool					m_bAICtrl;			//是否开启机器人控制
+	vector<TAIControl>		m_vAIContrl;		//机器人控制细节
+	int						m_RoomId;			//房间i
+
+
+	//控制是否好牌
+	void MakeGoodCard();
+	//清掉玩家的手牌数据
+	void GameBeginInit();
+	//超端设置入口
+	void SetSuPerUserCards();
+	//人机控制的条件
+	bool NeedAIControl();
+	//是否是有效玩家
+	bool IsValidPlayer(int iNum);
+	//获取更真实的牌型
+	int GetRealShape(int iMinBull, int iMaxBull);
+	//是否是有效的牛牛类型
+	bool IsValidBull(int iShape);
+	//查找牌型
+	bool FindShape(BYTE bUser, BYTE byRandCards[], int iShape);
+	//准倍发牌
+	void PrepareCard();
+	//发送游戏开始
+	void SendGameBegin();
+
 
 };
 

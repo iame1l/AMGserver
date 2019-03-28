@@ -77,18 +77,13 @@ typedef struct SuperUserState
 /*------------------------------------------------------------------------------*/
 typedef struct SuperUserSetData
 {
-	BYTE	byDeskStation;      /**< 玩家位置 */
-	bool	bSetSuccese;		//是否设置成功了
-	BYTE	byMaxDesk;			//设置最大玩家的位置
-	BYTE	byMinDesk;			//设置最小玩家的位置
+	BYTE	byDeskStation;      //玩家位置 
+	bool	bSetSuccess;		//是否设置成功了
+	int		iShape;				//请求配置的牌型
 	SuperUserSetData()
 	{
-		Init();
-	}
-	void Init()
-	{
-		memset(this,255,sizeof(SuperUserSetData));
-		bSetSuccese = false;
+		memset(this, 0, sizeof(SuperUserSetData));
+		byDeskStation = 255;
 	}
 };
 

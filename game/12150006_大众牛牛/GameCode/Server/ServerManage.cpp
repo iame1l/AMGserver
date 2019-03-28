@@ -1228,6 +1228,7 @@ void CServerGameDesk::SetSuPerUserCards( )
 			memset(byRandCards, 255, sizeof(byRandCards));
 
 			iShape = m_SuperSetData[x].iShape;
+			//’“≈∆(¥”≈∆ø‚¿Ô’“)
 			bool bFind = FindShape(bUser, byRandCards, iShape);
 			if (bFind)
 			{

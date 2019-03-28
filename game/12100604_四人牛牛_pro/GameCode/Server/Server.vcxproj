@@ -194,6 +194,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="..\GameMessage\UpGradeLogic.h" />
     <ClInclude Include="..\GameMessage\UpgradeMessage.h" />
+    <ClInclude Include="WylLog.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="UpGradeDLL.rc" />

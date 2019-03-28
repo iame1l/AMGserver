@@ -2,6 +2,11 @@
 
 //#include "StdAfx.h"
 
+//扑克数目-服务器专用
+#define NUM_CARD_ARRAY_WITH_FACE	54
+#define NUM_CARD_ARRAY_NO_FACE		( NUM_CARD_ARRAY_WITH_FACE - 3 * 4 )
+#define NUM_CARD_KING				2
+
 //操作掩码
 #define	UG_HUA_MASK					0xF0			//1111 0000
 #define	UG_VALUE_MASK				0x0F			//0000 1111
