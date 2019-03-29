@@ -994,6 +994,7 @@ int CUpGradeGameLogic::GetShape(BYTE iCardList[],int iCardCount,BYTE iUpCard[])
 			return UG_NO_POINT;
 		}
 	}
+	
 	if (IsBombBull(iCardList,iCardCount)&&(m_iCardShape&(0x01<<2))) 
 	{
 		return UG_BULL_BOMB;

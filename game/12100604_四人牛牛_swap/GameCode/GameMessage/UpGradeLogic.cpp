@@ -1054,6 +1054,7 @@ int CUpGradeGameLogic::GetShape(BYTE iCardList[],int iCardCount,BYTE iUpCard[])
 //牛牛获取点数
 int CUpGradeGameLogic::GetShape(BYTE iCardList[],int iCardCount)
 {
+	/*
 	if (IsBombBull(iCardList,iCardCount)&&(m_iCardShape&(0x01<<2))) 
 	{
 		return UG_BULL_BOMB;
@@ -1073,12 +1074,12 @@ int CUpGradeGameLogic::GetShape(BYTE iCardList[],int iCardCount)
 	{
 		return UG_BULL_SILVER;
 	}
-	
+	*/	
 	if(IsBullBull(iCardList,iCardCount))
 	{
 		return UG_BULL_BULL;
 	}
-
+	
 	switch(IsHaveNote(iCardList,iCardCount))
 	{
 	case 1:

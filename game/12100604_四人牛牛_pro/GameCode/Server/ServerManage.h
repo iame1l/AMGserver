@@ -23,6 +23,16 @@
 
 #define NUM_ONE_SECOND_MS			1000//1s=1000ms
 
+//201903028 eil
+struct TAIControl
+{
+	__int64 iMoney;
+	int		iLucky;
+	int		iMinBull;
+	int		iMaxBull;
+};
+
+
 
 
 //游戏桌类
@@ -36,7 +46,7 @@ protected:
 	BYTE					m_iTotalCard[52];		//总的牌
 
 	/*---------------------------游戏基础数据每局需要重置的数据----------------*/
-	SuperUserSetData		m_SuperSetData;					//超端设置的数据
+	SuperUserSetData		m_SuperSetData[PLAY_COUNT];			//超端设置的数据
 	bool                    m_bUserReady[PLAY_COUNT] ;			///玩家准备状态
 	BYTE					m_byUpGradePeople;					//庄家位置	
 	BYTE                    m_iFirstJiao;						//第一个抢庄玩家位置	
@@ -76,16 +86,6 @@ protected:
 	int					m_iBasePoint;			//游戏基础分, Added by QiWang 20180226
 	//超端参数
 	vector<long>		m_vlSuperID;				//保存超端玩家的容器
-	//奖池控制参数
-	bool				m_bAIWinAndLostAutoCtrl;	//机器人控制输赢
-	__int64				m_iAIWantWinMoneyA1;		/**<机器人输赢控制：机器人赢钱区域1  */
-	__int64				m_iAIWantWinMoneyA2;		/**<机器人输赢控制：机器人赢钱区域2  */
-	__int64				m_iAIWantWinMoneyA3;		/**<机器人输赢控制：机器人赢钱区域3  */
-	int					m_iAIWinLuckyAtA1;			/**<机器人输赢控制：机器人在区域1赢钱的概率  */
-	int					m_iAIWinLuckyAtA2;			/**<机器人输赢控制：机器人在区域2赢钱的概率  */
-	int					m_iAIWinLuckyAtA3;			/**<机器人输赢控制：机器人在区域3赢钱的概率  */
-	int					m_iAIWinLuckyAtA4;			/**<机器人输赢控制：机器人在区域4赢钱的概率  */
-
 	//一下参数都是可配置的 但是没有写在配置文件中 就是防止客户乱配出现问题
 	int					m_iSendCardTime;		//发牌时间-控制客户端发一张牌的速度
 	BOOL				m_bTurnRule;			//游戏顺序 0-顺时针 1-逆时针
@@ -224,10 +224,6 @@ public:
 	///获取当前牌中最大的牌型，
 	int		GetMaxCardShape(BYTE iCard[], int iCardCount);
 
-	///20121122dwj机器人输赢自动控制,
-	void	IAWinAutoCtrl();
-	//20190327
-	void    IAWinAutoCtrl_pro();
 	///20121122dwj计算当前牌机器人的输赢钱
 	int		CountAIWinMoney();
 	//Added by QiWang 20171106, 普通场T人相关
@@ -268,6 +264,35 @@ private:
 	virtual void UpDataRoomPond(__int64 iAIHaveWinMoney);
 
 	void UpdateCalculateBoard();
+
+//20190328 eil
+private:
+	bool					m_bAICtrl;			//是否开启机器人控制
+	vector<TAIControl>		m_vAIContrl;		//机器人控制细节
+	int						m_RoomId;			//房间i
+
+
+	//控制是否好牌
+	void MakeGoodCard();
+	//清掉玩家的手牌数据
+	void GameBeginInit();
+	//超端设置入口
+	void SetSuPerUserCards();
+	//人机控制的条件
+	bool NeedAIControl();
+	//是否是有效玩家
+	bool IsValidPlayer(int iNum);
+	//获取更真实的牌型
+	int GetRealShape(int iMinBull, int iMaxBull);
+	//是否是有效的牛牛类型
+	bool IsValidBull(int iShape);
+	//查找牌型
+	bool FindShape(BYTE bUser, BYTE byRandCards[], int iShape);
+	//准倍发牌
+	void PrepareCard();
+	//发送游戏开始
+	void SendGameBegin();
+
 
 };
 
