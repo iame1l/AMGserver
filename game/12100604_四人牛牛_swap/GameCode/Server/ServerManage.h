@@ -226,8 +226,6 @@ public:
 
 	///20121122dwj机器人输赢自动控制,
 	void	IAWinAutoCtrl();
-	//20190327
-	void    IAWinAutoCtrl_pro();
 	///20121122dwj计算当前牌机器人的输赢钱
 	int		CountAIWinMoney();
 	//Added by QiWang 20171106, 普通场T人相关
@@ -268,7 +266,14 @@ private:
 	virtual void UpDataRoomPond(__int64 iAIHaveWinMoney);
 
 	void UpdateCalculateBoard();
-
+//20190329 eil
+private:
+	//是否开启机器人控制
+	bool NeedAIControl();
+	//是否是有效玩家
+	bool IsValidPlayer(int iNum);
+	//发牌员换牌
+	void dealerSwapCard();
 };
 
 /******************************************************************************************************/
