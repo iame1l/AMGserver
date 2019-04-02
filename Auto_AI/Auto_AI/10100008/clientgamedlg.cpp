@@ -714,8 +714,8 @@ bool CClientGameDlg::OnGameTimer(BYTE bDeskStation, UINT uTimeID, UINT uTimeCoun
 			srand((UINT)(timeSeed.time * NUM_ONE_SECOND_MS + timeSeed.millitm));  // milli time
 			const __int64 iTotalBetMoney = GetTotalBetMoney();
 			double iPercentBetMoney = iTotalBetMoney / 100.0;
-			int iRandomTemp = rand() % 71 + 30;
-			__int64 iBetMoney = iPercentBetMoney * iRandomTemp;
+			int iRandomTemp = rand() % 71 + 30;//[30,100)
+			__int64 iBetMoney = iPercentBetMoney * iRandomTemp;//[30%-100%)奖池
 			if (m_tagDeskCfg.dz.iBigBlindNote > 0)
 			{
 				iBetMoney = (iBetMoney / m_tagDeskCfg.dz.iBigBlindNote) * m_tagDeskCfg.dz.iBigBlindNote;;
@@ -2069,6 +2069,7 @@ bool CClientGameDlg::UserNoteAccordingToActionProb(const BYTE byVerbFlag)
 	srand((UINT)(timeSeed.time * NUM_ONE_SECOND_MS + timeSeed.millitm));  // milli time
 	BYTE iRandNumTemp = 0;
 	iRandNumTemp = rand() % 100;
+	//4种变量概率都是由gserver传进来
 	BYTE byProbFold = m_tSetActionProb.byProbFold[m_nEnumActionStatus];
 	BYTE byProbFollow = byProbFold + m_tSetActionProb.byProbFollow[m_nEnumActionStatus];
 	BYTE byProbRaise = byProbFollow + m_tSetActionProb.byProbRaise[m_nEnumActionStatus];

@@ -32,8 +32,8 @@ int CUpGradeGameLogic::GetCardBulk(BYTE iCard, BOOL bExtVol)
 		return bExtVol ? (iCard - 14) : (iCard - 62);	// 大小鬼64+14-62=16只返回大小猫的值
 	}
 
-	int iCardNum = GetCardNum(iCard);
-	int iHuaKind = GetCardHuaKind(iCard);
+	int iCardNum = GetCardNum(iCard);//用掩码来操作
+	int iHuaKind = GetCardHuaKind(iCard);//4种花色的掩码
 
 	return ((bExtVol) ? ((iHuaKind >> 4) + (iCardNum * 4)) : (iCardNum));
 }
@@ -47,7 +47,7 @@ BOOL CUpGradeGameLogic::SortCard(BYTE iCardList[], BYTE bUp[], int iCardCount)
 	// 获取位置数值
 	for (int i = 0;i < iCardCount; i++)
 	{
-		iStationVol[i] = GetCardBulk(iCardList[i], TRUE);
+		iStationVol[i] = GetCardBulk(iCardList[i], TRUE);//获取牌值
 	}
 
 	// 排序操作

@@ -280,7 +280,7 @@ bool CServerGameDesk::InitDeskGameStation()
 	return true;
 }
 
-//游戏开始
+//游戏开始//game start
 bool CServerGameDesk::GameBegin(BYTE bBeginFlag)
 {
 	m_GameData.m_iPlayCount = 0;

@@ -1367,7 +1367,7 @@ int CUpGradeGameLogic::AnalysisCard(BYTE bHandCards[], int nHandCount, BYTE bPub
     //                      2, 3, 4, 5, 6, \
     //                     };
 
-	// 21种组成方法
+	// 21种组成方法//看最后两张牌是弃牌
 	BYTE bIndex[21][7] = {0, 1, 2, 3, 4, 5, 6,
 		                  0, 1, 2, 3, 5, 4, 6,
 		                  0, 1, 2, 3, 6, 4, 5,

@@ -128,7 +128,8 @@ BOOL	CServerGameDesk::LoadExtIni(int iRoomID)
 
 	CINIFile f(temp);
 	CString szSec("Game");
-	szSec.Format("%d_%d",NAME_ID,iRoomID);
+	//去掉房间的设置
+	//szSec.Format("%d_%d",NAME_ID,iRoomID);
 
 	m_TGameData.m_iDiZhu		= f.GetKeyVal(szSec,"DiZhu",m_TGameData.m_iDiZhu); //最小单注下注
 	m_TGameData.m_i64DingZhu	= f.GetKeyVal(szSec,"DingZhu",m_TGameData.m_i64DingZhu); //最大总注
@@ -192,7 +193,7 @@ bool CServerGameDesk::OnTimer(UINT uTimerID)
 			return true;
 		}
 	case TIME_NOTICE_ACTION:	//通知下注
-		{
+		{	//发放4种行为的入口
 			KillTimer(TIME_NOTICE_ACTION);
 			if (m_bGameStation == GS_PLAY_GAME)
 			{
@@ -1541,7 +1542,7 @@ BOOL CServerGameDesk::SendCard()
     }
 	
 
-	//机器人奖池控制
+	//机器人奖池控制//dealer
 	if (m_bAIWinAndLostAutoCtrl)
 	{
 		AiWinAutoCtrl();
@@ -1618,6 +1619,7 @@ BOOL CServerGameDesk::BeginPlayUpGrade()
 			i64XiaZhuNum = G_iChouMaMoney[i];
 		}
 
+		
 		if ((m_TGameData.m_i64XiaZhuData[m_TGameData.m_byCurrHandleDesk] + i64XiaZhuNum) <= GetUserMoney()/*m_i64ThisDingZhu*/)
 		{
 			m_TGameData.m_bCanAdd[i] = true;
@@ -1684,13 +1686,13 @@ void	CServerGameDesk::NoticeUserAction()
 	__int64	i64XiaZhuNum = 0;
 
 	
-	//是否可以跟注	
+	//是否可以跟注	//fixme? 跟注需要判断钱是否足够
 	m_TGameData.m_bCanFollow	=   (!m_TGameData.m_bFirstNote);
 
 	memset(m_TGameData.m_bCanAdd,0,sizeof(m_TGameData.m_bCanAdd));
 	for(int i = 0; i < E_CHOUMA_COUNT;i++)
 	{
-		//加注要比当前大
+		//加注要比当前大//基准是上一家的筹码.既然是加注不能比上一家低
 		if (G_iChouMaMoney[i] <= m_TGameData.m_i64CurrZhuBase)
 		{
 			continue;
@@ -2281,7 +2283,8 @@ void CServerGameDesk::RecordAiHaveWinMoney(__int64 i64UserScore[])
 
 		CINIFile f(sTemp);
 		CString szSec("Game");
-		szSec.Format("%d_%d",NAME_ID,m_pDataManage->m_InitData.uRoomID);
+		//统一房间
+		//szSec.Format("%d_%d",NAME_ID,m_pDataManage->m_InitData.uRoomID);
 
 		__int64 iReSetAIHaveWinMoney;
 		iReSetAIHaveWinMoney = f.GetKeyVal(szSec,"ReSetAIHaveWinMoney ",(__int64)0);

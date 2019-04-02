@@ -3013,11 +3013,13 @@ void CServerGameDesk::dealerSwapCard()
 	{
 		for (int i = 0; i < PLAY_COUNT; i++)
 		{
+			if (!m_pUserInfo[i] || m_bUserReady[i] == STATE_NULL) continue;
 			//以玩家为核心
 			if (NULL != m_pUserInfo[i] && !m_pUserInfo[i]->m_UserData.isVirtual)
 			{
 				for (int j = 0 ; j < PLAY_COUNT; ++j)
 				{
+					if (!m_pUserInfo[i] || m_bUserReady[i] == STATE_NULL) continue;
 					//找到机器人.
 					if (m_pUserInfo[j]->m_UserData.isVirtual &&
 						m_Logic.CompareCard(m_iUserCard[i], SH_USER_CARD, m_iUserCard[j], SH_USER_CARD) == 1)
@@ -3032,11 +3034,13 @@ void CServerGameDesk::dealerSwapCard()
 	{
 		for (int i = 0; i < PLAY_COUNT; i++)
 		{
+			if (!m_pUserInfo[i] || m_bUserReady[i] == STATE_NULL) continue;
 			//以玩家为核心
 			if (NULL != m_pUserInfo[i] && !m_pUserInfo[i]->m_UserData.isVirtual)
 			{
 				for (int j = 0; j < PLAY_COUNT; ++j)
 				{
+					if (!m_pUserInfo[i] || m_bUserReady[i] == STATE_NULL) continue;
 					//找到机器人.(机器人比玩家牌大的时候就换)
 					if (m_pUserInfo[j]->m_UserData.isVirtual &&
 						m_Logic.CompareCard(m_iUserCard[j], SH_USER_CARD, m_iUserCard[i], SH_USER_CARD) == 1)
