@@ -128,7 +128,8 @@ bool CServerGameDesk::InitDeskGameStation()
 	//加载配置文件
 	LoadIni();
 	//重新加载配置文件里面的
-	LoadExtIni(m_pDataManage->m_InitData.uRoomID);
+	//统一房间
+	//LoadExtIni(m_pDataManage->m_InitData.uRoomID);
 	return true;
 }
 
@@ -1011,7 +1012,7 @@ bool CServerGameDesk::OnGetGameStation(BYTE bDeskStation, UINT uSocketID, bool b
 			SendGameStation(bDeskStation,uSocketID,bWatchUser,&TGameStation,sizeof(TGameStation));
 			return true;
 		}
-	case GS_WAIT_AGREE:			//等待玩家开始状态
+	case GS_WAIT_AGREE:			//等待玩家开始状态e
 	case GS_WAIT_NEXT:			//等待下一盘游戏开始
 		{
 			//设置数据发送到客户端
@@ -1125,7 +1126,7 @@ bool CServerGameDesk::OnGetGameStation(BYTE bDeskStation, UINT uSocketID, bool b
 			TGameStation.i64UserWin	= m_i64UserWin[bDeskStation];
 			//自己的金币数
 			TGameStation.i64MyMoney = m_pUserInfo[bDeskStation]->m_UserData.i64Money;
-
+			
 			//上庄列表
 			for (auto itr = m_qZhuangList.begin();itr != m_qZhuangList.end();itr++)
 			{
@@ -1473,7 +1474,8 @@ void	CServerGameDesk::GetAIContrlSetFromIni(int iRoomID)
 	CString s = CINIFile::GetAppPath ();/////本地路径
 	CINIFile f(s +SKIN_FOLDER  + _T("_s.ini"));
 	CString szSec = TEXT("game");
-	szSec.Format("%s_%d",SKIN_FOLDER,iRoomID);
+	//统一房间
+	//szSec.Format("%s_%d",SKIN_FOLDER,iRoomID);
 	///机器人输赢自动控制
 	m_bAIWinAndLostAutoCtrl = f.GetKeyVal(szSec,"AIWinAndLostAutoCtrl",1);		///是否开启机器人输赢自动控制
 	m_i64AIWantWinMoneyA1	= f.GetKeyVal(szSec,"AIWantWinMoneyA1 ",100000);		/**<机器人赢钱区域1  */
@@ -2535,8 +2537,9 @@ void	CServerGameDesk::RecordAiWinMoney()
 
 	CString s = CINIFile::GetAppPath ();/////本地路径
 	CINIFile f(s +SKIN_FOLDER  + _T("_s.ini"));
-	TCHAR szSec[_MAX_PATH] = TEXT("");
-	_stprintf_s(szSec, sizeof(szSec), _T("%s_%d"), SKIN_FOLDER,m_pDataManage->m_InitData.uRoomID);
+	TCHAR szSec[_MAX_PATH] = TEXT("game");
+	//写到game上
+	//_stprintf_s(szSec, sizeof(szSec), _T("%s_%d"), SKIN_FOLDER,m_pDataManage->m_InitData.uRoomID);
 
 	int i64Tmp = 0;
 	i64Tmp = f.GetKeyVal(szSec,"ReSetAIHaveWinMoney ",(__int64)0);

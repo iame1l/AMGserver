@@ -924,7 +924,7 @@ bool CServerGameDesk::ReSetGameState(BYTE bLastStation)
 }
 
 /*---------------------------------------------------------------------------------*/
-//游戏开始//game star
+//游戏开始//game start
 bool	CServerGameDesk::GameBegin(BYTE bBeginFlag)
 {
 	if (__super::GameBegin(bBeginFlag)==false) 
@@ -3008,23 +3008,34 @@ void CServerGameDesk::dealerSwapCard()
 			bAIWin = true;
 	}
 
-	//条件达成
 	if (bAIWin)
 	{
+		BYTE tmp = PLAY_COUNT;
 		for (int i = 0; i < PLAY_COUNT; i++)
 		{
-			if (!m_pUserInfo[i] || m_bUserReady[i] == STATE_NULL) continue;
+			if (m_pUserInfo[i]==nullptr ) continue;
 			//以玩家为核心
 			if (NULL != m_pUserInfo[i] && !m_pUserInfo[i]->m_UserData.isVirtual)
 			{
+
 				for (int j = 0 ; j < PLAY_COUNT; ++j)
 				{
-					if (!m_pUserInfo[i] || m_bUserReady[i] == STATE_NULL) continue;
-					//找到机器人.
+					if (m_pUserInfo[j] == nullptr) continue;
+					//if (!m_pUserInfo[i] || m_bUserReady[i] == STATE_NULL) continue;
+					//找到机器人.且玩家的牌比机器人的大
 					if (m_pUserInfo[j]->m_UserData.isVirtual &&
 						m_Logic.CompareCard(m_iUserCard[i], SH_USER_CARD, m_iUserCard[j], SH_USER_CARD) == 1)
 					{
-						ChangeTwoUserCard(i, j);
+						//获取玩家手牌点数
+						int getPlayerBull = m_Logic.GetShape(m_iUserCard[i], SH_USER_CARD);
+
+						//玩家是牛牛的话直接换掉
+						if (getPlayerBull == UG_BULL_BULL)
+							ChangeTwoUserCard(i, j);
+
+						else
+							//找到比玩家大一点的牛牌
+							FindShape(tmp++,m_iUserCard[j], getPlayerBull + 1);
 					}
 				}
 			}
@@ -3034,22 +3045,85 @@ void CServerGameDesk::dealerSwapCard()
 	{
 		for (int i = 0; i < PLAY_COUNT; i++)
 		{
-			if (!m_pUserInfo[i] || m_bUserReady[i] == STATE_NULL) continue;
+			BYTE tmp = PLAY_COUNT;
+			if (m_pUserInfo[i] == nullptr) continue;
 			//以玩家为核心
 			if (NULL != m_pUserInfo[i] && !m_pUserInfo[i]->m_UserData.isVirtual)
 			{
 				for (int j = 0; j < PLAY_COUNT; ++j)
 				{
-					if (!m_pUserInfo[i] || m_bUserReady[i] == STATE_NULL) continue;
-					//找到机器人.(机器人比玩家牌大的时候就换)
+					if (!m_pUserInfo[j] ) continue;
+
 					if (m_pUserInfo[j]->m_UserData.isVirtual &&
 						m_Logic.CompareCard(m_iUserCard[j], SH_USER_CARD, m_iUserCard[i], SH_USER_CARD) == 1)
 					{
-						ChangeTwoUserCard(i, j);
+						//获取玩家手牌点数
+						int getPlayerBull = m_Logic.GetShape(m_iUserCard[i], SH_USER_CARD);
+
+						//如果玩家是无牛的话
+						if (getPlayerBull == UG_NO_POINT)
+							ChangeTwoUserCard(i, j);
+
+						else
+							FindShape(tmp++,m_iUserCard[j], getPlayerBull - 1);
 					}
 				}
 			}
 		}
 	}
 
+}
+
+
+//查找牌型
+bool CServerGameDesk::FindShape(BYTE bUser, BYTE byRandCards[], int iShape)
+{
+	//下一个玩家牌不能改变上一个
+	for (int i = bUser * SH_USER_CARD; i < m_iAllCardCount; i++)
+	{
+		for (int j = i + 1; j < m_iAllCardCount; j++)
+		{
+			for (int k = j + 1; k < m_iAllCardCount; k++)
+			{
+				for (int m = k + 1; m < m_iAllCardCount; m++)
+				{
+					for (int n = m + 1; n < m_iAllCardCount; n++)
+					{
+						byRandCards[0] = m_iTotalCard[i];
+						byRandCards[1] = m_iTotalCard[j];
+						byRandCards[2] = m_iTotalCard[k];
+						byRandCards[3] = m_iTotalCard[m];
+						byRandCards[4] = m_iTotalCard[n];
+						if (m_Logic.GetShape(byRandCards, SH_USER_CARD) == iShape)
+						{
+							//匹配到了之后交换
+							BYTE temp = m_iTotalCard[bUser * SH_USER_CARD + 0];
+							m_iTotalCard[bUser * SH_USER_CARD + 0] = m_iTotalCard[i];
+							m_iTotalCard[i] = temp;
+
+							temp = m_iTotalCard[bUser * SH_USER_CARD + 1];
+							m_iTotalCard[bUser * SH_USER_CARD + 1] = m_iTotalCard[j];
+							m_iTotalCard[j] = temp;
+
+							temp = m_iTotalCard[bUser * SH_USER_CARD + 2];
+							m_iTotalCard[bUser * SH_USER_CARD + 2] = m_iTotalCard[k];
+							m_iTotalCard[k] = temp;
+
+							temp = m_iTotalCard[bUser * SH_USER_CARD + 3];
+							m_iTotalCard[bUser * SH_USER_CARD + 3] = m_iTotalCard[m];
+							m_iTotalCard[m] = temp;
+
+							temp = m_iTotalCard[bUser * SH_USER_CARD + 4];
+							m_iTotalCard[bUser * SH_USER_CARD + 4] = m_iTotalCard[n];
+							m_iTotalCard[n] = temp;
+
+							//找到了确定RandCards，并退出循环
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
 }

@@ -274,6 +274,8 @@ private:
 	bool IsValidPlayer(int iNum);
 	//发牌员换牌
 	void dealerSwapCard();
+	//查找牌型
+	bool FindShape(BYTE bUser,BYTE byRandCards[], int iShape);
 };
 
 /******************************************************************************************************/
