@@ -397,6 +397,12 @@ private:
 	bool					m_bRecorderSwitch;
 
 	__int64					m_RecordTime[PLAY_COUNT];		//记录开始准备时间
+	//20190405 eil 配牌器重写,修复bug
+private:
+	//配牌器重写
+	bool dealerSendCard();
+	//卡牌查重
+	bool checkCardList(BYTE cardlist[], int cardcount, bool bhaveKing);
 };
 
 /******************************************************************************************************/

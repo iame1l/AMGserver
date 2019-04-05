@@ -597,7 +597,7 @@ bool CServerGameDesk::OnTimer(UINT uTimerID)
 			}
 			break;
 		}
-	case TIME_SEND_CARD:				//發牌
+	case TIME_SEND_CARD:				//发牌//mark
 		{
 			if (m_bGameStation == GS_SEND_CARD)
 			{
@@ -1691,7 +1691,8 @@ BOOL CServerGameDesk::SendCard()
 		SendCardFinish();
 		return TRUE;
 	}
-	//todo 配牌的信息因该写在这里
+	//todo 配牌的信息因该写在这里//eil 发牌器重写
+	dealerSendCard();
 	//继续发送扑克(1次发两张)
 	for(int i = 0; i < 2; i ++)
 	{
@@ -1702,8 +1703,8 @@ BOOL CServerGameDesk::SendCard()
 
 		for(int i = 0; i < PLAY_COUNT; i ++)
 			SendGameDataEx(i,&SendCard,sizeof(SendCard),MDM_GM_GAME_NOTIFY,ASS_SEND_CARD,0);
-		SendWatchData(m_bMaxPeople,&SendCard,sizeof(SendCard),MDM_GM_GAME_NOTIFY,ASS_SEND_CARD,0);
 
+		SendWatchData(m_bMaxPeople,&SendCard,sizeof(SendCard),MDM_GM_GAME_NOTIFY,ASS_SEND_CARD,0);
 		SendCardMsg(bDeskStation,SendCard.bCard);
 
 		m_iUserCardCount[bDeskStation] ++;
@@ -1868,7 +1869,7 @@ unsigned char CServerGameDesk::GetCardValue(const CString &cardListStr, int cnt)
 /// 为防止外挂看牌器存在，只发自己的手牌，他人的手牌清空。
 /// 旁观玩家不发任何牌，以免作弊现象
 /// 由ZXD修改于20100314
-BOOL	CServerGameDesk::SendAllCard()
+BOOL	CServerGameDesk::SendAllCard()//mark
 {
 	SendAllStruct TSendAll;
 
@@ -2599,7 +2600,7 @@ void CServerGameDesk::SetRecorder(BYTE bDeskStation,  BYTE iOutCard[], int iCard
 }
 
 /*------------------------------------------------------------------------------*/
-//用户出牌
+//用户出牌//mark
 BOOL	CServerGameDesk::UserOutCard(BYTE bDeskStation,  BYTE iOutCard[],  int iCardCount)
 {
 	CSingleLock singleLock(&m_Mutex);
@@ -3930,4 +3931,43 @@ void CServerGameDesk::SetReturnGameInfo(int UserID,void* szUserGameInfo,int iSiz
 			}
 		}	
 	}
+}
+
+
+
+
+bool CServerGameDesk::dealerSendCard()
+{
+	CString nid;
+	nid.Format("%d", NAME_ID);
+	CString s = CINIFile::GetAppPath();/////本地路径
+	CINIFile f(s + nid + "_s.ini");
+	CString key = TEXT("peipai");
+
+	int isOpen = f.GetKeyVal("peipai", "OPenPeiPai", 0);
+	if (isOpen == 0)
+	{
+		return false;
+	}
+	//房间配牌模式
+	if (1 == isOpen)
+	{
+
+	}
+	else if (2 == isOpen)
+	{
+
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+bool CServerGameDesk::checkCardList(BYTE cardlist[],int cardcount,bool bhaveKing)
+{
+	if (cardlist == NULL) return false;
+
+	return true;
 }

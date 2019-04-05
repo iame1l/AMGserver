@@ -472,7 +472,7 @@ bool CServerGameDesk::HandleNotifyMessage(BYTE bDeskStation, NetMessageHead * pN
 }
 
 
-//定时器消息
+//定时器消息//start
 bool CServerGameDesk::OnTimer(UINT uTimerID)
 {
 	//JAdd-20090113-//取消1M倒计时退出
@@ -788,7 +788,7 @@ bool CServerGameDesk::ReSetGameState(BYTE bLastStation)
 
 
 /*---------------------------------------------------------------------------------*/
-//游戏开始
+//游戏开始//游戏入口
 bool	CServerGameDesk::GameBegin(BYTE bBeginFlag)
 {
 
@@ -886,7 +886,7 @@ bool	CServerGameDesk::GameBegin(BYTE bBeginFlag)
 		m_iMonkeyPlayMultiple[i] = 1;
 		::CopyMemory(m_iUserCard[i],&iCardArray[m_iUserCount*i],sizeof(BYTE)*m_iUserCount);
 	}
-
+	//fixme //上面是洗牌 需要查重
 	IniTestSetHandPai(); //读取配牌
 	OutputDebugStringA("PDK::======================================================================A");
 	for(int i = 0;i < PLAY_COUNT;i ++)
