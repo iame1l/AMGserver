@@ -15,7 +15,7 @@ CUpGradeGameLogic::CUpGradeGameLogic(void)
 CUpGradeGameLogic::~CUpGradeGameLogic()
 {
 }
-//获取扑克花色
+//获取扑克花色//后一个变量是不计算花色//斗地主不用花色
 BYTE CUpGradeGameLogic::GetCardHuaKind(BYTE iCard, BOOL bTrueHua)
 { 
 	int iHuaKind=(iCard&UG_HUA_MASK);
@@ -35,6 +35,7 @@ int CUpGradeGameLogic::GetCardBulk(BYTE iCard, bool bExtVal)
 	}
 
 	int iCardNum = GetCardNum(iCard);
+	//获取花色//斗地主不需要花色
 	int iHuaKind = GetCardHuaKind(iCard, TRUE);
 
 	if (iCardNum == 2) //2王
@@ -57,20 +58,20 @@ BYTE CUpGradeGameLogic::GetCardByValue(int Value)
 {
 	BYTE CardArray[55]={
 		0x00,
-		0x01,0x11, 0x21,0x31,
-		0x02, 0x12 ,0x22 , 0x32 ,
-		0x03,0x13, 0x23,0x33,
-		0x04,0x14, 0x24, 0x34,
-		0x05, 0x15,0x25, 0x35,
-		0x06, 0x16, 0x26,0x36,
-		0x07, 0x17,0x27, 0x37,
-		0x08, 0x18, 0x28,  0x38,
-		0x09, 0x19, 0x29,0x39,
-		0x0A,  0x1A, 0x2A, 0x3A,
-		0x0B,0x1B,  0x2B,0x3B,
-		0x0C, 0x1C,0x2C, 0x3C,
-		0x0D,  0x1D, 0x2D, 0x3D,
-		0x4E, 0x4F};
+		0x01, 0x11, 0x21, 0x31,
+		0x02, 0x12, 0x22, 0x32 ,
+		0x03, 0x13, 0x23, 0x33,
+		0x04, 0x14, 0x24, 0x34,
+		0x05, 0x15, 0x25, 0x35,
+		0x06, 0x16, 0x26, 0x36,
+		0x07, 0x17, 0x27, 0x37,
+		0x08, 0x18, 0x28, 0x38,
+		0x09, 0x19, 0x29, 0x39,
+		0x0A, 0x1A, 0x2A, 0x3A,
+		0x0B, 0x1B, 0x2B, 0x3B,
+		0x0C, 0x1C, 0x2C, 0x3C,
+		0x0D, 0x1D, 0x2D, 0x3D,
+		0x4E,0x4F};
 
 		return CardArray[Value];
 }
@@ -497,7 +498,7 @@ BYTE CUpGradeGameLogic::GetBulkBySpecifyCardCount(BYTE iCardList[],int iCardCoun
 	return 0;
 }
 
-//是否为变种顺子
+//是否为变种顺子(A2345)或23456
 BOOL CUpGradeGameLogic::IsVariationSequence(BYTE iCardList[], int iCardCount, int iCount)
 {
 	int iValue = iCardCount / iCount;
@@ -620,6 +621,8 @@ BYTE  CUpGradeGameLogic::TackOutBySpecifyCard(BYTE iCardList[], int iCardCount,B
 
 
 //提取1,2,3 or 4张相同数字的牌
+//TackOutCount3 = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer3, 3);//三对
+//TackOutCount2 = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer2, 2);//二对
 int CUpGradeGameLogic::TackOutBySepcifyCardNumCount(BYTE iCardList[], int iCardCount, 
 													BYTE iDoubleBuffer[], BYTE bCardNum, 
 													bool bExtVal)
@@ -828,6 +831,7 @@ int  CUpGradeGameLogic::GetBulkBySepcifyMinOrMax(BYTE iCardList[], int iCardCoun
 	return CardNum;
 }
 
+//start
 /////////////////////////////////////////////////////////////////////////
 /**
 * @info 获取牌型

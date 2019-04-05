@@ -2088,7 +2088,7 @@ void	 CServerGameDesk::AiWinAutoCtrl()
 			bAIWin = true;
 		}
 	}
-
+	//fixme 无脑压和的出现
 	if(bAIWin)
 	{
 		OutputDebugStringA("chenlog-----------机器人赢钱控制----------0");
@@ -2115,7 +2115,8 @@ void	 CServerGameDesk::AiWinAutoCtrl()
 		{
 			str.Format("chenlog-------机器人赢钱 %d  总计 %d", CountAIWinMoney(), m_i64AIHaveWinMoney + CountAIWinMoney());
 			OutputDebugStringA(str);
-			for(int i=0; i<5000; i++)
+			//20190403 次数减少//有无脑压和的bug
+			for(int i=0; i<50; i++)
 			{
 				SendCard();
 				str.Format("chenlog-------机器人赢钱 %d  总计 %d", CountAIWinMoney(), m_i64AIHaveWinMoney + CountAIWinMoney());
@@ -2126,7 +2127,7 @@ void	 CServerGameDesk::AiWinAutoCtrl()
 					{
 						//如果开奖导致机器人总赢钱为负数，那么此次重开，直到让机器人赢。
 						//DWJ机器人输钱，并且机器人赢钱减去此盘输的钱不能为负数,如果重发了5000次还不行，只能说明RP有问题或者。。。
-						if (4999 != i)
+						if (49 != i)
 						{
 							continue;
 						}

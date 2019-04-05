@@ -679,6 +679,7 @@ bool CServerGameDesk::OnTimer(UINT uTimerID)
 			}
 			break;
 		}
+		//出牌
 	case TIME_OUT_CARD:
 		{
 			if (m_bIsBuy)
@@ -1681,7 +1682,7 @@ BOOL	CServerGameDesk::GamePrepare()
 }
 /*---------------------------------------------------------------------------------*/
 
-//发送扑克给用户
+//发送扑克给用户//发牌
 BOOL CServerGameDesk::SendCard()
 {
 	if (m_iSendCardPos == m_iSendCount)
@@ -1690,6 +1691,7 @@ BOOL CServerGameDesk::SendCard()
 		SendCardFinish();
 		return TRUE;
 	}
+	//todo 配牌的信息因该写在这里
 	//继续发送扑克(1次发两张)
 	for(int i = 0; i < 2; i ++)
 	{
@@ -1875,7 +1877,7 @@ BOOL	CServerGameDesk::SendAllCard()
 		m_iUserCardCount[i] = m_iUserCount;		
 		TSendAll.iUserCardCount[i] = m_iUserCardCount[i];
 	}
-
+	//fixme 配牌需要查重
 	LoadPeiPai();
 	for(int i = 0; i < PLAY_COUNT; i ++)
 	{
