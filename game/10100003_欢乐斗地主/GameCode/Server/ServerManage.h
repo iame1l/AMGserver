@@ -403,6 +403,8 @@ private:
 	bool dealerSendCard();
 	//卡牌查重
 	bool isnormalCardList();
+	//重新发牌,除了输入玩家位置
+	void restartSendCard(int userSatation);
 };
 
 /******************************************************************************************************/

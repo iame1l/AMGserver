@@ -1796,6 +1796,7 @@ void CServerGameDesk::LoadPeiPai()
 	}
 	else if(2 == isOpen)
 	{
+		int userStation = -1;
 		for(int i = 0; i < PLAY_COUNT; ++i)
 		{
 			if(m_pUserInfo[i] == nullptr) continue;
@@ -1808,6 +1809,7 @@ void CServerGameDesk::LoadPeiPai()
 				for(int j = 1; j <= 17; j++)
 				{
 					m_iUserCard[i][j-1] = GetCardValue(cardListStr, j-1);
+					userStation = i;
 				}
 			}
 		}
@@ -1823,6 +1825,12 @@ void CServerGameDesk::LoadPeiPai()
 			{
 				m_iBackCard[i-1] = ucTemp;
 			}
+		}
+
+		//mark
+		if (!isnormalCardList())
+		{
+			restartSendCard(userStation);
 		}
 	}
 	else
@@ -3967,15 +3975,64 @@ bool CServerGameDesk::dealerSendCard()
 
 bool CServerGameDesk::isnormalCardList()
 {
-	CUpGradeGameLogic cardValue;
-	int tmp[55];
-	memset(tmp, 0, sizeof(tmp));
+	//CUpGradeGameLogic cardValue;
+	//int tmp[55];
+	//memset(tmp, 0, sizeof(tmp));
 
 
+	////玩家的手牌加入列表
+	//for (int i = 0; i < PLAY_COUNT; ++i)
+	//{
+	//	for (int j = 0; j < 17; ++j)
+	//		tmp[cardValue.GetCardBulk(m_iUserCard[i][j], true)]++;
+	//}
+
+	////底牌加入列表
+	//for (int i = 0; i < 3; ++i)
+	//	tmp[cardValue.GetCardBulk(m_iBackCard[i])]++;
+
+	////遍历
+	//for (int i = 1; i < 54; ++i)
+	//{
+	//	if (tmp[i] != 1) return false;
+	//}
+
+	
+	vector<BYTE> cardlist;
 	for (int i = 0; i < PLAY_COUNT; ++i)
 	{
 		for (int j = 0; j < 17; ++j)
-			tmp[cardValue.GetCardBulk(m_iUserCard[i][j], true)]++;
+			cardlist.push_back(m_iUserCard[i][j]);
 	}
+	
+	for (int i = 0; i < 3; ++i)
+	{
+		cardlist.push_back(m_iBackCard[i]);
+	}
+	//排列
+	sort(cardlist.begin(), cardlist.end());
+	//查找相邻的两个元素,是否相同
+	auto tmp=adjacent_find(cardlist.begin(), cardlist.end());
+	if (tmp != cardlist.end()) return false;
+
+
 	return true;
+}
+
+
+
+void CServerGameDesk::restartSendCard(int userSatation)
+{
+	if (userSatation < 0) return;
+	BYTE Cards[54] =
+	{
+		0x01, 0x02 ,0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, //方块 2 - A
+		0x11, 0x12 ,0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, //梅花 2 - A
+		0x21, 0x22 ,0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, //红桃 2 - A
+		0x31, 0x32 ,0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, //黑桃 2 - A
+		0x4E, 0x4F //小鬼，大鬼
+	};
+
+
+	
 }
