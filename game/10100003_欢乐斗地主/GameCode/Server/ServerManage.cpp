@@ -3965,9 +3965,17 @@ bool CServerGameDesk::dealerSendCard()
 }
 
 
-bool CServerGameDesk::checkCardList(BYTE cardlist[],int cardcount,bool bhaveKing)
+bool CServerGameDesk::isnormalCardList()
 {
-	if (cardlist == NULL) return false;
+	CUpGradeGameLogic cardValue;
+	int tmp[55];
+	memset(tmp, 0, sizeof(tmp));
 
+
+	for (int i = 0; i < PLAY_COUNT; ++i)
+	{
+		for (int j = 0; j < 17; ++j)
+			tmp[cardValue.GetCardBulk(m_iUserCard[i][j], true)]++;
+	}
 	return true;
 }

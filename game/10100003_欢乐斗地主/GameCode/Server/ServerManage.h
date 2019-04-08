@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameDesk.h"
-//#include "../GameMessage/UpGradeLogic.h"
+#include "../GameMessage/UpGradeLogic.h"
 #include "GameTaskLogic.h"
 #include <afxmt.h>
 #include<string>
@@ -402,7 +402,7 @@ private:
 	//≈‰≈∆∆˜÷ÿ–¥
 	bool dealerSendCard();
 	//ø®≈∆≤È÷ÿ
-	bool checkCardList(BYTE cardlist[], int cardcount, bool bhaveKing);
+	bool isnormalCardList();
 };
 
 /******************************************************************************************************/
