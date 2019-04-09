@@ -3977,29 +3977,6 @@ bool CServerGameDesk::dealerSendCard()
 
 bool CServerGameDesk::isnormalCardList()
 {
-	//CUpGradeGameLogic cardValue;
-	//int tmp[55];
-	//memset(tmp, 0, sizeof(tmp));
-
-
-	////玩家的手牌加入列表
-	//for (int i = 0; i < PLAY_COUNT; ++i)
-	//{
-	//	for (int j = 0; j < 17; ++j)
-	//		tmp[cardValue.GetCardBulk(m_iUserCard[i][j], true)]++;
-	//}
-
-	////底牌加入列表
-	//for (int i = 0; i < 3; ++i)
-	//	tmp[cardValue.GetCardBulk(m_iBackCard[i])]++;
-
-	////遍历
-	//for (int i = 1; i < 54; ++i)
-	//{
-	//	if (tmp[i] != 1) return false;
-	//}
-
-	
 	vector<BYTE> cardlist;
 	for (int i = 0; i < PLAY_COUNT; ++i)
 	{
@@ -4038,8 +4015,8 @@ void CServerGameDesk::restartSendCard(int userSatation)
 	//获取到卡牌数目
 	int cardCount = sizeof(Cards) / sizeof(BYTE);
 	//除去配牌玩家的牌和配牌的底牌
-	cardCount -=this->removeCard(this->m_iUserCard[userSatation], this->m_iUserCardCount[userSatation], Cards, cardCount);
-	cardCount -=this->removeCard(this->m_iBackCard, this->m_iBaseOutCount, Cards, cardCount);
+	cardCount -=removeCard(m_iUserCard[userSatation], m_iUserCardCount[userSatation], Cards, cardCount);
+	cardCount -=removeCard(m_iBackCard,3, Cards, cardCount);
 	
 	BYTE iSend = 0, iStation = 0, iCardList[54];
 	srand(GetTickCount() + userSatation);
