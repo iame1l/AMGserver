@@ -397,15 +397,16 @@ private:
 	bool					m_bRecorderSwitch;
 
 	__int64					m_RecordTime[PLAY_COUNT];		//记录开始准备时间
-	//20190405 eil 配牌器重写,修复bug
+
+
+
+	//20190409 eil 配牌器重写,修复bug
 private:
-	//配牌器重写
-	bool dealerSendCard();
 	//卡牌查重
 	bool isnormalCardList();
 	//重新发牌,除了输入玩家位置
 	void restartSendCard(int userSatation);
-
+	//移除牌选用//从UpGradeLogic里提取的
 	int removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCardList[], int iCardCount);
 };
 

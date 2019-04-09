@@ -1144,6 +1144,7 @@ bool CServerGameDesk::ReSetGameState(BYTE bLastStation)
 }
 
 //服务端自动开始游戏
+//查找一下机器人启动的点
 BOOL CServerGameDesk::StartGame()
 {
 	for(int i = 0; i < PLAY_COUNT ;i++)
@@ -1691,8 +1692,6 @@ BOOL CServerGameDesk::SendCard()
 		SendCardFinish();
 		return TRUE;
 	}
-	//todo 配牌的信息因该写在这里//eil 发牌器重写
-	dealerSendCard();
 	//继续发送扑克(1次发两张)
 	for(int i = 0; i < 2; i ++)
 	{
@@ -1811,24 +1810,36 @@ void CServerGameDesk::LoadPeiPai()
 					m_iUserCard[i][j-1] = GetCardValue(cardListStr, j-1);
 					//记录一下座位号
 					userStation = i;
+					
+				}
+				/// 门牌  
+				for (int i = 1; i <= m_iBackCount; i++)
+				{
+					CString str;
+					unsigned char ucTemp;
+					str.Format("Backpai%02d", i);
+					ucTemp = f.GetKeyVal(key, str, 255);
+					if (255 != ucTemp)
+					{
+						m_iBackCard[i - 1] = ucTemp;
+					}
 				}
 			}
 		}
 
-		/// 门牌  
-		for(int i=1;i <= m_iBackCount;i++)
-		{
-			CString str;
-			unsigned char ucTemp;
-			str.Format("Backpai%02d",i);
-			ucTemp = f.GetKeyVal(key,str,255);
-			if(255 != ucTemp)
-			{
-				m_iBackCard[i-1] = ucTemp;
-			}
-		}
-
-		//mark
+			///// 门牌  
+			//for (int i = 1; i <= m_iBackCount; i++)
+			//{
+			//	CString str;
+			//	unsigned char ucTemp;
+			//	str.Format("Backpai%02d", i);
+			//	ucTemp = f.GetKeyVal(key, str, 255);
+			//	if (255 != ucTemp)
+			//	{
+			//		m_iBackCard[i - 1] = ucTemp;
+			//	}
+			//}
+		//20190409 修复乱发牌的情况
 		if (!isnormalCardList())
 		{
 			//需要输入座位号
@@ -1888,7 +1899,6 @@ BOOL	CServerGameDesk::SendAllCard()//mark
 		m_iUserCardCount[i] = m_iUserCount;		
 		TSendAll.iUserCardCount[i] = m_iUserCardCount[i];
 	}
-	//fixme 配牌需要查重
 	LoadPeiPai();
 	for(int i = 0; i < PLAY_COUNT; i ++)
 	{
@@ -3943,36 +3953,6 @@ void CServerGameDesk::SetReturnGameInfo(int UserID,void* szUserGameInfo,int iSiz
 	}
 }
 
-
-
-
-bool CServerGameDesk::dealerSendCard()
-{
-	CString nid;
-	nid.Format("%d", NAME_ID);
-	CString s = CINIFile::GetAppPath();/////本地路径
-	CINIFile f(s + nid + "_s.ini");
-	CString key = TEXT("peipai");
-
-	int isOpen = f.GetKeyVal("peipai", "OPenPeiPai", 0);
-	if (isOpen == 0)
-	{
-		return false;
-	}
-	//房间配牌模式
-	if (1 == isOpen)
-	{
-
-	}
-	else if (2 == isOpen)
-	{
-
-	}
-	else
-	{
-		return false;
-	}
-}
 
 
 bool CServerGameDesk::isnormalCardList()
