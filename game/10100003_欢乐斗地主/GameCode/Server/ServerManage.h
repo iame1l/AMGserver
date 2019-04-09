@@ -405,6 +405,8 @@ private:
 	bool isnormalCardList();
 	//重新发牌,除了输入玩家位置
 	void restartSendCard(int userSatation);
+
+	int removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCardList[], int iCardCount);
 };
 
 /******************************************************************************************************/

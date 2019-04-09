@@ -1809,6 +1809,7 @@ void CServerGameDesk::LoadPeiPai()
 				for(int j = 1; j <= 17; j++)
 				{
 					m_iUserCard[i][j-1] = GetCardValue(cardListStr, j-1);
+					//记录一下座位号
 					userStation = i;
 				}
 			}
@@ -1830,6 +1831,7 @@ void CServerGameDesk::LoadPeiPai()
 		//mark
 		if (!isnormalCardList())
 		{
+			//需要输入座位号
 			restartSendCard(userStation);
 		}
 	}
@@ -4005,7 +4007,7 @@ bool CServerGameDesk::isnormalCardList()
 			cardlist.push_back(m_iUserCard[i][j]);
 	}
 	
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < this->m_iBaseOutCount; ++i)
 	{
 		cardlist.push_back(m_iBackCard[i]);
 	}
@@ -4024,6 +4026,7 @@ bool CServerGameDesk::isnormalCardList()
 void CServerGameDesk::restartSendCard(int userSatation)
 {
 	if (userSatation < 0) return;
+
 	BYTE Cards[54] =
 	{
 		0x01, 0x02 ,0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, //方块 2 - A
@@ -4032,7 +4035,86 @@ void CServerGameDesk::restartSendCard(int userSatation)
 		0x31, 0x32 ,0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, //黑桃 2 - A
 		0x4E, 0x4F //小鬼，大鬼
 	};
-
-
+	//获取到卡牌数目
+	int cardCount = sizeof(Cards) / sizeof(BYTE);
+	//除去配牌玩家的牌和配牌的底牌
+	cardCount -=this->removeCard(this->m_iUserCard[userSatation], this->m_iUserCardCount[userSatation], Cards, cardCount);
+	cardCount -=this->removeCard(this->m_iBackCard, this->m_iBaseOutCount, Cards, cardCount);
 	
+	BYTE iSend = 0, iStation = 0, iCardList[54];
+	srand(GetTickCount() + userSatation);
+
+	//洗牌,将洗好的牌放到iCardList里
+	do
+	{
+		iStation = rand() % (cardCount - iSend);
+		iCardList[iSend] = Cards[iStation];
+		iSend++;
+		Cards[iStation] = Cards[cardCount- iSend];
+	} while (iSend < cardCount);
+		
+	//分发扑克牌
+	int tmp = 0;
+	for (int j = 0; j < 17; j++)
+	{
+		for (int i = 0; i < PLAY_COUNT; i++)
+		{
+			//跳过需要配牌的人
+			if (i == userSatation) continue;
+
+			if (NULL == m_pUserInfo[i])
+			{
+				m_iUserCardCount[i] = 0;
+				memset(&m_iUserCard[i], 0, sizeof(m_iUserCard[i]));
+			}
+			else
+			{
+				m_iUserCardCount[i] = 17;
+				m_iUserCard[i][j] = iCardList[tmp++];
+			}
+		}
+	}
+
+	return;
+}
+
+
+int CServerGameDesk::removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCardList[], int iCardCount)
+{
+	if (iRemoveCount > iCardCount) return 0;
+
+	int iRecount=0;
+	int iDeleteCount = 0; //把要删除的牌置零
+
+	for (int i = 0; i < iRemoveCount; i++)
+	{
+		for (int j = 0; j < iCardCount; j++)
+		{
+			if (iRemoveCard[i] == iCardList[j])
+			{
+				iDeleteCount++;
+				iCardList[j] = 0;
+				break;
+			}
+		}
+	}
+
+	//清除标记位是0的
+	int index =0;
+	for (int i = 0; i < iCardCount; i++)
+	{
+		if (iCardList[i] != 0)
+		{
+			iCardList[index++] = iCardList[i];
+		}
+		else
+		{
+			iRecount++;
+		}
+	}
+	if (iDeleteCount != iRecount)
+		return 0;
+
+	return iDeleteCount;
+
 }
