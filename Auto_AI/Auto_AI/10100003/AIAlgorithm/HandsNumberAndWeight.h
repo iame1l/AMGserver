@@ -1,11 +1,11 @@
 /****************************************************************************
 Copyright (c) 2014-2017 Beijing TianRuiDiAn Network Technology Co.,Ltd.
 Copyright (c) 2014-2017 ShenZhen Redbird Network Polytron Technologies Inc.
- 
+
 http://www.hotniao.com
 
-All of the content of the software, including code, pictures, 
-resources, are original. For unauthorized users, the company 
+All of the content of the software, including code, pictures,
+resources, are original. For unauthorized users, the company
 reserves the right to pursue its legal liability.
 ****************************************************************************/
 /******* 算法说明 *****************************************************
@@ -18,7 +18,7 @@ reserves the right to pursue its legal liability.
 连牌                              4  (每多一张牌权值+1)
 连对                              5（每多一对牌，权值+2）
 飞机                              6（每对以飞机，权值在基础上+3）
-炸弹                              7（包括对王在内） 
+炸弹                              7（包括对王在内）
 
 第一步：找牌
 定义对应的牌型vector
@@ -41,14 +41,14 @@ vector<fly> //飞机
 方案为：45678910J       4   6   QQQ
 对应的权值和手数：7+1+1+3 =12       3（因为3个可以带一张或者是1对，当有对子和单张张的时候手数要减去1）
 以下的几种方案也是同样的步骤，我就不写过程了，直接写最终的方案。
-2在剩余牌中提出 QQQ 66 
+2在剩余牌中提出 QQQ 66
 方案为： QQQ 66   78910j   5   44
 对应的权值和手数：  3+2+4+1+2=12            4
 
 第三步：选出最优的一组牌作为最后的拆牌方案
 通过以上步骤我们确定出了几种出牌方案，我们最后找出出牌手数最小的方案。
 如果手数相同的情况下，找权值最大的一组拆牌方案。
-如果2者都相同，就随机选一种就是了。（这种情况很小很小） 
+如果2者都相同，就随机选一种就是了。（这种情况很小很小）
 通过比较我们确定了下面的这一种拆牌方案。
 方案为：45678910J       4   6   QQQ
 对应的权值和手数：7+1+1+3 =12       3（因为3个可以带一张或者是1对，当有对子和单张张的时候手数要减去1）
@@ -64,7 +64,7 @@ vector<lianzi>  45678910J
 
 namespace HN_AI
 {
-	#define  LOG_ALL 0
+#define  LOG_ALL 0
 	typedef unsigned char CARDATA[16];
 	typedef std::vector<unsigned char> SVBYTE;
 
@@ -77,8 +77,8 @@ namespace HN_AI
 			int iLen;
 			SShunZiNode()
 			{
-				byValue =0;
-				iLen =0;
+				byValue = 0;
+				iLen = 0;
 			}
 		};
 		struct SZhaDanLongNode     /// 长炸弹
@@ -87,16 +87,16 @@ namespace HN_AI
 			int iLen;
 			SZhaDanLongNode()
 			{
-				byValue =0;
-				iLen =0;
+				byValue = 0;
+				iLen = 0;
 			}
 		};
 		enum EAddCardMainType
 		{
-		   eAddCardMainType_UnKnow = 0,
-		   eAddCardMainType_SanZhang,
-		   eAddCardMainType_FeiJi,
-		   eAddCardMainType_SiZhan,
+			eAddCardMainType_UnKnow = 0,
+			eAddCardMainType_SanZhang,
+			eAddCardMainType_FeiJi,
+			eAddCardMainType_SiZhan,
 		};
 	public:
 		CHandsNumberAndWeight(void);
@@ -106,38 +106,38 @@ namespace HN_AI
 		void SetCardRulesConfig(const SSysConfig & tSysConfig);
 		SSysConfig GetCardRulesConfig();
 		///  出牌算法
-		bool GetPutCardList(const unsigned char *pSrcCard,int iSrcCardLen,std::vector<SCombinationNode> & vecCombinationResult);
-		bool GetPutCardList(const unsigned char *pSrcCard,int iSrcCardLen,SCombinationResult & sCombinationResult);
-		bool GetPutCardList(const unsigned char *pSrcCard,int iSrcCardLen,int iLaiZiNumber,std::vector<SCombinationNode> & vecCombinationResult);
-		bool GetPutCardList(const unsigned char *pSrcCard,int iSrcCardLen,int iLaiZiNumber,SCombinationResult & sCombinationResult);
+		bool GetPutCardList(const unsigned char *pSrcCard, int iSrcCardLen, std::vector<SCombinationNode> & vecCombinationResult);
+		bool GetPutCardList(const unsigned char *pSrcCard, int iSrcCardLen, SCombinationResult & sCombinationResult);
+		bool GetPutCardList(const unsigned char *pSrcCard, int iSrcCardLen, int iLaiZiNumber, std::vector<SCombinationNode> & vecCombinationResult);
+		bool GetPutCardList(const unsigned char *pSrcCard, int iSrcCardLen, int iLaiZiNumber, SCombinationResult & sCombinationResult);
 
 		///  跟牌算法
-		bool GetFollowCardList(const unsigned char *pSrcCard,int iSrcCardLen,const SCombinationNode & tLastCard,std::vector<SCombinationNode> & vecFollowCardList);
-		bool GetFollowCardList(const unsigned char *pSrcCard,int iSrcCardLen,const unsigned char *pLastCard,int iLastCardLen,std::vector<SCombinationNode> & vecFollowCardList);
-		bool GetFollowCardList(const unsigned char *pSrcCard,int iSrcCardLen,const SCombinationNode & tLastCard,int iLaiZiNumber,std::vector<SCombinationNode> & vecFollowCardList);
-		
+		bool GetFollowCardList(const unsigned char *pSrcCard, int iSrcCardLen, const SCombinationNode & tLastCard, std::vector<SCombinationNode> & vecFollowCardList);
+		bool GetFollowCardList(const unsigned char *pSrcCard, int iSrcCardLen, const unsigned char *pLastCard, int iLastCardLen, std::vector<SCombinationNode> & vecFollowCardList);
+		bool GetFollowCardList(const unsigned char *pSrcCard, int iSrcCardLen, const SCombinationNode & tLastCard, int iLaiZiNumber, std::vector<SCombinationNode> & vecFollowCardList);
+
 		/// 叫分算法 返回0分则不叫分
-		int GetCallScore(const unsigned char *pSrcCard,int iSrcCardLen,int iMinScore,int iMaxScore);
+		int GetCallScore(const unsigned char *pSrcCard, int iSrcCardLen, int iMinScore, int iMaxScore);
 		//////// 辅助函数 ///////////////////////////
 		//// 从 tSrcList 筛选出 比tFilterNode 大的结果 保存在 tDstList 中
-		bool GetNodeListByFilter(const std::vector<SCombinationNode> & tSrcList,std::vector<SCombinationNode> & tDstList,const SCombinationNode & tFilterNode);
+		bool GetNodeListByFilter(const std::vector<SCombinationNode> & tSrcList, std::vector<SCombinationNode> & tDstList, const SCombinationNode & tFilterNode);
 		///  获取牌类型
-		bool GetCardType(const unsigned char *pSrcCard,int iSrcCardLen,SCombinationNode & tCardType);
-		bool GetCardType(const unsigned char *pSrcCard,int iSrcCardLen,int iLaiZiLen,std::vector<SCombinationNode> & tCardList);
+		bool GetCardType(const unsigned char *pSrcCard, int iSrcCardLen, SCombinationNode & tCardType);
+		bool GetCardType(const unsigned char *pSrcCard, int iSrcCardLen, int iLaiZiLen, std::vector<SCombinationNode> & tCardList);
 
-		int GetMainByCombinationNode(unsigned char *pSrcCard,int iSrcCardLen,const SCombinationNode & tCombinationNode );
-		int GetSubByCombinationNode(unsigned char *pSrcCard,int iSrcCardLen,const SCombinationNode & tCombinationNode);
-		int GetMainAndSubByCombinationNode(unsigned char *pSrcCard,int iSrcCardLen,const SCombinationNode & tCombinationNode);
+		int GetMainByCombinationNode(unsigned char *pSrcCard, int iSrcCardLen, const SCombinationNode & tCombinationNode);
+		int GetSubByCombinationNode(unsigned char *pSrcCard, int iSrcCardLen, const SCombinationNode & tCombinationNode);
+		int GetMainAndSubByCombinationNode(unsigned char *pSrcCard, int iSrcCardLen, const SCombinationNode & tCombinationNode);
 		/// 比较两Node的大小 -1:不能比较 0:相等 1:tNode1 > tNode2  2：tNode1 < tNode2
-		int  CompareNodeFun(const SCombinationNode & tNode1,const SCombinationNode & tNode2)const;
+		int  CompareNodeFun(const SCombinationNode & tNode1, const SCombinationNode & tNode2)const;
 	private:
 		//// 牌型获取 ///////////////////////////////////////////////////////////
-		bool GetCardTypeBySrc(const CARDATA pSrcCard,SCombinationNode & tCardType)const;
-		void GetCardTypeByLaiZi(CARDATA pSrcCard,int iStartIndex,int iLaiZiLen,std::vector<SCombinationNode> & tCardList)const;
-		void GetLongZhaDanTypeByLaiZi(const CARDATA pSrcCard,int iLaiZiLen,std::vector<SCombinationNode> & tCardList);
+		bool GetCardTypeBySrc(const CARDATA pSrcCard, SCombinationNode & tCardType)const;
+		void GetCardTypeByLaiZi(CARDATA pSrcCard, int iStartIndex, int iLaiZiLen, std::vector<SCombinationNode> & tCardList)const;
+		void GetLongZhaDanTypeByLaiZi(const CARDATA pSrcCard, int iLaiZiLen, std::vector<SCombinationNode> & tCardList);
 		///  癞子自动出牌算法 //////////////////////////////
 		///  在最优组合基础上 添加癞子 使组合更好
-		void GetCombinationByLaiZi(int iLaiziNumber,SCombinationResult & tCombinationResult) const;
+		void GetCombinationByLaiZi(int iLaiziNumber, SCombinationResult & tCombinationResult) const;
 		///  添加癞子后，重新组合最优结果
 		void GetMaxCombinationByLaiZi(SCombinationResult & tCombinationResult)const;
 		///  添加一张癞子 单张能否形成顺子
@@ -156,80 +156,80 @@ namespace HN_AI
 		///  获取出最优组合
 		void GetCombinationList();
 		///  保存最大组合牌
-		void GetMaxCombination();									       
+		void GetMaxCombination();
 		///  不带牌 不连牌组合获取
-		void GetCombinationResultNoWith(const CARDATA pSrcCard,std::vector<SCombinationNode> & tVecCombinationResult,int & tCurValue,int & tCurHandsNumber)const; 
-		void GetCombinationResultNoWith(const CARDATA pSrcCard,std::vector<SCombinationNode> & tVecCombinationResult)const;  
+		void GetCombinationResultNoWith(const CARDATA pSrcCard, std::vector<SCombinationNode> & tVecCombinationResult, int & tCurValue, int & tCurHandsNumber)const;
+		void GetCombinationResultNoWith(const CARDATA pSrcCard, std::vector<SCombinationNode> & tVecCombinationResult)const;
 		///  带牌 连牌组合获取
-		void GetCombinationResult(const CARDATA pSrcCard,std::vector<SCombinationNode> & tVecCombinationResult,int & tCurValue,int & tCurHandsNumber)const;		 
+		void GetCombinationResult(const CARDATA pSrcCard, std::vector<SCombinationNode> & tVecCombinationResult, int & tCurValue, int & tCurHandsNumber)const;
 		////// 跟牌算法 /////////////////////////
-		void GetDanZhangListByLastCard(const CARDATA pSrcCard,unsigned char tLastCard,std::vector<SCombinationNode> & vecFollowCardList)const;
-		void GetDuiZiListByLastCard(const CARDATA pSrcCard,unsigned char tLastCard,std::vector<SCombinationNode> & vecFollowCardList)const;
-		void GetSanZhangListByLastCard(const CARDATA pSrcCard,unsigned char tLastCard,EAddCardType tAddCardType,std::vector<SCombinationNode> & vecFollowCardList) const;
-		void GetZhaDanWListByLastCard(const CARDATA pSrcCard,unsigned char tLastCard,EAddCardType tAddCardType,std::vector<SCombinationNode> & vecFollowCardList) const;
-		void GetShunZiListByLastCard(const CARDATA pSrcCard,const unsigned char tStart,int iSunZiLen,std::vector<SCombinationNode> & vecFollowCardList) const;
-		void GetLianDuiListByLastCard(const CARDATA pSrcCard,const unsigned char tStart,int iDuiZiLen,std::vector<SCombinationNode> & vecFollowCardList) const;
-		void GetFeiJiListByLastCard(const CARDATA pSrcCard,const unsigned char tStart,int iFeiJiLen,EAddCardType tAddCardType,std::vector<SCombinationNode> & vecFollowCardList)const;
-		void GetFollowCardListNoZhaDan(const CARDATA pSrcCard,const SCombinationNode & tLastCard,std::vector<SCombinationNode> & vecFollowCardList)const;
+		void GetDanZhangListByLastCard(const CARDATA pSrcCard, unsigned char tLastCard, std::vector<SCombinationNode> & vecFollowCardList)const;
+		void GetDuiZiListByLastCard(const CARDATA pSrcCard, unsigned char tLastCard, std::vector<SCombinationNode> & vecFollowCardList)const;
+		void GetSanZhangListByLastCard(const CARDATA pSrcCard, unsigned char tLastCard, EAddCardType tAddCardType, std::vector<SCombinationNode> & vecFollowCardList) const;
+		void GetZhaDanWListByLastCard(const CARDATA pSrcCard, unsigned char tLastCard, EAddCardType tAddCardType, std::vector<SCombinationNode> & vecFollowCardList) const;
+		void GetShunZiListByLastCard(const CARDATA pSrcCard, const unsigned char tStart, int iSunZiLen, std::vector<SCombinationNode> & vecFollowCardList) const;
+		void GetLianDuiListByLastCard(const CARDATA pSrcCard, const unsigned char tStart, int iDuiZiLen, std::vector<SCombinationNode> & vecFollowCardList) const;
+		void GetFeiJiListByLastCard(const CARDATA pSrcCard, const unsigned char tStart, int iFeiJiLen, EAddCardType tAddCardType, std::vector<SCombinationNode> & vecFollowCardList)const;
+		void GetFollowCardListNoZhaDan(const CARDATA pSrcCard, const SCombinationNode & tLastCard, std::vector<SCombinationNode> & vecFollowCardList)const;
 		/////  癞子跟牌算法 ////////////////////
 		//// 获取出非炸弹 
-		void GetDuiZiListByLaiZi(CARDATA pSrcCard,unsigned char tLastCard,int iLaiZiNumber,std::vector<SCombinationNode> & vecFollowCardList)const;
-		void GetShunZiListByLaiZi(CARDATA pSrcCard,const unsigned char tLastStart,int iLastSunZiLen,int iStartIndex,int iLaiZiNumber,std::vector<SCombinationNode> & vecFollowCardList) const;
-		void GetLianDuiListByLaiZi(CARDATA pSrcCard,const unsigned char tLastStart,int iLastDuiZiLen,int iStartIndex,int iLaiZiNumber,std::vector<SCombinationNode> & vecFollowCardList) const;
-		void GetAddCardTypeListByLaiZi(CARDATA pSrcCard,const SCombinationNode & tLastCard,int iStartIndex,int iLaiZiNumber,std::vector<SCombinationNode> & vecFollowCardList)const;
-		void GetFollowListNoZhaDanByLaiZi(CARDATA pSrcCard,const SCombinationNode & tLastCard,int iLaiZiNumber,std::vector<SCombinationNode> & vecFollowCardList)const;
+		void GetDuiZiListByLaiZi(CARDATA pSrcCard, unsigned char tLastCard, int iLaiZiNumber, std::vector<SCombinationNode> & vecFollowCardList)const;
+		void GetShunZiListByLaiZi(CARDATA pSrcCard, const unsigned char tLastStart, int iLastSunZiLen, int iStartIndex, int iLaiZiNumber, std::vector<SCombinationNode> & vecFollowCardList) const;
+		void GetLianDuiListByLaiZi(CARDATA pSrcCard, const unsigned char tLastStart, int iLastDuiZiLen, int iStartIndex, int iLaiZiNumber, std::vector<SCombinationNode> & vecFollowCardList) const;
+		void GetAddCardTypeListByLaiZi(CARDATA pSrcCard, const SCombinationNode & tLastCard, int iStartIndex, int iLaiZiNumber, std::vector<SCombinationNode> & vecFollowCardList)const;
+		void GetFollowListNoZhaDanByLaiZi(CARDATA pSrcCard, const SCombinationNode & tLastCard, int iLaiZiNumber, std::vector<SCombinationNode> & vecFollowCardList)const;
 		//// 如果tLastCard 为炸弹并且是不带牌 获取跟牌需要特殊处理( 0:12软炸 > .... > 5纯 >5软 >四癞 > 王炸 > 硬炸 > 软炸  1:王炸 > 12软炸 > .... > 5纯 >5软 > 四癞 > 硬炸 > 软炸 )
-		void GetFollowListZhaDan(const CARDATA pSrcCard,const SCombinationNode & tLastCard,int iLaiZiNumber,std::vector<SCombinationNode> & vecFollowCardList)const;
+		void GetFollowListZhaDan(const CARDATA pSrcCard, const SCombinationNode & tLastCard, int iLaiZiNumber, std::vector<SCombinationNode> & vecFollowCardList)const;
 		////// 公共方法 /////////////////////////
-		int ChangeHandPaiData(const unsigned char *pSrcCard,int iSrcCardLen);
-		void ClassificationData(const CARDATA pSrcCard,SVBYTE & tVecDanZhang,SVBYTE & tVecDuiZi,SVBYTE & tVecSanZhang,SVBYTE & tVecSiZhang,std::vector<SZhaDanLongNode> & tVecZhaDanLong)const; 
+		int ChangeHandPaiData(const unsigned char *pSrcCard, int iSrcCardLen);
+		void ClassificationData(const CARDATA pSrcCard, SVBYTE & tVecDanZhang, SVBYTE & tVecDuiZi, SVBYTE & tVecSanZhang, SVBYTE & tVecSiZhang, std::vector<SZhaDanLongNode> & tVecZhaDanLong)const;
 		int GetCardCount()const;
 
 		/// 是否是顺子 iFlag:0 以byCardValue为中心向连边寻找 1：以byCardValue为最小点向上寻找 2：以byCardValue为最大点向下寻找
-		bool IsShunZi(const CARDATA pSrcCard,unsigned char byCardValue,int iFlag,int iShunZiLen = 5)const;  /// iShunZiLen 顺子长度 byCardValue 在pSrcCard中能不能形成顺子 pSrcCard 必须是 1~13 对应着 下标 1-13 按着顺序存
-		bool IsShunZi(const SVBYTE & tVec,unsigned char byCardValue,int iFlag,int iShunZiLen = 5)const;
+		bool IsShunZi(const CARDATA pSrcCard, unsigned char byCardValue, int iFlag, int iShunZiLen = 5)const;  /// iShunZiLen 顺子长度 byCardValue 在pSrcCard中能不能形成顺子 pSrcCard 必须是 1~13 对应着 下标 1-13 按着顺序存
+		bool IsShunZi(const SVBYTE & tVec, unsigned char byCardValue, int iFlag, int iShunZiLen = 5)const;
 		bool IsShunZi(const SVBYTE & tVec)const;													/// 是否全部相连
-		
+
 		/// 获取出最优的带牌 tVecDuiZi 对子 tVecDanZhang 单张  iSubCardNumber 需要带多少组 tVecSubCard 带牌结果
-		bool GetSubCard(const EAddCardMainType & tAddCardMainType,SVBYTE & tVecDuiZi,SVBYTE & tVecDanZhang,int iSubCardNumber,SVBYTE & tVecSubCard,EAddCardType & eAddCardType)const;			
+		bool GetSubCard(const EAddCardMainType & tAddCardMainType, SVBYTE & tVecDuiZi, SVBYTE & tVecDanZhang, int iSubCardNumber, SVBYTE & tVecSubCard, EAddCardType & eAddCardType)const;
 		/// 获取出最坏的带牌 iNumber:最坏的牌个数 单张:1 对子:2
-		unsigned char GetSubCard(const CARDATA pSrcCard,int iNumber)const;  
+		unsigned char GetSubCard(const CARDATA pSrcCard, int iNumber)const;
 		/// 连对的获取 会删除已经形成连对牌
-		void GetLianDui( SVBYTE & tVecDuiZi,std::vector<SCombinationNode> & tVecCombinationResult,int & tCurValue,int & tCurHandsNumber)const;		
+		void GetLianDui(SVBYTE & tVecDuiZi, std::vector<SCombinationNode> & tVecCombinationResult, int & tCurValue, int & tCurHandsNumber)const;
 		/// 飞机的获取 会删除已经形成飞机牌
-		void GetFeiJi( SVBYTE & tVecSanZhang,std::vector<SCombinationNode> & tVecCombinationResult,int & tCurValue,int & tCurHandsNumber)const;	
-		
+		void GetFeiJi(SVBYTE & tVecSanZhang, std::vector<SCombinationNode> & tVecCombinationResult, int & tCurValue, int & tCurHandsNumber)const;
+
 		/// iFlag:0 升序 1降序 2:癞子数升序
-		void ResultSort(std::vector<SCombinationNode> & tVecCombinationResult,int iFlag)const;  
-		
+		void ResultSort(std::vector<SCombinationNode> & tVecCombinationResult, int iFlag)const;
+
 		/// A 2 大于 3~13
-		bool SpecialComparisonFun(int a,int b)const;
+		bool SpecialComparisonFun(int a, int b)const;
 		/// 比较 两个CombinationNode 是否相等 flag:0 完全相等 1:带牌数据不计算
-		bool IsEqualByNode(const SCombinationNode & tNode1,const SCombinationNode & tNode2,int flag)const;
+		bool IsEqualByNode(const SCombinationNode & tNode1, const SCombinationNode & tNode2, int flag)const;
 		//// tNode1 是否包含 tVecData里面所有数据
-		bool IsNodeContainByVector(const SCombinationNode & tNode1,const SVBYTE & tVecData)const;
+		bool IsNodeContainByVector(const SCombinationNode & tNode1, const SVBYTE & tVecData)const;
 		//// vecA 是否包含 vecB里面所有数据
-		bool IsVecContainVec(const SVBYTE & vecA,const SVBYTE & vecB )const;
+		bool IsVecContainVec(const SVBYTE & vecA, const SVBYTE & vecB)const;
 		//// tNode1 是否已经存在于 vecNodeList 里面
-		std::vector<SCombinationNode>::iterator IsVectorNodeContainByNode(std::vector<SCombinationNode> & vecNodeList,const SCombinationNode & tNode1)const;
+		std::vector<SCombinationNode>::iterator IsVectorNodeContainByNode(std::vector<SCombinationNode> & vecNodeList, const SCombinationNode & tNode1)const;
 
 		///  删除tVecDelete 中 byValue
-		bool DeleteParamByValue(SVBYTE & tVecDelete,unsigned char byValue)const;
+		bool DeleteParamByValue(SVBYTE & tVecDelete, unsigned char byValue)const;
 		///  tVecAdd 添加iNumber个byValue 
-		bool AddParamByValue(SVBYTE & tVecAdd,unsigned char byValue,int iNumber=1)const;
+		bool AddParamByValue(SVBYTE & tVecAdd, unsigned char byValue, int iNumber = 1)const;
 		/// 基本牌型节点添加 
-		bool AddShunZiToNode(unsigned char ucStart,int iShunZiLen,SCombinationNode & tNode)const;
-		bool AddShunZiToNode(const SVBYTE & tVecDanZhang,SCombinationNode & tNode)const;
-		bool AddDanZhangToNode(unsigned char ucValue,SCombinationNode & tNode)const;
-		bool AddDuiZiToNode(unsigned char ucValue,SCombinationNode & tNode)const;
-		bool AddSanZhangToNode(unsigned char ucValue,unsigned char ucDaiPai,EAddCardType tAddCardType,SCombinationNode & tNode)const;
-		bool AddZhaDanToNode(unsigned char ucValue,unsigned char ucDaiPai1,unsigned char ucDaiPai2,EAddCardType tAddCardType,SCombinationNode & tNode)const;
-		bool AddZhaDanLongToNode(unsigned char ucValue,int iNumber,SCombinationNode & tNode)const;
-		bool AddLianDuiToNode(unsigned char ucStart,int iLianDuiLen,SCombinationNode & tNode)const;
-		bool AddLianDuiToNode(const SVBYTE & tVecDuiZi,SCombinationNode & tNode)const;
-		bool AddFeiJiToNode(unsigned char ucStart,int iFeiJiLen,const SVBYTE & tVecDaiPai,EAddCardType tAddCardType,SCombinationNode & tNode)const;
-		bool AddFeiJiToNode(const SVBYTE & tVecSanZhang,const SVBYTE & tVecDaiPai,EAddCardType tAddCardType,SCombinationNode & tNode)const;
-		bool AddAllLaiZiToNode(int iLaiZiLen,SCombinationNode & tNode)const;
+		bool AddShunZiToNode(unsigned char ucStart, int iShunZiLen, SCombinationNode & tNode)const;
+		bool AddShunZiToNode(const SVBYTE & tVecDanZhang, SCombinationNode & tNode)const;
+		bool AddDanZhangToNode(unsigned char ucValue, SCombinationNode & tNode)const;
+		bool AddDuiZiToNode(unsigned char ucValue, SCombinationNode & tNode)const;
+		bool AddSanZhangToNode(unsigned char ucValue, unsigned char ucDaiPai, EAddCardType tAddCardType, SCombinationNode & tNode)const;
+		bool AddZhaDanToNode(unsigned char ucValue, unsigned char ucDaiPai1, unsigned char ucDaiPai2, EAddCardType tAddCardType, SCombinationNode & tNode)const;
+		bool AddZhaDanLongToNode(unsigned char ucValue, int iNumber, SCombinationNode & tNode)const;
+		bool AddLianDuiToNode(unsigned char ucStart, int iLianDuiLen, SCombinationNode & tNode)const;
+		bool AddLianDuiToNode(const SVBYTE & tVecDuiZi, SCombinationNode & tNode)const;
+		bool AddFeiJiToNode(unsigned char ucStart, int iFeiJiLen, const SVBYTE & tVecDaiPai, EAddCardType tAddCardType, SCombinationNode & tNode)const;
+		bool AddFeiJiToNode(const SVBYTE & tVecSanZhang, const SVBYTE & tVecDaiPai, EAddCardType tAddCardType, SCombinationNode & tNode)const;
+		bool AddAllLaiZiToNode(int iLaiZiLen, SCombinationNode & tNode)const;
 
 		//设置检查类型
 		virtual void SetCheckType(int iType);
@@ -261,7 +261,7 @@ namespace HN_AI
 		int m_iMinHandsNumber;     /// 最少手数
 		std::vector<SCombinationNode>  m_vecCombinationResult;        ///组牌结果
 		std::vector<SCombinationNode>  m_vecResultNoWith;  ///组牌结果，没有带牌
-		
+
 		int	m_iCheckType;									//检查类型
 		bool m_bFirstOut;									//首出
 		unsigned char m_byMinCard;							//最小手牌
@@ -289,9 +289,9 @@ namespace HN_AI
 
 		//删除首出牌
 		void DeleteFirstOut();
-		
+
 		//配置带牌
-		bool GetSubCardEx(const EAddCardMainType & tAddCardMainType,SVBYTE &tVecSanZhang, SVBYTE & tVecDuiZi,SVBYTE & tVecDanZhang,int iSubCardNumber,SVBYTE & tVecSubCard,EAddCardType & eAddCardType, bool bSpecial = false)const;			
+		bool GetSubCardEx(const EAddCardMainType & tAddCardMainType, SVBYTE &tVecSanZhang, SVBYTE & tVecDuiZi, SVBYTE & tVecDanZhang, int iSubCardNumber, SVBYTE & tVecSubCard, EAddCardType & eAddCardType, bool bSpecial = false)const;
 	};
 }
 

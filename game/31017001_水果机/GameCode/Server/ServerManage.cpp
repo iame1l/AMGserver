@@ -537,8 +537,6 @@ void CServerGameDesk::OnHandleBibei(BYTE byStation,void * pData, UINT uSize)
 	__int64		iChangeMoney[PLAY_COUNT];				//玩家金币
 	memset(iChangeMoney, 0 , sizeof(iChangeMoney));
 	__super::RecoderGameInfo(iChangeMoney);
-
-
 	ChangeUserPointint64(iTurePoint, temp_cut);
 
 	///*--------------------------------------------------------------------------*/
@@ -962,6 +960,7 @@ void CServerGameDesk::OnHandleStartRoll(BYTE byStation,void * pData, UINT uSize)
 	//记录玩家金币变化
 	__int64		iChangeMoney[PLAY_COUNT];				//玩家金币
 	memset(iChangeMoney, 0 , sizeof(iChangeMoney));
+	//mark
 	__super::RecoderGameInfo(iChangeMoney);
 
 
@@ -1165,7 +1164,8 @@ BYTE CServerGameDesk::UserLeftDesk(BYTE bDeskStation, CGameUserInfo * pUserInfo)
 	memset(iChangeMoney, 0 , sizeof(iChangeMoney));
 	
 	//20190315 增量更新
-	//__super::RecoderGameInfo(iChangeMoney);
+	//mark
+	__super::RecoderGameInfo(iChangeMoney);
 	//ChangeUserPointint64(iTurePoint, temp_cut);
 
 	/*--------------------------------------------------------------------------*/
