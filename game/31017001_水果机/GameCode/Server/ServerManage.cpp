@@ -536,6 +536,7 @@ void CServerGameDesk::OnHandleBibei(BYTE byStation,void * pData, UINT uSize)
 	//记录玩家金币变化
 	__int64		iChangeMoney[PLAY_COUNT];				//玩家金币
 	memset(iChangeMoney, 0 , sizeof(iChangeMoney));
+	//mark2//押大小的结果处理//有记录
 	__super::RecoderGameInfo(iChangeMoney);
 	ChangeUserPointint64(iTurePoint, temp_cut);
 
@@ -960,11 +961,12 @@ void CServerGameDesk::OnHandleStartRoll(BYTE byStation,void * pData, UINT uSize)
 	//记录玩家金币变化
 	__int64		iChangeMoney[PLAY_COUNT];				//玩家金币
 	memset(iChangeMoney, 0 , sizeof(iChangeMoney));
-	//mark
+	//mark1//灯滚动的消息
 	__super::RecoderGameInfo(iChangeMoney);
-
-
 	ChangeUserPointint64(iTurePoint, temp_cut);
+
+
+
 	/*********************************写入配置文件************************************/
 	ClearUpListData( stUserData, iTmpMoney );
 	SaveSetting();
@@ -1164,9 +1166,9 @@ BYTE CServerGameDesk::UserLeftDesk(BYTE bDeskStation, CGameUserInfo * pUserInfo)
 	memset(iChangeMoney, 0 , sizeof(iChangeMoney));
 	
 	//20190315 增量更新
-	//mark
+	//mark3//用户离座的结果金币处理
 	__super::RecoderGameInfo(iChangeMoney);
-	//ChangeUserPointint64(iTurePoint, temp_cut);
+    //ChangeUserPointint64(iTurePoint, temp_cut);
 
 	/*--------------------------------------------------------------------------*/
 	__super::UserLeftDesk(bDeskStation,pUserInfo);
@@ -2046,7 +2048,6 @@ void CServerGameDesk::OnMsgAdminControl_Ntf( BYTE deskNumber )
 	// 库存信息更新
 	stContextNtf.currStore = G_i64CurrStorMoney;
 	stContextNtf.pondStore = G_i64Pond;
-
 	OnMsgAdminControlSendData( deskNumber, &stContextNtf, sizeof(stContextNtf) );
 }
 
