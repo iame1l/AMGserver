@@ -460,7 +460,7 @@ namespace HN_AI
 		}
 		return false;
 	}
-	
+	//mark
 	bool CAIAlgorithmManage::GetFollowArrayListByHands(const HN::CardArrayBase & tSrcArray,T_C2S_PLAY_CARD_REQ tLastCard,std::vector<T_C2S_PLAY_CARD_REQ> & tFollowArrayList) const
 	{
 		//// 过滤非法数据

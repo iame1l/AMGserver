@@ -1017,10 +1017,11 @@ namespace HN
 			return false;
 		}
 	}
-
+	//第一个出牌的时候
 	bool DataManage::getPickUpOutAll(HN::CardArrayBase &HandCard, std::vector<T_C2S_PLAY_CARD_REQ> & tPlayCardList)
 	{
 		AIMANAGEINSTANCE.SetFirstFlag(true);
+		//mark
 		AIMANAGEINSTANCE.GetPutArrayList(HandCard,tPlayCardList);
 		/// 结果返回
 		if( tPlayCardList.empty() ==  false )
