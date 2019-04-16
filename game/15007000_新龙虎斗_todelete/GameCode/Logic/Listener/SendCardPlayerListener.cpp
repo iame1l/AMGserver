@@ -17,12 +17,15 @@ SendCardPlayerListener::~SendCardPlayerListener()
 
 void SendCardPlayerListener::OnAdd()
 {
+	//mark
 	__super::OnAdd();
 	m_Context->GetGameDesk()->SetGameStation(m_State);
 
 	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
 	
 	exDataMgr->m_haveTimeSs=0;
+
+
 	void *pointers[] = {this};
 	OBJ_GET_EXT(m_Context, ExtensionTimer, extTimer);
 	extTimer->Add(2.0f,TimerData(pointers,ARRAY_LEN(pointers),DelayWait));
@@ -101,9 +104,16 @@ bool SendCardPlayerListener::countScore()
 		}
 	}
 
+	
 	if(bAIWin)
 	{
-		CountUesrWinMoney();
+		//todo 加入平局概念
+		if (rand() % 100 <= exDataMgr->m_pingjuPro)
+			pingjuFunction();
+
+		
+		//直接翻牌
+		else   CountUesrWinMoney();
 	}
 	else
 	{
@@ -180,6 +190,7 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 		
 	}
 
+	//Eil @ 20190315
 	//没人投和的时候给玩家赢
 	emWinAreaType byLoseQuYu = Area_Invalid;
 	if(i64MoneyHe <= 0)
@@ -204,6 +215,7 @@ bool SendCardPlayerListener::CountUesrLoseMoney()
 		else 
 			byLoseQuYu=i64MoneyLong>i64MoneyHu?Area_Long:Area_Hu;
 	}
+	//
 	/*
 	if(i64MoneyLong > 0 && exDataMgr->m_i64AIHaveWinMoney - i64MoneyLong >0)
 	{
@@ -278,7 +290,7 @@ void SendCardPlayerListener::GenerateByType(emWinAreaType emType)
 //系统win
 bool SendCardPlayerListener::CountUesrWinMoney()
 {
-	srand((unsigned int)GetTickCount());
+	srand((unsigned int)time(NULL));
 	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
 	DataManage::sGameUserInf userinf;
 	__int64 i64MoneyLong=0;
@@ -305,8 +317,8 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 	tempMin=min(tempMin,i64MoneyHu);
 	emWinAreaType tWinQuYu = Area_Invalid;
 
-	//龙虎两个区域都相同,(只有1个人玩的时候,两边同时押,会产生负数,导致和区是最大)
-	if(i64MoneyLong == i64MoneyHu && rand()%100 > 10)
+	//
+	if(i64MoneyLong == i64MoneyHu && i64MoneyHe > 0 && i64MoneyHu < i64MoneyHe)
 		tWinQuYu=rand()%2?Area_Long:Area_Hu;
 	
 	//
@@ -330,6 +342,8 @@ bool SendCardPlayerListener::CountUesrWinMoney()
 	}
 	return true;
 }
+
+
 
 //mark
 void SendCardPlayerListener::DelaySendCardOver(void **data, int dataCnt)
@@ -499,3 +513,67 @@ bool SendCardPlayerListener::checkKingFine(uchar playerPos)
 
 	return false;
 }
+
+//todelete
+bool SendCardPlayerListener::pingjuFunction()
+{
+	srand((unsigned int)time(NULL));
+	OBJ_GET_EXT(m_Context, DataManage, exDataMgr);
+	DataManage::sGameUserInf userinf;
+	__int64 i64MoneyLong = 0;
+	__int64 i64MoneyHu = 0;
+	__int64 i64MoneyHe = 0;
+	for (int i = 0; i < PLAY_COUNT; i++)
+	{
+		if (!exDataMgr->getUserInfo(i, userinf))continue;
+		if (userinf.bIsVirtual) continue;
+		//和
+		//i64MoneyHe += userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
+		i64MoneyHe += userinf.i64UserXiaZhuData[2] * 8 ;
+
+		//龙
+		i64MoneyLong += userinf.i64UserXiaZhuData[0] * 2 ;
+
+		//虎
+		i64MoneyHu += userinf.i64UserXiaZhuData[1] * 2 ;
+	}
+
+	//找到个第二区域胜利的区域
+	__int64 tempMax = max(i64MoneyHe, i64MoneyLong);
+	tempMax = max(tempMax, i64MoneyHu);
+	emWinAreaType tWinQuYu = Area_Invalid;
+
+
+	//
+	if (tempMax == i64MoneyHe)
+	{
+		__int64 tmp = max(i64MoneyHu, i64MoneyLong);
+		tWinQuYu = (tmp == i64MoneyHu ? Area_Hu : Area_Long);
+	}
+	else if (tempMax == i64MoneyLong)
+	{
+		__int64 tmp = max(i64MoneyHe, i64MoneyHu);
+		tWinQuYu = (tmp == i64MoneyHu ? Area_Hu : Area_He);
+	}
+	else
+	{
+		__int64 tmp = max(i64MoneyHe, i64MoneyLong);
+		tWinQuYu = (tmp == i64MoneyLong ? Area_Long : Area_He);
+	}
+
+	if (i64MoneyLong == i64MoneyHu && tempMax == i64MoneyHu)
+		tWinQuYu = rand() % 2 ? Area_Hu : Area_Long;
+
+	if (tWinQuYu != exDataMgr->byWinQuYu)		//赢钱最多区域和实际开奖区域不一致
+	{
+	
+		GenerateByType(tWinQuYu);
+		exDataMgr->byWinQuYu = tWinQuYu;
+		LOGGER_FILE(m_Context, "机器人1控制：：" << (int)exDataMgr->byWinQuYu);
+	}
+	return true;
+}
+
+
+
+
