@@ -27,7 +27,7 @@ void GameFinishListener::OnAdd()
 	
 }
 
-//结算
+//结算//mark
 bool GameFinishListener::countScore()
 {
  	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
@@ -121,6 +121,10 @@ bool GameFinishListener::countScore()
  	//m_Context->GetGameDesk()->ChangeUserPointint64(i_ChangePoint, temp_cut);
 	m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin(i_ChangePoint, temp_cut, flag);//newnew
 	m_Context->GetGameDesk()->gameinfo();
+
+	//20190417  下注金额写入db
+	//__int64 chipSum = userinf.i64UserXiaZhuData[1] + userinf.i64UserXiaZhuData[0] + userinf.i64UserXiaZhuData[2];
+	//m_Context->GetGameDesk()->UpdateUserDB(userinf.userID, chipSum);
 
  	exDataMgr->updateUserMoney();
  	exDataMgr->updateDataMoney();

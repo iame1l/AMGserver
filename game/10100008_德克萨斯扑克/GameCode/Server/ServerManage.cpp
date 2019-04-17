@@ -3142,7 +3142,7 @@ bool CServerGameDesk::OnEventUserCfgDesk()
 				SendGameData(i,&tagCfgDesk,sizeof(TCfgDesk),MDM_GM_GAME_NOTIFY,ASS_CFG_DESK,0);
 			}
 		}
-
+		
 		tagCfgDesk.dz.bCanSet = false;
 		SendWatchData(m_bMaxPeople,&tagCfgDesk,sizeof(TCfgDesk),MDM_GM_GAME_NOTIFY,ASS_CFG_DESK,0);
 		LOG_MSG_SEND(ASS_CFG_DESK);
@@ -3293,6 +3293,7 @@ void CServerGameDesk::AiWinAutoCtrl()
 		m_Logic.AnalysisCard(m_GameData.m_UserData[i].m_byMyCards, 2, byDeskCard, 5, byResultCard[i]);
 		memcpy(m_GameData.m_bResultCards[i],byResultCard[i], sizeof(BYTE) * 5);  // 五张最大的牌
 	}
+	//找出最大牌的玩家
 	CByteArray arrayResult;
 	CalculateWin(0,arrayResult,true);
 	bool bTraveled[PLAY_COUNT] = {0};
@@ -3334,6 +3335,7 @@ void CServerGameDesk::AiWinAutoCtrl()
 				if (!m_GameData.m_UserData[i].m_bIn) continue; //没带入金币
 				if (bTraveled[i]) continue;
 				llog.Format("lbdzpk::::::::111111赢家 = %s ,最大牌者  = %s",m_pUserInfo[arrayResult.GetAt(j)]->m_UserData.nickName,m_pUserInfo[i]->m_UserData.nickName);
+
 				OutputDebugString(llog);
 				Change2UserCard(i,arrayResult.GetAt(j));
 				bTraveled[i] = true;

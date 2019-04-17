@@ -2040,7 +2040,7 @@ int CClientGameDlg::GetRandAllinByWeight(int iWeight)
 	return UD_VF_FOLD;
 }
 
-//玩家根据设定动作概率下注
+//玩家根据设定动作概率下注//mark
 bool CClientGameDlg::UserNoteAccordingToActionProb(const BYTE byVerbFlag)
 {
 	//未选择行为概率策略，返回

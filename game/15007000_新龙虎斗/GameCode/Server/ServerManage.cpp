@@ -381,6 +381,7 @@ uchar CServerGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * 
 	return bFlag;
 }
 
+//用户离开桌子
 //用户离开游戏桌
 uchar CServerGameDesk::UserLeftDesk(uchar bDeskStation, CGameUserInfo * pUserInfo)
 {
