@@ -361,8 +361,6 @@ public:
 	virtual BOOL IsPlayingByGameStation(){ return m_bPlayGame; }
 	///游戏数据包处理函数
 	virtual bool HandleNotifyMessage(BYTE bDeskStation, NetMessageHead * pNetHead, void * pData, UINT uSize, UINT uSocketID, bool bWatchUser);
-	//下注总额
-	virtual BOOL CGameDesk::UpdateUserChipSum(LONG dwUserID, int dwMoney = 0, int dwPoint = 0);
 	///必须重载函数
 protected:
 	///获取游戏状态信息

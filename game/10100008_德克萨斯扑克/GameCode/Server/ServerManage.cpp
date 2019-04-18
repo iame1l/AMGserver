@@ -2021,7 +2021,7 @@ BOOL CServerGameDesk::LoadDeskCfg(int iRoomID, bool bConfigRC)
 	pDeskCfg->dz.iSubMaxMoney = f.GetKeyVal(strSeg, "SubMaxMoney", 10000);  // 房间最高代入金币
 	pDeskCfg->dz.iSubPlanMoney = f.GetKeyVal(strSeg, "SubPlanMoney",5000);  // 当前准备代入金币
 	pDeskCfg->dz.iMinusMoney  = f.GetKeyVal(strSeg, "MinusMoney",100);		// 修改注额加减金币
-	pDeskCfg->dz.iMinMoney   = f.GetKeyVal(strSeg, "MinMoney",100);			// 最小下注金币
+	pDeskCfg->dz.iMinMoney   = f.GetKeyVal(strSeg, "MinMoney",100);			// 最小下注金币 //和机器人加注有关
 	pDeskCfg->dz.iUntenMoney   = f.GetKeyVal(strSeg, "UntenMoney ",0);		// 少于多少金额时带入
 
 	pDeskCfg->dz.iUserClose = f.GetKeyVal(strSeg, "UserClose", true);		// 一局后10秒内将玩家强退

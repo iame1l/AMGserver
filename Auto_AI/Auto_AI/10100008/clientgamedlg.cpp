@@ -642,7 +642,7 @@ void CClientGameDlg::KillAllTimer()
 	return;
 }
 
-//定时器消息
+//定时器消息//mark
 bool CClientGameDlg::OnGameTimer(BYTE bDeskStation, UINT uTimeID, UINT uTimeCount)
 {
 	switch (uTimeID)
@@ -744,11 +744,13 @@ bool CClientGameDlg::OnGameTimer(BYTE bDeskStation, UINT uTimeID, UINT uTimeCoun
 		}
 	case IDT_RAISE_TIMER:			// 加注定时器
 		{
+			//todo 因为加注的金额太高,次数多造成allin的场面
 			KillTimer(IDT_RAISE_TIMER);
 
 			struct timeb timeSeed;
 			ftime(&timeSeed);
 			srand((UINT)(timeSeed.time * NUM_ONE_SECOND_MS + timeSeed.millitm));  // milli time
+
 			const __int64 iTotalBetMoney = GetTotalBetMoney();
 			__int64 iBetMoney = 0;
 			if (m_iMinBetOrRaiseMoney * 10 < iTotalBetMoney)

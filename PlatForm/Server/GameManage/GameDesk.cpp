@@ -3915,40 +3915,6 @@ bool CGameDesk::HandleNotifyMessage(BYTE bDeskStation, NetMessageHead * pNetHead
 	return false;
 }
 
-BOOL CGameDesk::UpdateUserChipSum(LONG dwUserID, int dwChangeMoney, int dwChangePoint)
-{
-	if (dwChangeMoney == 0 && dwChangePoint == 0)
-		return TRUE;
-
-	CGameUserInfo* UserInfo = m_pDataManage->m_UserManage.FindOnLineUser(dwUserID);
-
-	if (UserInfo == NULL)
-		UserInfo = m_pDataManage->m_UserManage.FindNetCutUser(dwUserID);
-
-
-	//更新数据库
-	try
-	{
-		DL_GR_Update_InstantMoney DT_InstantMoney;
-		memset(&DT_InstantMoney, 0, sizeof(DT_InstantMoney));
-		DT_InstantMoney.dwChangeMoney = dwChangeMoney;
-		DT_InstantMoney.dwChangePoint = dwChangePoint;
-		DT_InstantMoney.dwUserID = dwUserID;
-		DT_InstantMoney.bCutValue = 0;
-		m_pDataManage->m_SQLDataManage.PushLine(&DT_InstantMoney.DataBaseHead, sizeof(DT_InstantMoney), DTK_GR_UPDATE_INSTANT_MONEY, 0, 0);
-	}
-	catch (...)
-	{
-		TRACE("CATCH:%s with %s\n", __FILE__, __FUNCTION__);
-	}
-	//通知客户端
-	//MSG_GR_R_InstantUpdate InstantUpdate;
-	//InstantUpdate.dwUserID = dwUserID;
-	//InstantUpdate.dwMoney = dwChangeMoney;
-	//InstantUpdate.dwPoint = dwChangePoint;
-	//m_pDataManage->m_TCPSocket.SendDataBatch(&InstantUpdate, sizeof(InstantUpdate), MDM_GR_ROOM, ASS_GR_INSTANT_UPDATE, 0);
-	return true;
-}
 
 
 //mark
