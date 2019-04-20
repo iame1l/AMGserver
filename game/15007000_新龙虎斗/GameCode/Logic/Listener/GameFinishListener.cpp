@@ -100,6 +100,10 @@ bool GameFinishListener::countScore()
  			}
  		}
  		exDataMgr->alterUserInfo(i, userinf);
+
+		//20190420 有效投注的写入
+		//__int64 chipSum = userinf.i64UserXiaZhuData[1] + userinf.i64UserXiaZhuData[0] + userinf.i64UserXiaZhuData[2];
+		//this->m_Context->GetGameDesk()->m_pUserInfo[i]->m_ChangePoint.dwTaxCom = chipSum;
  	}
  	S_C_GameResult Noti;
  	bool flag[PLAY_COUNT];//能够扣台费的标志
@@ -119,11 +123,11 @@ bool GameFinishListener::countScore()
  	bool temp_cut[PLAY_COUNT] = {0};
 	//给Mserver统计
  	//m_Context->GetGameDesk()->ChangeUserPointint64(i_ChangePoint, temp_cut);
+
 	m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin(i_ChangePoint, temp_cut, flag);//newnew
 	m_Context->GetGameDesk()->gameinfo();
 
 	//20190417  下注金额写入db
-	//__int64 chipSum = userinf.i64UserXiaZhuData[1] + userinf.i64UserXiaZhuData[0] + userinf.i64UserXiaZhuData[2];
 	//m_Context->GetGameDesk()->UpdateUserDB(userinf.userID, chipSum);
 
  	exDataMgr->updateUserMoney();

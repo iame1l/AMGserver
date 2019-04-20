@@ -54,6 +54,7 @@ bool CGameAlgorithm::CompareCard(BYTE byCard1,BYTE byCard2,LPCVOID pData /*=NULL
 	       nNum		  [IN]   使用多少幅扑克
 		   nDeskIndex [IN]   桌号，用于优化随机数的生成
 */
+//洗牌
 BYTE CGameAlgorithm::RandCard(BYTE byCard[],int nNum,int nDeskIndex/*, BYTE *OriginalIndex*/)
 {
 	const BYTE m_byBaseCards[NUM_CARDS_NUM] =

@@ -995,6 +995,8 @@ bool CGameDesk::RecoderGameInfo(__int64 *ChangeMoney)
 				GameRecord.dwChangeMoney[i]=m_dwChangeMoney[i];
 
 				GameRecord.i64ScrMoney[i]=m_pUserInfo[i]->m_UserData.i64Money;
+
+
 				iCount++;
 			}
 		}
@@ -1801,6 +1803,7 @@ bool CGameDesk::ChangeUserPointint64_IsJoin(__int64 *arPoint, bool *bCut,bool *I
         }
         else 
         {
+			//写入积分的点
             pUpdateUserInfo[nIndex].dwChangePoint = iPoint;
         }
 

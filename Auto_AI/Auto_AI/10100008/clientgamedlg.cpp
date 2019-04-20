@@ -2313,6 +2313,7 @@ bool CClientGameDlg::AnalysisBiggestCards()
 		return false;
 	}
 
+	//fixme 没有接受
 	for (int i=0; i < PLAY_COUNT; ++i)
 	{
 		if (0 != m_tUserCardActionProb.byCards[i][0]) //有效牌
