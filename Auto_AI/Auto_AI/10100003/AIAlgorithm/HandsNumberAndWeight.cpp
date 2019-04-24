@@ -293,6 +293,8 @@ namespace HN_AI
 	void CHandsNumberAndWeight::MakeShunZi(SCombinationNode &tNode)
 	{
 		int iMaxLen = 0;
+
+		//顺子5张起
 		for(int iSunZiLen = 5;iSunZiLen <= 12;iSunZiLen++)
 		{
 			bool ret =  IsShunZi(m_byCardData, m_byMinCard, 1, iSunZiLen);
@@ -326,6 +328,7 @@ namespace HN_AI
 		ClassificationData(m_byCardData,tVecDanZhang,tVecDuiZi,tVecSanZhang,tVecSiZhang,tVecZhaDanLong);
 
 
+		//飞机可以带两张散牌
 		int iSanZhangSize = tVecSanZhang.size();
 		int iFeiJiLen = 0;
 		for(int i=0;i < iSanZhangSize;)
@@ -334,6 +337,7 @@ namespace HN_AI
 			bool ret = false;
 			do 
 			{
+				//需要的单张是否能组成顺子?
 				ret = IsShunZi(tVecSanZhang,tVecSanZhang[i],1,iFeiJiLen);
 				if(ret)
 				{
@@ -490,6 +494,11 @@ namespace HN_AI
 				DeleteParamByValue(tVecSanZhang,*subIter);
 			}
 
+			//log
+			//FILE *fp = fopen("123.txt", "a");
+			//fprintf(fp, "HandsNumberAndWeight.cpp,sandaiyi,497");
+			//fclose(fp);
+
 			//任何情况，首出不带的牌：A、2、王、炸
 			for(auto iter = tVecDanZhang.begin();iter != tVecDanZhang.end();)
 			{
@@ -532,6 +541,7 @@ namespace HN_AI
 		}
 	}
 
+	//mark
 	//获取首出该出的牌
 	//首出&主动出牌，不能包含A、2、王，必须包含最小牌。（牌型组成优先级：飞机＞顺子＞连对＞三带一（对）＞对子＞单牌）
 	//非首出&主动出牌，必须包含最小牌。（牌型组成优先级：飞机＞顺子＞连对＞三带一（对）＞对子＞单牌）
@@ -555,7 +565,7 @@ namespace HN_AI
 			}
 		}
 
-		//计算最小牌，不包含炸弹
+		//计算最小牌，不包含炸弹(为下面的组牌服务)
 		const int orderCard[] = {3,4,5,6,7,8,9,10,11,12,13,1,2,14,15};
 		for(int card = 0; card < sizeof(orderCard) / sizeof(orderCard[0]); card++)
 		{
@@ -569,6 +579,7 @@ namespace HN_AI
 		}
 
 		SCombinationNode tNode;
+		//只剩小王和大王或大王
 		if(m_byMinCard == 255)
 		{
 			tNode.eCardType = eCardType_ZhaDan;
@@ -601,17 +612,19 @@ namespace HN_AI
 					m_byCardData[i] = 0;
 				}
 			}
+			//20190424 修改连对大于顺子
+			//出牌顺序:飞机->连对->顺子->三带一->对子->单张
 			if(tNode.eCardType == eCardType_Unknown)
 			{
 				MakeFeiJi(tNode);
 			}
-			if(tNode.eCardType == eCardType_Unknown)
+			if (tNode.eCardType == eCardType_Unknown)
 			{
-				MakeShunZi(tNode);
+				MakeLianDui(tNode);
 			}
 			if(tNode.eCardType == eCardType_Unknown)
 			{
-				MakeLianDui(tNode);
+				MakeShunZi(tNode);
 			}
 			if(tNode.eCardType == eCardType_Unknown)
 			{
@@ -629,6 +642,7 @@ namespace HN_AI
 			memcpy(m_byCardData, byCardData, sizeof(m_byCardData));
 		}
 		m_tMaxNode = tNode;
+		//组牌结果推进
 		m_vecCombinationResult.push_back(tNode);
 		if(g_bFirstTimeNtOut)
 		{
@@ -655,15 +669,18 @@ namespace HN_AI
 		Init();
 		sCombinationResult.clear();
 
+		//适配
 		ChangeHandPaiData(pSrcCard,iSrcCardLen);  ///// 初始化手牌数据 
 
 		//如果首出，先获得出牌结果，然后从手牌中去掉后，剩下的按原有算法组合。
 		if(m_bFirstOut)
 		{
+			//mark 算出可出牌入口
 			GetFirstOutCard();
 
 			sCombinationResult.vecCombinationResult.insert(sCombinationResult.vecCombinationResult.end(),m_vecCombinationResult.begin(),m_vecCombinationResult.end());
 
+			//???
 			DeleteFirstOut();
 		}
 
@@ -674,11 +691,14 @@ namespace HN_AI
 		m_byCardData[14] = 0;
 		m_byCardData[15] = 0;
 		m_byCardData[2] = 0;
+
 		///// 拆牌 /////////////////////////
 		GetCombinationList();
+
 		/// 结果排序
 		ResultSort(m_vecCombinationResult,4);
 		ResultSort(m_vecResultNoWith,4);
+
 		/// 保存结果
 		//sCombinationResult.clear();
 		sCombinationResult.iMaxValue = m_iMaxValue;
@@ -1498,10 +1518,11 @@ namespace HN_AI
 		int iMinChaiPai = 16;
 		int iMaxChaiPai = 0;
 		bool bIsChaiPai = false;
+
 		for(int i=1;i<14;i++)		//// 组成顺子 只会是 3~KA
 		{
 			if(m_byCardData[i] == 0 || i == 2)
-			{
+			{//2跳过
 				continue;
 			}
 			if( m_byCardData[i] > 1 )
@@ -1514,14 +1535,18 @@ namespace HN_AI
 				memcpy(tCardData,m_byCardData,sizeof(m_byCardData));
 				memcpy(tCombinationData,m_byCombinationData,sizeof(m_byCombinationData));
 				tVetorShunZi.insert(tVetorShunZi.end(),m_vetorShunZi.begin(),m_vetorShunZi.end());
+
 				//// 添加结果 移除手牌
 				m_byCombinationData[i] =  m_byCardData[i];
 				m_byCardData[i] = 0;
+
 				/// 剩下的牌 继续组合 计算不拆手牌后的组合
 				GetCombinationList();
+
 				//// 还原数据 计算拆手牌后组合 /////////////////////////////////////////////////
 				memcpy(m_byCardData,tCardData,sizeof(m_byCardData));
 				memcpy(m_byCombinationData,tCombinationData,sizeof(m_byCombinationData));
+
 				m_vetorShunZi.clear();
 				m_vetorShunZi.insert(m_vetorShunZi.end(),tVetorShunZi.begin(),tVetorShunZi.end());
 				///// 拆牌 就必须要组成顺子 /////////////////////////////////////////////////
@@ -3124,6 +3149,7 @@ namespace HN_AI
 		{
 		   return false;
 		}
+		//2和大.小王不参与顺子
 		if( byCardValue <= 0 || byCardValue >= 14 || byCardValue == 2 )
 		{
 			return false;
@@ -3363,6 +3389,7 @@ namespace HN_AI
 	{
 		for(int i=1;i<16;i++)
 		{
+
 			if( pSrcCard[i] == 1 )
 			{
 				tVecDanZhang.push_back(i);

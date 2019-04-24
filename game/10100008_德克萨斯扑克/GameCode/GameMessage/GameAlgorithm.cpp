@@ -54,7 +54,7 @@ bool CGameAlgorithm::CompareCard(BYTE byCard1,BYTE byCard2,LPCVOID pData /*=NULL
 	       nNum		  [IN]   使用多少幅扑克
 		   nDeskIndex [IN]   桌号，用于优化随机数的生成
 */
-//洗牌
+//洗牌//nNum是多少副扑克
 BYTE CGameAlgorithm::RandCard(BYTE byCard[],int nNum,int nDeskIndex/*, BYTE *OriginalIndex*/)
 {
 	const BYTE m_byBaseCards[NUM_CARDS_NUM] =
@@ -66,46 +66,66 @@ BYTE CGameAlgorithm::RandCard(BYTE byCard[],int nNum,int nDeskIndex/*, BYTE *Ori
 		/*0x4E, 0x4F	*/																		//小鬼，大鬼
 	};
 
-	::memset(byCard,0,sizeof(byCard));
+//	//::memset(byCard,0,sizeof(byCard));
+//
+//	//for (int i = 0; i < nNum; ++i)
+//	//{
+//	//	::memcpy(byCard + i * sizeof(m_byBaseCards),m_byBaseCards,sizeof(m_byBaseCards));
+//	//}
+//
+//	
+//
+//
+//	//int iHalfCount = iCardsCount / 2;
+//
+//	//BYTE* pLSide = byCard;
+//	//BYTE* pRSide = byCard + iHalfCount;
+//	/*BYTE* pLOriginalIndex = OriginalIndex;
+//	BYTE* pROriginalIndex = OriginalIndex + iHalfCount;*/
+//
+//	//srand((unsigned)time(NULL));
+//
+//
+//	/*for (BYTE i = 0; i < NUM_CARDS_NUM ; ++i)
+//	{
+//	OriginalIndex[i] = i;
+//	}*/
+//
+///	int iRandPos = 0;
+//	BYTE temp = 0;
+//	//for (int i = 0; i < iHalfCount ; ++i)
+//	//{
+//	//	iRandPos = rand() % iHalfCount;
+//	//	temp = pLSide[iRandPos];
+//	//	pLSide[iRandPos] = pRSide[i];
+//	//	pRSide[i] = temp;
+//
+//	//	////新增超端设定牌修改，记录原始牌位置
+//	//	//temp = pLOriginalIndex[iRandPos];
+//	//	//pLOriginalIndex[iRandPos] = pROriginalIndex[i];
+//	//	//pROriginalIndex[i] = temp;
+//	//}
 
-	for (int i = 0; i < nNum; ++i)
-	{
-		::memcpy(byCard + i * sizeof(m_byBaseCards),m_byBaseCards,sizeof(m_byBaseCards));
-	}
-
+	//20190424 洗牌
 	int iCardsCount = nNum * sizeof(m_byBaseCards);
-	int iHalfCount = iCardsCount / 2;
+	BYTE iSend = 0, iStation = 0, iCardList[162];
 
-	BYTE* pLSide = byCard;
-	BYTE* pRSide = byCard + iHalfCount;
-	/*BYTE* pLOriginalIndex = OriginalIndex;
-	BYTE* pROriginalIndex = OriginalIndex + iHalfCount;*/
-
-	//srand((unsigned)time(NULL));
 	struct timeb timeSeed;
 	ftime(&timeSeed);
 	srand((UINT)(timeSeed.time * NUM_ONE_SECOND_MS + timeSeed.millitm));  // milli time
 
-	/*for (BYTE i = 0; i < NUM_CARDS_NUM ; ++i)
+
+	for (int i = 0; i < iCardsCount; i += 52)
+		memcpy(&iCardList[i], m_byBaseCards, sizeof(m_byBaseCards));
+	do
 	{
-	OriginalIndex[i] = i;
-	}*/
-
-	int iRandPos = 0;
-	BYTE temp = 0;
-	for (int i = 0; i < iHalfCount ; ++i)
-	{
-		iRandPos = rand() % iHalfCount;
-		temp = pLSide[iRandPos];
-		pLSide[iRandPos] = pRSide[i];
-		pRSide[i] = temp;
-
-		////新增超端设定牌修改，记录原始牌位置
-		//temp = pLOriginalIndex[iRandPos];
-		//pLOriginalIndex[iRandPos] = pROriginalIndex[i];
-		//pROriginalIndex[i] = temp;
-	}
-
+		//iSend是个推进数	
+		iStation = rand() % (iCardsCount - iSend);
+		byCard[iSend] = iCardList[iStation];
+		iSend++;
+		//将最后一位的扑克补到已经发出去的扑克上
+		iCardList[iStation] = iCardList[iCardsCount - iSend];
+	} while (iSend < iCardsCount);
 
 	return iCardsCount;
 }

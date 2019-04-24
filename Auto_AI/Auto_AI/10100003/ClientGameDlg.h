@@ -83,6 +83,7 @@ public:
 	HN::CSmartPointer<ExtensionObject> m_pExt;
 	
 private:
+	//mark
 	/// 记录自己和其它几人出过的牌，主要用于分析对方手中的牌，和了解对方对自己的认识
 	std::vector<OutCardStruct>     vChuCard[PLAY_COUNT];
 

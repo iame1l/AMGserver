@@ -190,6 +190,7 @@ void CServerGameDesk::SpuerExamine(BYTE byDeskStation)
 //游戏记录用
 void CServerGameDesk::gameinfo()
 {
+	//todo change可以尝试传入有效数据
 	__int64 change[PLAY_COUNT] = { 0 };
 	__super::RecoderGameInfo(change);
 }

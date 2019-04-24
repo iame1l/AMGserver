@@ -370,9 +370,13 @@ namespace HN_AI
 		tPutCardList.clear();
 		/// 获取出牌组合
 		SCombinationResult sCombinationResul;
+
+		//组牌的配置是否允许
 		HN_AI::SSysConfig tPutConfig = m_pCurAlgorithm->GetCardRulesConfig();;
 		tPutConfig.bIs4W2_One = false;
 		tPutConfig.bIs4W2_Double = false;
+
+		//@#@
 		GetPutArrayList(tSrcArray,sCombinationResul,tPutConfig);
 		/// 结果添加花色
 		AddRealCardToNode(tSrcArray,sCombinationResul.vecCombinationResult,false);
@@ -442,8 +446,11 @@ namespace HN_AI
 		}
 		tFollowArrayList.clear();
 		std::vector<SCombinationNode>  vecFollowCardList;
+
+		//跟牌需要上一手牌的类型(转换)
 		SCombinationNode tLastNode;
 		CPlayCardToNode(tLastCard,tLastNode);
+
 		/// 获取所有的跟牌结果
 		GetFollowArrayList(tSrcArray,tLastNode,vecFollowCardList);
 		/// 结果添加花色
@@ -709,8 +716,11 @@ namespace HN_AI
 	//// 主动出牌算法 ////////////////////////////
 	bool CAIAlgorithmManage::GetPutArrayList(const HN::CardArrayBase & tSrcArray,SCombinationResult & sCombinationResul,HN_AI::SSysConfig tSysConfig) const
 	{
+		//出牌配置
 		SSysConfig tConfig = m_pCurAlgorithm->GetCardRulesConfig();
 		m_pCurAlgorithm->SetCardRulesConfig(tSysConfig);
+
+		//@#@
 		bool ret = GetPutArrayList(tSrcArray,sCombinationResul);
 		m_pCurAlgorithm->SetCardRulesConfig(tConfig);
 		return ret;
@@ -725,11 +735,13 @@ namespace HN_AI
 		int iSrcLen = ONE_HAND_CARD_COUNT;
 		sCombinationResul.clear();
 		/// 转换数据 获取没有花色 无赖子的牌值
+		// 转换给bySrcData,iSrcLen,iLaiZiNum 
 		GetSrcToNoLaiZi(tSrcArray,bySrcData,iSrcLen,iLaiZiNum);
 		/// 获取跟牌结果
 		//int iLaiZi = Algor::rand_Mersenne(1,4);
 		/*unsigned char tData[21] = {3,3,4,4,4,5,5,6,6,7,9,9,10,13,1,14};
 		LOGICINSTANCE_HANDSANDWEIGHT->GetPutCardList(tData,17,1,sCombinationResul);*/
+		//算出 出牌 的结果
 		m_pCurAlgorithm->GetPutCardList(bySrcData,iSrcLen,iLaiZiNum,sCombinationResul);
 		return true;
 	}
@@ -826,6 +838,7 @@ namespace HN_AI
 		tPutConfig.bIs4W2_Double = false;
 		tPutConfig.bIs3W1_One = false;
 		tPutConfig.bIs3W1_Double = false;
+		//被动出牌是根据 配置来约束组牌结果
 		if( tLastNode.eAddCardType == eAddCardType_DanZhang )
 		{
 		    if(tLastNode.eCardType == eCardType_SanZhang || tLastNode.eCardType == eCardType_FeiJi )
@@ -1374,6 +1387,7 @@ namespace HN_AI
 		tSrc.getCardAllType(m_diLaiZi,tDiLaiList);
 		HN::CardArrayBase tDiLaiArray = tDiLaiList;
 		tSrc.erase(tDiLaiArray);
+
 		/// 获取无花色牌值
 		memset(bySrcData,0,ONE_HAND_CARD_COUNT);
 		iSrcLen = tSrc.reAssignVal(bySrcData,ONE_HAND_CARD_COUNT);

@@ -189,6 +189,7 @@ bool CClientGameDlg::SetGameStation(void * pStationData, UINT uDataSize)
 			}
 		}
 		break;
+		//mark
 	case GS_PLAY_GAME:	//游戏进行中
 		{
 			GameStation_4 * pGs = (GameStation_4 *)pStationData;
@@ -282,7 +283,7 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 			cardMgr->SetHandCard( pSendCard->bDeskStation, &pSendCard->bCard, 1 );
 		}
 		return true;
-	case ASS_SEND_ALL_CARD:
+	case ASS_SEND_ALL_CARD://发完牌了,存入到自己的手牌中
 		{
 			if (uDataSize!=sizeof(SendAllStruct)) return false;
 			SendAllStruct * pSendAll=(SendAllStruct *)pNetData;
@@ -295,7 +296,7 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 			}
 		}
 		return true;
-	case ASS_CALL_SCORE:			//叫分
+	case ASS_CALL_SCORE:			//叫分//计算牌权值的地方
 		{	
 			SetStationParameter(GS_WAIT_BACK);
 			if (sizeof(CallScoreStruct)!= uDataSize) return false;
@@ -380,7 +381,7 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 			}
 		}
 		return true;
-	case ASS_OUT_CARD:		//用户出牌
+	case ASS_OUT_CARD:		//用户出牌//mark
 		{
 			if (uDataSize != sizeof(OutCardMsg)) return false;
 			
@@ -686,10 +687,14 @@ void CClientGameDlg::OnControlHitPass(void)
 	SendGameData(&OutCard,sizeof(OutCard),MDM_GM_GAME_NOTIFY,ASS_OUT_CARD,0);
 }
 
+//牌的列表赋值到T_C2S_PLAY_CARD_REQ上
 void CClientGameDlg::transformPlayCard(const Card *pCard, int nCardCount, T_C2S_PLAY_CARD_REQ& tLastCard)
 {
+	
 	OBJ_GET_EXT(m_pExt, CUpGradeGameLogic, logic);
+	//获取上一手牌的类型
 	BYTE nShape = logic->GetCardShape( pCard, nCardCount );
+	//赋值到tLastCard上//转换函数
 	ShapeAdapter(nShape, tLastCard.eArrayType);
 	
 	for(int i = 0; i < nCardCount; ++i)
@@ -712,6 +717,7 @@ void CClientGameDlg::GetOutCardCount(int* iUserCardCounts)
 	}
 }
 
+//对应的转换函数
 void CClientGameDlg::ShapeAdapter(BYTE &byShape, EArrayType &eArrayType)
 {
 	switch(byShape)
@@ -779,6 +785,7 @@ void CClientGameDlg::ShapeAdapter(BYTE &byShape, EArrayType &eArrayType)
 	}
 }
 
+//玩家出牌//mark
 void CClientGameDlg::UserOutCard()
 {
 	OutCardStruct outCard;
@@ -792,10 +799,15 @@ void CClientGameDlg::UserOutCard()
 	const int nNtStation = gs->GetNtPeople();
 	bool bFirstOut = (nMyStation == nBigOutStation);
 
+	//获取手牌
 	int nHandCardCount;
 	const Card * pHandCard = cardMgr->GetHandCard( nMyStation, &nHandCardCount );
+
+	//记录上一手出的牌
 	int nDeskCardCount;
 	const Card * pDeskCard = cardMgr->GetDeskCard( nBigOutStation, &nDeskCardCount );
+
+
 	//是否是庄家第一次出牌（首出）
 	if(nMyStation == nNtStation && bFirstOut && nHandCardCount == ONE_HAND_CARD_COUNT)
 	{
@@ -810,11 +822,13 @@ void CClientGameDlg::UserOutCard()
 	for(int i = 0; i < nHandCardCount; ++i)
 	{
 		BYTE byCard = pHandCard[i];
+		//获取手牌的值(转换)
 		logic->CardAdapter(byCard, true);
 		HandCard.push_back(byCard);
 	}
 
 	T_C2S_PLAY_CARD_REQ tLastCard ;
+	//将pDeskCard赋值到tLastCard上(封装)
 	transformPlayCard(pDeskCard, nDeskCardCount, tLastCard);
 	for(int i = 0; i < tLastCard.iCardCount; ++i)
 	{
@@ -823,23 +837,26 @@ void CClientGameDlg::UserOutCard()
 	}
 
 	std::vector<T_C2S_PLAY_CARD_REQ>  tPlayCardList; 
+	//是否主动出牌
 	if(bFirstOut)
 	{
+		//主动出牌不需要管桌上的牌
 		_dataMange.getPickUpOutAll(HandCard,tPlayCardList);
 	}
 	else
 	{
+		//跟牌
 		_dataMange.getPickUpFollowAll(HandCard, tLastCard, tPlayCardList);
 	}
 	
-	/// 结果赋值
+	/// 结果赋值//可出牌 牌堆
 	T_S2C_PROMPT_CARD_RES m_sPlayCard;
 	for(int i = 0;i < ONE_HAND_CARD_COUNT && i < tPlayCardList.size();i++ )
 	{
 		m_sPlayCard.sCards[i] = tPlayCardList[i];
 		m_sPlayCard.iCardCount = i+1;
 	}
-
+	
 	if(m_sPlayCard.iCardCount == 0)										/// 过
 	{
 		OnControlHitPass();
