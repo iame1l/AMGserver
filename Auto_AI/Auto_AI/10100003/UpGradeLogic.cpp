@@ -3423,9 +3423,10 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 	{
 		for(int i = 0; i< sPlayCard.iCardCount; i++)
 		{
-			res = sPlayCard.sCards[i];
-			if( res.iCardCount == iFriendCount)
+			T_C2S_PLAY_CARD_REQ tmp= sPlayCard.sCards[i];
+			if (tmp.eArrayType == ARRAY_TYPE_SINGLE || tmp.eArrayType == ARRAY_TYPE_DOUBLE)
 			{
+				res = tmp;
 				return;
 			}
 		}
@@ -3623,8 +3624,8 @@ void CUpGradeGameLogic::passive_bankerOutCard(SGetPlayCardparam & tParam, T_S2C_
 		res = sPlayCard.sCards[0];
 		return;
 	}
-	//地主在5张前不出A和2
-	if (nextStationCount >= 5 || islastStationCount>=5 && tData != 1 && tData != 2 && tData != 14)
+	//地主在5张前不出和2
+	if (nextStationCount >= 5 || islastStationCount>=5  && tData != 2 && tData != 14)
 	{
 		res = sPlayCard.sCards[0];
 		return;
@@ -3684,12 +3685,12 @@ void CUpGradeGameLogic::passive_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_
 	//}
 
 	//队友没压牌.下家又是地主.必须压
-	if (tParam.iBanker == tParam.iLastOutCardUser && nextisBanker)  /// 地主出牌 能压必压
-	{
-		/// 能压必压
-		res = sPlayCard.sCards[0];
-		return;
-	}
+	//if (tParam.iBanker == tParam.iLastOutCardUser && nextisBanker)  /// 地主出牌 能压必压
+	//{
+	//	/// 能压必压
+	//	res = sPlayCard.sCards[0];
+	//	return;
+	//}
 
 	//地主没出牌 
 	if (tParam.iBanker != tParam.iLastOutCardUser && !nextisBanker)
@@ -3740,7 +3741,7 @@ void CUpGradeGameLogic::passive_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_
 			}
 
 			//地主在5张前不出A和2
-			if (iBankerCount >= 5 && tData != 1 && tData != 2 && tData != 14)
+			if (iBankerCount >= 5   && tData != 2 && tData != 14 && tData != 15)
 			{
 				res = sPlayCard.sCards[0];
 				break;

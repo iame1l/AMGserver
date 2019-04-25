@@ -692,7 +692,7 @@ namespace HN_AI
 		m_byCardData[15] = 0;
 		m_byCardData[2] = 0;
 
-		///// ²ğÅÆ /////////////////////////
+		///// ²ğÅÆ /////////////////////////!!!
 		GetCombinationList();
 
 		/// ½á¹ûÅÅĞò

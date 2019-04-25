@@ -3011,3 +3011,83 @@ int CUpGradeGameLogic::CheckHaveCard(BYTE byCard[], int outCardCount, BYTE card 
 	}
 	return ret;
 }
+
+bool  CUpGradeGameLogic::makefeiji(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
+{
+	bool tmp=TackOutSequence(iHandCard, iHandCardCount, NULL, 9, iResultCard, iResultCardCount, 3, true);
+	//3个三连顺
+	if (tmp)
+	{
+		BYTE TMP[CARD_COUNT];
+		int TmpCount = iHandCardCount;
+		memcpy(TMP, iHandCard, sizeof(BYTE)*iHandCardCount);
+		RemoveCard(iResultCard, iResultCardCount, TMP, TmpCount);
+		TmpCount -= iResultCardCount;
+
+		BYTE threelist[CARD_COUNT];
+		int threeCount=0;
+		memset(threelist, 0, sizeof(BYTE) * CARD_COUNT);
+		if (TackOutBySepcifyCardNumCount(TMP, TmpCount, threelist, 2) >= 3)
+		{
+			memcpy(&iResultCard[iResultCardCount], threelist, sizeof(BYTE) * threeCount);
+			iResultCardCount += threeCount;
+		}
+		else if (TackOutBySepcifyCardNumCount(TMP, TmpCount, threelist, 3) >= 3)
+		{
+			memcpy(&iResultCard[iResultCardCount], threelist, sizeof(BYTE) * threeCount);
+			iResultCardCount += threeCount;
+		}
+		return true;
+	}
+	//正常飞机
+	else
+	{
+		memset(iResultCard, 0, sizeof(BYTE)* iResultCardCount);
+		iResultCardCount = 0;
+		tmp = TackOutSequence(iHandCard, iHandCardCount, NULL, 6, iResultCard, iResultCardCount, 3, true);
+		if (tmp)
+		{
+			BYTE TMP[CARD_COUNT];
+			int TmpCount = iHandCardCount;
+			memcpy(TMP, iHandCard, sizeof(BYTE)*iHandCardCount);
+			RemoveCard(iResultCard, iResultCardCount, TMP, TmpCount);
+			TmpCount -= iResultCardCount;
+
+			BYTE twolist[CARD_COUNT];
+			int twoCount=0;
+			memset(twolist, 0, sizeof(BYTE) * CARD_COUNT);
+			if (TackOutBySepcifyCardNumCount(TMP, TmpCount, twolist, 2) >= 3)
+			{
+				memcpy(&iResultCard[iResultCardCount], twolist, sizeof(BYTE) * twoCount);
+				iResultCardCount += twoCount;
+			}
+			else if (TackOutBySepcifyCardNumCount(TMP, TmpCount, twolist, 3) >= 3)
+			{
+				memcpy(&iResultCard[iResultCardCount], twolist, sizeof(BYTE) * twoCount);
+				iResultCardCount += twoCount;
+			}
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return false;
+}
+bool  CUpGradeGameLogic::makeliandui(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
+{
+	return false;
+}
+bool  CUpGradeGameLogic::makesandaiX(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
+{
+	return false;
+}
+bool  CUpGradeGameLogic::makeshunzi(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
+{
+	return false;
+}
+bool  CUpGradeGameLogic::makeduizi(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
+{
+	return false;
+}

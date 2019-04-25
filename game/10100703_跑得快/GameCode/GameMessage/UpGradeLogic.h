@@ -268,6 +268,9 @@ public:
 	BOOL IsFourXSequence(BYTE iCardList[],int iCardCount,int iSeqX);
 	//[出牌相关]
 public:
+
+
+
 	//自动出牌函数
 	BOOL AutoOutCard(BYTE iHandCard[], int iHandCardCount, BYTE iBaseCard[], int iBaseCardCount, BYTE iResultCard[], int & iResultCardCount, BOOL bFirstOut);
 	//是否可以出牌
@@ -290,7 +293,7 @@ public:
 	//BYTE TackOutSequence(BYTE iCardList[], int iCardCount, BYTE iBaseCard[], int iBaseCount, BYTE iResultCard[], int &iResultCardCount);
 	//获取顺子中最小位置值(xSequence表示默认单顺)
 	int GetSequenceStartPostion(BYTE iCardList[],int iCardCount,int xSequence=1);
-	//提取单张的顺子,连对顺子,连三顺子
+	//提取单张的顺子,连对顺子,连三顺子//mark
 	BOOL TackOutSequence(BYTE iCardList[],int iCardCount,BYTE iBaseCard[],int iBaseCount,BYTE iResultCard[],int &iResultCardCount,int xSequence,BOOL bNoComp = false);
 	//提取同花顺
 	BOOL TackOutStraightFlush(BYTE iCardList[],int iCardCount,BYTE iBaseCard[],int iBaseCount,BYTE iResultCard[], int &iResultCardCount);
@@ -353,4 +356,12 @@ public:
 
 	// 有多少张指定的卡
 	int CheckHaveCard(BYTE byOutCard[], int outCardCount, BYTE card);
+
+	//20190425 主动出牌组合
+private:
+	bool makefeiji(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount);
+	bool makeliandui(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount);
+	bool makesandaiX(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount);
+	bool makeshunzi(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount);
+	bool makeduizi(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount);
 };
