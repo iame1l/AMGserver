@@ -354,8 +354,13 @@ public:
 
 //20190423 被动出牌
 private:
-	//地主主动出牌
+	//地主跟牌
 	void passive_bankerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res);
-	//农民主动出牌
+	//农民跟牌
 	void passive_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res);
+
+	//*******
+	void follow_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res);
+
+	void follow_bankerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res);
 };

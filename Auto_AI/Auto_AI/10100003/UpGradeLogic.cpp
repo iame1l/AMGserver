@@ -3144,7 +3144,7 @@ void CUpGradeGameLogic::GetOptimalPlayCard(SGetPlayCardparam & tParam,T_S2C_PROM
 		// 能压必压
 		//res = sPlayCard.sCards[0];
 		//20190423 封装
-		this->passive_bankerOutCard(tParam, sPlayCard, res);
+		this->follow_bankerOutCard(tParam, sPlayCard, res);
 		return;
 	}
 
@@ -3152,7 +3152,7 @@ void CUpGradeGameLogic::GetOptimalPlayCard(SGetPlayCardparam & tParam,T_S2C_PROM
 	if( tParam.iMybSeatNO != tParam.iBanker  && tParam.bOutCard == false )
 	{
 		//20190423 封装
-		this->passive_farmerOutCard(tParam, sPlayCard, res);
+		this->follow_farmerOutCard(tParam, sPlayCard, res);
 		return;
 		//if( tParam.iBanker == tParam.iLastOutCardUser )  /// 地主出牌 能压必压
 		//{
@@ -3394,32 +3394,26 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 	int iBankerCount = tParam.iUserCardCounts[tParam.iBanker];
 	int iFriendCount = tParam.iUserCardCounts[byFriend];
 
-	//只有在地主在下家的时候才顶牌
-	//if(iBankerCount == 1 || 2 == iBankerCount )
-	if (iBankerCount == 1 || 2 == iBankerCount && nextisBanker)
+	//下家是地主//主动出牌的时候注意
+	if (nextisBanker)
 	{
-		bool bIsDanMax = false; //最大的单双
-		for(int i = 0; i< sPlayCard.iCardCount; i++)
+		if (iBankerCount == 1 || 2 == iBankerCount )
 		{
-			res = sPlayCard.sCards[i];
-			if( res.iCardCount != iBankerCount)
+			bool bIsDanMax = false; //最大的单双
+			for (int i = 0; i < sPlayCard.iCardCount; i++)
 			{
-				return;
+				res = sPlayCard.sCards[i];
+				//出一些比地主牌多的组合牌
+				if(res.iCardCount > iBankerCount)
+				{
+					return;
+				}
 			}
-			if( ( res.iCardCount == 1 && iBankerCount == 1) || ( res.iCardCount == 2 && iBankerCount == 2) )
-			{
-				tRes = res;
-				bIsDanMax = true; 
-			}
-		}
-		if( bIsDanMax == true )
-		{
-			res = tRes;
-			return;
+
+			res = sPlayCard.sCards[0];
 		}
 	}
-	
-	else if(iFriendCount == 1 || 2 == iFriendCount && !nextisBanker)
+	else if (!nextisBanker)
 	{
 		for(int i = 0; i< sPlayCard.iCardCount; i++)
 		{
@@ -3431,6 +3425,11 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 			}
 		}
 	}
+
+
+	//只有在地主在下家的时候才顶牌
+	//if(iBankerCount == 1 || 2 == iBankerCount )
+
 	
 	/// 默认第一个
 	//todo 需要看地主的牌的数量 判断下家是否为队友
@@ -3457,14 +3456,7 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 			return;
 		}
 	}
-	//for (auto mem : analyse) {
-	//	if ((mem->type == Single || mem->type == Double) &&
-	//		mem->value >= 15 || mem->type == Bomb)
-	//		continue;
-	//	selection = *mem;
-	//	return;
-	//}
-	//
+
 	res = sPlayCard.sCards[0];
 	return;
 }
@@ -3670,7 +3662,7 @@ void CUpGradeGameLogic::passive_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_
 	if (iBankerCount == 1 || 2 == iBankerCount && nextisBanker)
 	{
 		//出最大的
-		res = sPlayCard.sCards[sPlayCard.iCardCount-1];
+		res = sPlayCard.sCards[0];
 		return;
 	}
 
@@ -3740,7 +3732,7 @@ void CUpGradeGameLogic::passive_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_
 				break;
 			}
 
-			//地主在5张前不出A和2
+			//地主在5张前不出2还有小王
 			if (iBankerCount >= 5   && tData != 2 && tData != 14 && tData != 15)
 			{
 				res = sPlayCard.sCards[0];
@@ -3754,4 +3746,200 @@ void CUpGradeGameLogic::passive_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_
 			}
 		} while (false);
 	}
+}
+
+
+
+void CUpGradeGameLogic::follow_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res)
+{
+	BYTE byFriend;
+	bool nextisBanker;
+	for (int i = 0; i < PLAY_COUNT; ++i)
+	{
+		if (i != tParam.iBanker && i != tParam.iMybSeatNO)
+		{
+			byFriend = i;
+		}
+	}
+
+	//找地主家的位置//标记下家是否为地主
+	if (GetNextDeskStation(tParam.iMybSeatNO) != byFriend)
+		nextisBanker = true;
+	else
+		nextisBanker = false;
+
+
+
+	T_C2S_PLAY_CARD_REQ tRes;
+	//压完对手报单双的牌后，优先出飞机、顺子、连对、三带一，如果只剩下对子、单牌，对手报双出小单牌，对手报单出小对子
+	//只剩单牌出最大的单排，只剩对子出最小的对子
+	int iBankerCount = tParam.iUserCardCounts[tParam.iBanker];
+	int iFriendCount = tParam.iUserCardCounts[byFriend];
+
+	if (nextisBanker)
+	{
+
+		if (iBankerCount == 1 || 2 == iBankerCount )
+		{
+			//出最大的
+			res = sPlayCard.sCards[0];
+			return;
+		}
+
+		//队友没压牌.下家又是地主.地主手牌少于8张必须压
+		if (tParam.iBanker == tParam.iLastOutCardUser &&
+			iBankerCount<=10)  /// 地主出牌 能压必压
+		{
+			/// 能压必压
+			res = sPlayCard.sCards[0];
+			return;
+		}
+
+
+	}
+	//下家是队友
+	else if (!nextisBanker)
+	{//需要分优先级
+
+		//地主不打.自己也不打
+		if (tParam.iLastOutCardUser != tParam.iBanker)
+			return;
+
+		unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
+		//队友只剩2张牌,且可出牌堆中是小于10的,不出,给队友出
+		if (iFriendCount <= 2)
+			if (sPlayCard.sCards[0].eArrayType == ARRAY_TYPE_SINGLE || sPlayCard.sCards[0].eArrayType == ARRAY_TYPE_DOUBLE 
+				&& (tData <= 10))
+				return;
+
+	}
+
+	unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
+	//todo 地主还再10张牌上打单排不出2和大小王
+	if (iBankerCount >= 12 &&
+		(sPlayCard.sCards[0].eArrayType == ARRAY_TYPE_SINGLE ||
+			sPlayCard.sCards[0].eArrayType == ARRAY_TYPE_DOUBLE) &&
+		tData == 2 || tData == 14 || tData == 15)
+		return;
+
+	//
+	//if (tParam.iBanker == tParam.iLastOutCardUser)  /// 地主出牌 能压必压
+	//{
+	//	/// 能压必压
+	//	res = sPlayCard.sCards[0];
+	//	return;
+	//}
+	//else
+	//{
+
+		//正常跟牌//设定是K以下的跟
+		do
+		{
+
+			//
+			unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
+
+			//// 能出完 必跟
+			if (sPlayCard.sCards[0].iCardCount == tParam.iUserCardCounts[tParam.iMybSeatNO])
+			{
+				res = sPlayCard.sCards[0];
+				break;
+			}
+
+			if ((sPlayCard.sCards[0].iCardCount == 2) &&
+				(tData <= 13 && tData != 1 && tData != 2))
+			{
+				res = sPlayCard.sCards[0];
+				break;
+			}
+
+			//地主在12张前不出2还有小王
+			if (iBankerCount >= 12 && tData != 2 && tData != 14 && tData != 15)
+			{
+				res = sPlayCard.sCards[0];
+				break;
+			}
+
+			if (sPlayCard.sCards[0].iCardCount == 2 && (tData <= 13 && tData != 1 && tData != 2))
+			{
+				res = sPlayCard.sCards[0];
+				break;
+			}
+		} while (false);
+	//}
+
+	/*
+
+	//???
+	////跟牌
+	//for (int i = 0; i < sPlayCard.iCardCount; i++)
+	//{
+	//	res = sPlayCard.sCards[i];
+	//	if (res.iCardCount == iFriendCount)
+	//	{
+	//		return;
+	//	}
+	//}
+
+	
+	*/
+}
+
+
+//地主被动出牌
+void CUpGradeGameLogic::follow_bankerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res)
+{
+	//先找出下一家的位置
+	BYTE isnextStation, islastStation;
+	isnextStation = GetNextDeskStation(tParam.iMybSeatNO);
+	islastStation = GetNextDeskStation(isnextStation);
+
+	//获取下家的牌
+	int nextStationCount = tParam.iUserCardCounts[isnextStation];
+	//上家的也要取出
+	int islastStationCount = tParam.iUserCardCounts[islastStation];
+
+
+
+
+	//然后是下家的手牌
+	if (nextStationCount == 1 || 2 == nextStationCount)
+	{
+		//出最大的
+		//todo找最大的牌
+		res = sPlayCard.sCards[0];
+		return;
+	}
+
+	//if (nextStationCount <= 10)
+	//{
+	//	res = sPlayCard.sCards[0];
+	//	return;
+	//}
+
+	//优先级最高//手里有炸弹//游戏结束
+
+
+	//获取可出牌中的第一个
+	unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
+
+
+	if (islastStationCount <= 2)
+	{
+		res = sPlayCard.sCards[0];
+		return;
+	}
+	//地主在5张前不出和2
+	if (nextStationCount >= 8 || islastStationCount >= 8 && tData != 2 && tData != 14 && tData != 15)
+	{
+		res = sPlayCard.sCards[0];
+		return;
+	}
+
+	//if (sPlayCard.sCards[0].uCards[0] == 1 || sPlayCard.sCards[0].uCards[0] == 2)
+	//{
+	//	return;
+	//}
+
+	res = sPlayCard.sCards[0];
 }

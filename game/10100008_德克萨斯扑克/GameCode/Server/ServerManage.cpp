@@ -2011,15 +2011,16 @@ BOOL CServerGameDesk::LoadDeskCfg(int iRoomID, bool bConfigRC)
 	
 	//修改
 
-	pDeskCfg->dz.iBigBlindNote = pDeskCfg->dz.iLower;		             // 大盲注底注
-	pDeskCfg->dz.iSmallBlindNote = pDeskCfg->dz.iLower / 2;		         // 小盲注底注
-	//pDeskCfg->dz.iBigBlindNote = 20000;
-	//pDeskCfg->dz.iSmallBlindNote = 10000;
+	//pDeskCfg->dz.iBigBlindNote = pDeskCfg->dz.iLower;		             // 大盲注底注
+	//pDeskCfg->dz.iSmallBlindNote = pDeskCfg->dz.iLower / 2;		         // 小盲注底注
+	pDeskCfg->dz.iBigBlindNote = 20000;
+	pDeskCfg->dz.iSmallBlindNote = 10000;
 
 	pDeskCfg->dz.bIsRoomSubMoney = f.GetKeyVal(strSeg, "RoomSubMoney", 0);  // 房间代入金币  0: 此房间不需要代入金币  1: 此房间需要代入金币
-	pDeskCfg->dz.iSubMinMoney = f.GetKeyVal(strSeg, "SubMinMoney",  1000);  // 房间最低代入金币
-	pDeskCfg->dz.iSubMaxMoney = f.GetKeyVal(strSeg, "SubMaxMoney", 10000);  // 房间最高代入金币
-	pDeskCfg->dz.iSubPlanMoney = f.GetKeyVal(strSeg, "SubPlanMoney",5000);  // 当前准备代入金币
+	pDeskCfg->dz.iSubMinMoney = f.GetKeyVal(strSeg, "SubMinMoney",  1000000);  // 房间最低代入金币
+	pDeskCfg->dz.iSubMaxMoney = f.GetKeyVal(strSeg, "SubMaxMoney", 10000000);  // 房间最高代入金币
+	pDeskCfg->dz.iSubPlanMoney = f.GetKeyVal(strSeg, "SubPlanMoney",5000000);  // 当前准备代入金币
+
 	pDeskCfg->dz.iMinusMoney  = f.GetKeyVal(strSeg, "MinusMoney",100);		// 修改注额加减金币
 	pDeskCfg->dz.iMinMoney   = f.GetKeyVal(strSeg, "MinMoney",100);			// 最小下注金币 //和机器人加注有关
 	pDeskCfg->dz.iUntenMoney   = f.GetKeyVal(strSeg, "UntenMoney ",0);		// 少于多少金额时带入
