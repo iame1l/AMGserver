@@ -1433,7 +1433,19 @@ BOOL CUpGradeGameLogic::AutoOutCard(BYTE iHandCard[], int iHandCardCount, //当前
 	iResultCardCount=0;
 	if(bFirstOut) //先手出最右边一手牌
 	{
-		TackOutCardBySpecifyCardNum(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iHandCard[iHandCardCount-1]);
+		if(iHandCardCount == 16)
+			TackOutCardBySpecifyCardNum(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iHandCard[iHandCardCount-1]);
+		else
+		{
+			if (makefeiji(iHandCard, iHandCardCount, iResultCard, iResultCardCount)) return true;
+			else if (makeliandui(iHandCard, iHandCardCount, iResultCard, iResultCardCount)) return true;
+			else if (makesandaiX(iHandCard, iHandCardCount, iResultCard, iResultCardCount)) return true;
+			else if (makeshunzi(iHandCard, iHandCardCount, iResultCard, iResultCardCount)) return true;
+			else if (makeduizi(iHandCard, iHandCardCount, iResultCard, iResultCardCount)) return true;
+			else
+				TackOutCardBySpecifyCardNum(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iHandCard[iHandCardCount - 1]);
+			
+		}
 	}
 	else //跟牌
 	{	
@@ -3014,6 +3026,12 @@ int CUpGradeGameLogic::CheckHaveCard(BYTE byCard[], int outCardCount, BYTE card 
 
 bool  CUpGradeGameLogic::makefeiji(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
 {
+	FILE *fp = fopen("fei.txt", "a");
+	fprintf(fp, "feiji");
+	fclose(fp);
+	memset(iResultCard, 0, sizeof(BYTE) * iResultCardCount);
+	iResultCardCount = 0;
+
 	bool tmp=TackOutSequence(iHandCard, iHandCardCount, NULL, 9, iResultCard, iResultCardCount, 3, true);
 	//3个三连顺
 	if (tmp)
@@ -3027,15 +3045,16 @@ bool  CUpGradeGameLogic::makefeiji(BYTE iHandCard[], int iHandCardCount, BYTE iR
 		BYTE threelist[CARD_COUNT];
 		int threeCount=0;
 		memset(threelist, 0, sizeof(BYTE) * CARD_COUNT);
-		if (TackOutBySepcifyCardNumCount(TMP, TmpCount, threelist, 2) >= 3)
+		if (TackOutBySepcifyCardNumCount(TMP, TmpCount, threelist, 2) >= 6)
 		{
-			memcpy(&iResultCard[iResultCardCount], threelist, sizeof(BYTE) * threeCount);
-			iResultCardCount += threeCount;
+			//对子都在treelist上,遍历
+			memcpy(&iResultCard[iResultCardCount], threelist, sizeof(BYTE) * 6);
+			iResultCardCount += 6;
 		}
-		else if (TackOutBySepcifyCardNumCount(TMP, TmpCount, threelist, 3) >= 3)
+		else if (TackOutBySepcifyCardNumCount(TMP, TmpCount, threelist, 1) >= 3)
 		{
-			memcpy(&iResultCard[iResultCardCount], threelist, sizeof(BYTE) * threeCount);
-			iResultCardCount += threeCount;
+			memcpy(&iResultCard[iResultCardCount], threelist, sizeof(BYTE) * 3);
+			iResultCardCount += 3;
 		}
 		return true;
 	}
@@ -3056,38 +3075,104 @@ bool  CUpGradeGameLogic::makefeiji(BYTE iHandCard[], int iHandCardCount, BYTE iR
 			BYTE twolist[CARD_COUNT];
 			int twoCount=0;
 			memset(twolist, 0, sizeof(BYTE) * CARD_COUNT);
-			if (TackOutBySepcifyCardNumCount(TMP, TmpCount, twolist, 2) >= 3)
+			//fixme //找对子和散排
+			if (TackOutBySepcifyCardNumCount(TMP, TmpCount, twolist, 2) >= 4)
 			{
-				memcpy(&iResultCard[iResultCardCount], twolist, sizeof(BYTE) * twoCount);
-				iResultCardCount += twoCount;
+				//只要两对
+				memcpy(&iResultCard[iResultCardCount], twolist, sizeof(BYTE) * 4);
+				iResultCardCount += 4;
 			}
-			else if (TackOutBySepcifyCardNumCount(TMP, TmpCount, twolist, 3) >= 3)
+			else if (TackOutBySepcifyCardNumCount(TMP, TmpCount, twolist, 1) >= 2)
 			{
-				memcpy(&iResultCard[iResultCardCount], twolist, sizeof(BYTE) * twoCount);
-				iResultCardCount += twoCount;
+				//只要两个
+				memcpy(&iResultCard[iResultCardCount], twolist, sizeof(BYTE) * 2);
+				iResultCardCount += 2;
 			}
-			return true;
+			return tmp;
 		}
 		else
 		{
-			return false;
+			return tmp;
 		}
 	}
-	return false;
+	return tmp;
 }
 bool  CUpGradeGameLogic::makeliandui(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
 {
-	return false;
+	FILE *fp = fopen("liandui.txt", "a");
+	fprintf(fp, "liandui");
+	fclose(fp);
+	memset(iResultCard, 0, sizeof(BYTE) * iResultCardCount);
+	iResultCardCount = 0;
+	bool tmp = false;
+	//找连对,从手牌16开始,最少3连对,2连对威力太小
+	for (int i = 16; i > 6; i -= 2)
+	{
+		tmp = TackOutSequence(iHandCard, iHandCardCount, NULL, i, iResultCard, iResultCardCount, 2, true);
+		if (tmp) break;
+	}
+
+	return tmp;
 }
 bool  CUpGradeGameLogic::makesandaiX(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
 {
-	return false;
+
+	memset(iResultCard, 0, sizeof(BYTE) * iResultCardCount);
+	iResultCardCount = 0;
+	bool tmp = false;
+	tmp= TackOutSequence(iHandCard, iHandCardCount, NULL, 3, iResultCard, iResultCardCount, 3, true);
+	//return tmp;
+	//只写三带X,三带一只能最后一手,直接忽略
+	if (tmp)
+	{
+		BYTE TMP[CARD_COUNT];
+		int TmpCount = iHandCardCount;
+		memcpy(TMP, iHandCard, sizeof(BYTE)*iHandCardCount);
+		RemoveCard(iResultCard, iResultCardCount, TMP, TmpCount);
+		TmpCount -= iResultCardCount;
+
+		BYTE twolist[CARD_COUNT];
+		int twoCount = 0;
+		memset(twolist, 0, sizeof(BYTE) * CARD_COUNT);
+
+		if (TackOutBySepcifyCardNumCount(TMP, TmpCount, twolist, 1) >= 2)
+		{
+			memcpy(&iResultCard[iResultCardCount], twolist, sizeof(BYTE) * 2);
+			iResultCardCount += 2;
+		}
+		else if (TackOutBySepcifyCardNumCount(TMP, TmpCount, twolist, 2) >= 2)
+		{
+			memcpy(&iResultCard[iResultCardCount], twolist, sizeof(BYTE) * 2);
+			iResultCardCount += 2;
+		}
+
+	}
+	return tmp;
+
 }
 bool  CUpGradeGameLogic::makeshunzi(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
 {
-	return false;
+	FILE *fp = fopen("shunzi.txt", "a");
+	fprintf(fp, "shunzi");
+	fclose(fp);
+	bool tmp = false;
+	for(int i = 16;i>5;--i)
+	{
+		tmp = TackOutSequence(iHandCard, iHandCardCount, NULL, i, iResultCard, iResultCardCount, 1, true);
+		if (tmp) break;
+	}
+
+	return tmp;
 }
 bool  CUpGradeGameLogic::makeduizi(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
 {
+	BYTE resultCardTMP[CARD_COUNT];
+	memset(resultCardTMP, 0, sizeof(resultCardTMP));
+	if (TackOutBySepcifyCardNumCount(iHandCard, iHandCardCount, resultCardTMP, 2) >= 2)
+	{
+		memcpy(iResultCard, resultCardTMP, sizeof(BYTE) * 2);
+		iResultCardCount = 2;
+		return false;
+	}
 	return false;
 }

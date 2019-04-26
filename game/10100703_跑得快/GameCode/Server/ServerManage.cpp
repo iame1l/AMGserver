@@ -2027,7 +2027,7 @@ bool CServerGameDesk::UserSetAuto(BYTE bDeskStation,bool bAutoCard)
 	return true;
 }
 
-//自动出牌
+//自动出牌//mark//机器人自动出牌入口
 BOOL CServerGameDesk::UserAutoOutCard(BYTE bDeskStation)
 {
 	if (bDeskStation >= PLAY_COUNT || !m_bIsAutoOutCard)
@@ -2074,6 +2074,7 @@ BOOL CServerGameDesk::UserAutoOutCard(BYTE bDeskStation)
 	   }
 	   else
 	   {
+		   //手牌
 		   m_Logic.AutoOutCard(m_iUserCard[bDeskStation],m_iUserCardCount[bDeskStation],
 			   m_iDeskCard[m_iNowBigPeople],m_iDeskCardCount[m_iNowBigPeople],
 			   bCardList,iCardCount,bDeskStation == m_iNowBigPeople);
