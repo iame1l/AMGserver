@@ -741,7 +741,7 @@ namespace HN_AI
 		//int iLaiZi = Algor::rand_Mersenne(1,4);
 		/*unsigned char tData[21] = {3,3,4,4,4,5,5,6,6,7,9,9,10,13,1,14};
 		LOGICINSTANCE_HANDSANDWEIGHT->GetPutCardList(tData,17,1,sCombinationResul);*/
-		//算出 出牌 的结果
+		//算出 出牌 的结果//@#@
 		m_pCurAlgorithm->GetPutCardList(bySrcData,iSrcLen,iLaiZiNum,sCombinationResul);
 		return true;
 	}

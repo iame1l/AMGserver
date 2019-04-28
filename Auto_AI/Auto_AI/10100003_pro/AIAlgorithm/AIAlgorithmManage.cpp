@@ -748,11 +748,6 @@ namespace HN_AI
 	//// 跟牌算法 ///////////////////////////////
 	bool CAIAlgorithmManage::GetFollowArrayList(const HN::CardArrayBase & tSrcArray,const HN_AI::SCombinationNode & tLastNode,std::vector<HN_AI::SCombinationNode> & tFollowArrayList) const
 	{
-		//mark
-		//FILE *fp = fopen("tlastNode.txt", "a");
-		//fprintf(fp, "%d\n", tLastNode.eCardType);
-		//fclose(fp);
-		//
 		std::vector<HN_AI::SCombinationNode> tNodeList;
 		//// 1、先从组合牌中获取
 		bool ret = GetFollowListByNodeList(tSrcArray,tLastNode,tNodeList);
@@ -838,12 +833,11 @@ namespace HN_AI
 		   tSrcNoLaiZi.push_back(tSrcArray.getArray()[i]);
 		}
 		/// 设置规则
-		HN_AI::SSysConfig tPutConfig = m_pCurAlgorithm->GetCardRulesConfig();
+		HN_AI::SSysConfig tPutConfig = m_pCurAlgorithm->GetCardRulesConfig();;
 		tPutConfig.bIs4W2_One = false;
 		tPutConfig.bIs4W2_Double = false;
 		tPutConfig.bIs3W1_One = false;
 		tPutConfig.bIs3W1_Double = false;
-		//tPutConfig.bIsWBomb_Separate = false;
 		//被动出牌是根据 配置来约束组牌结果
 		if( tLastNode.eAddCardType == eAddCardType_DanZhang )
 		{

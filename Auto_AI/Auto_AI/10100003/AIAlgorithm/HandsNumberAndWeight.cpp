@@ -652,7 +652,7 @@ namespace HN_AI
 		return;
 	}
 
-	/// 出牌算法
+	/// 出牌算法//@#@
 	bool CHandsNumberAndWeight::GetPutCardList(const unsigned char *pSrcCard,int iSrcCardLen,SCombinationResult & sCombinationResult)
 	{
 		if( iSrcCardLen == 0 || pSrcCard==nullptr)
@@ -684,6 +684,7 @@ namespace HN_AI
 			DeleteFirstOut();
 		}
 
+		
 		//// 首先 获取出 小鬼和大鬼 和 2 //////////////////
 		m_byCombinationData[14] =  m_byCardData[14];
 		m_byCombinationData[15] =  m_byCardData[15];
