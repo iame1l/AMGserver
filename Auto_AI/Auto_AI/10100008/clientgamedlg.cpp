@@ -2051,12 +2051,22 @@ bool CClientGameDlg::UserNoteAccordingToActionProb(const BYTE byVerbFlag)
 		return false;
 	}
 
-	//选择错误的行为概率策略，返回
+	//选择错误的行为概率策略，返回//坑位
+	//if (m_nEnumActionStatus < ENUM_SET_ACTION_STATUS_Big
+	//	|| m_nEnumActionStatus >= ENUM_SET_ACTION_STATUS_Max)
+	//{
+	//	return false;
+	//}
+	//mark
 	if (m_nEnumActionStatus < ENUM_SET_ACTION_STATUS_Big
-		|| m_nEnumActionStatus >= ENUM_SET_ACTION_STATUS_Max)
+		|| m_nEnumActionStatus > ENUM_SET_ACTION_STATUS_Small)
 	{
 		return false;
 	}
+
+	//FILE *fp = fopen("m_nEnumActionStatus.txt", "a");
+	//fprintf(fp, "%d\n\n", m_nEnumActionStatus);
+	//fclose(fp);
 
 	//不是机器人说话，返回
 	if (m_byTokenUser != m_byMeStation)
@@ -2237,6 +2247,8 @@ bool CClientGameDlg::UserNoteAccordingToActionProb(const BYTE byVerbFlag)
 bool CClientGameDlg::JudgeRTActionProb()
 {
 	m_bSelectActionProb = false;
+	//默认是选择比玩家大
+	//概率只有两套.都是以数组形式//枚举要注意是0,1
 	m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Max;
 
 	//m_pUserInfo[0];
@@ -2278,16 +2290,42 @@ bool CClientGameDlg::JudgeRTActionProb()
 						//找到未放弃的真人
 						bGotRealPlayer = true;
 						m_bSelectActionProb = true;
-						iResultTemp = m_Logic.CompareCard(m_byResultCardsActionProb[bMeDeskStation], 5, 
-														  m_byResultCardsActionProb[bDeskStationTemp], 5);
+						//比牌.获取数据//m_byResultCardsActionProb 没有数据
+						//iResultTemp = m_Logic.CompareCard(m_byResultCardsActionProb[bMeDeskStation], 5, 
+						//								  m_byResultCardsActionProb[bDeskStationTemp], 5);
+						//20190430
+						BYTE machine[7], player[7];
+						memset(machine, 0, sizeof(machine));
+						memset(player, 0, sizeof(player));
+
+						memcpy(machine, m_tUserCardActionProb.byCards[bMeDeskStation], sizeof(BYTE)*MAX_DEAL_CARDS);
+						memcpy(&machine[MAX_DEAL_CARDS], m_tUserCardActionProb.byPubCards, sizeof(BYTE) * 5);
+
+						memcpy(player, m_tUserCardActionProb.byCards[bDeskStationTemp], sizeof(BYTE)*MAX_DEAL_CARDS);
+						memcpy(&player[MAX_DEAL_CARDS], m_tUserCardActionProb.byPubCards, sizeof(BYTE) * 5);
+
+						iResultTemp = m_Logic.CompareCard(machine, 7, player, 7);
+						//
+						//FILE * fp = fopen("Sation.txt", "a");
+						//fprintf(fp, "bMeDeskStation:%d\n", bMeDeskStation);
+						//fprintf(fp, "bDeskStationTemp:%d\n", bDeskStationTemp);
+						//fclose(fp);
 						//如果有就需要判断使用哪种行为策略
 						if (iResultTemp < 0)
 						{
+							//FILE * fp = fopen("small.txt", "a");
+							//fprintf(fp, "ENUM_SET_ACTION_STATUS_Small\n");
+							//fclose(fp);
+							//这个是1.坑位
 							m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Small;
-						} else 
+						}
+						else 
 						{
 							if (m_nEnumActionStatus != ENUM_SET_ACTION_STATUS_Small)
 							{
+								//FILE * fp = fopen("big.txt", "a");
+								//fprintf(fp, "ENUM_SET_ACTION_STATUS_Big\n");
+								//fclose(fp);
 								m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Big;
 							}
 						}
@@ -2351,7 +2389,7 @@ void CClientGameDlg::OnHandleTToken(TToken* pToken)
 	// 模拟下注消息
 	if (m_byTokenUser == m_byMeStation)
 	{
-		JudgeRTActionProb();
+		JudgeRTActionProb();//判断选择那种行为
 		m_nCallMoney = pToken->nCallMoney;
 		if (UserNoteAccordingToActionProb(byVerbFlag))
 		{

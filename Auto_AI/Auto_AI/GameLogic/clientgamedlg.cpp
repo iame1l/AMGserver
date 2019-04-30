@@ -1,1086 +1,2493 @@
 #include "StdAfx.h"
-
+#include "ClientGameDlg.h"
 #include ".\clientgamedlg.h"
-#include "gameframedlg.h"
-#include "Cfg.h"
-#include "Cfg.cpp"
-#include "CardData.h"
-#include "CardData.CPP"
-#include "def.h"
-#include "GameStation.h"
-#include "GameStation.cpp"
-#include "UpGradeLogic.h"
-#include "ExtensionObject.cpp"
-#include "Common.h"
-#include "Common.cpp"
-#include "./Card/CardArrayBase.h"
-#include "./AIAlgorithm/IAIAlgorithm.h"
-
-#include "./Card/CardArrayBase.cpp"
-#include "./Card/CardBase.cpp"
-#include "./AIAlgorithm/AIAlgorithmManage.cpp"
-#include "./AIAlgorithm/HandsNumberAndWeight.cpp"
-#include "./util/log/LogModule.cpp"
-#include "./DataManage.cpp"
-
-bool g_bFirstTimeNtOut = false;
 
 
 BEGIN_MESSAGE_MAP(CClientGameDlg, CLoveSendClass)
 	ON_WM_QUERYDRAGICON()
+
+	ON_MESSAGE(IDM_CALL_SCORE,OnCallScore)				//叫分
+
+	ON_MESSAGE(IDM_AUTO,OnHitAuto)				//托管
+	
+	ON_MESSAGE(IDM_ACTIVE_RESULT,OnHitActiveResult)//用户处理结果
+	ON_MESSAGE(IDM_SHOW_NOTE,OnShowNote)			//用户下注加注具体数
+//	ON_MESSAGE(IDM_SELECT_NOTE_NUM,OnSelectNote)		//用户选择下注
+//	ON_MESSAGE(WM_SENDCARD_SHOWCARD,SendCardShowCard)
+	//	ON_MESSAGE(WM_SETMESSAGE,OnSetMessage)
 	ON_WM_TIMER()
+	//	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
-CClientGameDlg::CClientGameDlg()
-	: CLoveSendClass(IDD_GAME_FRAME)
-	//, m_pExt(new ExtensionObject())
-	, m_pExt(NULL)
+//构造函数
+CClientGameDlg::CClientGameDlg() : CLoveSendClass(IDD_GAME_FRAME)
 {
-	m_pExt = HN::CSmartPointer<ExtensionObject>(new ExtensionObject());
-	m_bHaveRobOrCall = false;
-	for(int i = 0; i < PLAY_COUNT; ++i)
-	{
-		vChuCard[i].clear();
-	}
-	CString s = CINIFile::GetAppPath ();/////本地路径
-	CString nid;
-	nid.Format("%d",NAME_ID);
-	CINIFile f( s +nid +"_c.ini");
+	m_iVersion=DEV_HEIGHT_VERSION;
+	m_iVersion2=DEV_LOW_VERSION;
+	m_iThinkTime=0;
+	m_iCardCount=0;
+	m_iNowOutPeople=0;
+	m_iFirstOutPeople = 0;
+	//m_PlayView.SetNTStation();
+	m_bTimeOutCount=0;
+	m_bCurrentOperationStation = 255;//当前叫分者
+	//系统牌清零
+	//m_iSysCardCount=28;
+	m_iNowBigNote=0;				//当前最大押注数
+	m_iThisTurnLimit=0;				//本轮限注
+	::memset(m_iDeskCardCount,0,sizeof(m_iDeskCardCount));
+	::memset(m_iUpBullCard,1,sizeof(m_iUpBullCard));
+	m_tUserCardActionProb.Clear();
+	memset(m_byResultCardsActionProb,0,sizeof(m_byResultCardsActionProb));
+	m_bGotUserCardActionProb = false;
+	m_bBgSound=true;
+	m_GameType = 0;
+	m_hMciWnd1=NULL;
+	m_hMciWnd2=NULL;
+	m_bCancel = false;
+	//	WriteProfileInt(TEXT("ShowPicture"),GameSetDlg.m_bRightPower?1:0);
 
-	CString key = "game";
+	// 记录每个玩家代入金额
+	memset(m_iMoneys, 0, sizeof(m_iMoneys));
 
-	m_iDefaultTime = f.GetKeyVal(key,"DefaultTime",5);
-	m_iHandCount = f.GetKeyVal(key,"HandCount",17);
+	m_iCurrentMoney = 0;	// 当前要代入的金币
+	m_iMinMoney = 0;		// 最小代入金币
+	m_iMaxMoney = 0;		// 最大代入金币
+	m_iSelfMoney = 0;		// 自己本人拥有的金币
 
-	HN_AI::SSysConfig tSysConfig;
-	tSysConfig.bIsWBomb_Separate = f.GetKeyVal(key, "BombCompareType", 1);
-	tSysConfig.bIs3W1_One = f.GetKeyVal(key, "BombCompareType", 1);
-	tSysConfig.bIs3W1_Double = f.GetKeyVal(key, "BombCompareType", 1);
-	tSysConfig.bIs4W2_One = f.GetKeyVal(key, "BombCompareType", 1);
-	tSysConfig.bIs4W2_Double = f.GetKeyVal(key, "BombCompareType", 1);
-	tSysConfig.bIsLongBomb = f.GetKeyVal(key, "BombCompareType", 0);
-	tSysConfig.iBombCompareType = f.GetKeyVal(key, "BombCompareType", 1);
-	_dataMange.SetCardRulesConfig(tSysConfig);
+	//庄家位置
+	m_byNTUser = 255;
+
+	//小盲注位置
+	m_bySmallBlind = 255;
+
+	//大盲注位置
+	m_byBigBlind = 255;
+
+	//得到令牌的玩家
+	m_byTokenUser = 255;
+
+	m_nTypeCard = UNKNOWN;	// 未知类型
+
+	// 机器人总共的牌数据
+	memset(m_byRobotInAllCard, 255,sizeof(m_byRobotInAllCard));
+
+	// 机器人总共牌张数
+	m_nRobotInAllCardNum = 0;	
+
+	m_iFollowNum = 0;  //机器人跟注次数
+
+	m_tSetActionProb.Clear();
+	m_bSetActionProbRecv = false;
+	m_bSelectActionProb = false;
+	m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Max;
 }
 
+//析构函数
+CClientGameDlg::~CClientGameDlg()
+{
+	if(m_hMciWnd1)
+	{
+//		MCIWndStop(m_hMciWnd1);
+//		MCIWndDestroy(m_hMciWnd1);
+		m_hMciWnd1=NULL;
+	}
+
+	if(m_hMciWnd2)
+	{
+//		MCIWndStop(m_hMciWnd2);
+//		MCIWndDestroy(m_hMciWnd2);
+		m_hMciWnd2=NULL;
+	}	
+
+}
+
+//数据绑定函数
+void CClientGameDlg::DoDataExchange(CDataExchange * pDX)
+{
+	CLoveSendClass::DoDataExchange(pDX);
+//	DoDataExchangeWebVirFace(pDX);
+}
+
+//初始化函数
 BOOL CClientGameDlg::OnInitDialog()
 {
 	CLoveSendClass::OnInitDialog();
-
-	// TODO:  在此添加额外的初始化
-	return TRUE;  // return TRUE unless you set the focus to a control
-	// 异常: OCX 属性页应返回 FALSE
+	return TRUE;
 }
-
-void CClientGameDlg::KillAllTimer()
+void CClientGameDlg::InitData()
 {
-	for( int i = TID_BEGIN; TID_MAX > i; i++ )
-		KillGameTimer(i);
+	CINIFile iniFile(CINIFile::GetAppPath()+ "Setup.ini");
+	m_bCancel =  iniFile.GetKeyVal("Cancel", "Cancel" , 0) ; ///是否退出
+
+	// 全下玩家
+	memset(m_bAllBet, 0, sizeof(m_bAllBet));
+
+	// 弃牌玩家
+	memset(m_bGiveUp, 0, sizeof(m_bGiveUp));
+
+	// 每个玩家下注金币
+	memset(m_nBetMoney, 0, sizeof(m_nBetMoney));
+
+	//底牌数据
+	memset(m_iUserDataCard, 0, sizeof(m_iUserDataCard));
+
+	//底牌数
+	m_iCardCounts = 0;
+
+	// 保存底牌显示
+	memset(m_iCardData, 0, sizeof(m_iCardData));
+
+	//底牌数3
+	m_iCardDataCounts = 0;
+
+	//初始自己扑克表
+	::memset(m_byMyCards,0,sizeof(m_byMyCards));
+
+	//用户手上扑克数目
+	m_iCardsNum = 0;
+
+	// 上一次操作类型
+	memset(&m_emLastOperation, ET_UNKNOWN,sizeof(m_emLastOperation));
+
+	// 跟注金币
+	m_nCallMoney = 0;
+
+	// 初始化累加金额
+	m_nCurrentMoney = 0;
+
+	m_iFollowNum = 0;  //机器人跟注次数
 }
 
-void CClientGameDlg::ResetExt()
-{
-	OBJ_GET_EXT(m_pExt, CGameStation, gs);
-	OBJ_GET_EXT(m_pExt, CPlayerCardMgr, cardMgr);
-	OBJ_GET_EXT(m_pExt, CCfg, cfg);
-
-	cfg->Clear();
-	cfg->SetValue(CFG_PLAYER_COUNT, PLAY_COUNT);
-
-	cardMgr->Clear();
-	cardMgr->Init();
-
-	gs->Clear();
-
-	for(int i = 0; i < PLAY_COUNT; ++i)
-	{
-		vChuCard[i].clear();
-	}
-	m_bHaveRobOrCall = false;
-}
-
+//设置游戏状态
 bool CClientGameDlg::SetGameStation(void * pStationData, UINT uDataSize)
 {
-	bool bResult = true;
+	ResetGameStation(0);
 
-	//////////////////////////////////////////////////////////////////////////
-	// 清理数据
-	ResetExt();
-	///
+	const TGSBase* pGSBase = (TGSBase*)pStationData;
 
-	OBJ_GET_EXT(m_pExt, CCfg, cfg);
-	OBJ_GET_EXT(m_pExt, CPlayerCardMgr, cardMgr);
+	m_byMeStation = GetMeUserInfo()->bDeskStation;
 
-	switch( GetStationParameter() )
+	//还原桌面设置数据
+	::memcpy(&m_tagDeskCfg,&pGSBase->tagDeskCfg,sizeof(TDeskCfg));
+	
+	// 当前操作时间
+	m_byCurveOperationTimer = pGSBase->tagDeskCfg.Time.byOperate;
+
+	switch(GetStationParameter())
 	{
 	case GS_WAIT_SETGAME:
 	case GS_WAIT_ARGEE:
+	case GS_WAIT_NEXT_ROUND:
 		{
-			GameStation_2 * pGs = (GameStation_2 *)pStationData;
-
-			cfg->SetValue(CFG_BEGIN_TIME, pGs->iBeginTime);
-			cfg->SetValue(CFG_THINK_TIME, pGs->iThinkTime);
-			cfg->SetValue(CFG_ROB_NT_TIME, pGs->iRobNTTime);
-			cfg->SetValue(CFG_CALL_SCORE_TIME, pGs->iCallScoreTime);
-			cfg->SetValue(CFG_ADD_DOUBLE_TIME, pGs->iAddDoubleTime);
-			cfg->SetValue(CFG_ROOM_BASE_POINT, pGs->iRoomBasePoint);
-			cfg->SetValue(CFG_RUN_PUBLISH, pGs->iRunPublish);
-			cfg->SetValue(CFG_CARD_SHAPE, pGs->iCardShape);
-			cfg->SetValue(CFG_ROOM_RULE, m_pGameInfo->dwRoomRule);
-			cfg->SetValue(CFG_CARD_SHAPE, pGs->iCardShape);
-
-			cardMgr->Init();
-			if( !IsQueueGame() && !IsContestGame() )
-				StartupGameBeginTimer();
-		}
-		break;
-	case GS_SEND_CARD:
-	case GS_WAIT_BACK:
-		{
-			GameStation_3 * pGs = (GameStation_3 *)pStationData;
-			cfg->SetValue(CFG_BEGIN_TIME, pGs->iBeginTime);
-			cfg->SetValue(CFG_THINK_TIME, pGs->iThinkTime);
-			cfg->SetValue(CFG_ROB_NT_TIME, pGs->iRobNTTime);
-			cfg->SetValue(CFG_CALL_SCORE_TIME, pGs->iCallScoreTime);
-			cfg->SetValue(CFG_ADD_DOUBLE_TIME, pGs->iAddDoubleTime);
-			cfg->SetValue(CFG_ROOM_BASE_POINT, pGs->iRoomBasePoint);
-			cfg->SetValue(CFG_RUN_PUBLISH, pGs->iRunPublish);
-			cfg->SetValue(CFG_CARD_SHAPE, pGs->iCardShape);
-			cfg->SetValue(CFG_ROOM_RULE, m_pGameInfo->dwRoomRule);
-			cfg->SetValue(CFG_CARD_SHAPE, pGs->iCardShape);
-
-			int nPos = 0;
-			for( int i = 0; PLAY_COUNT > i; i++ )
+			TGSWaitAgree* pGSWaitAgree = (TGSWaitAgree*)pStationData;
+			
+			// 机器人当前准备带入的金币
+			m_iCurrentMoney = pGSWaitAgree->tagDeskCfg.dz.iSubPlanMoney;
+			m_iMinMoney = pGSWaitAgree->tagDeskCfg.dz.iSubMinMoney;
+			m_iMaxMoney	= pGSWaitAgree->tagDeskCfg.dz.iSubMaxMoney;
+			
+			// 金币数据不相等就更新
+			if (m_iCurrentMoney < m_iMinMoney)
 			{
-				cardMgr->SetHandCard(i, &pGs->iUserCardList[nPos], pGs->iUserCardCount[i] );
-				nPos += pGs->iUserCardCount[i];
+				m_iCurrentMoney = m_iMinMoney;
 			}
-			BYTE byMyStation = GetMeUserInfo()->bDeskStation;
-			if(pGs->iRobNT[byMyStation] == 3 || pGs->iRobNT[byMyStation] == 1)
+			else if (m_iCurrentMoney > m_iMaxMoney)
 			{
-				m_bHaveRobOrCall = true;
-			}
-			else if(pGs->iCallScore[byMyStation] != 0)
-			{
-				m_bHaveRobOrCall = true;
+				m_iCurrentMoney = m_iMaxMoney;
 			}
 			
-			switch (pGs->iGameFlag)
+			m_iSelfMoney = GetMeUserInfo()->i64Money;
+			
+			// 防止代入金币超过自身金币
+			if (m_iCurrentMoney > m_iSelfMoney)
 			{
-			case  GS_FLAG_ROB_NT:
-				if(byMyStation == pGs->iCurOperator)
-				{
-					SetMyGameTimer(byMyStation, cfg->GetValue(CFG_ROB_NT_TIME, 5), TID_ROB_NT);
-				}
-				break;
-			case  GS_FLAG_ADD_DOUBLE:
-				{
-					if( 0 == pGs->iUserDoubleValue[byMyStation] )
-					{
-						SetMyGameTimer(GetMeUserInfo()->bDeskStation, cfg->GetValue(CFG_ADD_DOUBLE_TIME, 5), TID_ADD_DOUBLE);
-					}
-				}
-				break;
-			case  GS_FLAG_SHOW_CARD:
-				{
-					//SetMyGameTimer(byMyStation, cfg->GetValue(CFG_ADD_DOUBLE_TIME, 5), TID_SHOW_CARD);
-				}
-				break;
+				m_iCurrentMoney = m_iSelfMoney;
 			}
+
+			srand((unsigned) time (NULL) + m_byMeStation) ; 
+
+			int iRandTime = rand() % 3 + 1; 
+
+			// 机器人自动带入金额定时器
+			SetGameTimer(m_byMeStation,iRandTime,IDT_IN_MONEY_TIMER);
 		}
 		break;
-		//mark
-	case GS_PLAY_GAME:	//游戏进行中
+	case GS_PLAY_GAME:
 		{
-			GameStation_4 * pGs = (GameStation_4 *)pStationData;
-			cfg->SetValue(CFG_BEGIN_TIME, pGs->iBeginTime);
-			cfg->SetValue(CFG_THINK_TIME, pGs->iThinkTime);
-			cfg->SetValue(CFG_ROB_NT_TIME, pGs->iRobNTTime);
-			cfg->SetValue(CFG_CALL_SCORE_TIME, pGs->iCallScoreTime);
-			cfg->SetValue(CFG_ADD_DOUBLE_TIME, pGs->iAddDoubleTime);
-			cfg->SetValue(CFG_ROOM_BASE_POINT, pGs->iRoomBasePoint);
-			cfg->SetValue(CFG_RUN_PUBLISH, pGs->iRunPublish);
-			cfg->SetValue(CFG_CARD_SHAPE, pGs->iCardShape);
-			cfg->SetValue(CFG_ROOM_RULE, m_pGameInfo->dwRoomRule);
-			cfg->SetValue(CFG_CARD_SHAPE, pGs->iCardShape);
+			TGSPlaying * pGSPlaying = (TGSPlaying *)pStationData;
 
-			int nPos = 0;
-			for( int i = 0; PLAY_COUNT > i; i++ )
+			// 获得得到令牌的玩家
+			m_byTokenUser = pGSPlaying->byTokenUser;
+
+			// 庄家大小肓
+			m_byNTUser = pGSPlaying->byNTUser;
+			m_bySmallBlind = pGSPlaying->bySmallBlind;
+			m_byBigBlind = pGSPlaying->byBigBlind;
+
+			// 复制手牌
+			m_iCardCounts = pGSPlaying->nHandCardNums;
+			memcpy(m_iUserDataCard, pGSPlaying->byHandCard[GetMeUserInfo()->bDeskStation], sizeof(BYTE) * m_iCardCounts);
+
+			// 全下玩家
+			memcpy(m_bAllBet, pGSPlaying->bNoBet, sizeof(pGSPlaying->bNoBet));
+
+			// 弃牌玩家
+			memcpy(m_bGiveUp, pGSPlaying->bGiveUp, sizeof(pGSPlaying->bGiveUp));
+
+			// 获取代入金币
+			memcpy(m_iMoneys, pGSPlaying->nSubMoney, sizeof(pGSPlaying->nSubMoney));
+
+			for (int i = 0; i < PLAY_COUNT; i++)
 			{
-				cardMgr->SetHandCard(i, &pGs->iUserCardList[nPos], pGs->iUserCardCount[i] );
-				nPos += pGs->iUserCardCount[i];
+				// 显示下注金币
+				m_nBetMoney[i] = 0;
+
+				for (int j = 0; j < PLAY_COUNT; j++)
+				{
+					m_nBetMoney[i] += pGSPlaying->nBetMoney[i][j];
+				}
 			}
+			
+			// 当前操作玩家
+			TToken toKen;
+			toKen.bNewTurn	 = pGSPlaying->bNewTurn;
+			toKen.byUser	 = pGSPlaying->byTokenUser;
+			toKen.byVerbFlag = pGSPlaying->byVerbFlag;
+			toKen.nCallMoney = pGSPlaying->nCallMoney;
+			m_iMinBetOrRaiseMoney = toKen.iMinBetOrRaiseMoney = pGSPlaying->nCallMoney;
+			m_tRecomeTToken = toKen;
 
-			for( int i = 0; PLAY_COUNT > i; i++ )
-				cardMgr->SetDeskCard(i, pGs->iDeskCardList[i], pGs->iDeskCardCount[i]);
+			//行动概率相关
+			m_tUserCardActionProb.Clear();
+			memcpy(m_tUserCardActionProb.byCards, pGSPlaying->byHandCard, sizeof(pGSPlaying->byHandCard));
+			memcpy(m_tUserCardActionProb.byPubCards, pGSPlaying->byCards, sizeof(pGSPlaying->byCards));
+			
+			m_bGotUserCardActionProb = true;
+			AnalysisBiggestCards();
 
-			OBJ_GET_EXT(m_pExt, CGameStation, gs);
-			gs->SetOutCardPeople( pGs->iOutCardPeople );
-			gs->SetNtPeople(pGs->iUpGradePeople);
-			gs->SetBigOutPeople(pGs->iBigOutPeople);
 
-
-			BYTE byMyStation = GetMeUserInfo()->bDeskStation;
-			if(gs->GetOutCardPeople() == byMyStation)
+			if (m_tRecomeTToken.byUser == m_byMeStation)
 			{
-				SetMyGameTimer(byMyStation, cfg->GetValue(CFG_THINK_TIME, 5), TID_OUT_CARD);
+				SetGameTimer(m_byMeStation, 2, IDT_RECOME_TTOKEN);
 			}
 		}
 		break;
-	case GS_WAIT_NEXT:		//等待下一盘开始
-		{
-			GameStation_5 * pGs = (GameStation_5 *)pStationData;
-			cfg->SetValue(CFG_BEGIN_TIME, pGs->iBeginTime);
-			cfg->SetValue(CFG_THINK_TIME, pGs->iThinkTime);
-			cfg->SetValue(CFG_ROB_NT_TIME, pGs->iRobNTTime);
-			cfg->SetValue(CFG_CALL_SCORE_TIME, pGs->iCallScoreTime);
-			cfg->SetValue(CFG_ADD_DOUBLE_TIME, pGs->iAddDoubleTime);
-			cfg->SetValue(CFG_ROOM_BASE_POINT, pGs->iRoomBasePoint);
-			cfg->SetValue(CFG_RUN_PUBLISH, pGs->iRunPublish);
-			cfg->SetValue(CFG_CARD_SHAPE, pGs->iCardShape);
-			cfg->SetValue(CFG_ROOM_RULE, m_pGameInfo->dwRoomRule);
-			cfg->SetValue(CFG_CARD_SHAPE, pGs->iCardShape);
-
-			if( !IsQueueGame() && !IsContestGame() )
-				StartupGameBeginTimer();
-			break;
-		}
-	default:
-		bResult = false;
+	default:{break;}
 	}
-
-	return bResult;
-}
-
-bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetData, UINT uDataSize, CTCPClientSocket * pClientSocket)
-{
-	if( MDM_GM_GAME_NOTIFY != pNetHead->bMainID )
-		return __super::HandleGameMessage( pNetHead, pNetData, uDataSize, pClientSocket );
-
-	OBJ_GET_EXT( m_pExt, CCfg, cfg );
-
-	switch( pNetHead->bAssistantID )
-	{
-	case ASS_GAME_BEGIN:		//游戏开始
-		{
-			if (uDataSize != sizeof(GameBeginStruct)) return false;
-			GameBeginStruct * pBegin=(GameBeginStruct *)pNetData;	
-			OBJ_GET_EXT(m_pExt, CCfg, cfg);
-			cfg->SetValue(CFG_CARD_SHAPE, pBegin->iCardShape);
-			SetStationParameter( GS_SEND_CARD );
-		}
-		return true;
-	case ASS_SEND_FINISH:
-		{
-			SetStationParameter( GS_WAIT_BACK );
-			return true;
-		}
-	case ASS_SEND_CARD:			
-		{
-			if (uDataSize!=sizeof(SendCardStruct)) return false;
-			SendCardStruct * pSendCard=(SendCardStruct *)pNetData;
-			OBJ_GET_EXT(m_pExt, CPlayerCardMgr, cardMgr);
-			cardMgr->SetHandCard( pSendCard->bDeskStation, &pSendCard->bCard, 1 );
-		}
-		return true;
-	case ASS_SEND_ALL_CARD://发完牌了,存入到自己的手牌中
-		{
-			if (uDataSize!=sizeof(SendAllStruct)) return false;
-			SendAllStruct * pSendAll=(SendAllStruct *)pNetData;
-			OBJ_GET_EXT(m_pExt, CPlayerCardMgr, cardMgr);
-			int nPos = 0;
-			for( int i = 0; PLAY_COUNT > i; i++ )
-			{
-				cardMgr->SetHandCard( i, &pSendAll->iUserCardList[nPos], pSendAll->iUserCardCount[i]);
-				nPos += pSendAll->iUserCardCount[i];
-			}
-		}
-		return true;
-	case ASS_CALL_SCORE:			//叫分//计算牌权值的地方
-		{	
-			SetStationParameter(GS_WAIT_BACK);
-			if (sizeof(CallScoreStruct)!= uDataSize) return false;
-			CallScoreStruct *pScore=(CallScoreStruct *)pNetData;	
-
-			if( GetMeUserInfo()->bDeskStation == pScore->bDeskStation )
-				SetMyGameTimer(pScore->bDeskStation, cfg->GetValue(CFG_CALL_SCORE_TIME, 5), TID_CALL_SCORE);
-		}
-		return true;
-	case ASS_ROB_NT:	//抢地主
-		{
-			if (uDataSize != sizeof(RobNTStruct)) return false;
-				
-			RobNTStruct * pRobNT = (RobNTStruct *)pNetData;
-			if( GetMeUserInfo()->bDeskStation == pRobNT->byDeskStation )
-				SetMyGameTimer(pRobNT->byDeskStation, cfg->GetValue(CFG_ROB_NT_TIME, 5), TID_ROB_NT);
-		}
-		return true;
-	case ASS_BACK_CARD_EX:		//扩展底牌数据
-		{
-			if (uDataSize!=sizeof(BackCardExStruct)) 
-				return FALSE;
-			BackCardExStruct * pBackCard=(BackCardExStruct *)pNetData;
-			OBJ_GET_EXT(m_pExt, CGameStation, gs);
-			OBJ_GET_EXT(m_pExt, CPlayerCardMgr, cardMgr);
-			gs->SetNtPeople( pBackCard->iGiveBackPeople );
-			cardMgr->SetBackCard(pBackCard->iBackCard, pBackCard->iBackCardCount);
-			cardMgr->PushHandCard(pBackCard->iGiveBackPeople, pBackCard->iBackCard, pBackCard->iBackCardCount);
-			
-			LOG( "ASS_BACK_CARD_EX %d - %d - %d", GetMeUserInfo()->bDeskStation, GetMeUserInfo()->dwUserID, cardMgr->GetHandCardCount(GetMeUserInfo()->bDeskStation) );
-		}
-		return true;
-	case ASS_ADD_DOUBLE://加棒
-		{
-			if (uDataSize!=sizeof(AddDoubleStruct)) return false;
-			AddDoubleStruct * pAddDouble=(AddDoubleStruct *)pNetData;
-			//if(GetMeUserInfo()->bDeskStation != pAddDouble->bDeskStation )
-				SetMyGameTimer(GetMeUserInfo()->bDeskStation, cfg->GetValue(CFG_ADD_DOUBLE_TIME, 5), TID_ADD_DOUBLE);
-		}
-		return true;
-	case ASS_SHOW_CARD://亮牌
-		{
-			if (uDataSize!=sizeof(ShowCardStruct)) return false;
-			ShowCardStruct  * pShow = (ShowCardStruct*)pNetData;
-			if( GetMeUserInfo()->bDeskStation == pShow->bDeskStation )
-				SetMyGameTimer(pShow->bDeskStation, cfg->GetValue(CFG_ADD_DOUBLE_TIME, 5), TID_SHOW_CARD);
-		}
-		return true;
-	case ASS_GAME_PLAY:		//开始游戏
-		{
-			if (uDataSize!=sizeof(BeginPlayStruct)) return false;
-
-			BeginPlayStruct * pBeginInfo=(BeginPlayStruct *)pNetData;
-			OBJ_GET_EXT( m_pExt, CGameStation, gs );
-
-			SetStationParameter(GS_PLAY_GAME);
-			gs->SetBigOutPeople( pBeginInfo->iOutDeskStation );
-			gs->SetOutCardPeople( pBeginInfo->iOutDeskStation );
-			if( INVALID_INDEX == gs->GetBigOutPeople() )
-				throw(-1);
-
-			if (GetMeUserInfo()->bDeskStation == pBeginInfo->iOutDeskStation)
-				SetMyGameTimer(pBeginInfo->iOutDeskStation, cfg->GetValue(CFG_THINK_TIME, 5), TID_OUT_CARD);
-		}
-		return true;
-	case ASS_OUT_CARD_RESULT:
-		{
-			if (uDataSize != sizeof(OutCardMsg2AI))return false;
-			OutCardMsg2AI * pOutCardInfo=(OutCardMsg2AI *)pNetData;
-			OBJ_GET_EXT( m_pExt, CPlayerCardMgr, cardMgr );
-			OBJ_GET_EXT( m_pExt, CGameStation, gs );
-
-			cardMgr->SetDeskCard( pOutCardInfo->outCard.bDeskStation, pOutCardInfo->outCard.iCardList, pOutCardInfo->outCard.iCardCount );
-			cardMgr->SetHandCard(  pOutCardInfo->outCard.bDeskStation,pOutCardInfo->bHandCard,pOutCardInfo->iHandCardCount);
-			if( 0 < pOutCardInfo->outCard.iCardCount )
-			{
-				LOG( "ASS_OUT_CARD_RESULT %d - %d - %d - %d", GetMeUserInfo()->bDeskStation, 
-					pOutCardInfo->outCard.bDeskStation, pOutCardInfo->outCard.iCardCount, 
-					cardMgr->GetHandCardCount(pOutCardInfo->outCard.bDeskStation) );
-				gs->SetBigOutPeople( pOutCardInfo->outCard.bDeskStation );
-				outCardResult(pOutCardInfo);
-			}
-		}
-		return true;
-	case ASS_OUT_CARD:		//用户出牌//mark
-		{
-			if (uDataSize != sizeof(OutCardMsg)) return false;
-			
-			OutCardMsg * pOutCardInfo=(OutCardMsg *)pNetData;
-			OBJ_GET_EXT(m_pExt, CGameStation, gs);
-			gs->SetOutCardPeople( pOutCardInfo->iNextDeskStation );
-
-			if( pOutCardInfo->iNextDeskStation == GetMeUserInfo()->bDeskStation )
-				SetMyGameTimer( pOutCardInfo->iNextDeskStation, cfg->GetValue(CFG_THINK_TIME, 5), TID_OUT_CARD );
-		}
-		return true;
-	case ASS_NEW_TURN:		//新一轮出牌
-		{
-			if(uDataSize!=sizeof(NewTurnStruct)) return false;
-			NewTurnStruct * pTurn = (NewTurnStruct *)pNetData; 
-			if (pTurn == NULL)
-			{
-				return false;
-			}
-
-			OBJ_GET_EXT(m_pExt, CGameStation, gs);
-			gs->SetBigOutPeople( pTurn->bDeskStation );
-			gs->SetOutCardPeople( pTurn->bDeskStation );
-
-			if( INVALID_INDEX == gs->GetBigOutPeople() )
-				throw(-1);
-
-			//删除扑克信息
-			OBJ_GET_EXT( m_pExt, CPlayerCardMgr, cardMgr );
-			cardMgr->ClearDeskCard();
-
-			if ( GetMeUserInfo()->bDeskStation == pTurn->bDeskStation )
-				SetMyGameTimer( pTurn->bDeskStation, cfg->GetValue(CFG_THINK_TIME, 5), TID_OUT_CARD );
-		}
-		return true;
-	case ASS_NO_CALL_SCORE_END://无人叫分直接进入下一局
-		{
-			KillGameTimer(0);
-			SetStationParameter(GS_WAIT_NEXT);
-			ResetGameStation(0);
-		}
-		return true;
-	case ASS_SAFE_END:	//游戏安全结束
-	case ASS_CUT_END:	//用户强行离开
-	case ASS_TERMINATE_END://意外结束
-	case ASS_NO_CONTINUE_END://游戏结束
-	case ASS_CONTINUE_END:	//游戏结束
-	case ASS_AHEAD_END:
-		{
-			KillGameTimer(0);
-			SetStationParameter(GS_WAIT_NEXT);
-			ResetGameStation(0);
-
-			if( !IsContestGame() )
-				StartupGameBeginTimer();
-		}
-		return true;
-
-	case ASS_CALL_SCORE_RESULT:			//叫分结果
-		{
-			if(uDataSize!=sizeof(RobNTStruct)) return false;
-			RobNTStruct * pTurn = (RobNTStruct *)pNetData; 
-			if (pTurn == NULL)
-			{
-				return false;
-			}
-			if(pTurn->byDeskStation == GetMeUserInfo()->bDeskStation)
-			{
-				m_bHaveRobOrCall = true;
-			}
-		}
-		return true;
-	case ASS_ROB_NT_RESULT://抢地主结果
-		{
-			if(uDataSize!=sizeof(CallScoreStruct)) return false;
-			CallScoreStruct * pTurn = (CallScoreStruct *)pNetData; 
-			if (pTurn == NULL) return false;
-			if(pTurn->bDeskStation == GetMeUserInfo()->bDeskStation)
-			{
-				m_bHaveRobOrCall = true;
-			}
-		}
-		return true;
-	case ASS_SEND_CARD_MSG://发牌消息
-	case ASS_CALL_SCORE_FINISH:
-	case ASS_GAME_MULTIPLE:
-	case ASS_ROB_NT_FINISH:		//抢地主结束
-	case ASS_ADD_DOUBLE_RESULT://加棒结果
-	case ASS_ADD_DOUBLE_FINISH:
-	case ASS_SHOW_CARD_RESULT:
-	case ASS_SHOW_CARD_FINISH:
-	case ASS_AWARD_POINT://将分
-	case ASS_AI_STATION:
-	case ASS_ONE_TURN_OVER:
-	case ASS_HAVE_THING:	//用户请求离开
-	case ASS_LEFT_RESULT:	//请求离开结果 
-	case ASS_AUTO:				//托管
-	case ASS_MESSAGE:
-		return true;
-	}
-
-	return __super::HandleGameMessage( pNetHead, pNetData, uDataSize, pClientSocket );
-}
-
-/// 出牌的处理，主要用于记录出牌的信息,和更正猜牌的信息
-/// pOutCardInfo为所出的牌
-void CClientGameDlg::outCardResult(OutCardMsg2AI * pOutCardInfo)
-{
-	OutCardStruct temp;
-	temp.iCardCount = pOutCardInfo->outCard.iCardCount;
-	memcpy(temp.iCardList,pOutCardInfo->outCard.iCardList,sizeof(temp.iCardList));
-	vChuCard[pOutCardInfo->outCard.bDeskStation].push_back(temp);
-	//if(pOutCardInfo->bDeskStation != GetMeUserInfo()->bDeskStation)
-	//{
-    //   deleteGuessCard(temp.iCardList,temp.iCardCount);
-	//}
-
-}
-
-bool CClientGameDlg::OnControlHitBegin()
-{
-	if (((GetStationParameter()==GS_WAIT_SETGAME)
-		||(GetStationParameter()==GS_WAIT_NEXT)
-		||(GetStationParameter()==GS_WAIT_ARGEE))
-		)
-	{
-		SendGameData( MDM_GM_GAME_NOTIFY, ASS_GM_AGREE_GAME, 0 );
-	}
-
-	KillGameTimer(0);
-	ResetGameStation(0);
 	return true;
 }
 
-bool CClientGameDlg::OnGameTimer(BYTE bDeskStation, UINT uTimeID, UINT uTimeCount)
+//游戏消息处理函数
+bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetData, UINT uDataSize, CTCPClientSocket * pClientSocket)
 {
-	int iChoice = Choice_Rand;
-	PreDealing(uTimeID, iChoice);
-
-	switch( uTimeID )
+	if (pNetHead->bMainID == MDM_GM_GAME_NOTIFY)
 	{
-	case TID_BEGIN:
+		switch(pNetHead->bAssistantID)
+
 		{
-			KillGameTimer(TID_BEGIN);
-			if( (GRR_CONTEST & m_pGameInfo->dwRoomRule) || (GRR_QUEUE_GAME & m_pGameInfo->dwRoomRule) )
+		case ASS_GAME_BEGIN:
 			{
-				//OutputDebugString("dwjrobot::比赛场或者排队机 不用准备计时器-直接返回");
+				//游戏开始
+				SetStationParameter(GS_PLAY_GAME);
+				// 初始化数据
+				InitData();
+				return true;
 			}
-			else
-				OnHitBegin(0,0);
-		}
-		break;
-	case TID_CALL_SCORE:
-		{
-			KillGameTimer( TID_CALL_SCORE );
-			int iCallType = 0;
-			if(iChoice == Choice_OK)
+		case ASS_SET_ACTION_PROB:
 			{
-				iCallType = 3;
-			}
-			else if(iChoice == Choice_Not)
-			{
-				iCallType = 0;
-			}
-			else
-			{
-				iCallType = rand() % 4;
-			}
-			OnCallScore( iCallType, 0 );
-		}
-		break;
-	case TID_ROB_NT:
-		{
-			KillGameTimer( TID_ROB_NT );
-			int iCallType = 0;
-			if(iChoice == Choice_OK)
-			{
-				iCallType = 1;
-			}
-			else if(iChoice == Choice_Not)
-			{
-				iCallType = 0;
-			}
-			else
-			{
-				iCallType = rand() % 2;
-			}
-			OnRobNT( iCallType, 0 );
-		}
-		break;
-	case TID_ADD_DOUBLE:
-		{
-			KillGameTimer( TID_ADD_DOUBLE );
-			int iCallType = 0;
-			if(iChoice == Choice_OK)
-			{
-				iCallType = 1;
-			}
-			else if(iChoice == Choice_Not)
-			{
-				iCallType = 0;
-			}
-			else
-			{
-				if(m_bHaveRobOrCall)
+				if (uDataSize != sizeof(SetActionProb))
 				{
-					iCallType = rand() % 2;
+					return true;
+				}
+
+				if (NULL == pNetData)
+				{
+					return true;
+				}
+
+				m_tSetActionProb = *(SetActionProb*)pNetData;
+				m_bSetActionProbRecv = true;
+				return true;
+			}
+		case ASS_SYS_DESK_CFG:
+			{
+				//收到系统配置桌子的信息包，并处理
+				TDeskCfg* pDeskCfg = (TDeskCfg*)pNetData;
+
+				//更改数据
+				::memcpy(&m_tagDeskCfg,pDeskCfg,sizeof(TDeskCfg));
+				return true;
+			}
+		case ASS_CFG_DESK: 
+			{
+				//修正游戏的状态
+				SetStationParameter(GS_CONFIG_NOTE);
+				return true;
+			}
+		case ASS_CFG_DESK_TIMEOUT:
+			{
+				return true;
+			}
+		case ASS_DESK_CFG: 
+			{
+				//修正游戏的状态
+				SetStationParameter(GS_CONFIG_NOTE);
+
+				TDeskCfg* pDeskCfg = (TDeskCfg*)pNetData;
+
+				//更改数据
+				::memcpy(&m_tagDeskCfg,pDeskCfg,sizeof(TDeskCfg));
+				return true;
+			}
+		case ASS_SHOW_IN_MONEY: 
+			{
+				//收到代入金额信息包，并处理
+				TSubMoney* pSubMoney = (TSubMoney*)pNetData;
+
+				memcpy(m_iMoneys, pSubMoney->nMoney, sizeof(m_iMoneys));
+				return true;
+			}
+		case ASS_SEND_A_CARD:
+			{
+				//收到服务器发一张牌包，并处理
+				TCards* pCards = (TCards*)pNetData;
+
+				if (m_byNTUser == 255)
+				{
+					return false;
+				}
+
+				if (NULL == pCards)
+				{
+					return true;
+				}
+
+				//行动概率相关
+				m_tUserCardActionProb = *pCards;
+				m_bGotUserCardActionProb = true;
+				AnalysisBiggestCards();
+
+				m_nTypeCard = pCards->nTypeCard;
+
+				// 自己的牌数据
+				::memcpy(m_iUserDataCard, pCards->byCards[GetMeUserInfo()->bDeskStation], MAX_HANDCARDS_NUM);
+				m_iCardCounts = pCards->iCardsNum;
+
+				memset(m_byRobotInAllCard,255,sizeof(m_byRobotInAllCard));
+				m_nRobotInAllCardNum = 0;
+				// 将自己的牌数据拷贝到机器人总牌数据
+				::memcpy(m_byRobotInAllCard,pCards->byCards[GetMeUserInfo()->bDeskStation],sizeof(BYTE)*pCards->iCardsNum);
+				m_nRobotInAllCardNum = pCards->iCardsNum;
+
+				SendGameData(MDM_GM_GAME_NOTIFY, ASS_SEND_CARD_FINISH, NULL);
+
+				return true;
+			}
+		case ASS_BETPOOL_UP:
+			{
+				//收到服务器边池更新包，并处理
+				TBetPool* pBetPool = (TBetPool *)pNetData;
+
+				memcpy(&m_tagBetPool, pBetPool, sizeof(m_tagBetPool));
+
+				return true;
+			}
+		case ASS_SEND_3_CARD:
+			{
+				//收到服务器发一张牌包，并处理
+				TCards * pCards = (TCards *)pNetData;
+				
+				// 拷贝三张公共牌
+				memcpy(m_iCardData, pCards->byPubCards, sizeof(BYTE) * (pCards->iCardsNum));
+				m_iCardDataCounts += pCards->iCardsNum;
+
+				// 将自己的牌数据拷贝到机器人总牌数据
+				::memcpy(&m_byRobotInAllCard[m_nRobotInAllCardNum],pCards->byPubCards,sizeof(BYTE)*pCards->iCardsNum);
+				m_nRobotInAllCardNum += pCards->iCardsNum;
+
+				return true;
+			}			
+		case ASS_SEND_4_5_CARD:
+			{
+				//收到服务器发一张牌包，并处理
+				TCards * pCards = (TCards *)pNetData;
+
+				// 拷贝第四与第五张公共牌
+				memcpy(m_iCardData, pCards->byPubCards, sizeof(BYTE) * (pCards->iCardsNum));
+				m_iCardDataCounts = pCards->iCardsNum;
+
+				// 将自己的牌数据拷贝到机器人总牌数据
+				::memcpy(&m_byRobotInAllCard[m_nRobotInAllCardNum],pCards->byPubCards,sizeof(m_byRobotInAllCard[m_nRobotInAllCardNum]));
+				m_nRobotInAllCardNum += 1;
+
+				return true;
+			}
+		case ASS_SEND_CARD_FINISH:
+			{
+				//收到服务器报告所有玩家发牌完成的消息，并处理
+				
+				return true;
+			}
+		case ASS_BET_INFO:
+			{
+				//收到玩家下注的消息
+				TBet* pBet = (TBet*)pNetData;
+
+				if (pBet->nType == ET_AUTO || pBet->nType == ET_BET || pBet->nType == ET_ADDNOTE || pBet->nType == ET_ALLIN || pBet->nType == ET_CALL)
+				{
+					m_nBetMoney[pBet->byUser] += pBet->nMoney; 
+					m_iMoneys[pBet->byUser] -= pBet->nMoney;
+				}
+
+				// 记录全下与放弃玩家
+				if (pBet->nType == ET_ALLIN)
+				{
+					m_bAllBet[pBet->byUser] = true;
+				}
+				else if (pBet->nType == ET_FOLD)
+				{
+					m_bGiveUp[pBet->byUser] = true;		
+				}
+
+				// 记录这个玩家操作类型
+				m_emLastOperation[pBet->byUser] = pBet->nType;
+
+				return true;
+			}
+		case ASS_TOKEN:
+			{
+				//收到令牌消息，激活用户
+				TToken* pToken = (TToken*)pNetData;
+
+				OnHandleTToken(pToken);
+
+				return true;
+			}
+		case ASS_COMPARE_CARD:
+			{
+				//比牌消息
+				TCompareCard *pCmd = (TCompareCard*)pNetData;
+
+				return true;
+			}
+		case ASS_RESULT:
+			{
+				//修正游戏的状态
+				SetStationParameter(GS_WAIT_NEXT_ROUND);
+				//收到结算消息包，并处理
+				TResult* pResult = (TResult*)pNetData;
+
+				//记录游戏数据
+				::memcpy(&m_tagResult,pResult,sizeof(TResult));
+
+				if (m_iMoneys[m_byMeStation] <= m_tagDeskCfg.dz.iUntenMoney)
+				{
+					// 机器人当前准备带入的金币
+					m_iCurrentMoney = m_tagDeskCfg.dz.iSubPlanMoney;
+
+					// 金币数据不相等就更新
+					if (m_iCurrentMoney < m_iMinMoney)
+					{
+						m_iCurrentMoney = m_iMinMoney;
+					}
+					else if (m_iCurrentMoney > m_iMaxMoney)
+					{
+						m_iCurrentMoney = m_iMaxMoney;
+					}
+
+					m_iSelfMoney = GetMeUserInfo()->i64Money;
+
+					// 防止代入金币超过自身金币
+					if (m_iCurrentMoney > m_iSelfMoney)
+					{
+						m_iCurrentMoney = m_iSelfMoney;
+					}
+
+
+					if (m_iSelfMoney < m_iMinMoney)
+					{
+						// 本身金币少于最低带入将玩家踢出
+						if (m_pUserInfo[m_byMeStation] != NULL)
+						{
+							if (m_tagResult.nSelfMoney[m_byMeStation] < m_tagDeskCfg.dz.iSubMinMoney)
+							{
+								SetGameTimer(m_byMeStation, 500, IDT_MONEY_LACK);
+							}
+						}
+						return false;
+					}
+
+					srand((unsigned) time (NULL) + m_byMeStation) ; 
+					int iRandTime = rand() % 3 + 1; 
+
+					// 机器人自动带入金额定时器
+					SetGameTimer(m_byMeStation,iRandTime,IDT_IN_MONEY_TIMER);
 				}
 				else
 				{
-					iCallType = 0;
+					srand((unsigned) time (NULL) + m_byMeStation) ; 
+					int iRandTime = rand() % 3 + 1; 
+
+					// 机器人自动带入金额定时器
+					SetGameTimer(m_byMeStation,iRandTime,IDT_PODO_MONEY_TIMER);
 				}
-				
+
+				return true;
 			}
-			OnAddDouble( iCallType, 1 );
-		}
-		break;
-	case TID_SHOW_CARD:
-		{
-			KillGameTimer( TID_SHOW_CARD );
-			OnShowCard( 0, 0 ); // 永远不亮张
-		}
-		break;
-	case TID_OUT_CARD:
-		{
-			KillGameTimer( TID_OUT_CARD );
-			UserOutCard();
-		}
-		break;
+		case ASS_NEW_ROUND_BEGIN:
+			{
+				//收到新的一回合开始消息包，并处理
+				TNextRoundBeginInfo* pNextRoundBeginInfo = (TNextRoundBeginInfo*)pNetData;
+
+				//记录庄家的位置
+				m_byNTUser = pNextRoundBeginInfo->byNTUser;
+
+				//记录大小盲注
+				m_bySmallBlind = pNextRoundBeginInfo->bSmallBlind;
+				m_byBigBlind = pNextRoundBeginInfo->bBigBlind;
+
+
+				//底牌清空，数量归零
+				::memset(m_byBackCard,0,MAX_BACKCARDS_NUM);
+				m_iBackCardNums = 0;
+
+
+				//初始一些桌面配置/////////////////////////////
+
+				TDeskCfg::TRule* pRule = &m_tagDeskCfg.Rule;
+				return true;
+			}
+		case ASS_NO_PLAYER:
+			{
+				//没有玩家进行游戏，退出处理
+				//OnHandleNoPlayer(buffer,nLen);
+				return true;
+			}
+		case ASS_AGREE:
+			{
+				//玩家是否同意的游戏的，处理
+				//return m_GameMachine.OnHandleAgree(pNetData,uDataSize);
+				return true;
+			}
+		case ASS_NOT_ENOUGH_MONEY:
+			{
+				//玩家手上的钱不足够时，处理
+				//OnHandleNotEnoughMoney(buffer,nLen);
+				return true;
+			}
+		case ASS_USER_LEFT_DESK:
+			{
+				return true;
+			}
+		case ASS_SORT_OUT:
+			{
+				//系统自动清理片
+				//OnUserSortOut();
+				return true;
+			}
+		default:
+			break;
+
+		}	
 	}
-	return true;
+	return __super::HandleGameMessage(pNetHead,pNetData,uDataSize,pClientSocket);
 }
 
-void CClientGameDlg::ResetGameStation(int iGameStation)
+//重新设置界面
+void CClientGameDlg::ResetGameFrame()
 {
-	ResetExt();
+	//m_PlayView.m_Result.ShowWindow(SW_HIDE);
+	m_bTimeOutCount=0;
+
+	m_iNowOutPeople=-1;
+
+	m_iFirstOutPeople=-1;
+
+	::memset(m_iDeskCardCount,0,sizeof(m_iDeskCardCount));
+
+	return __super::ResetGameFrame();
 }
 
-LRESULT CClientGameDlg::OnCallScore(WPARAM wparam, LPARAM lparam)
-{
-	KillGameTimer(TID_CALL_SCORE);
-	CallScoreStruct score;
-	memset(&score,0,sizeof(score));
-	score.iValue = (int)wparam;								
-	score.bDeskStation = GetMeUserInfo()->bDeskStation;			
-	score.bCallScoreflag = false;
-	SendGameData(&score,sizeof(score),MDM_GM_GAME_NOTIFY,ASS_CALL_SCORE,0);
-	return 0;
-}
-
-LRESULT CClientGameDlg::OnRobNT(WPARAM wparam, LPARAM lparam)
-{
-	RobNTStruct robnt;
-	memset(&robnt,0,sizeof(robnt));
-	robnt.byDeskStation = GetMeUserInfo()->bDeskStation;		
-	robnt.iValue = (int)wparam;	
-	SendGameData(&robnt,sizeof(robnt),MDM_GM_GAME_NOTIFY,ASS_ROB_NT,0);
-	return 0;
-}
-
-LRESULT CClientGameDlg::OnAddDouble(WPARAM wparam, LPARAM lparam)
-{
-	AddDoubleStruct AddDouble;
-	memset(&AddDouble,0,sizeof(AddDouble));
-	AddDouble.bDeskStation = GetMeUserInfo()->bDeskStation;		
-	AddDouble.iValue  = (int)wparam;	
-	SendGameData(&AddDouble,sizeof(AddDouble),MDM_GM_GAME_NOTIFY,ASS_ADD_DOUBLE,0);
-	return 0;
-}
-
-LRESULT CClientGameDlg::OnShowCard(WPARAM wparam, LPARAM lparam)
-{
-	ShowCardStruct show;
-	memset(&show,0,sizeof(show));
-	show.bDeskStation = GetMeUserInfo()->bDeskStation;		
-	show.iValue  = (int)wparam;	
-	SendGameData(&show,sizeof(show),MDM_GM_GAME_NOTIFY,ASS_SHOW_CARD,0);
-	return 0;
-}
-
+//开始按钮函数
 LRESULT	CClientGameDlg::OnHitBegin(WPARAM wparam, LPARAM lparam)
 {
 	OnControlHitBegin();
 	return 0;
 }
 
-void CClientGameDlg::StartupGameBeginTimer()
+bool CClientGameDlg::OnControlHitBegin()
 {
-	OBJ_GET_EXT( m_pExt, CCfg, cfg );
-	SetMyGameTimer( GetMeUserInfo()->bDeskStation, cfg->GetValue(CFG_BEGIN_TIME, 5), TID_BEGIN);
+	if (((GetStationParameter()==GS_WAIT_SETGAME)
+		||(GetStationParameter()==GS_WAIT_NEXT_ROUND)
+		||(GetStationParameter()==GS_WAIT_ARGEE))
+		)
+	{
+		SendGameData(MDM_GM_GAME_NOTIFY,ASS_GM_AGREE_GAME,0);
+	}
+
+	KillGameTimer(0);
+	ResetGameStation(0);
+	return true;;
 }
 
-void CClientGameDlg::OnControlHitPass(void)
+//清除所有定时器
+void CClientGameDlg::KillAllTimer()
+{
+	KillTimer(ID_BEGIN_TIME);
+	KillTimer(ID_OUT_CARD);
+	KillTimer(ID_LOOK_BACK);
+	KillTimer(ID_NOTE);
+	KillTimer(ID_CALL_SCORE_TIME);
+	return;
+}
+
+//定时器消息//mark
+bool CClientGameDlg::OnGameTimer(BYTE bDeskStation, UINT uTimeID, UINT uTimeCount)
+{
+	switch (uTimeID)
+	{
+	case IDT_CANCEL_TIME:
+		{
+			KillAllTimer();
+			AFCCloseFrame();
+			__super::OnCancel();
+			SendGameData(MDM_GR_USER_ACTION,ASS_GR_USER_UP,0);
+			break;
+		}
+	case IDT_MONEY_LACK:
+		{
+			SendGameData(ASS_MONEY_LACK, NULL,0);
+			break;
+		}
+	case IDT_IN_MONEY_TIMER:	// 带入金额定时器
+		{
+			KillTimer(IDT_IN_MONEY_TIMER);
+			// 确认代入	
+			TSubMoney cmd;
+			cmd.nMoney[m_byMeStation] = m_iCurrentMoney;
+			cmd.bDeskStation = m_byMeStation;
+			SendGameData(&cmd, sizeof(cmd), MDM_GM_GAME_NOTIFY, ASS_SUB_MENOY, 0);
+			break;
+		}
+	case IDT_IN_MONEY_TIMERS:	// 带入金额定时器
+		{
+			KillTimer(IDT_IN_MONEY_TIMERS);
+			OutputDebugString("DKSS:带入金额定时器");
+
+			if (m_bCancel)
+			{
+				OnCancel();
+			}
+			else
+			{
+				// 确认代入	
+				TSubMoney cmd;
+				cmd.nMoney[m_byMeStation] = m_iCurrentMoney;
+				cmd.bDeskStation = m_byMeStation;
+				SendGameData(&cmd, sizeof(cmd), MDM_GM_GAME_NOTIFY, ASS_SUB_MENOY, 0);
+			}
+			break;			
+		}
+	case IDT_PODO_MONEY_TIMER: // 机器人还有金额，不需从新带入	
+		{
+			if (m_bCancel)
+			{
+				OnCancel();
+			}
+			else
+			{
+				// 自动准备(代入)
+				TSubMoney cmd;
+				cmd.nMoney[m_byMeStation] = m_iMoneys[m_byMeStation];
+				cmd.bDeskStation = m_byMeStation;
+				SendGameData(&cmd, sizeof(cmd), MDM_GM_GAME_NOTIFY, ASS_SUB_MENOY, 0);
+			}			
+			break;
+		}
+	case IDT_BET_TIMER:			// 下注定时器
+		{
+			KillTimer(IDT_BET_TIMER);
+
+			struct timeb timeSeed;
+			ftime(&timeSeed);
+			srand((UINT)(timeSeed.time * NUM_ONE_SECOND_MS + timeSeed.millitm));  // milli time
+			const __int64 iTotalBetMoney = GetTotalBetMoney();
+			double iPercentBetMoney = iTotalBetMoney / 100.0;
+			int iRandomTemp = rand() % 71 + 30;//[30,100)
+			__int64 iBetMoney = iPercentBetMoney * iRandomTemp;//[30%-100%)奖池
+			if (m_tagDeskCfg.dz.iBigBlindNote > 0)
+			{
+				iBetMoney = (iBetMoney / m_tagDeskCfg.dz.iBigBlindNote) * m_tagDeskCfg.dz.iBigBlindNote;;
+			}
+
+			if (iBetMoney < m_iMinBetOrRaiseMoney)
+			{
+				iBetMoney = m_iMinBetOrRaiseMoney;
+			}
+
+			TBet tagBet;
+			tagBet.nType = ET_BET;
+			tagBet.nMoney = iBetMoney;
+			SendGameData(&tagBet, sizeof(tagBet), MDM_GM_GAME_NOTIFY, ASS_BET, 0);	
+			break;
+		}
+	case IDT_CALL_TIMER:			// 跟注定时器
+		{
+			KillTimer(IDT_CALL_TIMER);
+			TBet tagBet;
+			tagBet.nType = ET_CALL;
+			tagBet.nMoney = m_nCallMoney;
+
+			SendGameData(&tagBet, sizeof(tagBet), MDM_GM_GAME_NOTIFY, ASS_BET, 0);	
+			break;
+		}
+	case IDT_RAISE_TIMER:			// 加注定时器
+		{
+			//todo 因为加注的金额太高,次数多造成allin的场面
+			KillTimer(IDT_RAISE_TIMER);
+
+			struct timeb timeSeed;
+			ftime(&timeSeed);
+			srand((UINT)(timeSeed.time * NUM_ONE_SECOND_MS + timeSeed.millitm));  // milli time
+
+			const __int64 iTotalBetMoney = GetTotalBetMoney();
+			__int64 iBetMoney = 0;
+			if (m_iMinBetOrRaiseMoney * 10 < iTotalBetMoney)
+			{
+				double iPercentBetMoney = iTotalBetMoney / 100.0;
+				int iRandomTemp = rand() % 71 + 30;
+				iBetMoney = iPercentBetMoney * iRandomTemp;
+				if (m_tagDeskCfg.dz.iBigBlindNote > 0)
+				{
+					iBetMoney = (iBetMoney / m_tagDeskCfg.dz.iBigBlindNote) * m_tagDeskCfg.dz.iBigBlindNote;;
+				}
+			} else 
+			{
+				iBetMoney = m_iMinBetOrRaiseMoney * (rand() % 9 + 2);
+			}
+			
+
+			if (iBetMoney < m_iMinBetOrRaiseMoney)
+			{
+				iBetMoney = m_iMinBetOrRaiseMoney;
+			}
+
+			TBet tagBet;
+			tagBet.nType = ET_ADDNOTE;
+			//tagBet.nMoney = m_nCallMoney + 500;
+			//tagBet.nMoney = m_nCallMoney + GetRandBetValue();
+			tagBet.nMoney = m_nCallMoney + iBetMoney;
+			SendGameData(&tagBet, sizeof(tagBet), MDM_GM_GAME_NOTIFY, ASS_BET, 0);
+			break;
+		}
+	case IDT_CHECK_TIMER:			// 过牌定时器
+		{
+			KillTimer(IDT_CHECK_TIMER);
+			TBet tagBet;
+			tagBet.nType = ET_CHECK;
+			SendGameData(&tagBet, sizeof(tagBet), MDM_GM_GAME_NOTIFY, ASS_BET, 0);
+			break;
+		}
+	case IDT_FOLO_TIMER:			// 弃牌定时器
+		{
+			KillTimer(IDT_FOLO_TIMER);
+			TBet tagBet;
+			tagBet.nType = ET_FOLD;
+			SendGameData(&tagBet, sizeof(tagBet), MDM_GM_GAME_NOTIFY, ASS_BET, 0);
+			break;
+		}
+	case IDT_ALLIN_TIMER:			// 全下定时器
+		{
+			KillTimer(IDT_ALLIN_TIMER);
+			TBet tagBet;
+			tagBet.nType = ET_ALLIN;
+			tagBet.nMoney = m_iMoneys[m_byMeStation];
+			SendGameData(&tagBet, sizeof(tagBet), MDM_GM_GAME_NOTIFY, ASS_BET, 0);	
+			break;
+		}
+	case IDT_RECOME_TTOKEN:
+		{
+			KillTimer(IDT_RECOME_TTOKEN);
+			OnHandleTToken(&m_tRecomeTToken);	
+			break;
+		}
+	default:{break;}
+	}
+	return true;
+}
+__int64 CClientGameDlg::GetRandBetValue()
+{
+	__int64 i64BetValue=0;
+	int iRandom=rand()%100;
+	if(iRandom<30)
+	{
+		i64BetValue=m_tagDeskCfg.dz.iLowers[0];
+	}
+	else if(iRandom>=30 && iRandom<60)
+	{
+		i64BetValue=m_tagDeskCfg.dz.iLowers[1];
+	}
+	else if(iRandom>=60 && iRandom<80)
+	{
+		i64BetValue=m_tagDeskCfg.dz.iLowers[2];
+	}
+	else if(iRandom>=80 && iRandom<90)
+	{
+		i64BetValue=m_tagDeskCfg.dz.iLowers[3];
+	}
+	else
+	{
+		i64BetValue=m_tagDeskCfg.dz.iLowers[4];
+	}
+	return i64BetValue;
+}
+//按动扑克
+LRESULT CClientGameDlg::OnHitCard(WPARAM wparam, LPARAM lparam)
+{
+	
+	return 0L;
+}
+
+//按动扑克
+LRESULT CClientGameDlg::OnMouseMove(WPARAM wparam, LPARAM lparam)
+{
+	
+	return TRUE;;
+}
+//按动扑克
+LRESULT CClientGameDlg::OnMouseLeft(WPARAM wparam, LPARAM lparam)
+{
+	return TRUE;	
+}
+
+//用户处理结果
+LRESULT CClientGameDlg::OnHitActiveResult(WPARAM wparam, LPARAM lparam)
+{
+	return 0L;
+}
+
+//托管
+LRESULT CClientGameDlg::OnHitAuto(WPARAM wparam,LPARAM lparam)
+{
+	return 0;
+}
+//按动有事按钮函数
+LRESULT	CClientGameDlg::OnHitHaveThing(WPARAM wparam, LPARAM lparam)
+{
+	return 0;
+}
+
+//提前结束
+LRESULT	CClientGameDlg::OnStop(WPARAM wparam, LPARAM lparam)
+{
+	
+	return 0;
+}
+
+//发送提前结束
+LRESULT	CClientGameDlg::OnStopThing(WPARAM wparam, LPARAM lparam)
+{
+	
+	return 0;
+}
+
+//同意提前结束
+LRESULT	CClientGameDlg::OnAgreeStop(WPARAM wparam, LPARAM lparam)
+{
+	return 0;
+}
+
+
+//发送离开请求函数
+LRESULT	CClientGameDlg::OnSendHaveThing(WPARAM wparam, LPARAM lparam)
+{
+	/*	if(!m_bWatchMode && GetStationParameter()!=GS_WAIT_SETGAME)
+	{
+	m_PlayView.m_btThing.EnableWindow(FALSE);
+	HaveThingStruct HaveThing;
+	HaveThing.pos=0;
+	::strcpy(HaveThing.szMessage,(char *)wparam);
+	SendGameData(&HaveThing,sizeof(HaveThing),MDM_GM_GAME_NOTIFY,ASS_HAVE_THING,0);
+	}*/
+	return 0;
+}
+
+//用户请求离开
+LRESULT	CClientGameDlg::OnArgeeUserLeft(WPARAM wparam, LPARAM lparam)
+{
+	/*	LeaveResultStruct Leave;
+	Leave.bDeskStation=GetMeUserInfo()->bDeskStation;
+	Leave.bArgeeLeave=(BYTE)wparam;
+	SendGameData(&Leave,sizeof(Leave),MDM_GM_GAME_NOTIFY,ASS_LEFT_RESULT,0);
+	*/	return 0;
+}
+
+
+
+//重置游戏
+void CClientGameDlg::ResetGameStation(int iGameStation)
+{
+	//数据重置
+	m_iNowOutPeople=-1;
+	m_iFirstOutPeople=-1;
+	::memset(m_iUpBullCard,1,sizeof(m_iUpBullCard));
+	m_tUserCardActionProb.Clear();
+	memset(m_byResultCardsActionProb,0,sizeof(m_byResultCardsActionProb));
+	m_bGotUserCardActionProb = false;
+	::memset(m_iTotalGameNote,0,sizeof(m_iTotalGameNote));
+	::memset(m_iThisGameNote,0,sizeof(m_iThisGameNote));
+	//桌上牌情况
+	::memset(m_iDeskCardCount,0,sizeof(m_iDeskCardCount));
+
+	m_tSetActionProb.Clear();
+	m_bSetActionProbRecv = false;
+	m_bSelectActionProb = false;
+	m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Max;
+
+	return;
+}
+
+void CClientGameDlg::OnGameSetting()
+{
+	//AfxSetResourceHandle(GetModuleHandle(CLIENT_DLL_NAME));
+
+	//CGameSet GameSetDlg(this);
+	//GameSetDlg.m_bSound=m_pGameInfo->bEnableSound;
+	//GameSetDlg.m_bShowUser=m_pGameInfo->bShowUserInfo;	
+	//GameSetDlg.m_bEnableWatch=m_pGameInfo->bEnableWatch;
+	//GameSetDlg.m_bRightPower=GetProfileInt(TEXT("RightPower"),FALSE);
+
+	//if (GameSetDlg.DoModal()==IDOK)
+	//{
+	//	//定义参数
+	//	bool bSendWatch=((m_bWatchMode==false)&&(m_pGameInfo->bEnableWatch!=GameSetDlg.m_bEnableWatch));
+
+	//	//保存数据
+	//	/*m_pGameInfo->bShowUserInfo=GameSetDlg.m_bShowUser;
+	//	m_pGameInfo->bEnableWatch=GameSetDlg.m_bEnableWatch;
+	//	m_pGameInfo->bEnableSound=GameSetDlg.m_bSound;
+	//	WriteProfileInt(TEXT("RightPower"),GameSetDlg.m_bRightPower?1:0);*/
+	//	//m_PlayView.m_bRightPower=GameSetDlg.m_bRightPower;
+
+	//	//发送数据
+	//	if (bSendWatch==true)
+	//	{
+	//		MSG_GM_WatchSet WatchSet;			
+	//		memset(&WatchSet,0,sizeof(WatchSet));
+	//		WatchSet.dwUserID=0;
+	//		SendGameData(&WatchSet,sizeof(WatchSet),MDM_GM_GAME_FRAME,ASS_GM_WATCH_SET,GameSetDlg.m_bEnableWatch?TRUE:FALSE);
+	//	}
+	//}
+	AfxSetResourceHandle(GetModuleHandle(NULL));
+	return;
+}
+
+void CClientGameDlg::OnWatchSetChange(void)
+{
+	/*if (m_bWatchMode==true)
+	{
+		if (m_bWatchOther)	m_MessageHandle.InsertNormalMessage(TEXT("玩家允许你旁观他游戏"));
+		else m_MessageHandle.InsertNormalMessage(TEXT("玩家不允许你旁观他游戏"));
+	}*/
+}
+
+//用户离开
+bool CClientGameDlg::GameUserLeft(BYTE bDeskStation, UserItemStruct * pUserItem, bool bWatchUser)
+{
+	/*	if ((bWatchUser==false)&&(pUserItem!=NULL)&&(bDeskStation==0))
+	{
+	if (GetStationParameter()==GS_WAIT_ARGEE)
+	{
+	for (int i=0;i<4;i++)
+	{
+	if (m_pUserInfo[i]!=NULL) 
+	{
+	m_pUserInfo[i]->GameUserInfo.bUserState=USER_SITTING;
+	m_UserListDlg.UpdateGameUser(m_pUserInfo[i]);
+	}
+	}
+	if (m_PlayView.m_GameInfo.GetSafeHwnd()) m_PlayView.m_GameInfo.DestroyWindow();
+	m_PlayView.m_GameNoteView.SetMessage(TEXT("正在等待东家设置牌局"));
+	m_PlayView.UpdateViewFace(NULL);
+	}
+	}*/
+	//	if ((bWatchUser==false)&&(pUserItem!=NULL)&&(bDeskStation==0))		//如果是东家离开
+	//	{
+	if (GetStationParameter()>GS_WAIT_ARGEE)
+	{
+		for (int i=0;i<PLAY_COUNT;i++)
+		{
+			if (m_pUserInfo[i]!=NULL) 
+			{
+				m_pUserInfo[i]->GameUserInfo.bUserState=USER_SITTING;
+//				m_UserListDlg.UpdateGameUser(m_pUserInfo[i]);
+			}
+		}
+	//	m_PlayView.UpdateViewFace(NULL);
+	}
+//	m_PlayView.SetNTStation();
+	//	}
+	//当前玩家离开看此玩家牌的玩家也随之离开房间
+	if(GetMeUserInfo()->bDeskStation==bDeskStation&&pUserItem!=NULL&&!bWatchUser==TRUE)
+	{
+		//	MessageBox("你观看的玩家,已经退出.","系统提示",MB_ICONQUESTION);
+		OnCancel();
+		//PostMessage(WM_CLOSE,0,0);
+	}
+	return true;
+//	return __super::GameUserLeft(bDeskStation,pUserItem,bWatchUser);
+}
+
+void CClientGameDlg::OnTimer(UINT nIDEvent)
+{
+	switch(nIDEvent)
+	{
+	case IDT_IN_MONEY_TIMER:
+		{
+			KillTimer(IDT_IN_MONEY_TIMER);
+			// 确认代入	
+			TSubMoney cmd;
+			cmd.nMoney[m_byMeStation] = m_iCurrentMoney;
+			cmd.bDeskStation = m_byMeStation;
+			SendGameData(&cmd, sizeof(cmd), MDM_GM_GAME_NOTIFY, ASS_SUB_MENOY, 0);
+			break;
+		}
+	}
+	CLoveSendClass::OnTimer(nIDEvent);
+}
+
+
+void CClientGameDlg::OnCancel()
+{
+	/*TCHAR sz[200];
+	if(GetComType() == TY_MONEY_GAME)
+		wsprintf(sz,"现在退出将会扣 %d 分(金币场还会扣 %d 金币).你真得要退出吗?",m_iRunPublish,m_iRunPublish * m_iRoomBasePoint);
+	else
+		wsprintf(sz,"现在退出将会扣 %d 分.你真得要退出吗?",m_iRunPublish);*/
+	//查询状态
+	if (/*!m_bWatchMode &&*/ GetStationParameter()>=GS_CONFIG_NOTE&&GetStationParameter() < GS_WAIT_NEXT_ROUND)
+	{
+//		if (IDYES!=AFCMessage(sz,m_pGameInfo->szGameName,MB_YESNO|MB_DEFBUTTON2|MB_ICONINFORMATION,this)) 
+			return;
+		SendGameData(MDM_GM_GAME_FRAME,ASS_GM_FORCE_QUIT,0);
+	}
+
+	srand((unsigned) time (NULL) + m_byMeStation); 
+	int iRandTime = rand() % 5; 
+
+	SetGameTimer(m_byMeStation, iRandTime, IDT_CANCEL_TIME);
+}
+
+//修改用户押注情况
+BOOL CClientGameDlg::ModifyNote(BYTE iViewStation,int iCurNote,BOOL bExtVal)
+{
+	//追加本轮某方押注情况
+//	m_PlayView.AddNotePoint(iViewStation,iCurNote);
+	//总注累加
+//	m_PlayView.AddTotalNote(0,iCurNote);
+	return true;
+}
+
+////用户押注声音
+//BOOL CClientGameDlg::SetNoteSound(BYTE bNoteStyle,BOOL bIsBoy)
+//{
+//	TCHAR str[MAX_PATH+1]="";
+//	TCHAR filename[MAX_PATH];//path[MAX_PATH];
+//	CString s=CINIFile::GetAppPath ();/////本地路径
+//	CINIFile f( s + "cardsound.ini");
+//	CString key = TEXT("wznnnote");
+//	//	TCHAR path[MAX_PATH];
+//	CString folder,extendname,name;
+//	folder=f.GetKeyVal(key,"folder","music\\cardwav\\wznn\\");
+//	extendname=f.GetKeyVal(key,"extendname",".wav");
+//	TCHAR Val[50];
+//	srand(GetCurrentTime());
+//	int count =f.GetKeyVal(key,"count",1);-
+//	switch(bNoteStyle)
+//	{
+//		/*case TYPE_OPENCARD:
+//		{	
+//		wsprintf(Val,"%c(open%d)",bIsBoy?'b':'g',rand()%count);
+//		name = f.GetKeyVal(key,Val,Val);
+//		break;
+//		}
+//		case TYPE_FOLLOW:
+//		{
+//		wsprintf(Val,"%c(follow%d)",bIsBoy?'b':'g',rand()%count);
+//		name = f.GetKeyVal(key,Val,Val);
+//		break;
+//		}
+//		case TYPE_BULL:
+//		{
+//		wsprintf(Val,"%c(add%d)",bIsBoy?'b':'g',rand()%count);
+//		name = f.GetKeyVal(key,Val,Val);
+//		break;
+//		}*/
+//	case TYPE_NOTE:
+//		{
+//			wsprintf(Val,"%c(note%d)",bIsBoy?'b':'g',rand()%count);
+//			name = f.GetKeyVal(key,Val,Val);
+//			break;
+//		}
+//	case TYPE_GIVE_UP:
+//		{
+//			wsprintf(Val,"%c(pass%d)",bIsBoy?'b':'g',rand()%count);
+//			name = f.GetKeyVal(key,Val,Val);
+//			break;
+//		}	
+//	default:
+//		{
+//			wsprintf(str,"%c(def)",bIsBoy?'b':'g');
+//			name = f.GetKeyVal(key,Val,Val);
+//			break;
+//		}
+//
+//	}
+//	wsprintf(filename,"%s%s%s",folder,name,extendname);
+//	PlayOutCardType(filename,m_hMciWnd1);
+//	return true;
+//}
+//
+//BOOL CClientGameDlg::SetPlaySound(BYTE bSoundStyle,BOOL bExtVal)
+//{
+//	CString s=CINIFile::GetAppPath ();/////本地路径
+//	CINIFile f( s + "cardsound.ini");
+//	CString key = TEXT("system");
+//	CString folder,filename;
+//	folder=f.GetKeyVal(key,"folder","music\\cardwav\\");
+//	TCHAR fi[MAX_PATH+1];
+//	switch(bSoundStyle)
+//	{
+//	case SOUND_WARNING:
+//		{
+//			filename = f.GetKeyVal(key,"warning","warning");
+//			break;
+//		}
+//	case SOUND_INVALIDATE:
+//		{
+//			filename = f.GetKeyVal(key,"invalidate","invalidate");
+//			break;
+//		}
+//	case SOUND_SEND_CARD:
+//		{
+//			filename = f.GetKeyVal(key,"sendcard","sendcard");
+//			break;
+//		}
+//	}
+//	wsprintf(fi,"%s%s%s",folder,filename,".wav");
+//	::PlaySound(fi,NULL,SND_FILENAME|SND_ASYNC|SND_NOSTOP|SND_NOWAIT|SND_NODEFAULT);
+//	return true;
+//}
+//
+////设置出牌牌型声音
+//BOOL CClientGameDlg::SetOutCardTypeSound(BYTE iCardList[],int iCardCount,BOOL IsBoy)
+//{
+//	int cardshape = m_Logic.GetCardShape(iCardList,iCardCount);
+//	//	int cardstart,cardend;
+//	//	TCHAR filename[MAX_PATH],
+//	TCHAR str[100]="";
+//	TCHAR filename[MAX_PATH];//path[MAX_PATH];
+//	CString s=CINIFile::GetAppPath ();/////本地路径
+//	CINIFile f( s + "cardsound.ini");
+//	CString key = TEXT("type0");
+//	//	TCHAR path[MAX_PATH];
+//	CString folder,extendname,name;
+//	folder=f.GetKeyVal(key,"folder","music\\cardwav\\type0\\");
+//	extendname=f.GetKeyVal(key,"extendname",".mp3");
+//
+//
+//	if(IsBoy)
+//	{
+//		wsprintf(str,"b(def)");
+//	}
+//	else
+//		wsprintf(str,"g(def)");
+//
+//	name=f.GetKeyVal(key,str,str);
+//	wsprintf(filename,"%s%s%s",folder,name,extendname);
+//
+//	PlayOutCardType(filename,m_hMciWnd1);
+//
+//	//::PlaySound(filename,NULL,SND_FILENAME|SND_ASYNC|SND_NOWAIT|SND_NODEFAULT);
+//
+//	return TRUE;
+//}
+////播放场景声音
+//BOOL CClientGameDlg::SetSenceSound(BYTE iSendSound,BOOL IsBoy,int iVal)
+//{
+//	TCHAR str[100]="";
+//	TCHAR filename[MAX_PATH];//path[MAX_PATH];
+//	CString s=CINIFile::GetAppPath ();/////本地路径
+//	CINIFile f( s + "cardsound.ini");
+//	CString key = TEXT("cardsence");
+//	//	TCHAR path[MAX_PATH];
+//	CString folder,extendname,name;
+//	folder=f.GetKeyVal(key,"folder","music\\cardwav\\sence\\");
+//	extendname=f.GetKeyVal(key,"extendname",".mp3");
+//
+//	//	TCHAR filename[MAX_PATH],str[100]="";
+//	srand(GetCurrentTime());
+//	int count;
+//	switch(iSendSound)
+//	{
+//	case SOUND_WIN://胜利
+//		if(IsBoy)
+//		{	
+//			count = f.GetKeyVal(key,"bwincount",10);
+//			wsprintf(str,"b(win%d)",rand()%count);
+//		}
+//		else
+//		{
+//			count = f.GetKeyVal(key,"gwincount",10);
+//			wsprintf(str,"g(win%d)",rand()%count);
+//		}
+//		break;
+//	case SOUND_LOSE://失败
+//		if(IsBoy)
+//		{
+//			count = f.GetKeyVal(key,"blosecount",10);
+//			wsprintf(str,"b(lose%d)",rand()%count);
+//		}
+//		else
+//		{
+//			count = f.GetKeyVal(key,"glosecount",10);
+//			wsprintf(str,"g(lose%d)",rand()%count);
+//		}
+//		break;
+//	case SOUND_WAITING://等待
+//		if(IsBoy)
+//		{
+//			count = f.GetKeyVal(key,"bwaitcount",10);
+//			wsprintf(str,"b(wait%d)",rand()%count);
+//		}
+//		else
+//		{
+//			count = f.GetKeyVal(key,"gwaitcount",10);
+//			wsprintf(str,"g(wait%d)",rand()%count);
+//		}
+//		break;
+//	case SOUND_ERROR://出牌出错了
+//		if(IsBoy)
+//		{
+//			count = f.GetKeyVal(key,"berrorcount",10);
+//			wsprintf(str,"b(error%d)",rand()%count);
+//		}
+//		else
+//		{
+//			count = f.GetKeyVal(key,"gerrorcount",10);
+//			wsprintf(str,"g(error%d)",rand()%count);
+//		}
+//		break;
+//	case SOUND_READY://准备
+//		if(IsBoy)
+//		{
+//			count = f.GetKeyVal(key,"breadycount",10);
+//			wsprintf(str,"b(ready%d)",rand()%count);
+//		}
+//		else
+//		{
+//			count = f.GetKeyVal(key,"greadycount",10);
+//			wsprintf(str,"g(ready%d)",rand()%count);
+//		}
+//		break;
+//	case SOUND_START://开始游戏(随机)
+//		if(IsBoy)
+//		{
+//			count = f.GetKeyVal(key,"bstartcount",10);
+//			wsprintf(str,"b(start%d)",rand()%count);
+//		}
+//		else
+//		{
+//			count = f.GetKeyVal(key,"gstartcount",10);
+//			wsprintf(str,"g(start%d)",rand()%count);
+//		}
+//		break;
+//	case SOUND_JIAO_FEN://叫分
+//		{
+//			if(IsBoy)
+//				wsprintf(str,"b(jiaofen%d)",iVal);
+//			else
+//				wsprintf(str,"g(jiaofen%d)",iVal);
+//		}
+//	case SOUND_OUT_CARD_FINISH://出完牌
+//		{
+//			if(IsBoy)
+//			{
+//				count = f.GetKeyVal(key,"boutcardfinishcount",10);
+//				wsprintf(str,"b(outcardfinish%d)",rand()%count);
+//			}
+//			else
+//			{
+//				count = f.GetKeyVal(key,"goutcardfinishcount",10);
+//				wsprintf(str,"g(outcardfinish%d)",rand()%count);
+//			}
+//			break;
+//		}
+//	case SOUND_FRIEND_APPEAR://盟友出現
+//		{
+//			if(IsBoy)
+//			{
+//				count = f.GetKeyVal(key,"bfriendcount",10);
+//				wsprintf(str,"b(friend%d)",rand()%count);
+//			}
+//			else
+//			{
+//				count = f.GetKeyVal(key,"gfriendcount",10);
+//				wsprintf(str,"g(friend%d)",rand()%count);
+//			}
+//			break;
+//		}
+//	case SOUND_USER_RUNAWARY:	//逃跑
+//		{
+//			if(IsBoy)
+//			{
+//				count = f.GetKeyVal(key,"brunawarycount",10);
+//				wsprintf(str,"b(runawary%d)",rand()%count);
+//			}
+//			else
+//			{
+//				count = f.GetKeyVal(key,"grunawarycount",10);
+//				wsprintf(str,"g(runawary%d)",rand()%count);
+//			}
+//			break;
+//		}
+//	case SOUND_USER_LEFT:	//有人离开
+//		{
+//			if(IsBoy)
+//			{
+//				count = f.GetKeyVal(key,"bleftcount",10);
+//				wsprintf(str,"b(left%d)",rand()%count);
+//			}
+//			else
+//			{
+//				count = f.GetKeyVal(key,"gleftcount",10);
+//				wsprintf(str,"g(left%d)",rand()%count);
+//			}
+//			break;
+//		}
+//	case SOUND_GIVE_BACK://埋底
+//		{
+//			if(IsBoy)
+//			{
+//				count = f.GetKeyVal(key,"bgivebackcount",10);
+//				wsprintf(str,"b(giveback%d)",rand()%count);
+//			}
+//			else
+//			{
+//				count = f.GetKeyVal(key,"ggivebackcount",10);
+//				wsprintf(str,"g(giveback%d)",rand()%count);
+//			}
+//			break;
+//		}
+//	default:
+//		if(IsBoy)
+//			wsprintf(str,"b(sence_0)");
+//		else
+//			wsprintf(str,"g(sence_0)");
+//		break;
+//	}
+//	name=f.GetKeyVal(key,str,str);
+//	wsprintf(filename,"%s%s%s",folder,name,extendname);
+//	PlayOutCardType(filename,m_hMciWnd2);
+//	return TRUE;
+//}
+////播放Mp3音乐
+//BOOL CClientGameDlg::PlayOutCardType(TCHAR FileName[],HWND hmciwnd)
+//{
+//	if(hmciwnd)
+//	{
+//		MCIWndStop(hmciwnd);
+//		MCIWndDestroy(hmciwnd);
+//		hmciwnd=NULL;
+//	}
+//
+//	//hmciwnd = MCIWndCreate(this->m_hWnd,AfxGetInstanceHandle(),WS_CHILD,FileName);
+//
+//	hmciwnd=MCIWndCreate(this->m_hWnd,AfxGetInstanceHandle(),WS_CHILD|MCIWNDF_NOMENU|MCIWNDF_NOOPEN|MCIWNDF_NOPLAYBAR|MCIWNDF_NOERRORDLG,FileName);
+//	if(hmciwnd)
+//		MCIWndPlay(hmciwnd);	
+//	return true;
+//}
+////函数定义
+BOOL CClientGameDlg::CheckVersion(BYTE iVersion,BYTE iVersion2)
+{	
+	TCHAR GameName[200];
+	CString strBuffer;
+	wsprintf(GameName,"你的 %s 游戏版本过旧,你要现在重新下载新版本吗?",m_pGameInfo->szGameName);
+	if(iVersion!=m_iVersion || iVersion2!=m_iVersion2)
+	{
+		TCHAR sz[200];
+		wsprintf(sz,"版本冲突:当前版本%d-%d,服务端版本%d-%d",m_iVersion,m_iVersion2,iVersion,iVersion2);
+	}
+	if(iVersion!=m_iVersion)
+	{
+
+//		if (IDYES==AFCMessage(GameName,m_pGameInfo->szGameName,MB_YESNO|MB_DEFBUTTON1|MB_ICONINFORMATION,this)) 
+		{
+//			strBuffer.Format(TEXT(Glb().m_CenterServerPara.m_strDownLoadSetupADDR),1,1);
+			ShellExecute(NULL,TEXT("open"),strBuffer,NULL,NULL,SW_MAXIMIZE);
+		}
+		PostMessage(WM_CLOSE,0,0);
+		return TRUE;
+	}
+
+	if(iVersion2!=m_iVersion2)
+	{
+///		if (IDYES==AFCMessage(GameName,m_pGameInfo->szGameName,MB_YESNO|MB_DEFBUTTON1|MB_ICONINFORMATION,this)) 
+		{
+//			strBuffer.Format(TEXT(Glb().m_CenterServerPara.m_strDownLoadSetupADDR),1,1);
+			ShellExecute(NULL,TEXT("open"),strBuffer,NULL,NULL,SW_MAXIMIZE);
+		}
+		PostMessage(WM_CLOSE,0,0);
+		return TRUE;
+	}
+
+	return TRUE;
+}
+//用户下注
+LRESULT CClientGameDlg::OnShowNote(WPARAM wparam,LPARAM lparam)
+{
+//	m_PlayView.m_NtList.ShowWindow(TRUE);
+//	m_PlayView.m_NtList.SetNumList(m_iThisTurnLimit, m_iBaseNote);				//更新下注数目
+	return TRUE;
+}
+//用户选择下注数
+LRESULT CClientGameDlg::OnSelectNote(__int64 wparam,int lparam)
+{
+	return TRUE;
+}
+
+
+//发牌动画显示完毕后,显示各家牌
+LRESULT CClientGameDlg::SendCardShowCard(WPARAM wparam,LPARAM lparam)
+{
+	//BYTE iViewStation=(BYTE)wparam;
+	//m_PlayView.m_UserCard[iViewStation].SetCard(m_DeskCard[iViewStation],NULL,m_iDeskCardCount[iViewStation]);
+	////	m_PlayView.m_UserCard[m_PlayView.m_flag].SetCard(m_DeskCard[m_PlayView.m_flag],NULL,m_iDeskCardCount[m_PlayView.m_flag]);
+
+	////系统管理员显示各家底牌
+	//if(m_pGameInfo->pMeUserInfo->GameUserInfo.bGameMaster==MAST_PEOPLE)
+	//	m_PlayView.m_UserCard[iViewStation].SetCard(m_UserCard[iViewStation],NULL,m_iDeskCardCount[iViewStation]);
+	return 0;
+}
+
+//用戶換底牌
+LRESULT CClientGameDlg::ChangeBackCard()
+{
+	return 0;
+}
+
+//桌号换算到视图位置
+//BYTE CClientGameDlg::ViewStation(BYTE bDeskStation)
+//{
+//	BYTE bViewStation=m_pGameInfo->pMeUserInfo->GameUserInfo.bDeskStation;
+//	int temp=((PLAY_COUNT/2)-bViewStation+bDeskStation);
+//	if(temp>=0)
+//		return temp%PLAY_COUNT;
+//	else
+//		return PLAY_COUNT-1;
+//switch(bViewStation)
+//	{
+//	case 0: { 
+//		if(bDeskStation==0)	
+//			return 3;
+//		if(bDeskStation==1)
+//			return 4;
+//		if(bDeskStation==2)
+//			return 5;
+//		if(bDeskStation==3)
+//			return 0;
+//		if(bDeskStation==4)
+//			return 1;
+//		if(bDeskStation==5)
+//			return 2;
+//		break;
+//			}
+//	case 1: {
+//		if(bDeskStation==0)	
+//			return 2;
+//		if(bDeskStation==1)
+//			return 3;
+//		if(bDeskStation==2)
+//			return 4;
+//		if(bDeskStation==3)
+//			return 5;
+//		if(bDeskStation==4)
+//			return 0;
+//        if(bDeskStation==5)
+//			return 1;
+//		break;
+//			}
+//	case 2: { 
+//		if(bDeskStation==0)	
+//			return 1;
+//		if(bDeskStation==1)
+//			return 2;
+//		if(bDeskStation==2)
+//			return 3;
+//		if(bDeskStation==3)
+//			return 4;
+//		if(bDeskStation==4)
+//			return 5;
+//		if(bDeskStation==5)
+//			return 0;
+//		break;
+//			}
+//	case 3: { 
+//		if(bDeskStation==0)	
+//			return 0;
+//		if(bDeskStation==1)
+//			return 1;
+//		if(bDeskStation==2)
+//			return 2;
+//		if(bDeskStation==3)
+//			return 3;
+//		if(bDeskStation==4)
+//			return 4;
+//		if(bDeskStation==5)
+//			return 5;
+//		break;
+//			}	
+//	case 4: { 
+//		if(bDeskStation==0)	
+//			return 5;
+//		if(bDeskStation==1)
+//			return 0;
+//		if(bDeskStation==2)
+//			return 1;
+//		if(bDeskStation==3)
+//			return 2;
+//		if(bDeskStation==4)
+//			return 3;
+//		if(bDeskStation==5)
+//			return 4;
+//		break;
+//			}
+//	case 5:
+//		{
+//		if(bDeskStation==0)	
+//			return 4;
+//		if(bDeskStation==1)
+//			return 5;
+//		if(bDeskStation==2)
+//			return 0;
+//		if(bDeskStation==3)
+//			return 1;
+//		if(bDeskStation==4)
+//			return 2;
+//		if(bDeskStation==5)
+//			return 3;
+//		break;
+//		}
+//	default:
+//		break;
+//    }
+//	return 0;
+//}
+//換底牌結果
+BOOL CClientGameDlg::ChangeBackCardResult(BYTE bDeskStation,BYTE bSourceBackCard,BYTE bResultCard,BOOL bExtVal)
+{
+	if(!bExtVal)
+		return true;
+	m_UserCard[bDeskStation][0]=bResultCard;
+	/*m_PlayView.m_UserCard[bDeskStation].SetCard(m_UserCard[bDeskStation],NULL,m_iDeskCardCount[bDeskStation]);
+	ReplaceCard(m_SysCard,0,m_iSysCardCount,bSourceBackCard,bResultCard);
+
+	m_PlayView.m_SysBackCard.SetCard(m_SysCard,NULL,m_iSysCardCount);*/
+	return true;
+}
+//系統底牌中是否有某張牌
+BOOL CClientGameDlg::ReplaceCard(BYTE iTotalCard[],int iSendCardPos,int iEndPos,BYTE bSourceCard,BYTE bResultCard)
+{
+	//換底牌
+	for(int i=iSendCardPos;i<iEndPos;i++)
+	{
+		if(iTotalCard[i]==bResultCard)
+		{
+			iTotalCard[i]=bSourceCard;
+			return true;
+		}
+	}
+	return false;
+}
+
+//代替断线玩家下注
+BOOL CClientGameDlg::UserSupersedeNote(BYTE bDeskStation)
 {
 	KillAllTimer();
-	//设置数据
-	OBJ_GET_EXT(m_pExt, CGameStation, gs);
-	gs->SetOutCardPeople( INVALID_INDEX );
-	//发送数据
-	OutCardStruct OutCard;
-	memset(OutCard.iCardList, 0, sizeof(OutCard.iCardList));
-	OutCard.iCardCount=0;
-	SendGameData(&OutCard,sizeof(OutCard),MDM_GM_GAME_NOTIFY,ASS_OUT_CARD,0);
+	return TRUE;
 }
-
-//牌的列表赋值到T_C2S_PLAY_CARD_REQ上
-void CClientGameDlg::transformPlayCard(const Card *pCard, int nCardCount, T_C2S_PLAY_CARD_REQ& tLastCard)
+int CClientGameDlg::GetFrontPlay(int NowPaly)
 {
-	
-	OBJ_GET_EXT(m_pExt, CUpGradeGameLogic, logic);
-	//获取上一手牌的类型
-	BYTE nShape = logic->GetCardShape( pCard, nCardCount );
-	//赋值到tLastCard上//转换函数
-	ShapeAdapter(nShape, tLastCard.eArrayType);
-	
-	for(int i = 0; i < nCardCount; ++i)
+	int frontplay;//上一位下注者
+	for(int i=1;i<PLAY_COUNT;i++)
 	{
-		tLastCard.uCards[i] = pCard[i];
-		tLastCard.uActualCards[i] = pCard[i];
+		frontplay=(GetMeUserInfo()->bDeskStation-i<0)?PLAY_COUNT+(GetMeUserInfo()->bDeskStation-i)
+			:GetMeUserInfo()->bDeskStation-i;
+
+		if(!m_pUserInfo[frontplay])		
+			continue;
+
+		if(m_UserCard[frontplay]!=0)//当前有玩家且未PASS
+
+			return frontplay;
 	}
-	tLastCard.iCardCount = nCardCount;
+	return 0;
+}
+void CClientGameDlg::DelShowThis()
+{
+	/*for (int i = 0; i < PLAY_COUNT; i++)
+	{
+		m_PlayView.m_UserCard[i].SetCardShowNum(0);
+	}*/
+}
+//为视频模块重载此函数
+#ifdef VIDEO
+bool CClientGameDlg::GameUserCome(BYTE bDeskStation, UserItemStruct * pUserItem, bool bWatchUser)
+{
+	if (! __super::GameUserCome(bDeskStation, pUserItem, bWatchUser))
+	{
+		return FALSE;
+	}
+
+	if( GetMeUserInfo()->dwUserID == pUserItem->GameUserInfo.dwUserID && bWatchUser )
+	{
+		m_PlayView.m_bWatch=bWatchUser;
+	}
+	if( GetMeUserInfo()->dwUserID == pUserItem->GameUserInfo.dwUserID && (!bWatchUser) )
+	{    
+		CPlayVideo *pPlayVideo=CPlayVideo::CreatePlayVideo();
+
+
+		if(NULL!=pPlayVideo)
+		{ 
+
+			CString NickName=TEXT("");
+			int    byteDeskNO=0;
+			UserInfoStruct &UInfo=	pUserItem->GameUserInfo;
+			NickName+=UInfo.nickName;
+			byteDeskNO=UInfo.bDeskNO;
+			UINT	uiRoomID = m_pGameInfo->uRoomID;
+			UINT	uiBRRoomID =   uiRoomID * 1000 + byteDeskNO; 
+
+			ST_INITVIDEO stInitVideo;
+			stInitVideo.iRoomPassType = 0;
+			stInitVideo.nRoomID		  = uiBRRoomID;
+			stInitVideo.pParentWnd    = &m_PlayView;
+			stInitVideo.strRoomPass   = _T("");
+			stInitVideo.strUserName	  = NickName;
+			stInitVideo.strUserPass   = _T("");
+			if( pPlayVideo->Video_Initialize(stInitVideo) )
+			{
+				//			
+				//sprintf(sz,"视频初始化成功!");
+				//Writelog(sz,1);
+				////连接视频服务器
+
+				pPlayVideo->Connect();
+
+			}
+			else
+			{
+				pPlayVideo->Video_Release();
+				/*	sprintf(sz,"视频初始化失败!");
+				Writelog(sz,1);*/
+				return 0;
+			}
+
+
+		} 
+	}
+	return TRUE;
+}
+bool CClientGameDlg::AFCCloseFrame()
+{
+	///释放视频资源 
+	if( NULL != CPlayVideo::GetPlayVideo())
+		CPlayVideo::GetPlayVideo()->Video_Release(); 
+	return __super::AFCCloseFrame();
+}
+#endif
+//隐藏叫庄按钮
+BOOL CClientGameDlg::HideButton()
+{
+	/*m_PlayView.m_btCallScore1.ShowWindow(SW_HIDE);
+	m_PlayView.m_btCallScorePass.ShowWindow(SW_HIDE);*/
+	return true;
+}
+//叫分
+void CClientGameDlg::ShowCallScoreBt(int CallScore,BOOL bExtVol)
+{
+	/*m_PlayView.m_btCallScore1.ShowWindow(SW_SHOW);
+	m_PlayView.m_btCallScorePass.ShowWindow(SW_SHOW);
+	m_PlayView.m_btCallScorePass.EnableWindow(1);
+	m_PlayView.m_btCallScore1.EnableWindow(TRUE);*/
+	return;
+}
+//叫分
+LRESULT	CClientGameDlg::OnCallScore(WPARAM wparam, LPARAM lparam)
+{
+	return 0;
+}
+BOOL CClientGameDlg::GetBull(BYTE iCardList[],int iCardCount,BYTE iBullCard[])
+{
+	return false;
 }
 
-void CClientGameDlg::GetOutCardCount(int* iUserCardCounts)
+// 顺时针顺序得到下家位置
+BYTE CClientGameDlg::GetNextUserStation(BYTE byStation, BOOL bIsAll)
 {
-	for(int i = 0; i < PLAY_COUNT; ++i)
+	int nCount = 0;
+	int iNextStation = (byStation + PLAY_COUNT + 1) % PLAY_COUNT;
+
+	// 绕过无效玩家与已放弃的玩家
+	while (m_pUserInfo[iNextStation] == NULL 
+	|| m_bGiveUp[iNextStation] 
+	|| (!bIsAll && m_bAllBet[iNextStation]))
 	{
-		iUserCardCounts[i] = 0;
-		for(int j = 0; j < (int)vChuCard[i].size(); j++)
+		iNextStation = (iNextStation + PLAY_COUNT + 1) % PLAY_COUNT;
+		nCount++;
+
+		if (nCount > PLAY_COUNT)
 		{
-			iUserCardCounts[i] += vChuCard[i][j].iCardCount;
+			iNextStation = -1;
+			break;
 		}
 	}
+	return iNextStation;
 }
 
-//对应的转换函数
-void CClientGameDlg::ShapeAdapter(BYTE &byShape, EArrayType &eArrayType)
+//逆时针顺序得到上家位置
+BYTE CClientGameDlg::GetLastUserStation(BYTE byStation, BOOL bIsAll)
 {
-	switch(byShape)
+	int nCount = 0;
+	int iLastStation = (byStation + PLAY_COUNT - 1) % PLAY_COUNT;
+
+	// 绕过无效玩家 与 已放弃的玩家 或 中途进入游戏玩家
+	while (m_pUserInfo[iLastStation] == NULL 
+	|| m_bGiveUp[iLastStation] 
+	|| (!bIsAll && m_bAllBet[iLastStation]))
 	{
-	case UG_ONLY_ONE:
-		eArrayType = ARRAY_TYPE_SINGLE;
-		break;
-	case UG_DOUBLE:
-		eArrayType = ARRAY_TYPE_DOUBLE;
-		break;
-	case UG_THREE:
-		eArrayType = ARRAY_TYPE_3W_;
-		break;
-	case UG_THREE_ONE:
-	case UG_THREE_TWO:
-		eArrayType = ARRAY_TYPE_3W1_ONE;
-		break;
-	case UG_THREE_DOUBLE:
-		eArrayType = ARRAY_TYPE_3W1_DOUBLE;
-		break;
-	case UG_THREE_SEQUENCE:
-		eArrayType = ARRAY_TYPE_PLANE_;
-		break;
-	case UG_THREE_ONE_SEQUENCE:
-		eArrayType = ARRAY_TYPE_PLANE_ONE;
-		break;
-	case UG_THREE_TWO_SEQUENCE:
-	case UG_THREE_DOUBLE_SEQUENCE:
-		eArrayType = ARRAY_TYPE_PLANE_DOUBLE;
-		break;
-	case UG_STRAIGHT:
-		eArrayType = ARRAY_TYPE_STRAIGHT_ONE;
-		break;
-	case UG_DOUBLE_SEQUENCE:
-		eArrayType = ARRAY_TYPE_STRAIGHT_DOUBLE;
-		break;
-	case UG_FOUR_ONE:
-	case UG_FOUR_TWO:
-		eArrayType = ARRAY_TYPE_4w2_ONE;
-		break;
-	case UG_FOUR_TWO_DOUBLE:
-	case UG_FOUR_ONE_DOUBLE:
-		eArrayType = ARRAY_TYPE_4w2_DOUBLE;
-		break;
-	/*case UG_ONLY_ONE:
-		eArrayType = ARRAY_TYPE_SBOMB;*/
-	case UG_BOMB:
-		eArrayType = ARRAY_TYPE_HBOMB;
-		break;
-	case UG_KING_BOMB:
-		eArrayType = ARRAY_TYPE_WBOMB;
-		break;
-		/*case UG_ONLY_ONE:
-		eArrayType = ARRAY_TYPE_4L;
-		break;
-		case UG_ONLY_ONE:
-		eArrayType = ARRAY_TYPE_LBOMB_S;
-		break;
-		case UG_ONLY_ONE:
-		eArrayType = ARRAY_TYPE_LBOMB_L;*/
-		break;
-	default:
-		eArrayType = ARRAY_TYPE_ERROR;
-		break;
+		iLastStation = (iLastStation + PLAY_COUNT - 1) % PLAY_COUNT;
+
+		nCount++;
+
+		if (nCount > PLAY_COUNT)
+		{
+			iLastStation = -1;
+			break;
+		}
 	}
+
+	return iLastStation;
 }
 
-//玩家出牌//mark
-void CClientGameDlg::UserOutCard()
+// 获取Bet随机动作
+int CClientGameDlg::GetRandBetByWeight(int iWeight)
 {
-	OutCardStruct outCard;
-	memset( &outCard, 0, sizeof(outCard) );
-
-	OBJ_GET_EXT(m_pExt, CGameStation, gs);
-	OBJ_GET_EXT(m_pExt, CPlayerCardMgr, cardMgr);
-	OBJ_GET_EXT(m_pExt, CUpGradeGameLogic, logic);
-	const int nMyStation = GetMeUserInfo()->bDeskStation;
-	const int nBigOutStation = gs->GetBigOutPeople();
-	const int nNtStation = gs->GetNtPeople();
-	bool bFirstOut = (nMyStation == nBigOutStation);
-
-	
-	
-	//获取手牌
-	int nHandCardCount;
-	const Card * pHandCard = cardMgr->GetHandCard( nMyStation, &nHandCardCount );
-
-	//记录上一手出的牌
-	int nDeskCardCount;
-	const Card * pDeskCard = cardMgr->GetDeskCard( nBigOutStation, &nDeskCardCount );
-
-
-	//是否是庄家第一次出牌（首出）
-	if(nMyStation == nNtStation && bFirstOut && nHandCardCount == ONE_HAND_CARD_COUNT)
+	srand(GetTickCount()); 
+	int iRandNum = rand() % 10 + 1;
+	switch(iWeight)
 	{
-		g_bFirstTimeNtOut = true;
+	case 0:
+	case 1:
+	case 2:
+		{
+			if (iRandNum > 5)
+			{
+				return UD_VF_BET;
+			}
+			else
+			{
+				return UD_VF_FOLD;
+			}
+		}
+	case 3:
+	case 4:
+		{
+			if (iRandNum > 6)
+			{
+				return UD_VF_BET;
+			}
+			else
+			{
+				return UD_VF_FOLD; 
+			}
+		}
+	case 5:
+	case 6:
+		{
+			if (iRandNum > 7)
+			{
+				return UD_VF_BET;
+			}
+			else if (iRandNum > 4)
+			{
+				return UD_VF_CHECK;
+			}
+			else
+			{
+				return UD_VF_FOLD;
+			}
+		}
+	case 7:
+		{
+			if (iRandNum > 8)
+			{
+				return UD_VF_BET;
+			}
+			else
+			{
+				return UD_VF_CHECK;
+			}
+		}
+	case 8:
+		{
+			if (iRandNum > 8)
+			{
+				return UD_VF_BET;
+			}
+			else if (iRandNum > 5)
+			{
+				return UD_VF_CHECK;
+			}
+		}
+	case 9:
+	case  10:
+		{
+			if (iRandNum > 10)
+			{
+				return UD_VF_BET;
+			}
+			else
+			{
+				return UD_VF_CHECK;
+			}
+		}
+
+	default:{return UD_VF_FOLD;}
 	}
-	else
+
+	return UD_VF_FOLD;
+}
+
+// 获取Add随机动作
+int CClientGameDlg::GetRandAddByWeight(int iWeight)
+{
+	int iRandNum = rand() % 10 + 1;
+
+	switch(iWeight)
 	{
-		g_bFirstTimeNtOut = false;
+	case 1:
+	case 2:
+		{
+			if (iRandNum > 4)
+			{
+				return UD_VF_CALL;
+			}
+			else
+			{
+				return UD_VF_FOLD ; 
+			}
+		}
+	case 3:
+	case 4:
+		{
+			if (iRandNum > 5)
+			{
+				return UD_VF_ADD;
+			}
+			else if (iRandNum > 4)
+			{
+				return UD_VF_CALL;
+			}
+			else
+			{
+				return UD_VF_FOLD; 
+			}
+		}
+	case 5:
+	case 6:
+		{
+			if (iRandNum > 5)
+			{
+				return UD_VF_ADD;
+			}
+			else if (iRandNum > 4)
+			{
+				return UD_VF_CALL;
+			}
+			else
+			{
+				return UD_VF_FOLD;
+			}
+		}
+	case 7:
+		{
+			if(m_iFollowNum > 5)
+			{
+				return UD_VF_FOLD;
+			}
+			if (iRandNum > 7)
+			{
+				return UD_VF_ADD;
+			}
+			else
+			{
+				return UD_VF_CALL;
+			}
+		}
+	case 8:
+		{
+			if(m_iFollowNum > 5)
+			{
+				return UD_VF_FOLD;
+			}
+			if (iRandNum > 8)
+			{
+				return UD_VF_ADD;
+			}
+			else if (iRandNum > 4)
+			{
+				return UD_VF_CALL;
+			}
+		}
+	case 9:
+	case 10:
+		{
+			if(m_iFollowNum > 5)
+			{
+				return UD_VF_FOLD;
+			}
+			if (iRandNum > 9)
+			{
+				return UD_VF_ADD;
+			}
+			else
+			{
+				return UD_VF_CALL;
+			}
+		}
+
+	default:{return UD_VF_FOLD;}
 	}
 
-	HN::CardArrayBase HandCard;
-	for(int i = 0; i < nHandCardCount; ++i)
+	return UD_VF_FOLD;
+}
+
+// 获取Allin随机动作
+int CClientGameDlg::GetRandAllinByWeight(int iWeight)
+{
+	srand(GetTickCount()); 
+	int iRandNum = rand() % 10 + 1;
+	switch(iWeight)
 	{
-		BYTE byCard = pHandCard[i];
-		//获取手牌的值(转换)
-		logic->CardAdapter(byCard, true);
-		HandCard.push_back(byCard);
+	case 0:
+	case 1:
+	case 2:
+		{
+			return UD_VF_FOLD;				 
+		}
+	case 3:
+	case 4:
+		{
+			if (iRandNum > 3)
+			{
+				return UD_VF_ALLIN;
+			}
+			else
+			{
+				return UD_VF_FOLD; 
+			}
+		}
+	case 5:
+	case 6:
+		{
+			if (iRandNum > 6)
+			{
+				return UD_VF_ALLIN;
+			}
+			else
+			{
+				return UD_VF_FOLD;
+			}
+		}
+	case 7:
+		{
+			if (iRandNum > 7)
+			{
+				return UD_VF_ALLIN;
+			}
+		}
+	case 8:
+		{
+			if (iRandNum > 8)
+			{
+				return UD_VF_ALLIN;
+			}
+		}
+	case 9:
+	case  10:
+		{
+			if (iRandNum > 10)
+			{
+				return UD_VF_ALLIN;
+			}
+		}
+
+	default:{return UD_VF_FOLD;}
 	}
 
-	T_C2S_PLAY_CARD_REQ tLastCard ;
-	//将pDeskCard赋值到tLastCard上(封装)
-	transformPlayCard(pDeskCard, nDeskCardCount, tLastCard);
-	for(int i = 0; i < tLastCard.iCardCount; ++i)
+	return UD_VF_FOLD;
+}
+
+//玩家根据设定动作概率下注//mark
+bool CClientGameDlg::UserNoteAccordingToActionProb(const BYTE byVerbFlag)
+{
+	//未选择行为概率策略，返回
+	if (!m_bSelectActionProb)
 	{
-		logic->CardAdapter(tLastCard.uCards[i], true);
-		logic->CardAdapter(tLastCard.uActualCards[i], true);
+		return false;
 	}
 
-	std::vector<T_C2S_PLAY_CARD_REQ>  tPlayCardList; 
-	bool isfirstoutcard;
-	//地主第一手
-	if(bFirstOut)
-	{
-
-		_dataMange.getPickUpOutAll(HandCard,tPlayCardList);
-	}
-	else
-	{
-
-		_dataMange.getPickUpFollowAll(HandCard, tLastCard, tPlayCardList);
-	}
-
-
-
-	//if(bFirstOut)_dataMange.getPickUpOutAll(HandCard, tPlayCardList);
-	//else _dataMange.getPickUpFollowAll(HandCard, tLastCard, tPlayCardList);
-
-
-
-	/// 结果赋值//可出牌 牌堆
-	T_S2C_PROMPT_CARD_RES m_sPlayCard;
-	for(int i = 0;i < ONE_HAND_CARD_COUNT && i < tPlayCardList.size();i++ )
-	{
-
-		m_sPlayCard.sCards[i] = tPlayCardList[i];
-		m_sPlayCard.iCardCount = i+1;
-	}
-	
-	//FILE *fp = fopen("m_splayCard.txt", "a");
-	//for (int i = 0; i < m_sPlayCard.iCardCount; ++i)
+	//选择错误的行为概率策略，返回//坑位
+	//if (m_nEnumActionStatus < ENUM_SET_ACTION_STATUS_Big
+	//	|| m_nEnumActionStatus >= ENUM_SET_ACTION_STATUS_Max)
 	//{
-	//	fprintf(fp, "m_sPlayCard[%d]",i);
-	//	for (int j = 0; j < m_sPlayCard.sCards[i].iCardCount; ++j)
-	//	{
-	//		fprintf(fp, "%02X ", m_sPlayCard.sCards[i].uActualCards[j]);
-	//	}
-	//	fprintf(fp, "\n");
+	//	return false;
 	//}
-	//fprintf(fp, "\n");
+	//mark
+	if (m_nEnumActionStatus < ENUM_SET_ACTION_STATUS_Big
+		|| m_nEnumActionStatus > ENUM_SET_ACTION_STATUS_Small)
+	{
+		return false;
+	}
+
+	//FILE *fp = fopen("m_nEnumActionStatus.txt", "a");
+	//fprintf(fp, "%d\n\n", m_nEnumActionStatus);
 	//fclose(fp);
-	if(m_sPlayCard.iCardCount == 0)										/// 过
+
+	//不是机器人说话，返回
+	if (m_byTokenUser != m_byMeStation)
 	{
-		OnControlHitPass();
+		return false;
 	}
-	else
+
+	//随机确定策略
+	//srand(GetTickCount()+GetMeUserInfo()->bDeskStation);
+	struct timeb timeSeed;
+	ftime(&timeSeed);
+	srand((UINT)(timeSeed.time * NUM_ONE_SECOND_MS + timeSeed.millitm));  // milli time
+	BYTE iRandNumTemp = 0;
+	iRandNumTemp = rand() % 100;
+	//4种变量概率都是由gserver传进来
+	BYTE byProbFold = m_tSetActionProb.byProbFold[m_nEnumActionStatus];
+	BYTE byProbFollow = byProbFold + m_tSetActionProb.byProbFollow[m_nEnumActionStatus];
+	BYTE byProbRaise = byProbFollow + m_tSetActionProb.byProbRaise[m_nEnumActionStatus];
+	BYTE byProbAllIn = byProbRaise + m_tSetActionProb.byProbAllIn[m_nEnumActionStatus];
+	BYTE bySelectActionTemp = 0;
+	if (iRandNumTemp < byProbFold)
 	{
-		T_C2S_PLAY_CARD_REQ res;
-		SGetPlayCardparam tParam;
-		BYTE byShape = logic->GetCardShape(pDeskCard, nDeskCardCount);
-		ShapeAdapter(byShape, tParam.iDeskShape);
-		tParam.bOutCard = bFirstOut;
-		tParam.iBanker = nNtStation;
-		tParam.iLastOutCardUser = nBigOutStation;
-		tParam.iMybSeatNO = nMyStation;
-		int outCardCount[PLAY_COUNT] = {0};
-		GetOutCardCount(outCardCount);
-		for(int i = 0; i < PLAY_COUNT; ++i)
+		bySelectActionTemp = UD_VF_FOLD;
+	} else if (iRandNumTemp < byProbFollow)
+	{
+		bySelectActionTemp = UD_VF_CALL;
+	} else if (iRandNumTemp < byProbRaise)
+	{
+		bySelectActionTemp = UD_VF_ADD;
+	} else if (iRandNumTemp < byProbAllIn)
+	{
+		bySelectActionTemp = UD_VF_ALLIN;
+	}
+
+	const static BYTE bVerbFlagCheckArr[] =
+	{
+		UD_VF_ALLIN,
+		UD_VF_ADD,
+		UD_VF_BET,
+		UD_VF_CALL,
+		UD_VF_CHECK,
+	};
+
+	//特殊情况修改
+	if (0 == (byVerbFlag & bySelectActionTemp))
+	{
+		//如果没有可选行为，即寻找同级或下级行为
+		bool bSelectGotReplace = false;
+		switch(bySelectActionTemp)
 		{
-			//坑位.是获取i位置手牌
-			tParam.pHandCard[i] = cardMgr->GetHandCard( i, &tParam.iUserCardCounts[i] );
-		}
-		/// 挑选出最优的出牌
-		logic->GetOptimalPlayCard(tParam, m_sPlayCard, res);
-		for(int i = 0; i < res.iCardCount; ++i)
-		{
-			logic->CardAdapter(res.uCards[i], false);
-			logic->CardAdapter(res.uActualCards[i], false);
-		}
-		if( res.iCardCount == 0)
-		{
-			OnControlHitPass();
-		}
-		else
-		{
-			OutCardStruct outCard;
-			memset( &outCard, 0, sizeof(outCard) );
-			outCard.iCardCount = res.iCardCount;
-			memcpy(outCard.iCardList, res.uCards, outCard.iCardCount);
-			SendGameData( &outCard, sizeof(outCard), MDM_GM_GAME_NOTIFY, ASS_OUT_CARD, 0 );
-			gs->SetOutCardPeople( INVALID_INDEX );
-		}
-	}
-}
-
-int CClientGameDlg::AI_DaTongHuo(OutCardStruct & outCard)
-{
-	OBJ_GET_EXT(m_pExt, CGameStation, gs);
-	OBJ_GET_EXT(m_pExt, CPlayerCardMgr, cardMgr);
-	OBJ_GET_EXT(m_pExt, CUpGradeGameLogic, logic);
-
-	const int nMyStation = GetMeUserInfo()->bDeskStation;
-	const int nBigOutStation = gs->GetBigOutPeople();
-	const int nNtStation = gs->GetNtPeople();
-	bool bFirstOut = (nMyStation == nBigOutStation);
-
-	int nHandCardCount;
-	const Card * pHandCard = cardMgr->GetHandCard( nMyStation, &nHandCardCount );
-	int nDeskCardCount;
-	const Card * pDeskCard = cardMgr->GetDeskCard( nBigOutStation, &nDeskCardCount );
-
-	if( NULL == pHandCard || 0 >= nHandCardCount )
-	{
-		LOG(_T("用户数据出问题了"));
-		throw( -1 );
-	}
-
-	if( NULL == pDeskCard || 0 >= nDeskCardCount )
-		return 0;
-
-	outCard.iCardCount = 0;
-
-	Card pTempCardList[MAX_CARD_BUFFER];
-	int nTempCardCount;
-	
-	int nShape = logic->GetCardShape( pDeskCard, nDeskCardCount );
-	Card bySplit = 0;
-	int nSplitCount = 0;
-	if( UG_ONLY_ONE == nShape )
-	{
-		bySplit = 10;
-		nSplitCount = 1;
-	}
-	else if( UG_DOUBLE == nShape )
-	{
-		bySplit = 7;
-		nSplitCount = 2;
-	}
-
-	if( 0 != nSplitCount && bySplit > logic->GetCardBulk(*pDeskCard) )
-	{
-		memcpy_s( pTempCardList, MAX_CARD_BUFFER * sizeof(Card), pHandCard, nHandCardCount );
-		nTempCardCount = nHandCardCount;
-		do {
-			logic->AutoOutCard( pTempCardList, nTempCardCount, pDeskCard, nDeskCardCount
-				, outCard.iCardList, outCard.iCardCount, bFirstOut );
-			if( 0 < outCard.iCardCount )
+		case UD_VF_ALLIN:
+			for (int i=0; i < NUM_GET_ARR(bVerbFlagCheckArr); i++)
 			{
-				nTempCardCount -= logic->RemoveCard( outCard.iCardList, outCard.iCardCount, 
-					pTempCardList, nTempCardCount );
-				if( 1 == outCard.iCardCount && 15 > logic->GetCardBulk(*outCard.iCardList)
-					&& bySplit <= logic->GetCardBulk(*outCard.iCardList) )
-					break;
-				if( 0 == nTempCardCount )
+				if (byVerbFlag & bVerbFlagCheckArr[i])
 				{
-					logic->AutoOutCard( pHandCard, nHandCardCount, pDeskCard, nDeskCardCount
-						, outCard.iCardList, outCard.iCardCount, bFirstOut );
-					if( nSplitCount != outCard.iCardCount || 15 <= logic->GetCardBulk(*outCard.iCardList) )
-						outCard.iCardCount = 0;
+					bySelectActionTemp = bVerbFlagCheckArr[i];
+					bSelectGotReplace = true;
 					break;
 				}
 			}
-			else if( 0 == outCard.iCardCount )
+			break;
+		case UD_VF_ADD:
+			for (int i=2; i >= 0; i--)
 			{
-				logic->AutoOutCard( pHandCard, nHandCardCount, pDeskCard, nDeskCardCount
-					, outCard.iCardList, outCard.iCardCount, bFirstOut );
-				if( nSplitCount != outCard.iCardCount || 15 <= logic->GetCardBulk(*outCard.iCardList) )
-					outCard.iCardCount = 0;
-				break;
-			}
-		}while( true );
-	}
-
-	return outCard.iCardCount;
-}
-
-void CClientGameDlg::PreDealing(UINT uTimeID, int& iChoice)
-{
-	OBJ_GET_EXT(m_pExt, CUpGradeGameLogic, logic);
-	OBJ_GET_EXT(m_pExt, CPlayerCardMgr, cardMgr);
-	const int nMyStation = GetMeUserInfo()->bDeskStation;
-
-	int nHandCardCount;
-	const Card * pHandCard = cardMgr->GetHandCard( nMyStation, &nHandCardCount );
-	std::vector<T_C2S_PLAY_CARD_REQ>  tPlayCardList; 
-	HN::CardArrayBase HandCard;
-	for(int i = 0; i < nHandCardCount; ++i)
-	{
-		BYTE byCard = pHandCard[i];
-		logic->CardAdapter(byCard, true);
-		HandCard.push_back(byCard);
-	}
-
-
-	switch( uTimeID )
-	{
-	case TID_CALL_SCORE:
-	case TID_ROB_NT:
-	case TID_ADD_DOUBLE:
-		if(logic->HaveKingBomb(pHandCard, nHandCardCount))									iChoice = Choice_OK;
-		if(logic->GetOneCardCount(pHandCard, nHandCardCount, Value_A) >= 4)					iChoice = Choice_OK;
-		if(logic->GetOneCardCount(pHandCard, nHandCardCount, Value_2) >= 3)					iChoice = Choice_OK;
-		if(logic->GetSpecifyCardCount(pHandCard, nHandCardCount, 4) >= 2)					iChoice = Choice_OK;
-		if( (logic->HaveKing(pHandCard, nHandCardCount, true) || logic->HaveKing(pHandCard, nHandCardCount, false))
-			&& ( logic->GetOneCardCount(pHandCard, nHandCardCount, Value_A) + logic->GetOneCardCount(pHandCard, nHandCardCount, Value_2) >= 4 )
-			)																				iChoice = Choice_OK;
-
-
-		if(Choice_OK != iChoice)
-		{
-			if(_dataMange.CheckType(HandCard, SanZhangCheck) || _dataMange.CheckType(HandCard, NoSanPaiCheck))
-			{
-				if(TID_CALL_SCORE == uTimeID || TID_ROB_NT == uTimeID)
+				if (byVerbFlag & bVerbFlagCheckArr[i])
 				{
-					iChoice = Choice_OK;
+					bySelectActionTemp = bVerbFlagCheckArr[i];
+					bSelectGotReplace = true;
+					break;
 				}
 			}
 
-			if(_dataMange.CheckType(HandCard, SanZhang_Double) ||_dataMange.CheckType(HandCard, A2King_Double) || _dataMange.CheckType(HandCard, DanZhang_Double))
+			if (!bSelectGotReplace)
 			{
-				if(TID_ADD_DOUBLE == uTimeID)
+				for (int i=3; i < NUM_GET_ARR(bVerbFlagCheckArr); i++)
 				{
-					iChoice = Choice_OK;
+					if (byVerbFlag & bVerbFlagCheckArr[i])
+					{
+						bySelectActionTemp = bVerbFlagCheckArr[i];
+						bSelectGotReplace = true;
+						break;
+					}
+				}
+			}
+			break;
+		case UD_VF_CALL:
+			for (int i=4; i < NUM_GET_ARR(bVerbFlagCheckArr); i++)
+			{
+				if (byVerbFlag & bVerbFlagCheckArr[i])
+				{
+					bySelectActionTemp = bVerbFlagCheckArr[i];
+					bSelectGotReplace = true;
+					break;
+				}
+			}
+
+			if (!bSelectGotReplace)
+			{
+				for (int i=0; i >= 0; i--)
+				{
+					if (byVerbFlag & bVerbFlagCheckArr[i])
+					{
+						bySelectActionTemp = bVerbFlagCheckArr[i];
+						bSelectGotReplace = true;
+						break;
+					}
+				}
+			}
+
+			break;
+		default:
+			break;
+		}
+
+		if (!bSelectGotReplace)
+		{
+			bySelectActionTemp = UD_VF_FOLD;
+		}
+	}
+
+	bool bGotAction = false;
+	int iRandTime = rand() % 3 + 1;
+	switch(byVerbFlag & bySelectActionTemp)
+	{
+	case UD_VF_BET:		// 允许下注
+		{
+			SetGameTimer(m_byMeStation,iRandTime,IDT_BET_TIMER);
+			bGotAction = true;
+			break;
+		}
+	case UD_VF_CALL:	// 允许跟注
+		{
+			m_iFollowNum++;			//机器人跟注次数
+			SetGameTimer(m_byMeStation,iRandTime,IDT_CALL_TIMER);
+			bGotAction = true;
+			break;
+		}
+	case UD_VF_ADD:		// 允许加注
+		{
+			SetGameTimer(m_byMeStation,iRandTime,IDT_RAISE_TIMER);
+			bGotAction = true;
+			break;
+		}
+	case UD_VF_CHECK:  // 允许过牌
+		{
+			SetGameTimer(m_byMeStation,iRandTime,IDT_CHECK_TIMER);
+			bGotAction = true;
+			break;
+		}
+	case UD_VF_FOLD:   // 允许弃牌
+		{
+			SetGameTimer(m_byMeStation,iRandTime,IDT_FOLO_TIMER);
+			bGotAction = true;
+			break;
+		}
+	case UD_VF_ALLIN:  // 允许全下
+		{
+			SetGameTimer(m_byMeStation,iRandTime,IDT_ALLIN_TIMER);
+			bGotAction = true;
+			break;
+		}
+	default:
+		{
+			break;
+		}
+	}
+
+	//没有成功执行返回错误
+	if (!bGotAction)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+// 判断实时行为概率
+bool CClientGameDlg::JudgeRTActionProb()
+{
+	m_bSelectActionProb = false;
+	//默认是选择比玩家大
+	//概率只有两套.都是以数组形式//枚举要注意是0,1
+	m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Max;
+
+	//m_pUserInfo[0];
+	CPtrArray PlayPtrArray;
+	CPtrArray WatchPtrArray;
+	if (NULL != m_pGameInfo && NULL != m_pGameInfo->pIFindUser)
+	{
+		m_pGameInfo->pIFindUser->FindOnLineUser(GetMeUserInfo()->bDeskNO,PlayPtrArray,WatchPtrArray);
+	}
+
+	UserItemStruct* pUserInfo[PLAY_COUNT] = {NULL};	//游戏玩家信息
+	int iSizeTemp = PlayPtrArray.GetSize();
+	if (iSizeTemp >= 2)
+	{
+		for (int i=0; i < PLAY_COUNT && i < iSizeTemp; ++i)
+		{
+			pUserInfo[i] = (UserItemStruct *)PlayPtrArray.GetAt(i);
+		}
+	}
+
+	if (m_bSetActionProbRecv && m_bGotUserCardActionProb)
+	{
+		//检测是否有还没弃牌的真人
+		bool bGotRealPlayer = false;
+		const BYTE bMeDeskStation = GetMeUserInfo()->bDeskStation;
+		BYTE bDeskStationTemp = 0;
+		int iResultTemp = 0;
+		const int nCardCount = m_iDeskCardCount[GetMeUserInfo()->bDeskStation];
+		for (int i=0; i < PLAY_COUNT; ++i)
+		{
+
+			if (NULL != pUserInfo[i])
+			{
+				bDeskStationTemp = pUserInfo[i]->GameUserInfo.bDeskStation;
+				if (bDeskStationTemp < PLAY_COUNT && bDeskStationTemp != bMeDeskStation)
+				{
+					if (!m_bGiveUp[i] && !pUserInfo[i]->GameUserInfo.isVirtual)
+					{
+						//找到未放弃的真人
+						bGotRealPlayer = true;
+						m_bSelectActionProb = true;
+						//比牌.获取数据//m_byResultCardsActionProb 没有数据
+						//iResultTemp = m_Logic.CompareCard(m_byResultCardsActionProb[bMeDeskStation], 5, 
+						//								  m_byResultCardsActionProb[bDeskStationTemp], 5);
+						//20190430
+						BYTE machine[7], player[7];
+						memset(machine, 0, sizeof(machine));
+						memset(player, 0, sizeof(player));
+
+						memcpy(machine, m_tUserCardActionProb.byCards[bMeDeskStation], sizeof(BYTE)*MAX_DEAL_CARDS);
+						memcpy(&machine[MAX_DEAL_CARDS], m_tUserCardActionProb.byPubCards, sizeof(BYTE) * 5);
+
+						memcpy(player, m_tUserCardActionProb.byCards[bDeskStationTemp], sizeof(BYTE)*MAX_DEAL_CARDS);
+						memcpy(&player[MAX_DEAL_CARDS], m_tUserCardActionProb.byPubCards, sizeof(BYTE) * 5);
+
+						iResultTemp = m_Logic.CompareCard(machine, 7, player, 7);
+						//
+						//FILE * fp = fopen("Sation.txt", "a");
+						//fprintf(fp, "bMeDeskStation:%d\n", bMeDeskStation);
+						//fprintf(fp, "bDeskStationTemp:%d\n", bDeskStationTemp);
+						//fclose(fp);
+						//如果有就需要判断使用哪种行为策略
+						if (iResultTemp < 0)
+						{
+							//FILE * fp = fopen("small.txt", "a");
+							//fprintf(fp, "ENUM_SET_ACTION_STATUS_Small\n");
+							//fclose(fp);
+							//这个是1.坑位
+							m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Small;
+						}
+						else 
+						{
+							if (m_nEnumActionStatus != ENUM_SET_ACTION_STATUS_Small)
+							{
+								//FILE * fp = fopen("big.txt", "a");
+								//fprintf(fp, "ENUM_SET_ACTION_STATUS_Big\n");
+								//fclose(fp);
+								m_nEnumActionStatus = ENUM_SET_ACTION_STATUS_Big;
+							}
+						}
+
+						if (ENUM_SET_ACTION_STATUS_Small == m_nEnumActionStatus)
+						{
+							break;
+						}
+					}
 				}
 			}
 		}
-
-		if(Choice_OK != iChoice)
-		{
-			if(!_dataMange.CheckType(HandCard, SanPai_Not))
-			{
-				iChoice = Choice_Not;
-			}
-		}
-		break;
 	}
+
+	return true;
 }
 
-bool CClientGameDlg::SetMyGameTimer(BYTE bDeskStation,UINT uTimeCount,UINT uTimeID)
+//分析最大牌
+bool CClientGameDlg::AnalysisBiggestCards()
 {
-	if(uTimeCount >= 5)
+	if (m_bGotUserCardActionProb)
 	{
-		uTimeCount = (rand() + bDeskStation) % m_iDefaultTime + 1;
+		return false;
 	}
-	else if(uTimeCount >= 1)
+
+	//fixme 没有接受
+	for (int i=0; i < PLAY_COUNT; ++i)
 	{
-		uTimeCount = (rand() + bDeskStation) % uTimeCount + 1;
+		if (0 != m_tUserCardActionProb.byCards[i][0]) //有效牌
+		{
+			m_Logic.AnalysisCard(m_tUserCardActionProb.byCards[i], 2, 
+								 m_tUserCardActionProb.byPubCards, 5, 
+								 m_byResultCardsActionProb[i]);
+		}
 	}
-	else
-	{
-		uTimeCount = (rand() + bDeskStation) % m_iDefaultTime + 1;
-	}
-	return SetGameTimer(bDeskStation, uTimeCount, uTimeID);
+
+	return true;
 }
 
+//处理令牌信息
+void CClientGameDlg::OnHandleTToken(TToken* pToken)
+{
+	KillTimer(IDT_RECOME_TTOKEN);
+
+	if (NULL == pToken)
+	{
+		return;
+	}
+
+	//更新数据
+	m_byTokenUser = pToken->byUser;
+
+	// 允许动作标志
+	BYTE byVerbFlag = pToken->byVerbFlag;
+
+	m_iMinBetOrRaiseMoney = pToken->iMinBetOrRaiseMoney;
+
+	int iWeight = 0;
+	int nRandByWeight = 0;
+
+	// 模拟下注消息
+	if (m_byTokenUser == m_byMeStation)
+	{
+		JudgeRTActionProb();//判断选择那种行为
+		m_nCallMoney = pToken->nCallMoney;
+		if (UserNoteAccordingToActionProb(byVerbFlag))
+		{
+			//Do Nothing
+		} else //行为概率下注策略如果失败，使用旧下注策略
+		{
+			if (m_nRobotInAllCardNum >= 2)
+			{
+				iWeight = m_Logic.RobotHandCardAnalysis(m_byRobotInAllCard,m_nRobotInAllCardNum);
+
+				if ((byVerbFlag & UD_VF_BET) && (byVerbFlag & UD_VF_CHECK) && (byVerbFlag & UD_VF_FOLD))
+				{
+					nRandByWeight = GetRandBetByWeight(iWeight);
+				}
+				else if ((byVerbFlag & UD_VF_ADD) && (byVerbFlag & UD_VF_CALL) && (byVerbFlag & UD_VF_FOLD))
+				{
+					nRandByWeight = GetRandAddByWeight(iWeight);
+				}
+				else if ((byVerbFlag & UD_VF_ALLIN) && (byVerbFlag & UD_VF_FOLD))
+				{
+					nRandByWeight = GetRandAllinByWeight(iWeight);
+				}
+			}
+
+			switch (byVerbFlag & nRandByWeight)
+			{
+			case UD_VF_BET:		// 允许下注
+				{
+					srand((unsigned) time (NULL) + m_byMeStation);
+					int iRandTime = rand() % 3 + 1;
+					SetGameTimer(m_byMeStation,iRandTime,IDT_BET_TIMER);
+					break;
+				}
+			case UD_VF_CALL:	// 允许跟注
+				{
+					m_iFollowNum++;			//机器人跟注次数
+					m_nCallMoney = pToken->nCallMoney;
+					srand((unsigned) time (NULL) + m_byMeStation);
+					int iRandTime = rand() % 3 + 1;
+					SetGameTimer(m_byMeStation,iRandTime,IDT_CALL_TIMER);
+					break;
+				}
+			case UD_VF_ADD:		// 允许加注
+				{
+					m_nCallMoney = pToken->nCallMoney;
+					srand((unsigned) time (NULL) + m_byMeStation);
+					int iRandTime = rand() % 3 + 1;
+					SetGameTimer(m_byMeStation,iRandTime,IDT_RAISE_TIMER);
+					break;
+				}
+			case UD_VF_CHECK:  // 允许过牌
+				{
+					srand((unsigned) time (NULL) + m_byMeStation);
+					int iRandTime = rand() % 3 + 1;
+					SetGameTimer(m_byMeStation,iRandTime,IDT_CHECK_TIMER);
+					break;
+				}
+			case UD_VF_FOLD:   // 允许弃牌
+				{
+					srand((unsigned) time (NULL) + m_byMeStation);
+					int iRandTime = rand() % 3 + 1;
+					SetGameTimer(m_byMeStation,iRandTime,IDT_FOLO_TIMER);
+					break;
+				}
+			case UD_VF_ALLIN:  // 允许全下
+				{
+					//__int64 nMoney = m_nBetMoney[GetLastUserStation(m_byMeStation)] - m_nBetMoney[m_byMeStation];
+
+					//if (m_iMoneys[m_byMeStation] <= nMoney)
+					{
+						srand((unsigned) time (NULL) + m_byMeStation);
+						int iRandTime = rand() % 3 + 1;
+
+						SetGameTimer(m_byMeStation,iRandTime,IDT_ALLIN_TIMER);
+					}
+					break;
+				}
+			default:
+				{
+					OutputDebugString("jan: 未知操作\n");
+					SetGameTimer(m_byMeStation,1,IDT_FOLO_TIMER);
+					break;
+				}
+			}	
+		}
+	}
+}
+
+//获得所有已下注金额总值
+__int64 CClientGameDlg::GetTotalBetMoney()
+{
+	__int64 iTotalBetMoney = 0;
+
+	for (int i = 0; i < PLAY_COUNT; i++)
+	{
+		// 显示下注金币
+		iTotalBetMoney += m_nBetMoney[i];
+	}
+
+	return iTotalBetMoney;
+}

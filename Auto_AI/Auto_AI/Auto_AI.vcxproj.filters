@@ -117,9 +117,6 @@
     <ClInclude Include="GameLogic\UpgradeMessage.h">
       <Filter>头文件\GameLogic</Filter>
     </ClInclude>
-    <ClInclude Include="Ecardgroup.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Auto_AI.cpp">
@@ -172,9 +169,6 @@
     </ClCompile>
     <ClCompile Include="GameLogic\UpGradeLogic.cpp">
       <Filter>源文件\GameLogic</Filter>
-    </ClCompile>
-    <ClCompile Include="Ecardgroup.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

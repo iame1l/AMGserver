@@ -127,7 +127,7 @@ public:
 	HWND					m_hMciWnd2;									// 背景音乐(场景)
 	BYTE                    m_GameType;
 
-	//机器人行为概率相关
+	//机器人行为概率相关//mark
 private:
 	SetActionProb			m_tSetActionProb;	//设定行为概率
 	bool					m_bSetActionProbRecv;//设定行为概率接收与否

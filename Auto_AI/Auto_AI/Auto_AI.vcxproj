@@ -746,7 +746,6 @@
     <ClInclude Include="Common\Platglobaldata.h" />
     <ClInclude Include="Common\Platlock.h" />
     <ClInclude Include="Common\PlatLog.h" />
-    <ClInclude Include="Ecardgroup.h" />
     <ClInclude Include="GameLogic\ClientGameDlg.h" />
     <ClInclude Include="GameLogic\CMD_Fish.h" />
     <ClInclude Include="GameLogic\UpGradeLogic.h" />
@@ -771,7 +770,6 @@
     <ClCompile Include="Common\Platconfig.cpp" />
     <ClCompile Include="Common\Platglobaldata.cpp" />
     <ClCompile Include="Common\PlatLog.cpp" />
-    <ClCompile Include="Ecardgroup.cpp" />
     <ClCompile Include="GameLogic\clientgamedlg.cpp" />
     <ClCompile Include="GameLogic\UpGradeLogic.cpp" />
     <ClCompile Include="PlatformLogic\Auto_AIDlg.cpp" />
