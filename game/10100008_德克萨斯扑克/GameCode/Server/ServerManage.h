@@ -112,7 +112,7 @@ protected:
 
 	//机器人行为概率相关
 private:
-	SetActionProb	m_tSetActionProb;	//设定行为概率
+	SetActionProb	m_tSetActionProb;	//设定行为概率 //mark
 
 private:
 	GameBeginInfo	m_tGameBeginInfo;	//游戏开始信息

@@ -6,8 +6,8 @@
 CUpGradeGameLogic::CUpGradeGameLogic(void)
 {
 	m_bSortCardStyle = 0; //0 牌按大小排序;1 按牌型排序
-	m_iCondition=0;			//无出牌限制条件
-	m_bKingCanReplace=false;
+	m_iCondition = 0;			//无出牌限制条件
+	m_bKingCanReplace = false;
 	//	m_iStation[4] = 500;
 	//	for (int i=0; i<4; i++)
 	//		m_iStation[i] = 100*i;
@@ -18,13 +18,13 @@ CUpGradeGameLogic::~CUpGradeGameLogic()
 }
 //获取扑克花色
 BYTE CUpGradeGameLogic::GetCardHuaKind(BYTE iCard, BOOL bTrueHua) const
-{ 
-	int iHuaKind=(iCard&UG_HUA_MASK);
+{
+	int iHuaKind = (iCard&UG_HUA_MASK);
 	if (!bTrueHua)
 	{
-		return iHuaKind=UG_NT_CARD;
+		return iHuaKind = UG_NT_CARD;
 	}
-	return iHuaKind; 
+	return iHuaKind;
 }
 
 //获取扑克大小 （2 - 18 ， 15 以上是主牌 ： 2 - 21 ， 15 以上是主）
@@ -32,7 +32,7 @@ int CUpGradeGameLogic::GetCardBulk(BYTE iCard, bool bExtVal) const
 {
 	if ((iCard == 0x4E) || (iCard == 0x4F))
 	{
-		return bExtVal ? (iCard-14) : (iCard-62); //大小鬼64+14-62=16	只返回大小猫的值
+		return bExtVal ? (iCard - 14) : (iCard - 62); //大小鬼64+14-62=16	只返回大小猫的值
 	}
 
 	int iCardNum = GetCardNum(iCard);
@@ -40,9 +40,9 @@ int CUpGradeGameLogic::GetCardBulk(BYTE iCard, bool bExtVal) const
 
 	if (iCardNum == 2) //2王
 	{
-		if(bExtVal) //有鬼
+		if (bExtVal) //有鬼
 		{
-			return ((iHuaKind>>4)+(15*4));
+			return ((iHuaKind >> 4) + (15 * 4));
 		}
 		else //没有鬼，返回2王
 		{
@@ -50,13 +50,13 @@ int CUpGradeGameLogic::GetCardBulk(BYTE iCard, bool bExtVal) const
 		}
 	}
 
-	return ((bExtVal) ? ((iHuaKind>>4)+(iCardNum*4)) : (iCardNum));
+	return ((bExtVal) ? ((iHuaKind >> 4) + (iCardNum * 4)) : (iCardNum));
 }
 
 //从值得到牌
 BYTE CUpGradeGameLogic::GetCardByValue(int Value)
 {
-	BYTE CardArray[55]={
+	BYTE CardArray[55] = {
 		0x00,
 		0x01,0x11, 0x21,0x31,
 		0x02, 0x12 ,0x22 , 0x32 ,
@@ -71,32 +71,32 @@ BYTE CUpGradeGameLogic::GetCardByValue(int Value)
 		0x0B,0x1B,  0x2B,0x3B,
 		0x0C, 0x1C,0x2C, 0x3C,
 		0x0D,  0x1D, 0x2D, 0x3D,
-		0x4E, 0x4F};
+		0x4E, 0x4F };
 
-		return CardArray[Value];
+	return CardArray[Value];
 }
 
 DWORD CUpGradeGameLogic::GetCardShape() const
 {
-	OBJ_GET_EXT( m_pExt, CCfg, cfg );
-	return cfg->GetValue( CFG_CARD_SHAPE, 0 );
+	OBJ_GET_EXT(m_pExt, CCfg, cfg);
+	return cfg->GetValue(CFG_CARD_SHAPE, 0);
 }
 
 //按牌面数字从大到小排列扑克
-BOOL CUpGradeGameLogic::SortCard(BYTE iCardList[], BYTE bUp[], BYTE iCardCount,BOOL bSysSort) const
+BOOL CUpGradeGameLogic::SortCard(BYTE iCardList[], BYTE bUp[], BYTE iCardCount, BOOL bSysSort) const
 {
-	BOOL bSorted=TRUE,bTempUp;
-	int iTemp,iLast=0,iStationVol[45];
+	BOOL bSorted = TRUE, bTempUp;
+	int iTemp, iLast = 0, iStationVol[45];
 	memset(iStationVol, 0, sizeof(iStationVol));
 	if (iCardCount > 45)
 	{
 		iCardCount = 45;
 	}
-iLast=iCardCount-1;
+	iLast = iCardCount - 1;
 	//获取位置数值
-	for (int i=0;i<iCardCount;i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
-		iStationVol[i]=GetCardBulk(iCardList[i], true);
+		iStationVol[i] = GetCardBulk(iCardList[i], true);
 		//if (iStationVol[i]>=15) iStationVol[i]+=m_iStation[4];
 		//else iStationVol[i]+=m_iStation[GetCardHuaKind(iCardList[i],FALSE)>>4];
 	}
@@ -104,43 +104,43 @@ iLast=iCardCount-1;
 	//排序操作(按从大到小排序)
 	do
 	{
-		bSorted=TRUE;
-		for (int i=0;i<iLast;i++)
+		bSorted = TRUE;
+		for (int i = 0; i < iLast; i++)
 		{
-			if (iStationVol[i]<iStationVol[i+1])
-			{	
+			if (iStationVol[i] < iStationVol[i + 1])
+			{
 				//交换位置				//==冒泡排序
-				iTemp=iCardList[i];
-				iCardList[i]=iCardList[i+1];
-				iCardList[i+1]=iTemp;
+				iTemp = iCardList[i];
+				iCardList[i] = iCardList[i + 1];
+				iCardList[i + 1] = iTemp;
 
-				iTemp=iStationVol[i];
-				iStationVol[i]=iStationVol[i+1];
-				iStationVol[i+1]=iTemp;
+				iTemp = iStationVol[i];
+				iStationVol[i] = iStationVol[i + 1];
+				iStationVol[i + 1] = iTemp;
 
-				if (bUp!=NULL)
+				if (bUp != NULL)
 				{
-					bTempUp=bUp[i];
-					bUp[i]=bUp[i+1];
-					bUp[i+1]=bTempUp;
+					bTempUp = bUp[i];
+					bUp[i] = bUp[i + 1];
+					bUp[i + 1] = bTempUp;
 				}
-				bSorted=FALSE;
-			}	
+				bSorted = FALSE;
+			}
 		}
 		iLast--;
-	} while(!bSorted);
+	} while (!bSorted);
 
 	//系统序列不考虑花色牌型问题
-	if(bSysSort)
+	if (bSysSort)
 	{
-		ReverseCard(iCardList,bUp,iCardCount);
+		ReverseCard(iCardList, bUp, iCardCount);
 		return TRUE;
 	}
-	if(GetSortCardStyle() == 1) //按牌型排序
-		SortCardByStyle(iCardList,iCardCount);
+	if (GetSortCardStyle() == 1) //按牌型排序
+		SortCardByStyle(iCardList, iCardCount);
 
-	if(GetSortCardStyle() == 2)
-		SortCardByKind(iCardList,iCardCount);
+	if (GetSortCardStyle() == 2)
+		SortCardByKind(iCardList, iCardCount);
 
 
 	return TRUE;
@@ -149,11 +149,11 @@ iLast=iCardCount-1;
 BOOL CUpGradeGameLogic::ReverseCard(BYTE iCardList[], BYTE bUp[], BYTE iCardCount) const
 {
 	BYTE iTemp;
-	for(int i=0;i< iCardCount /2 ;i++)
+	for (int i = 0; i < iCardCount / 2; i++)
 	{
 		iTemp = iCardList[i];
-		iCardList[i] = iCardList[iCardCount - 1 -i];
-		iCardList[iCardCount - 1 -i] = iTemp;
+		iCardList[i] = iCardList[iCardCount - 1 - i];
+		iCardList[iCardCount - 1 - i] = iTemp;
 	}
 	return TRUE;
 }
@@ -161,7 +161,7 @@ BOOL CUpGradeGameLogic::ReverseCard(BYTE iCardList[], BYTE bUp[], BYTE iCardCoun
 BOOL CUpGradeGameLogic::SortCardByStyle(BYTE iCardList[], BYTE iCardCount) const
 {
 	//如果排序设置是要求按大小排序
-	if(m_bSortCardStyle == 0)
+	if (m_bSortCardStyle == 0)
 	{
 		SortCard(iCardList, NULL, iCardCount);
 
@@ -170,64 +170,64 @@ BOOL CUpGradeGameLogic::SortCardByStyle(BYTE iCardList[], BYTE iCardCount) const
 
 	//下面的代码==按牌形排大小
 	int iStationVol[45];
-	for (int i=0;i<iCardCount;i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
-		iStationVol[i]=GetCardBulk(iCardList[i],false);
+		iStationVol[i] = GetCardBulk(iCardList[i], false);
 	}
 
-	int Start=0;
-	int j,step;
+	int Start = 0;
+	int j, step;
 	BYTE CardTemp[8];					//用来保存要移位的牌形
 	int CardTempVal[8];					//用来保存移位的牌面值
-	for(int i=8;i>1;i--)				//在数组中找一个连续i张相同的值
+	for (int i = 8; i > 1; i--)				//在数组中找一个连续i张相同的值
 	{
-		for(j=Start;j<iCardCount;j++)
+		for (j = Start; j < iCardCount; j++)
 		{
-			CardTemp[0]=iCardList[j];			//保存当前i个数组相同的值
-			CardTempVal[0]=iStationVol[j];
-			for(step=1;step<i&&j+step<iCardCount;)			//找一个连续i个值相等的数组(并保存于临时数组中)
+			CardTemp[0] = iCardList[j];			//保存当前i个数组相同的值
+			CardTempVal[0] = iStationVol[j];
+			for (step = 1; step < i&&j + step < iCardCount;)			//找一个连续i个值相等的数组(并保存于临时数组中)
 			{
-				if(iStationVol[j]==iStationVol[j+step])
+				if (iStationVol[j] == iStationVol[j + step])
 				{
-					CardTemp[step]=iCardList[j+step];			//用来保存牌形
-					CardTempVal[step]=iStationVol[j+step];		//面值
+					CardTemp[step] = iCardList[j + step];			//用来保存牌形
+					CardTempVal[step] = iStationVol[j + step];		//面值
 					step++;
 				}
 				else
 					break;
 			}
 
-			if(step>=i)	//找到一个连续i个相等的数组串起始位置为j,结束位置为j+setp-1
+			if (step >= i)	//找到一个连续i个相等的数组串起始位置为j,结束位置为j+setp-1
 			{			//将从Start开始到j个数组后移setp个
-				if(j!=Start) //排除开始就是有序
+				if (j != Start) //排除开始就是有序
 				{
-					for(;j>=Start;j--) //从Start张至j张后移动i张
+					for (; j >= Start; j--) //从Start张至j张后移动i张
 					{
-						iCardList[j+i-1]=iCardList[j-1];
-						iStationVol[j+i-1]=iStationVol[j-1];
+						iCardList[j + i - 1] = iCardList[j - 1];
+						iStationVol[j + i - 1] = iStationVol[j - 1];
 					}
-					for(int k=0;k<i;k++)				
+					for (int k = 0; k < i; k++)
 					{
-						iCardList[Start+k]=CardTemp[k];	//从Start开始设置成CardSave
-						iStationVol[Start+k]=CardTempVal[k];
+						iCardList[Start + k] = CardTemp[k];	//从Start开始设置成CardSave
+						iStationVol[Start + k] = CardTempVal[k];
 					}
 				}
-				Start=Start+i;
+				Start = Start + i;
 			}
-			j=j+step-1;
+			j = j + step - 1;
 		}
 	}
 	return TRUE;
 }
 
 //按花色排序
-BOOL CUpGradeGameLogic::SortCardByKind(BYTE iCardList[],BYTE iCardCount) const
+BOOL CUpGradeGameLogic::SortCardByKind(BYTE iCardList[], BYTE iCardCount) const
 {
 	return TRUE;
 }
 
 //混乱扑克,服务器使用
-BYTE CUpGradeGameLogic::RandCard(BYTE iCard[], int iCardCount,bool bHaveKing)
+BYTE CUpGradeGameLogic::RandCard(BYTE iCard[], int iCardCount, bool bHaveKing)
 {
 	static const BYTE m_CardArray[54] =
 	{
@@ -238,45 +238,45 @@ BYTE CUpGradeGameLogic::RandCard(BYTE iCard[], int iCardCount,bool bHaveKing)
 		0x4E, 0x4F //小鬼，大鬼
 	};
 
-	BYTE iSend=0,iStation=0,iCardList[216],step=(bHaveKing?54:52);
+	BYTE iSend = 0, iStation = 0, iCardList[216], step = (bHaveKing ? 54 : 52);
 	srand(GetTickCount());
 
-	for (int i=0;i<iCardCount;i+=step)
-		::CopyMemory(&iCardList[i],m_CardArray,sizeof(m_CardArray));
+	for (int i = 0; i < iCardCount; i += step)
+		::CopyMemory(&iCardList[i], m_CardArray, sizeof(m_CardArray));
 
 	do
 	{
-		iStation=rand()%(iCardCount-iSend);
-		iCard[iSend]=iCardList[iStation];
+		iStation = rand() % (iCardCount - iSend);
+		iCard[iSend] = iCardList[iStation];
 		iSend++;
-		iCardList[iStation]=iCardList[iCardCount-iSend];
-	} while (iSend<iCardCount);
+		iCardList[iStation] = iCardList[iCardCount - iSend];
+	} while (iSend < iCardCount);
 
 	return iCardCount;
 }
 
 //删除扑克
 int CUpGradeGameLogic::RemoveCard(const BYTE * pSrc,   //要删除的牌面
-								  int nSrcCount,		//要删除的牌总数
-								  BYTE * pDest,		//要处理的数组
-								  int nDestCount)		//处理数组的上限
+	int nSrcCount,		//要删除的牌总数
+	BYTE * pDest,		//要处理的数组
+	int nDestCount)		//处理数组的上限
 {
 	int nResult = 0;
 
-	do 
+	do
 	{
-		if( NULL == pSrc || 0 >= nSrcCount )
+		if (NULL == pSrc || 0 >= nSrcCount)
 			break;
-		if( NULL == pDest || 0 >= nDestCount )
+		if (NULL == pDest || 0 >= nDestCount)
 			break;
-		if( nSrcCount > nDestCount )
+		if (nSrcCount > nDestCount)
 			break;
 
-		for( int i = 0; nSrcCount > i; i++ )
+		for (int i = 0; nSrcCount > i; i++)
 		{
-			for( int j = 0; nDestCount > j; j++ )
+			for (int j = 0; nDestCount > j; j++)
 			{
-				if( pSrc[i] == pDest[j] )
+				if (pSrc[i] == pDest[j])
 				{
 					nResult++;
 					// 交换位置
@@ -287,7 +287,7 @@ int CUpGradeGameLogic::RemoveCard(const BYTE * pSrc,   //要删除的牌面
 			}
 		}
 
-		if( nResult != nSrcCount )
+		if (nResult != nSrcCount)
 			nResult = 0;
 
 	} while (false);
@@ -325,10 +325,10 @@ BOOL CUpGradeGameLogic::CompareOnlyOne(const BYTE iFirstCard, BYTE iNextCard) co
 int CUpGradeGameLogic::FindPoint(BYTE iCardList[], int iCardCount)
 {
 	int iPoint = 0; //分数
-	for (int i=0; i<iCardCount; i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
 		int iNum = GetCardNum(iCardList[i]); //牌面点数
-		switch(iNum)
+		switch (iNum)
 		{
 		case 5:
 			iPoint += 5;
@@ -343,29 +343,29 @@ int CUpGradeGameLogic::FindPoint(BYTE iCardList[], int iCardCount)
 }
 
 //几张牌是否是相同数字
-BOOL CUpGradeGameLogic::IsSameNumCard(const BYTE iCardList[],int iCardCount,bool bExtVal) const
+BOOL CUpGradeGameLogic::IsSameNumCard(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	int i, temp[18] = {0};
-	for(i = 0; i < iCardCount; i++)
+	int i, temp[18] = { 0 };
+	for (i = 0; i < iCardCount; i++)
 	{
-		temp[GetCardBulk(iCardList[i],false)]++;
+		temp[GetCardBulk(iCardList[i], false)]++;
 	}
 
-	for(i = 0; i < 18; i++)
+	for (i = 0; i < 18; i++)
 	{
-		if(temp[i]!=0)
+		if (temp[i] != 0)
 			break;
 	}
-	if(m_bKingCanReplace)
+	if (m_bKingCanReplace)
 	{
-		if(i<16)//王带其他牌
-			return (temp[i]+temp[16]+temp[17]==iCardCount);
+		if (i < 16)//王带其他牌
+			return (temp[i] + temp[16] + temp[17] == iCardCount);
 		//else//只有王
-			if(i < 17)
-				return (temp[16]+temp[17]==iCardCount);
+		if (i < 17)
+			return (temp[16] + temp[17] == iCardCount);
 	}
 	else
-		return (temp[i]==iCardCount);
+		return (temp[i] == iCardCount);
 	return 0;
 }
 
@@ -378,7 +378,7 @@ BOOL CUpGradeGameLogic::IsSameHuaKind(const BYTE iCardList[], int iCardCount, bo
 
 	for (int i = 1; i < iCardCount; i++) //后面的都和第一张的花色比
 	{
-		if(GetCardHuaKind(iCardList[i], TRUE) != iFirstHua) 
+		if (GetCardHuaKind(iCardList[i], TRUE) != iFirstHua)
 		{
 			return FALSE;
 		}
@@ -406,56 +406,56 @@ BOOL CUpGradeGameLogic::IsSameHuaKind(const BYTE iCardList[], int iCardCount, bo
 }
 
 //查找用户手中炸弹数
-BYTE CUpGradeGameLogic::GetBombCount(const BYTE iCardList[],int iCardCount,int iNumCount,bool bExtVal) const
+BYTE CUpGradeGameLogic::GetBombCount(const BYTE iCardList[], int iCardCount, int iNumCount, bool bExtVal) const
 {
 	int iCount = 0,
-		temp[18] = {0};
-	for(int i=0; i<iCardCount; i++)
+		temp[18] = { 0 };
+	for (int i = 0; i < iCardCount; i++)
 	{
-		temp[ GetCardBulk(iCardList[i])]++;
+		temp[GetCardBulk(iCardList[i])]++;
 	}
-	for(int i=0;i<16;i++)
+	for (int i = 0; i < 16; i++)
 	{
-		if(temp[i] >= iNumCount)
+		if (temp[i] >= iNumCount)
 			iCount++;
 	}
-	return iCount;	
+	return iCount;
 }
 
 //获取指定张数牌个数
-BYTE CUpGradeGameLogic::GetCountBySpecifyNumCount(const BYTE iCardList[],int iCardCount,int Num) const
+BYTE CUpGradeGameLogic::GetCountBySpecifyNumCount(const BYTE iCardList[], int iCardCount, int Num) const
 {
-	BYTE temp[18] = {0};
+	BYTE temp[18] = { 0 };
 	int count = 0;
-	for(int i = 0;i < iCardCount;i ++)
+	for (int i = 0; i < iCardCount; i++)
 		temp[GetCardBulk(iCardList[i])]++;
 
-	for(int i = 0;i< 18;i++)
-		if(temp[i] == Num)
+	for (int i = 0; i < 18; i++)
+		if (temp[i] == Num)
 			count++;
 
 	return count;
 }
 
 //获取指定牌个数
-BYTE CUpGradeGameLogic::GetCountBySpecifyCard(const BYTE iCardList[],int iCardCount,BYTE bCard) const
+BYTE CUpGradeGameLogic::GetCountBySpecifyCard(const BYTE iCardList[], int iCardCount, BYTE bCard) const
 {
 	int count = 0;
-	for(int i = 0;i < iCardCount;i ++)
-		if(iCardList[i] == bCard) 
+	for (int i = 0; i < iCardCount; i++)
+		if (iCardList[i] == bCard)
 			count++;
 
 	return count;
 }
 //获取指定牌张数牌大小
-BYTE CUpGradeGameLogic::GetBulkBySpecifyCardCount(const BYTE iCardList[],int iCardCount,int iCount) const
+BYTE CUpGradeGameLogic::GetBulkBySpecifyCardCount(const BYTE iCardList[], int iCardCount, int iCount) const
 {
-	BYTE temp[18] = {0};
-	for(int i = 0;i < iCardCount;i ++)
+	BYTE temp[18] = { 0 };
+	for (int i = 0; i < iCardCount; i++)
 		temp[GetCardBulk(iCardList[i])]++;
 
-	for(int i = 17;i> 0;i--)
-		if(temp[i] == iCount)
+	for (int i = 17; i > 0; i--)
+		if (temp[i] == iCount)
 			return i;
 
 	return 0;
@@ -465,43 +465,43 @@ BYTE CUpGradeGameLogic::GetBulkBySpecifyCardCount(const BYTE iCardList[],int iCa
 BOOL CUpGradeGameLogic::IsVariationSequence(const BYTE iCardList[], int iCardCount, int iCount) const
 {
 	int iValue = iCardCount / iCount;
-	if (iCardCount != iCount *iValue)						 //张数不相配
+	if (iCardCount != iCount * iValue)						 //张数不相配
 		return FALSE;
 
-	int iFirstMax = 0, iSecondMax = 0,iThirdMax = 0,iMin = 18;//找出第一大,第二大,第三大的牌,和最小牌
-	BYTE temp[18]={0};
-	for(int i = 0;i < iCardCount;i ++)						//牌多少
+	int iFirstMax = 0, iSecondMax = 0, iThirdMax = 0, iMin = 18;//找出第一大,第二大,第三大的牌,和最小牌
+	BYTE temp[18] = { 0 };
+	for (int i = 0; i < iCardCount; i++)						//牌多少
 	{
 		temp[GetCardBulk(iCardList[i])]++;
 	}
 
-	for(int i=0;i<18;i++)	
+	for (int i = 0; i < 18; i++)
 	{
-		if(temp[i] !=0 && temp[i] != iCount)	//非找定顺子
+		if (temp[i] != 0 && temp[i] != iCount)	//非找定顺子
 			return false;
 	}
 
-	for(int i = 0;i < 18;i ++)						//最小牌最大可能到A
+	for (int i = 0; i < 18; i++)						//最小牌最大可能到A
 	{
-		if(temp[i] != 0)
+		if (temp[i] != 0)
 			iMin = i;
 	}
 
-	for(int i=17;i>0;i--)
+	for (int i = 17; i > 0; i--)
 	{
-		if(temp[i] !=0 )
+		if (temp[i] != 0)
 		{
-			iFirstMax=i;						//可能是2也可以是A
-			for(int j=i-1;j>0;j--)
+			iFirstMax = i;						//可能是2也可以是A
+			for (int j = i - 1; j > 0; j--)
 			{
-				if(temp[j] !=0)//找到第二大的退出循环(无第三大的)//可能是A也可以非A
+				if (temp[j] != 0)//找到第二大的退出循环(无第三大的)//可能是A也可以非A
 				{
 					iSecondMax = j;
-					for(int k=j-1;j>0;j--)
+					for (int k = j - 1; j > 0; j--)
 					{
-						if(temp[k] != 0)//查第第三大的退出循环	//可是存在也可以不存在
+						if (temp[k] != 0)//查第第三大的退出循环	//可是存在也可以不存在
 						{
-							iThirdMax =k;
+							iThirdMax = k;
 							break;
 						}
 					}
@@ -512,21 +512,21 @@ BOOL CUpGradeGameLogic::IsVariationSequence(const BYTE iCardList[], int iCardCou
 		}
 	}
 
-	if(iFirstMax < 15)	//不存在2的情况,正常情况下
+	if (iFirstMax < 15)	//不存在2的情况,正常情况下
 	{
-		return (iFirstMax -iMin + 1 == iValue);
+		return (iFirstMax - iMin + 1 == iValue);
 	}
 
-	if(iFirstMax == 15)	//存在2,再看是否存在A
+	if (iFirstMax == 15)	//存在2,再看是否存在A
 	{
-		if(iSecondMax == 14)		//存在A
+		if (iSecondMax == 14)		//存在A
 		{
-			if(iThirdMax == 0)		//不存在第三大,也只有A2两种牌
+			if (iThirdMax == 0)		//不存在第三大,也只有A2两种牌
 				return true;
 
-			return (iThirdMax - iMin +1 == iValue - 2);		//存在 A2情况包括处理AA2233
+			return (iThirdMax - iMin + 1 == iValue - 2);		//存在 A2情况包括处理AA2233
 		}
-		return (iSecondMax -iMin+1 == iValue-1);
+		return (iSecondMax - iMin + 1 == iValue - 1);
 	}
 
 	return false;
@@ -535,15 +535,15 @@ BOOL CUpGradeGameLogic::IsVariationSequence(const BYTE iCardList[], int iCardCou
 //是否為順子
 BOOL CUpGradeGameLogic::IsSequence(const BYTE iCardList[], int iCardCount, int iCount) const
 {
-	BYTE temp[18]={0};
-	for(int i= 0;i < iCardCount;i++)
+	BYTE temp[18] = { 0 };
+	for (int i = 0; i < iCardCount; i++)
 	{
 		temp[GetCardBulk(iCardList[i])]++;
 	}
 
-	for(int i = 0; i < 15 ; i ++)
+	for (int i = 0; i < 15; i++)
 	{
-		if(temp [i]!= 0 &&temp[i] !=iCount)	//非指定顺
+		if (temp[i] != 0 && temp[i] != iCount)	//非指定顺
 			return false;
 	}
 
@@ -551,15 +551,15 @@ BOOL CUpGradeGameLogic::IsSequence(const BYTE iCardList[], int iCardCount, int i
 	//TCHAR sz[200];
 	//wsprintf(sz,"iCardCount=%d,iCount=%d,len=%d",iCardCount,iCount,len);
 	//WriteStr(sz);
-	for(int i=0;i<15;i++)
+	for (int i = 0; i < 15; i++)
 	{
-		if(temp[i] != 0)//有值
+		if (temp[i] != 0)//有值
 		{
 			//if(temp[i] == iCount )
 			//{	
-			for(int j = i;j < i + len  ;j ++)
+			for (int j = i; j < i + len; j++)
 			{
-				if(temp[j] != iCount || j >=15 )
+				if (temp[j] != iCount || j >= 15)
 					return false;
 			}
 			return true;
@@ -571,36 +571,36 @@ BOOL CUpGradeGameLogic::IsSequence(const BYTE iCardList[], int iCardCount, int i
 }
 
 //提取指定牌返回找到牌個數
-BYTE  CUpGradeGameLogic::TackOutBySpecifyCard(const BYTE iCardList[], int iCardCount,BYTE bCardBuffer[],int &iResultCardCount,BYTE bCard) const
+BYTE  CUpGradeGameLogic::TackOutBySpecifyCard(const BYTE iCardList[], int iCardCount, BYTE bCardBuffer[], int &iResultCardCount, BYTE bCard) const
 {
 	iResultCardCount = 0;
-	for(int i = 0;i < iCardCount;i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
-		if(iCardList[i] == bCard)
-			bCardBuffer[iResultCardCount ++] = iCardList[i];
+		if (iCardList[i] == bCard)
+			bCardBuffer[iResultCardCount++] = iCardList[i];
 	}
 	return iResultCardCount;
 }
 
 
 //提取1,2,3 or 4张相同数字的牌
-int CUpGradeGameLogic::TackOutBySepcifyCardNumCount(const BYTE iCardList[], int iCardCount, 
-													BYTE iDoubleBuffer[], BYTE bCardNum, 
-													bool bExtVal) const
+int CUpGradeGameLogic::TackOutBySepcifyCardNumCount(const BYTE iCardList[], int iCardCount,
+	BYTE iDoubleBuffer[], BYTE bCardNum,
+	bool bExtVal) const
 {
-	int iCount = 0, temp[18] = {0};
-	for(int i = 0; i < iCardCount; i++)
+	int iCount = 0, temp[18] = { 0 };
+	for (int i = 0; i < iCardCount; i++)
 	{
 		temp[GetCardBulk(iCardList[i])]++;
 	}
 
-	for(int i=0; i<18; i++)
+	for (int i = 0; i < 18; i++)
 	{
-		if(temp[i] >= bCardNum) //现在要查找的牌型:one?double?three?four_bomb?
+		if (temp[i] >= bCardNum) //现在要查找的牌型:one?double?three?four_bomb?
 		{
-			for(int j = 0; j < iCardCount; j++)
+			for (int j = 0; j < iCardCount; j++)
 			{
-				if(i == GetCardBulk(iCardList[j]))
+				if (i == GetCardBulk(iCardList[j]))
 					iDoubleBuffer[iCount++] = iCardList[j];
 			}
 		}
@@ -609,16 +609,16 @@ int CUpGradeGameLogic::TackOutBySepcifyCardNumCount(const BYTE iCardList[], int 
 }
 
 //提取指定花色牌
-int CUpGradeGameLogic::TackOutByCardKind(const BYTE iCardList[],int iCardCount,BYTE iDoubleBuffer[],BYTE iCardKind) const
+int CUpGradeGameLogic::TackOutByCardKind(const BYTE iCardList[], int iCardCount, BYTE iDoubleBuffer[], BYTE iCardKind) const
 {
-	int count =0;
+	int count = 0;
 
-	for(int i = 0;i < iCardCount; i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
 		//TCHAR sz[200];
 		//wsprintf(sz,"i=%d,iCardKind = %d %d",i,iCardKind,GetCardHuaKind(iCardList[i]));
 		//WriteStr(sz,2,2);
-		if( GetCardHuaKind(iCardList[i]) == iCardKind)
+		if (GetCardHuaKind(iCardList[i]) == iCardKind)
 		{
 			iDoubleBuffer[count++] = iCardList[i];
 		}
@@ -627,17 +627,17 @@ int CUpGradeGameLogic::TackOutByCardKind(const BYTE iCardList[],int iCardCount,B
 }
 
 //拆出(将手中牌多的拆成少的)
-int CUpGradeGameLogic::TackOutMuchToFew(const BYTE iCardList[],int iCardCount,BYTE iDoubleBuffer[],int &iBufferCardCount,BYTE iCardMuch,BYTE iCardFew) const
+int CUpGradeGameLogic::TackOutMuchToFew(const BYTE iCardList[], int iCardCount, BYTE iDoubleBuffer[], int &iBufferCardCount, BYTE iCardMuch, BYTE iCardFew) const
 {
-	iBufferCardCount=0;
-	int count =0;
+	iBufferCardCount = 0;
+	int count = 0;
 	BYTE iBuffer[45];
-	int iCount = TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,iCardMuch);
-	if(iCount <=0)
+	int iCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, iCardMuch);
+	if (iCount <= 0)
 		return count;
-	for(int i = 0;i < iCount; i += iCardMuch)
+	for (int i = 0; i < iCount; i += iCardMuch)
 	{
-		::CopyMemory(&iDoubleBuffer[iBufferCardCount],&iBuffer[i],sizeof(BYTE)*iCardFew);
+		::CopyMemory(&iDoubleBuffer[iBufferCardCount], &iBuffer[i], sizeof(BYTE)*iCardFew);
 		iBufferCardCount += iCardFew;
 		count++;
 	}
@@ -645,13 +645,13 @@ int CUpGradeGameLogic::TackOutMuchToFew(const BYTE iCardList[],int iCardCount,BY
 }
 
 //提取某张指定大小的牌
-BOOL CUpGradeGameLogic::TackOutCardBySpecifyCardNum(const BYTE iCardList[],int iCardCount,BYTE iBuffer[],int &iBufferCardCount,BYTE iCard,BOOL bExtVal) const
+BOOL CUpGradeGameLogic::TackOutCardBySpecifyCardNum(const BYTE iCardList[], int iCardCount, BYTE iBuffer[], int &iBufferCardCount, BYTE iCard, BOOL bExtVal) const
 {
 	iBufferCardCount = 0;
 	BYTE iCardNum = GetCardBulk(iCard); //得到牌面点数
-	for(int i = 0; i < iCardCount; i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
-		if(GetCardBulk(iCardList[i]) == iCardNum) //现在要查找的牌点数字
+		if (GetCardBulk(iCardList[i]) == iCardNum) //现在要查找的牌点数字
 		{
 			iBuffer[iBufferCardCount++] = iCardList[i];
 		}
@@ -662,20 +662,20 @@ BOOL CUpGradeGameLogic::TackOutCardBySpecifyCardNum(const BYTE iCardList[],int i
 
 //查找大于iCard的单牌所在iCardList中的序号
 BYTE  CUpGradeGameLogic::GetSerialByMoreThanSpecifyCard(const BYTE iCardList[], int iCardCount,
-														BYTE iCard, BYTE iBaseCardCount,
-														bool bExtValue) const
+	BYTE iCard, BYTE iBaseCardCount,
+	bool bExtValue) const
 {
-	BYTE MaxCard=0;
-	BYTE Serial=0;
-	BYTE MaxCardNum=255;
+	BYTE MaxCard = 0;
+	BYTE Serial = 0;
+	BYTE MaxCardNum = 255;
 
 	int BaseCardNum = GetCardBulk(iCard);	//当前比较值
 
-	for(BYTE i=0; i<iCardCount;  i++)	
+	for (BYTE i = 0; i < iCardCount; i++)
 	{
 		int temp = GetCardBulk(iCardList[i]);
 
-		if(temp<MaxCardNum && temp>BaseCardNum)
+		if (temp<MaxCardNum && temp>BaseCardNum)
 		{
 			MaxCardNum = temp;
 			Serial = i; //得到序号
@@ -688,41 +688,41 @@ BYTE  CUpGradeGameLogic::GetSerialByMoreThanSpecifyCard(const BYTE iCardList[], 
 
 
 //查找==iCard的单牌所在iCardList中的序号
-int  CUpGradeGameLogic::GetSerialBySpecifyCard(const BYTE iCardList[],int iStart,int iCardCount,BYTE iCard) const
+int  CUpGradeGameLogic::GetSerialBySpecifyCard(const BYTE iCardList[], int iStart, int iCardCount, BYTE iCard) const
 {
-	for(int i = iStart;i < iCardCount;i ++)
+	for (int i = iStart; i < iCardCount; i++)
 	{
-		if(iCardList[i] == iCard)
+		if (iCardList[i] == iCard)
 			return i;
 	}
 	return -1;
 }
 
 //变种顺子中最大的
-BYTE CUpGradeGameLogic::GetBulkBySpecifyVariationSequence(const BYTE iCardList[],int iCardCount ,int iSequence ) const
+BYTE CUpGradeGameLogic::GetBulkBySpecifyVariationSequence(const BYTE iCardList[], int iCardCount, int iSequence) const
 {
-	int iFirstMax = 0, iSecondMax = 0,iThirdMax = 0;//找出第一大,第二大,第三大的牌,和最小牌
-	BYTE temp[18]={0};
-	for(int i = 0;i < iCardCount;i ++)						//牌多少
+	int iFirstMax = 0, iSecondMax = 0, iThirdMax = 0;//找出第一大,第二大,第三大的牌,和最小牌
+	BYTE temp[18] = { 0 };
+	for (int i = 0; i < iCardCount; i++)						//牌多少
 	{
 		temp[GetCardBulk(iCardList[i])]++;
 	}
 
-	for(int i=17;i>0;i++)
+	for (int i = 17; i > 0; i++)
 	{
-		if(temp[i] == iSequence)
+		if (temp[i] == iSequence)
 		{
-			iFirstMax=i;						//可能是2也可以是A
-			for(int j=i-1;j>0;j--)
+			iFirstMax = i;						//可能是2也可以是A
+			for (int j = i - 1; j > 0; j--)
 			{
-				if(temp[j] == iSequence)//找到第二大的退出循环(无第三大的)//可能是A也可以非A
+				if (temp[j] == iSequence)//找到第二大的退出循环(无第三大的)//可能是A也可以非A
 				{
 					iSecondMax = j;
-					for(int k=j-1;j>0;j--)
+					for (int k = j - 1; j > 0; j--)
 					{
-						if(temp[k] == iSequence)//查第第三大的退出循环	//可是存在也可以不存在
+						if (temp[k] == iSequence)//查第第三大的退出循环	//可是存在也可以不存在
 						{
-							iThirdMax =k;
+							iThirdMax = k;
 							break;
 						}
 					}
@@ -733,11 +733,11 @@ BYTE CUpGradeGameLogic::GetBulkBySpecifyVariationSequence(const BYTE iCardList[]
 		}
 	}
 
-	if(iFirstMax == 15)	//存在2,再看是否存在A
+	if (iFirstMax == 15)	//存在2,再看是否存在A
 	{
-		if(iSecondMax == 14)		//存在A
+		if (iSecondMax == 14)		//存在A
 		{
-			if(iThirdMax == 0)		//不存在第三大,也只有A2两种牌
+			if (iThirdMax == 0)		//不存在第三大,也只有A2两种牌
 				return 2;
 
 			return iThirdMax;		//存在 A2情况包括处理AA2233
@@ -748,17 +748,17 @@ BYTE CUpGradeGameLogic::GetBulkBySpecifyVariationSequence(const BYTE iCardList[]
 }
 
 //获取指定顺子中牌点最小值(iSequence 代表顺子的牌数最多为
-BYTE  CUpGradeGameLogic::GetBulkBySpecifySequence(const BYTE iCardList[],int iCardCount ,int iSequence ) const
+BYTE  CUpGradeGameLogic::GetBulkBySpecifySequence(const BYTE iCardList[], int iCardCount, int iSequence) const
 {
-	int temp[18] = {0};
-	for(int i = 0; i < iCardCount; i++)
+	int temp[18] = { 0 };
+	for (int i = 0; i < iCardCount; i++)
 	{
 		temp[GetCardBulk(iCardList[i])]++;
 	}
 
-	for(int k = 0; k < 15; k++)
+	for (int k = 0; k < 15; k++)
 	{
-		if(temp[k] == iSequence)
+		if (temp[k] == iSequence)
 		{
 			return k;
 		}
@@ -772,22 +772,22 @@ int  CUpGradeGameLogic::GetBulkBySepcifyMinOrMax(const BYTE iCardList[], int iCa
 	int CardNum = GetCardBulk(iCardList[0], false);
 	BYTE byCardData = iCardList[0];
 
-	if(MinOrMax == 1) //找最小的
+	if (MinOrMax == 1) //找最小的
 	{
-		for(int i = 1; i < iCardCount; i++)
+		for (int i = 1; i < iCardCount; i++)
 		{
-			if(GetCardBulk(iCardList[i], false) < CardNum)
+			if (GetCardBulk(iCardList[i], false) < CardNum)
 			{
 				CardNum = GetCardBulk(iCardList[i], false);
 				byCardData = iCardList[i];
 			}
 		}
 	}
-	else if(MinOrMax == 255)
+	else if (MinOrMax == 255)
 	{
-		for(int i = 1; i < iCardCount; i++)
+		for (int i = 1; i < iCardCount; i++)
 		{
-			if(GetCardBulk(iCardList[i], false) > CardNum)
+			if (GetCardBulk(iCardList[i], false) > CardNum)
 			{
 				CardNum = GetCardBulk(iCardList[i], false);
 				byCardData = iCardList[i];
@@ -796,7 +796,7 @@ int  CUpGradeGameLogic::GetBulkBySepcifyMinOrMax(const BYTE iCardList[], int iCa
 	}
 
 	//返回的是 GetCardBulk() 得到的值
-	if(!bExtVal)
+	if (!bExtVal)
 	{
 		return CardNum;
 	}
@@ -816,38 +816,38 @@ int  CUpGradeGameLogic::GetBulkBySepcifyMinOrMax(const BYTE iCardList[], int iCa
 BYTE CUpGradeGameLogic::GetCardShape(const BYTE iCardList[], int iCardCount, bool bExlVol) const
 {
 	DWORD dwCardShape = GetCardShape();
-	if (IsOnlyOne(iCardList,iCardCount)&&(dwCardShape&(0x01))) return UG_ONLY_ONE; //单牌
-	if (IsDouble(iCardList,iCardCount)&&(dwCardShape&(0x01<<1))) return UG_DOUBLE;	 //对牌
-	if (IsThreeX(iCardList,iCardCount,0)&&(dwCardShape&(0x01<<2))) return UG_THREE;	 //三张
+	if (IsOnlyOne(iCardList, iCardCount) && (dwCardShape&(0x01))) return UG_ONLY_ONE; //单牌
+	if (IsDouble(iCardList, iCardCount) && (dwCardShape&(0x01 << 1))) return UG_DOUBLE;	 //对牌
+	if (IsThreeX(iCardList, iCardCount, 0) && (dwCardShape&(0x01 << 2))) return UG_THREE;	 //三张
 
-	if (IsThreeX(iCardList, iCardCount, 1)&&(dwCardShape&(0x01<<3))) return UG_THREE_ONE; //三带一
-	if (IsThreeX(iCardList, iCardCount, 2)&&(dwCardShape&(0x01<<4))) return UG_THREE_TWO; //三带二
-	if (IsThreeX(iCardList,iCardCount,3)&&(dwCardShape&(0x01<<5)))	return UG_THREE_DOUBLE;	//三带对
+	if (IsThreeX(iCardList, iCardCount, 1) && (dwCardShape&(0x01 << 3))) return UG_THREE_ONE; //三带一
+	if (IsThreeX(iCardList, iCardCount, 2) && (dwCardShape&(0x01 << 4))) return UG_THREE_TWO; //三带二
+	if (IsThreeX(iCardList, iCardCount, 3) && (dwCardShape&(0x01 << 5)))	return UG_THREE_DOUBLE;	//三带对
 
 
 	/* 顺子中包括 同花顺,所以先判断是否同花顺,如果不是，再判断是否是顺子，如果是顺子，就是一般的顺子啦*/
-	if (IsStraightFlush(iCardList, iCardCount)&&(dwCardShape&(0x01<<7))) return UG_STRAIGHT_FLUSH; //同花顺
-	if  (IsStraight(iCardList, iCardCount)&&(dwCardShape&(0x01<<6))) return UG_STRAIGHT;            //顺子	
-	if (IsDoubleSequence(iCardList, iCardCount)&&(dwCardShape&(0x01<<8))) return UG_DOUBLE_SEQUENCE;  //连对
+	if (IsStraightFlush(iCardList, iCardCount) && (dwCardShape&(0x01 << 7))) return UG_STRAIGHT_FLUSH; //同花顺
+	if (IsStraight(iCardList, iCardCount) && (dwCardShape&(0x01 << 6))) return UG_STRAIGHT;            //顺子	
+	if (IsDoubleSequence(iCardList, iCardCount) && (dwCardShape&(0x01 << 8))) return UG_DOUBLE_SEQUENCE;  //连对
 
 
-	if (IsThreeXSequence(iCardList, iCardCount, 3)&&(dwCardShape&(0x01<<12))) return UG_THREE_DOUBLE_SEQUENCE; //连的三带对
-	if (IsThreeXSequence(iCardList, iCardCount, 2)&&(dwCardShape&(0x01<<11))) return UG_THREE_TWO_SEQUENCE; //连的三带二
-	if (IsThreeXSequence(iCardList, iCardCount, 1)&&(dwCardShape&(0x01<<10))) return UG_THREE_ONE_SEQUENCE; //连的三带一
-	if (IsThreeXSequence(iCardList, iCardCount, 0)&&(dwCardShape&(0x01<<9))) return UG_THREE_SEQUENCE; //连三
+	if (IsThreeXSequence(iCardList, iCardCount, 3) && (dwCardShape&(0x01 << 12))) return UG_THREE_DOUBLE_SEQUENCE; //连的三带对
+	if (IsThreeXSequence(iCardList, iCardCount, 2) && (dwCardShape&(0x01 << 11))) return UG_THREE_TWO_SEQUENCE; //连的三带二
+	if (IsThreeXSequence(iCardList, iCardCount, 1) && (dwCardShape&(0x01 << 10))) return UG_THREE_ONE_SEQUENCE; //连的三带一
+	if (IsThreeXSequence(iCardList, iCardCount, 0) && (dwCardShape&(0x01 << 9))) return UG_THREE_SEQUENCE; //连三
 
-	if  (IsFourX(iCardList,iCardCount,4)&&(dwCardShape&(0x01<<16))) return UG_FOUR_TWO_DOUBLE;		//四带二对(要求是二对)
-	if  (IsFourX(iCardList,iCardCount,3)&&(dwCardShape&(0x01<<15))) return UG_FOUR_ONE_DOUBLE;		//四带一对(要求成对)
-	if	(IsFourX(iCardList,iCardCount,2)&&(dwCardShape&(0x01<<14))) return UG_FOUR_TWO;			//四带二(不要求成对)
-	if	(IsFourX(iCardList,iCardCount,1)&&(dwCardShape&(0x01<<13))) return UG_FOUR_ONE;			//四带一
+	if (IsFourX(iCardList, iCardCount, 4) && (dwCardShape&(0x01 << 16))) return UG_FOUR_TWO_DOUBLE;		//四带二对(要求是二对)
+	if (IsFourX(iCardList, iCardCount, 3) && (dwCardShape&(0x01 << 15))) return UG_FOUR_ONE_DOUBLE;		//四带一对(要求成对)
+	if (IsFourX(iCardList, iCardCount, 2) && (dwCardShape&(0x01 << 14))) return UG_FOUR_TWO;			//四带二(不要求成对)
+	if (IsFourX(iCardList, iCardCount, 1) && (dwCardShape&(0x01 << 13))) return UG_FOUR_ONE;			//四带一
 
-	if (IsFourXSequence(iCardList,iCardCount,4)) return UG_FOUR_TWO_DOUBLE_SEQUENCE;	//四顺带二对
-	if (IsFourXSequence(iCardList,iCardCount,2)) return UG_FOUR_TWO_SEQUENCE;	//四顺带二单张
-	if (IsFourXSequence(iCardList,iCardCount,0)) return UG_FOUR_SEQUENCE;	//四顺
+	if (IsFourXSequence(iCardList, iCardCount, 4)) return UG_FOUR_TWO_DOUBLE_SEQUENCE;	//四顺带二对
+	if (IsFourXSequence(iCardList, iCardCount, 2)) return UG_FOUR_TWO_SEQUENCE;	//四顺带二单张
+	if (IsFourXSequence(iCardList, iCardCount, 0)) return UG_FOUR_SEQUENCE;	//四顺
 
 
-	if	(IsKingBomb(iCardList,iCardCount)&&(dwCardShape&(0x01<<20))) return UG_KING_BOMB;//王炸
-	if (IsBomb(iCardList, iCardCount)&&(dwCardShape&(0x01<<19))) return UG_BOMB; //4张以上同点牌，炸弹
+	if (IsKingBomb(iCardList, iCardCount) && (dwCardShape&(0x01 << 20))) return UG_KING_BOMB;//王炸
+	if (IsBomb(iCardList, iCardCount) && (dwCardShape&(0x01 << 19))) return UG_BOMB; //4张以上同点牌，炸弹
 
 //	if (IsOnlyOne(iCardList,iCardCount)) return UG_ONLY_ONE; //单牌
 //	if (IsDouble(iCardList,iCardCount)) return UG_DOUBLE;	 //对牌
@@ -909,7 +909,7 @@ BYTE CUpGradeGameLogic::GetCardShape(const BYTE iCardList[], int iCardCount, boo
 //对牌
 BOOL CUpGradeGameLogic::IsDouble(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if (iCardCount != 2) 
+	if (iCardCount != 2)
 		return FALSE;
 	return IsSameNumCard(iCardList, iCardCount, bExtVal);
 }
@@ -917,17 +917,17 @@ BOOL CUpGradeGameLogic::IsDouble(const BYTE iCardList[], int iCardCount, bool bE
 //3 带 0,1or2,or3
 BOOL CUpGradeGameLogic::IsThreeX(const BYTE iCardList[], int iCardCount, int iX, bool bExtVal) const
 {
-	if(iCardCount > 5 || iCardCount < 3) 
+	if (iCardCount > 5 || iCardCount < 3)
 	{
 		return FALSE;
 	}
-	if(GetCountBySpecifyNumCount(iCardList, iCardCount,3) != 1)//是否存在三张
+	if (GetCountBySpecifyNumCount(iCardList, iCardCount, 3) != 1)//是否存在三张
 	{
 		return FALSE;
 	}
-	switch(iX)
+	switch (iX)
 	{
-	case 0:	
+	case 0:
 		return iCardCount == 3;//IsSameNumCard(iCardList, iCardCount, bExtVal);//不带
 		break;
 	case 1:
@@ -937,7 +937,7 @@ BOOL CUpGradeGameLogic::IsThreeX(const BYTE iCardList[], int iCardCount, int iX,
 		return iCardCount == 5;//带二张（可以非对子）
 		break;
 	case 3:					//带一对
-		return GetCountBySpecifyNumCount(iCardList,iCardCount,2)==1;//是否存在对牌
+		return GetCountBySpecifyNumCount(iCardList, iCardCount, 2) == 1;//是否存在对牌
 		break;
 	default:
 		break;
@@ -946,39 +946,39 @@ BOOL CUpGradeGameLogic::IsThreeX(const BYTE iCardList[], int iCardCount, int iX,
 }
 
 //四带1or2
-BOOL CUpGradeGameLogic::IsFourX(const BYTE iCardList[],int iCardCount,int iX) const
+BOOL CUpGradeGameLogic::IsFourX(const BYTE iCardList[], int iCardCount, int iX) const
 {
-	if(iCardCount >8 || iCardCount < 4)
+	if (iCardCount > 8 || iCardCount < 4)
 		return false;
 
-	if(GetCountBySpecifyNumCount(iCardList,iCardCount,4) != 1)//是否有四个牌型
+	if (GetCountBySpecifyNumCount(iCardList, iCardCount, 4) != 1)//是否有四个牌型
 		return false;
 
-	switch(iX)
+	switch (iX)
 	{
 	case 0:
 		return iCardCount == 4;//四张
-	case 1:						
+	case 1:
 		return iCardCount == 5;//四带1张
 	case 2:
-		return iCardCount ==6;//四带2(不要求成对)
+		return iCardCount == 6;//四带2(不要求成对)
 	case 3:
-		return (iCardCount == 6 && 1 == GetCountBySpecifyNumCount(iCardList,iCardCount,2));//要求成对
+		return (iCardCount == 6 && 1 == GetCountBySpecifyNumCount(iCardList, iCardCount, 2));//要求成对
 	case 4:
-		return (iCardCount == 8 && 2 == GetCountBySpecifyNumCount(iCardList,iCardCount,2));	//四带2对
+		return (iCardCount == 8 && 2 == GetCountBySpecifyNumCount(iCardList, iCardCount, 2));	//四带2对
 	}
 
 	return FALSE;
 }
 
 //王炸
-BOOL CUpGradeGameLogic:: IsKingBomb(const BYTE iCardList[],int iCardCount) const			//是否为王炸(抓到所的王)
+BOOL CUpGradeGameLogic::IsKingBomb(const BYTE iCardList[], int iCardCount) const			//是否为王炸(抓到所的王)
 {
-	if(iCardCount != KING_COUNT)
+	if (iCardCount != KING_COUNT)
 		return false;
 
-	for(int i=0;i<iCardCount;i++)
-		if(iCardList[i]!=0x4e&&iCardList[i]!=0x4f)
+	for (int i = 0; i < iCardCount; i++)
+		if (iCardList[i] != 0x4e && iCardList[i] != 0x4f)
 			return false;
 	return true;
 }
@@ -986,22 +986,22 @@ BOOL CUpGradeGameLogic:: IsKingBomb(const BYTE iCardList[],int iCardCount) const
 //4+张牌 炸弹
 BOOL CUpGradeGameLogic::IsBomb(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if(iCardCount < 4)
+	if (iCardCount < 4)
 		return FALSE;
 
 	return IsSameNumCard(iCardList, iCardCount, bExtVal); //是否是相同数字
 }
 
 //同花炸弹
-BOOL CUpGradeGameLogic::IsBombSameHua(const BYTE iCardList[],int iCardCount) const
+BOOL CUpGradeGameLogic::IsBombSameHua(const BYTE iCardList[], int iCardCount) const
 {
-	if(!IsBomb(iCardList,iCardCount)) return false;
-	if(!IsSameHuaKind(iCardList,iCardCount)) return false;
+	if (!IsBomb(iCardList, iCardCount)) return false;
+	if (!IsSameHuaKind(iCardList, iCardCount)) return false;
 	return TRUE;
 }
 
 //同花(非同花)
-BOOL CUpGradeGameLogic::IsFlush(const BYTE iCardList[],int iCardCount) const
+BOOL CUpGradeGameLogic::IsFlush(const BYTE iCardList[], int iCardCount) const
 {
 	return IsSameHuaKind(iCardList, iCardCount);
 }
@@ -1009,122 +1009,122 @@ BOOL CUpGradeGameLogic::IsFlush(const BYTE iCardList[],int iCardCount) const
 //同花顺 5张同花连续牌
 BOOL CUpGradeGameLogic::IsStraightFlush(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if(!IsSameHuaKind(iCardList, iCardCount, bExtVal)) return FALSE; //同花？
+	if (!IsSameHuaKind(iCardList, iCardCount, bExtVal)) return FALSE; //同花？
 
-	if( !IsStraight(iCardList, iCardCount, bExtVal) ) return FALSE; //顺子？
+	if (!IsStraight(iCardList, iCardCount, bExtVal)) return FALSE; //顺子？
 	return TRUE;
 }
 
 //是否是变种顺子(A2345)或23456
-BOOL CUpGradeGameLogic::IsVariationStraight(const BYTE iCardList[],int iCardCount,bool bExtVal) const
+BOOL CUpGradeGameLogic::IsVariationStraight(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if(iCardCount < 5)
+	if (iCardCount < 5)
 		return false;
-	return IsVariationSequence(iCardList,iCardCount,1);
+	return IsVariationSequence(iCardList, iCardCount, 1);
 }
 
 //是否是顺子指定张数
-BOOL CUpGradeGameLogic::IsStraight(const BYTE iCardList[],int iCardCount,bool bExtVal) const
+BOOL CUpGradeGameLogic::IsStraight(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if(iCardCount < 5)
+	if (iCardCount < 5)
 		return false;
-	return IsSequence(iCardList,iCardCount,1);
+	return IsSequence(iCardList, iCardCount, 1);
 }
 
 //是否是变种连对AA22或2233等
-BOOL CUpGradeGameLogic::IsVariationDoubleSequence(const BYTE iCardList[],int iCardCount,bool bExtVal) const
+BOOL CUpGradeGameLogic::IsVariationDoubleSequence(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if(iCardCount%2 != 0 || iCardCount < 4)
+	if (iCardCount % 2 != 0 || iCardCount < 4)
 		return false;
 
-	return IsVariationSequence(iCardList,iCardCount,2);
+	return IsVariationSequence(iCardList, iCardCount, 2);
 }
 
 //是否是连对
-BOOL CUpGradeGameLogic::IsDoubleSequence(const BYTE iCardList[],int iCardCount,bool bExtVal) const
+BOOL CUpGradeGameLogic::IsDoubleSequence(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if(iCardCount%2 != 0 || iCardCount < 6)
+	if (iCardCount % 2 != 0 || iCardCount < 6)
 		return false;
 
-	return IsSequence(iCardList,iCardCount,2);
+	return IsSequence(iCardList, iCardCount, 2);
 }
 
 //变种三顺带二顺
 BOOL CUpGradeGameLogic::IsVariationThreeSequenceDoubleSequence(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if(iCardCount < 10)		//三顺至少2二顺也至少二
+	if (iCardCount < 10)		//三顺至少2二顺也至少二
 		return false;
 
-	BYTE iBuffer3[45],iBuffer2[45];
-	BOOL bValue3 = false,bValue2 = false;	//三顺,二顺是否为顺,
-	int TackOutCount3 = 0,TackOutCount2 = 0;
+	BYTE iBuffer3[45], iBuffer2[45];
+	BOOL bValue3 = false, bValue2 = false;	//三顺,二顺是否为顺,
+	int TackOutCount3 = 0, TackOutCount2 = 0;
 
-	TackOutCount3=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer3,3);//三对
-	TackOutCount2=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer2,2);//二对
+	TackOutCount3 = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer3, 3);//三对
+	TackOutCount2 = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer2, 2);//二对
 
-	if(TackOutCount3 <=0 || TackOutCount2 <=0 || TackOutCount3 + TackOutCount2 !=iCardCount || TackOutCount3/3 != TackOutCount2/2 )
+	if (TackOutCount3 <= 0 || TackOutCount2 <= 0 || TackOutCount3 + TackOutCount2 != iCardCount || TackOutCount3 / 3 != TackOutCount2 / 2)
 		return FALSE;
 
-	bValue3 =IsVariationSequence(iBuffer3,TackOutCount3,3);
-	bValue2 =(IsVariationSequence(iBuffer2,TackOutCount2,2)||IsSequence(iBuffer2,TackOutCount2,2));
-	return bValue3&&bValue2;
+	bValue3 = IsVariationSequence(iBuffer3, TackOutCount3, 3);
+	bValue2 = (IsVariationSequence(iBuffer2, TackOutCount2, 2) || IsSequence(iBuffer2, TackOutCount2, 2));
+	return bValue3 && bValue2;
 }
 
 //三顺带二顺
 BOOL CUpGradeGameLogic::IsThreeSequenceDoubleSequence(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if(iCardCount < 10)		//三顺至少2二顺也至少二
+	if (iCardCount < 10)		//三顺至少2二顺也至少二
 		return false;
 
-	BYTE iBuffer3[45],iBuffer2[45];
-	BOOL bValue3 = false,bValue2 = false;	//三顺,二顺是否为顺,
-	int TackOutCount3 = 0,TackOutCount2 = 0;
+	BYTE iBuffer3[45], iBuffer2[45];
+	BOOL bValue3 = false, bValue2 = false;	//三顺,二顺是否为顺,
+	int TackOutCount3 = 0, TackOutCount2 = 0;
 
-	TackOutCount3=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer3,3);//三对
-	TackOutCount2=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer2,2);//二对
-	if(TackOutCount3 <=0 || TackOutCount2 <=0 || TackOutCount3 + TackOutCount2 !=iCardCount || TackOutCount3/3 != TackOutCount2/2 )
+	TackOutCount3 = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer3, 3);//三对
+	TackOutCount2 = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer2, 2);//二对
+	if (TackOutCount3 <= 0 || TackOutCount2 <= 0 || TackOutCount3 + TackOutCount2 != iCardCount || TackOutCount3 / 3 != TackOutCount2 / 2)
 		return FALSE;
-	bValue3 =IsSequence(iBuffer3,TackOutCount3,3);
+	bValue3 = IsSequence(iBuffer3, TackOutCount3, 3);
 	//	TCHAR sz[200];
 	//wsprintf(sz,"%d",bValue3);
 	//	WriteStr(sz);
-	bValue2 =(IsVariationSequence(iBuffer2,TackOutCount2,2)||IsSequence(iBuffer2,TackOutCount2,2));
+	bValue2 = (IsVariationSequence(iBuffer2, TackOutCount2, 2) || IsSequence(iBuffer2, TackOutCount2, 2));
 	//	TCHAR sz[200];
 	//	wsprintf(sz,"bValue3=%d,bValue2=%d==变种2顺%d,标准二顺%d",bValue3,bValue2,IsVariationSequence(iBuffer2,TackOutCount2,2),IsSequence(iBuffer2,TackOutCount2,2));
 	//	WriteStr(sz);
-	return bValue3&&bValue2;
+	return bValue3 && bValue2;
 }
 
 
 //变种连三带x
 BOOL CUpGradeGameLogic::IsVariationThreeXSequence(const BYTE iCardList[], int iCardCount, int iSeqX, bool bExtVal) const
 {
-	if(iCardCount < 6)		//三顺至少2
+	if (iCardCount < 6)		//三顺至少2
 		return false;
 
 	BYTE iBuffer[45];
-	int TackOutCount=0;
-	switch(iSeqX)
+	int TackOutCount = 0;
+	switch (iSeqX)
 	{
 	case 0:
-		if( iCardCount%3 != 0)		
+		if (iCardCount % 3 != 0)
 			return false;
-		return IsVariationSequence(iCardList,iCardCount,3);
+		return IsVariationSequence(iCardList, iCardCount, 3);
 		break;
 	case 1://带单
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,3);
-		if(TackOutCount>0 && TackOutCount/3*4 == iCardCount)
-			return IsVariationSequence(iBuffer,TackOutCount,3);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 3);
+		if (TackOutCount > 0 && TackOutCount / 3 * 4 == iCardCount)
+			return IsVariationSequence(iBuffer, TackOutCount, 3);
 		break;
 	case 2://带二单
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,3);
-		if(TackOutCount>0 &&TackOutCount/3*5 == iCardCount)
-			return IsVariationSequence(iBuffer,TackOutCount,3);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 3);
+		if (TackOutCount > 0 && TackOutCount / 3 * 5 == iCardCount)
+			return IsVariationSequence(iBuffer, TackOutCount, 3);
 	case 3://带一对
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,3);
-		if(TackOutCount>0 &&TackOutCount/3*5 == iCardCount
-			&&GetCountBySpecifyNumCount(iCardList,iCardCount,2))
-			return IsVariationSequence(iBuffer,TackOutCount,3);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 3);
+		if (TackOutCount > 0 && TackOutCount / 3 * 5 == iCardCount
+			&& GetCountBySpecifyNumCount(iCardList, iCardCount, 2))
+			return IsVariationSequence(iBuffer, TackOutCount, 3);
 
 		break;
 	}
@@ -1134,33 +1134,33 @@ BOOL CUpGradeGameLogic::IsVariationThreeXSequence(const BYTE iCardList[], int iC
 //连的三带 0,1 or 2
 BOOL CUpGradeGameLogic::IsThreeXSequence(const BYTE iCardList[], int iCardCount, int iSeqX, bool bExtVal) const
 {
-	if(iCardCount < 6)		//三顺至少2
+	if (iCardCount < 6)		//三顺至少2
 		return false;
 
 	BYTE iBuffer[45];
-	int TackOutCount=0;
-	switch(iSeqX)
+	int TackOutCount = 0;
+	switch (iSeqX)
 	{
 	case 0:
-		if( iCardCount%3 != 0)		
+		if (iCardCount % 3 != 0)
 			return false;
-		return IsSequence(iCardList,iCardCount,3);
+		return IsSequence(iCardList, iCardCount, 3);
 		break;
 	case 1://带单
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,3);
-		if(TackOutCount>0 && TackOutCount/3*4 == iCardCount)
-			return IsSequence(iBuffer,TackOutCount,3); //2011-6-28 修改333444请允许带55
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 3);
+		if (TackOutCount > 0 && TackOutCount / 3 * 4 == iCardCount)
+			return IsSequence(iBuffer, TackOutCount, 3); //2011-6-28 修改333444请允许带55
 			//&& (TackOutCount/3==GetCountBySpecifyNumCount(iCardList,iCardCount,1));//沈阳要求333444不能带55;
 		break;
 	case 2://带二单
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,3);
-		if(TackOutCount>0 &&TackOutCount/3*5 == iCardCount)
-			return IsSequence(iBuffer,TackOutCount,3);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 3);
+		if (TackOutCount > 0 && TackOutCount / 3 * 5 == iCardCount)
+			return IsSequence(iBuffer, TackOutCount, 3);
 	case 3://带对
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,3);
-		if(TackOutCount>0 &&TackOutCount/3*5 == iCardCount
-			&&GetCountBySpecifyNumCount(iCardList,iCardCount,2) == TackOutCount/3)
-			return IsSequence(iBuffer,TackOutCount,3);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 3);
+		if (TackOutCount > 0 && TackOutCount / 3 * 5 == iCardCount
+			&& GetCountBySpecifyNumCount(iCardList, iCardCount, 2) == TackOutCount / 3)
+			return IsSequence(iBuffer, TackOutCount, 3);
 
 		break;
 	}
@@ -1168,112 +1168,112 @@ BOOL CUpGradeGameLogic::IsThreeXSequence(const BYTE iCardList[], int iCardCount,
 }
 
 //变种四顺带　
-BOOL CUpGradeGameLogic::IsVariationFourXSequence(const BYTE iCardList[],int iCardCount,int iSeqX) const
+BOOL CUpGradeGameLogic::IsVariationFourXSequence(const BYTE iCardList[], int iCardCount, int iSeqX) const
 {
-	if(iCardCount < 8)		//四顺至少2
+	if (iCardCount < 8)		//四顺至少2
 		return false;
 
 	BYTE iBuffer[45];
-	int TackOutCount=0;
-	switch(iSeqX)
+	int TackOutCount = 0;
+	switch (iSeqX)
 	{
 	case 0:
-		if( iCardCount%4 != 0)		
+		if (iCardCount % 4 != 0)
 			return false;
-		return IsVariationSequence(iCardList,iCardCount,4);
+		return IsVariationSequence(iCardList, iCardCount, 4);
 		break;
 
 	case 1://带单张
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,4);
-		if(TackOutCount>0 && TackOutCount/4*5 == iCardCount)
-			return IsVariationSequence(iBuffer,TackOutCount,4);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 4);
+		if (TackOutCount > 0 && TackOutCount / 4 * 5 == iCardCount)
+			return IsVariationSequence(iBuffer, TackOutCount, 4);
 		break;
 
 	case 2://带二张(可以非对子）
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,4);
-		if(TackOutCount>0 &&TackOutCount/4*6 == iCardCount)
-			return IsVariationSequence(iBuffer,TackOutCount,4);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 4);
+		if (TackOutCount > 0 && TackOutCount / 4 * 6 == iCardCount)
+			return IsVariationSequence(iBuffer, TackOutCount, 4);
 
 	case 3://带一对
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,4);
-		if(TackOutCount>0 &&TackOutCount/4*6 == iCardCount 
-			&&TackOutCount/4 == GetBulkBySpecifyCardCount(iCardList,iCardCount,2))
-			return IsVariationSequence(iBuffer,TackOutCount,4);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 4);
+		if (TackOutCount > 0 && TackOutCount / 4 * 6 == iCardCount
+			&& TackOutCount / 4 == GetBulkBySpecifyCardCount(iCardList, iCardCount, 2))
+			return IsVariationSequence(iBuffer, TackOutCount, 4);
 
 	case 4://(带二对）
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,4);
-		if(TackOutCount>0 &&TackOutCount/4*6 == iCardCount
-			&&TackOutCount/2 == GetBulkBySpecifyCardCount(iCardList,iCardCount,2))
-			return IsVariationSequence(iBuffer,TackOutCount,4);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 4);
+		if (TackOutCount > 0 && TackOutCount / 4 * 6 == iCardCount
+			&& TackOutCount / 2 == GetBulkBySpecifyCardCount(iCardList, iCardCount, 2))
+			return IsVariationSequence(iBuffer, TackOutCount, 4);
 		break;
-	}	
+	}
 	return FALSE;
 }
 
 //四顺带　
-BOOL CUpGradeGameLogic::IsFourXSequence(const BYTE iCardList[],int iCardCount,int iSeqX) const
+BOOL CUpGradeGameLogic::IsFourXSequence(const BYTE iCardList[], int iCardCount, int iSeqX) const
 {
-	if(iCardCount < 8)		//四顺至少2
+	if (iCardCount < 8)		//四顺至少2
 		return false;
 
 	BYTE iBuffer[45];
-	int TackOutCount=0;
-	switch(iSeqX)
+	int TackOutCount = 0;
+	switch (iSeqX)
 	{
 	case 0:
-		if( iCardCount%4 != 0)		
+		if (iCardCount % 4 != 0)
 			return false;
-		return IsSequence(iCardList,iCardCount,4);
+		return IsSequence(iCardList, iCardCount, 4);
 		break;
 
 	case 1://带单张
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,4);
-		if(TackOutCount>0 && TackOutCount/4*5 == iCardCount)
-			return IsSequence(iBuffer,TackOutCount,4);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 4);
+		if (TackOutCount > 0 && TackOutCount / 4 * 5 == iCardCount)
+			return IsSequence(iBuffer, TackOutCount, 4);
 		break;
 
 	case 2://带二张(可以非对子）
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,4);
-		if(TackOutCount>0 &&TackOutCount/4*6 == iCardCount)
-			return IsSequence(iBuffer,TackOutCount,4);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 4);
+		if (TackOutCount > 0 && TackOutCount / 4 * 6 == iCardCount)
+			return IsSequence(iBuffer, TackOutCount, 4);
 
 	case 3://带一对
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,4);
-		if(TackOutCount>0 &&TackOutCount/4*6 == iCardCount 
-			&&TackOutCount/4 == GetBulkBySpecifyCardCount(iCardList,iCardCount,2))
-			return IsSequence(iBuffer,TackOutCount,4);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 4);
+		if (TackOutCount > 0 && TackOutCount / 4 * 6 == iCardCount
+			&& TackOutCount / 4 == GetBulkBySpecifyCardCount(iCardList, iCardCount, 2))
+			return IsSequence(iBuffer, TackOutCount, 4);
 
 	case 4://(带二对）
-		TackOutCount=TackOutBySepcifyCardNumCount(iCardList,iCardCount,iBuffer,4);
-		if(TackOutCount>0 &&TackOutCount/4*6 == iCardCount
-			&&TackOutCount/2 == GetBulkBySpecifyCardCount(iCardList,iCardCount,2))
-			return IsSequence(iBuffer,TackOutCount,4);
+		TackOutCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iBuffer, 4);
+		if (TackOutCount > 0 && TackOutCount / 4 * 6 == iCardCount
+			&& TackOutCount / 2 == GetBulkBySpecifyCardCount(iCardList, iCardCount, 2))
+			return IsSequence(iBuffer, TackOutCount, 4);
 		break;
-	}	
+	}
 	return FALSE;
 }
 
 //判断是否是510K 炸弹
 BOOL CUpGradeGameLogic::IsSlave510K(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if(iCardCount != 3) return false;
-	BYTE Test[18]={0};
-	for(int i = 0; i < iCardCount; i++)
+	if (iCardCount != 3) return false;
+	BYTE Test[18] = { 0 };
+	for (int i = 0; i < iCardCount; i++)
 	{
 		Test[GetCardNum(i)] ++;
 	}
 
-	return (Test[5]==Test[10]==Test[13]==1);
+	return (Test[5] == Test[10] == Test[13] == 1);
 }
 
 //判断是否是510K 同花
 BOOL CUpGradeGameLogic::IsMaster510K(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	if(iCardCount != 3) return false; //数量不对
+	if (iCardCount != 3) return false; //数量不对
 
-	if( !IsSameHuaKind(iCardList, iCardCount, bExtVal) ) return false; //同花 ？
+	if (!IsSameHuaKind(iCardList, iCardCount, bExtVal)) return false; //同花 ？
 
-	if( !IsSlave510K(iCardList, iCardCount, bExtVal) ) return false; //510K ？	
+	if (!IsSlave510K(iCardList, iCardCount, bExtVal)) return false; //510K ？	
 
 	return true;
 }
@@ -1282,21 +1282,21 @@ BOOL CUpGradeGameLogic::IsMaster510K(const BYTE iCardList[], int iCardCount, boo
 
 //自动找出可以出的牌
 BOOL CUpGradeGameLogic::AutoOutCard(const BYTE iHandCard[], int iHandCardCount, //当前玩家手中所有的牌数据
-									const BYTE iBaseCard[], int iBaseCardCount, //前一个出牌的人出的牌数据
-									BYTE iResultCard[], int & iResultCardCount, //找到的结果
-									BOOL bFirstOut) const //当前玩家是否先手
+	const BYTE iBaseCard[], int iBaseCardCount, //前一个出牌的人出的牌数据
+	BYTE iResultCard[], int & iResultCardCount, //找到的结果
+	BOOL bFirstOut) const //当前玩家是否先手
 {
-	iResultCardCount=0;
-	if(bFirstOut) //先手出最右边一手牌
+	iResultCardCount = 0;
+	if (bFirstOut) //先手出最右边一手牌
 	{
-		TackOutCardBySpecifyCardNum(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iHandCard[iHandCardCount-1]);
+		TackOutCardBySpecifyCardNum(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iHandCard[iHandCardCount - 1]);
 	}
 	else //跟牌
 	{
 		//从手中的牌中找出比桌面上大的牌
 
 		TackOutCardMoreThanLast(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount, false);
-		if(!CanOutCard(iResultCard, iResultCardCount, iBaseCard, iBaseCardCount, iHandCard, iHandCardCount))
+		if (!CanOutCard(iResultCard, iResultCardCount, iBaseCard, iBaseCardCount, iHandCard, iHandCardCount))
 		{
 			iResultCardCount = 0;
 		}
@@ -1308,189 +1308,189 @@ BOOL CUpGradeGameLogic::AutoOutCard(const BYTE iHandCard[], int iHandCardCount, 
 
 //查找一个比当前大的
 BOOL CUpGradeGameLogic::TackOutCardMoreThanLast(const BYTE iHandCard[], int iHandCardCount,
-												const BYTE iBaseCard[], int iBaseCardCount,
-												BYTE iResultCard[], int &iResultCardCount, 
-												bool bExtVal) const
+	const BYTE iBaseCard[], int iBaseCardCount,
+	BYTE iResultCard[], int &iResultCardCount,
+	bool bExtVal) const
 {
 	BYTE iTempCard[45];
 	iResultCardCount = 0;
 
 	int iBaseShape = GetCardShape(iBaseCard, iBaseCardCount); //桌面上牌的牌型
 
-	switch(iBaseShape)
+	switch (iBaseShape)
 	{
 	case UG_ONLY_ONE: //单张
 	case UG_DOUBLE:   //对牌
 	case UG_THREE:    //三张
 	case UG_BOMB:	//四张 炸弹
+	{
+		//查找1,2,3,or4张牌
+		BYTE iCount = TackOutBySepcifyCardNumCount(iHandCard, iHandCardCount, iTempCard, iBaseCardCount);
+
+		if (iCount > 0)
 		{
-			//查找1,2,3,or4张牌
-			BYTE iCount = TackOutBySepcifyCardNumCount(iHandCard, iHandCardCount, iTempCard, iBaseCardCount);
+			BYTE Step = GetSerialByMoreThanSpecifyCard(iTempCard, iCount, iBaseCard[0], iBaseCardCount, false);
+			CopyMemory(iResultCard, &iTempCard[Step], sizeof(BYTE)*iBaseCardCount);
 
-			if(iCount > 0)
+			if (CompareOnlyOne(iBaseCard[0], iResultCard[0]))
 			{
-				BYTE Step = GetSerialByMoreThanSpecifyCard(iTempCard, iCount, iBaseCard[0], iBaseCardCount, false);
-				CopyMemory(iResultCard, &iTempCard[Step], sizeof(BYTE)*iBaseCardCount);	
+				iResultCardCount = iBaseCardCount;
+			}
+			else
+			{
+				if (iBaseShape != UG_BOMB)
+				{
+					//查找炸弹
 
-				if(CompareOnlyOne(iBaseCard[0], iResultCard[0]))
-				{
-					iResultCardCount = iBaseCardCount;
-				}
-				else
-				{
-	               if (iBaseShape!=UG_BOMB)
+					iCount = TackOutBySepcifyCardNumCount(iHandCard, iHandCardCount, iTempCard, 4);
+					if (iCount >= 4)
 					{
-						//查找炸弹
-					
-						iCount = TackOutBySepcifyCardNumCount(iHandCard, iHandCardCount, iTempCard, 4);
-						if (iCount>=4)
-						{
-							CopyMemory(iResultCard, &iTempCard, sizeof(BYTE)*4);	  
-							iResultCardCount=4;
-							return TRUE;
-						}
-						else
-						{     
-							break;
-						}
-					 
-					
+						CopyMemory(iResultCard, &iTempCard, sizeof(BYTE) * 4);
+						iResultCardCount = 4;
+						return TRUE;
 					}
 					else
 					{
 						break;
 					}
+
+
 				}
-			}				
-			break;			
+				else
+				{
+					break;
+				}
+			}
 		}
-		//case UG_THREE:    //三张也可以用下面的来提取
+		break;
+	}
+	//case UG_THREE:    //三张也可以用下面的来提取
 	case UG_THREE_ONE: //三带一
-		{
-			if(TackOutThreeX(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount,1))
-				return TRUE;
-			break;
-		}
+	{
+		if (TackOutThreeX(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount, 1))
+			return TRUE;
+		break;
+	}
 	case UG_THREE_TWO: //三带二张
-		{
-			if(TackOutThreeX(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount,2))
-				return TRUE;
-			break;
-		}
+	{
+		if (TackOutThreeX(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount, 2))
+			return TRUE;
+		break;
+	}
 	case UG_THREE_DOUBLE:	//三带一对
-		{
-			if(TackOutThreeX(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount,3))
-				return TRUE;
-			break;
-		}
+	{
+		if (TackOutThreeX(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount, 3))
+			return TRUE;
+		break;
+	}
 	case UG_FLUSH:		//同花
-		{
-			//if(TackOutStraightFlush(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount))
-			//	return true;
-			break;
-		}
+	{
+		//if(TackOutStraightFlush(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount))
+		//	return true;
+		break;
+	}
 
 	case UG_STRAIGHT: //顺子
 		/*if(TackOutStraightFlush(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount))
 		{
 		return TRUE; //先找相同牌点的同花顺
 		}*/
-		if(TackOutSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount,1))
+		if (TackOutSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount, 1))
 		{
 			return TRUE; //再找牌点大的顺子
 		}
 		break;
 	case UG_STRAIGHT_FLUSH: //同花顺
+	{
+		if (TackOutStraightFlush(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount))
+			return true;
+	}
+	break;
+	case UG_DOUBLE_SEQUENCE: //连对
+	{
+		if (TackOutSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount, 2))
 		{
-			if(TackOutStraightFlush(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount))
-				return true;
+			return TRUE; //再找牌点大的顺子
 		}
 		break;
-	case UG_DOUBLE_SEQUENCE: //连对
-		{
-			if(TackOutSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount,2))
-			{
-				return TRUE; //再找牌点大的顺子
-			}
-			break;
-		}
+	}
 	case UG_THREE_SEQUENCE: //连三
+	{
+		if (TackOutSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount, 3))
 		{
-			if(TackOutSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount,3))
-			{
-				return TRUE;
-			}
-			break;
+			return TRUE;
 		}
+		break;
+	}
 
 	case UG_THREE_ONE_SEQUENCE: //三带一的连牌
-		{
-			if(TrackOut3XSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount,1))
-				break;
-		}
+	{
+		if (TrackOut3XSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount, 1))
+			break;
+	}
 	case UG_THREE_TWO_SEQUENCE: //三带二的连牌
-		if(TrackOut3XSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount,2))
+		if (TrackOut3XSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount, 2))
 			//if(TrackOut3XSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount))
 		{
 			return TRUE;
-		}	
-	case UG_THREE_DOUBLE_SEQUENCE://三带对连牌
-		{
-			if(TrackOut3XSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount,3))
-				return TRUE;
-			break;
-		}	
-	case UG_THREE_SEQUENCE_DOUBLE_SEQUENCE:
-		{
-			if(TrackOut3Sequence2Sequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount))
-				return true;
-			break;
 		}
-		//case UG_FOUR_ONE_SEQUENCE:
+	case UG_THREE_DOUBLE_SEQUENCE://三带对连牌
+	{
+		if (TrackOut3XSequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount, 3))
+			return TRUE;
+		break;
+	}
+	case UG_THREE_SEQUENCE_DOUBLE_SEQUENCE:
+	{
+		if (TrackOut3Sequence2Sequence(iHandCard, iHandCardCount, iBaseCard, iBaseCardCount, iResultCard, iResultCardCount))
+			return true;
+		break;
+	}
+	//case UG_FOUR_ONE_SEQUENCE:
 
 	case UG_SLAVE_510K: //只能用同花来压,属于找大的牌型,用下面的来处理
 		//	break;
 	case UG_MASTER_510K:
 		TrackOut510K(iHandCard, iHandCardCount, iResultCard, iResultCardCount, true); //找出同花 510K
-		if(GetCardHuaKind(iBaseCard[0], TRUE) >= GetCardHuaKind(iResultCard[0], TRUE)) //比较花色
+		if (GetCardHuaKind(iBaseCard[0], TRUE) >= GetCardHuaKind(iResultCard[0], TRUE)) //比较花色
 		{
 			iResultCardCount = 0;
 		}
 		break;
 	default:
-		{
-			iResultCardCount = 0;
-		}
-		
+	{
+		iResultCardCount = 0;
 	}
 
-	if(iResultCardCount == 0) //没找到同牌型的大牌,就找大一点的牌型
+	}
+
+	if (iResultCardCount == 0) //没找到同牌型的大牌,就找大一点的牌型
 	{
-		memset(iResultCard,0,sizeof(BYTE) * 45);
-		switch(iBaseShape)
+		memset(iResultCard, 0, sizeof(BYTE) * 45);
+		switch (iBaseShape)
 		{
 		case UG_ONLY_ONE: //可以拆对子,拆三条来压单牌或者对子
 		case UG_DOUBLE:
-			{
-				if(TackOutCardByNoSameShape(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iBaseCard, iBaseCardCount))
-					return TRUE;
-				break;
-			}
-		case UG_BOMB:
-			{
-				//上面没找到相同数量的大炸弹,这里找数量更多的
-				if(TackOutBomb(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iBaseCardCount+1))
-					return TRUE;
-			}
+		{
+			if (TackOutCardByNoSameShape(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iBaseCard, iBaseCardCount))
+				return TRUE;
 			break;
+		}
+		case UG_BOMB:
+		{
+			//上面没找到相同数量的大炸弹,这里找数量更多的
+			if (TackOutBomb(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iBaseCardCount + 1))
+				return TRUE;
+		}
+		break;
 		default: //如果找不到大的对子单牌就找大的牌型,warning此处不用break;
 			break;
 		}
 	}
 
-	if(iResultCardCount == 0)
+	if (iResultCardCount == 0)
 	{
-		memset(iResultCard,0,sizeof(BYTE) * 45);
+		memset(iResultCard, 0, sizeof(BYTE) * 45);
 		TackOutMoreThanLastShape(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iBaseCard, iBaseCardCount);
 	}
 	//				if(TackOutMoreThanLastShape(iHandCard, iHandCardCount, iResultCard, iResultCardCount, iBaseCard, iBaseCardCount))
@@ -1501,13 +1501,13 @@ BOOL CUpGradeGameLogic::TackOutCardMoreThanLast(const BYTE iHandCard[], int iHan
 }
 
 //直接提取比桌面上大的牌型
-BOOL  CUpGradeGameLogic::TackOutMoreThanLastShape(const BYTE iCardList[], int iCardCount, 
-												  BYTE iResultCard[], int &iResultCardCount, 
-												  const BYTE iBaseCard[], int iBaseCardCount) const
+BOOL  CUpGradeGameLogic::TackOutMoreThanLastShape(const BYTE iCardList[], int iCardCount,
+	BYTE iResultCard[], int &iResultCardCount,
+	const BYTE iBaseCard[], int iBaseCardCount) const
 {
 	iResultCardCount = 0;
 	int ishape = GetCardShape(iBaseCard, iBaseCardCount);
-	switch(ishape)
+	switch (ishape)
 	{
 		/*	case UG_ONLY_ONE: //单张
 		case UG_DOUBLE:   //对牌
@@ -1530,7 +1530,7 @@ BOOL  CUpGradeGameLogic::TackOutMoreThanLastShape(const BYTE iCardList[], int iC
 		case UG_STRAIGHT_FLUSH:			//同花顺
 		if(TrackOut510K(iCardList, iCardCount, iResultCard, iResultCardCount)) //510K 炸弹
 		{
-		break; 
+		break;
 		}
 
 		if(TrackOut510K(iCardList,iCardCount,iResultCard,iResultCardCount,true)) //同花510K
@@ -1542,20 +1542,20 @@ BOOL  CUpGradeGameLogic::TackOutMoreThanLastShape(const BYTE iCardList[], int iC
 
 		break;*/
 	case UG_SLAVE_510K: //一般510K
-		{
-			if(TrackOut510K(iCardList,iCardCount,iResultCard,iResultCardCount,true))
-				break;		
-			else 
-				TackOutBomb(iCardList,iCardCount,iResultCard,iResultCardCount);
+	{
+		if (TrackOut510K(iCardList, iCardCount, iResultCard, iResultCardCount, true))
 			break;
-		}
+		else
+			TackOutBomb(iCardList, iCardCount, iResultCard, iResultCardCount);
+		break;
+	}
 	case UG_MASTER_510K: //510K 同花
-		{
-			TackOutBomb(iCardList,iCardCount,iResultCard,iResultCardCount);		
-			break;
-		}
+	{
+		TackOutBomb(iCardList, iCardCount, iResultCard, iResultCardCount);
+		break;
+	}
 	default:
-		TackOutBomb(iCardList,iCardCount,iResultCard,iResultCardCount); //找炸弹
+		TackOutBomb(iCardList, iCardCount, iResultCard, iResultCardCount); //找炸弹
 		break;
 	}
 	return true;
@@ -1566,36 +1566,36 @@ BOOL	CUpGradeGameLogic::TackOutMinOrMaxOneNoDouble(BYTE iCardList[], int iCardCo
 {
 	iResultCount = 0;
 	BYTE byTmpData[14][2];
-	memset(byTmpData,0,sizeof(byTmpData));
+	memset(byTmpData, 0, sizeof(byTmpData));
 
 	BYTE byCardNum = 0;
-	for(int i=0; i<iCardCount; i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
 		byCardNum = GetCardNum(iCardList[i]);
-		if(iCardList[i] == 0x4E || iCardList[i] == 0x4F)	//大小王
+		if (iCardList[i] == 0x4E || iCardList[i] == 0x4F)	//大小王
 		{
 
 		}
-		else if(byCardNum == 2)		//2
+		else if (byCardNum == 2)		//2
 		{
 			byTmpData[12][0] = 2;
 			byTmpData[12][1]++;
 		}
 		else
 		{
-			byTmpData[byCardNum-3][0] = byCardNum;
-			byTmpData[byCardNum-3][1]++;
+			byTmpData[byCardNum - 3][0] = byCardNum;
+			byTmpData[byCardNum - 3][1]++;
 		}
 	}
 
 	//查找最小的单张
 	BYTE byIndex = 255;
-	if(0 == iMinOrMax)
+	if (0 == iMinOrMax)
 	{
 		//只找3-k 
-		for(int i=0; i<11; i++)
+		for (int i = 0; i < 11; i++)
 		{
-			if(byTmpData[i][1] == 1)
+			if (byTmpData[i][1] == 1)
 			{
 				byIndex = i;
 				break;
@@ -1604,9 +1604,9 @@ BOOL	CUpGradeGameLogic::TackOutMinOrMaxOneNoDouble(BYTE iCardList[], int iCardCo
 	}
 	else
 	{
-		for(int i=13; i>0; i--)
+		for (int i = 13; i > 0; i--)
 		{
-			if(byTmpData[i][1] == 1)
+			if (byTmpData[i][1] == 1)
 			{
 				byIndex = i;
 				break;
@@ -1615,11 +1615,11 @@ BOOL	CUpGradeGameLogic::TackOutMinOrMaxOneNoDouble(BYTE iCardList[], int iCardCo
 	}
 
 	//找到了单张
-	if(byIndex != 255)
+	if (byIndex != 255)
 	{
-		for(int i=0; i<iCardCount; i++)
+		for (int i = 0; i < iCardCount; i++)
 		{
-			if(GetCardNum(iCardList[i]) == byTmpData[byIndex][0])
+			if (GetCardNum(iCardList[i]) == byTmpData[byIndex][0])
 			{
 				iResultCard[iResultCount++] = iCardList[i];
 			}
@@ -1636,35 +1636,35 @@ BOOL	CUpGradeGameLogic::TackOutDouBle(BYTE iCardList[], int iCardCount, BYTE iRe
 {
 	iResultCount = 0;
 	BYTE byTmpData[14][2];
-	memset(byTmpData,0,sizeof(byTmpData));
+	memset(byTmpData, 0, sizeof(byTmpData));
 
 	BYTE byCardNum = 0;
-	for(int i=0; i<iCardCount; i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
 		byCardNum = GetCardNum(iCardList[i]);
-		if(iCardList[i] == 0x4E || iCardList[i] == 0x4F)	//大小王
+		if (iCardList[i] == 0x4E || iCardList[i] == 0x4F)	//大小王
 		{
 
 		}
-		else if(byCardNum == 2)		//2
+		else if (byCardNum == 2)		//2
 		{
 			byTmpData[12][0] = 2;
 			byTmpData[12][1]++;
 		}
 		else
 		{
-			byTmpData[byCardNum-3][0] = byCardNum;
-			byTmpData[byCardNum-3][1]++;
+			byTmpData[byCardNum - 3][0] = byCardNum;
+			byTmpData[byCardNum - 3][1]++;
 		}
 	}
 
 	//查找最小的对子
 	BYTE byIndex = 255;
-	if(0 == iMinOrMax)
+	if (0 == iMinOrMax)
 	{
-		for(int i=0; i<13; i++)
+		for (int i = 0; i < 13; i++)
 		{
-			if(byTmpData[i][1] == 2)
+			if (byTmpData[i][1] == 2)
 			{
 				byIndex = i;
 				break;
@@ -1673,9 +1673,9 @@ BOOL	CUpGradeGameLogic::TackOutDouBle(BYTE iCardList[], int iCardCount, BYTE iRe
 	}
 	else
 	{
-		for(int i=12; i>0; i--)
+		for (int i = 12; i > 0; i--)
 		{
-			if(byTmpData[i][1] == 2)
+			if (byTmpData[i][1] == 2)
 			{
 				byIndex = i;
 				break;
@@ -1684,11 +1684,11 @@ BOOL	CUpGradeGameLogic::TackOutDouBle(BYTE iCardList[], int iCardCount, BYTE iRe
 	}
 
 	//找到了对子
-	if(byIndex != 255)
+	if (byIndex != 255)
 	{
-		for(int i=0; i<iCardCount; i++)
+		for (int i = 0; i < iCardCount; i++)
 		{
-			if(GetCardNum(iCardList[i]) == byTmpData[byIndex][0])
+			if (GetCardNum(iCardList[i]) == byTmpData[byIndex][0])
 			{
 				iResultCard[iResultCount++] = iCardList[i];
 			}
@@ -1701,22 +1701,22 @@ BOOL	CUpGradeGameLogic::TackOutDouBle(BYTE iCardList[], int iCardCount, BYTE iRe
 /*-----------------------------------------------------------------------------------------------------------------------------*/
 
 //提取单个的三带0, 1 or 2 到底带的是几,由 iBaseCount-3 来决定
-BYTE CUpGradeGameLogic::TackOutThreeX(const BYTE iCardList[], int iCardCount, 
-									  const BYTE iBaseCard[], int iBaseCount, 
-									  BYTE iResultCard[], int &iResultCount, int iValue) const
+BYTE CUpGradeGameLogic::TackOutThreeX(const BYTE iCardList[], int iCardCount,
+	const BYTE iBaseCard[], int iBaseCount,
+	BYTE iResultCard[], int &iResultCount, int iValue) const
 {
 	iResultCount = 0;
-	if(iCardCount<iBaseCount)
+	if (iCardCount < iBaseCount)
 		return FALSE;
 	BYTE iTempCard[45];
-	int threecard = GetBulkBySpecifyCardCount(iBaseCard,iBaseCount,3);//桌面牌三张的点数
+	int threecard = GetBulkBySpecifyCardCount(iBaseCard, iBaseCount, 3);//桌面牌三张的点数
 	//3张牌总个数
 	BYTE iCount = TackOutBySepcifyCardNumCount(iCardList, iCardCount, iTempCard, 3);
 
-	if(iCount > 0)//提取大于桌面的三条
+	if (iCount > 0)//提取大于桌面的三条
 	{
 		BYTE byCardTemp = 0x00;
-		for (int i=0; i<iBaseCount; ++i)
+		for (int i = 0; i < iBaseCount; ++i)
 		{
 			if (threecard == GetCardBulk(iBaseCard[i]))
 			{
@@ -1732,85 +1732,86 @@ BYTE CUpGradeGameLogic::TackOutThreeX(const BYTE iCardList[], int iCardCount,
 		BYTE Step = GetSerialByMoreThanSpecifyCard(iTempCard, iCount, byCardTemp, 3, true);//牌面值进去
 		//if(Step == 0)
 		//	return FALSE;
-		CopyMemory(iResultCard, &iTempCard[Step], sizeof(BYTE)*3);	
+		CopyMemory(iResultCard, &iTempCard[Step], sizeof(BYTE) * 3);
 		//TCHAR sz[200];
 		//wsprintf(sz,"Step=%d,iBaseCount=%d",Step,iBaseCount);
 		//WriteStr(sz,7,7);
 
 		//if(CompareOnlyOne(iBaseCard[0], iResultCard[0]))			//由于传过来的step可能为0得进行一次比较处理
-		if(threecard >= GetBulkBySpecifyCardCount(iResultCard,3,3))
+		if (threecard >= GetBulkBySpecifyCardCount(iResultCard, 3, 3))
 			return FALSE;
 		//iResultCount = 3;
 		//else
 		//	return FALSE;
-	}else 
+	}
+	else
 		return FALSE;
 	//将原值移走
 	BYTE Tmp[45];
-	int iTempCount=iCardCount;
-	::CopyMemory(Tmp,iCardList,sizeof(BYTE)*iCardCount);
-	RemoveCard(iResultCard,3,Tmp,iTempCount);
-	iTempCount-=3;
+	int iTempCount = iCardCount;
+	::CopyMemory(Tmp, iCardList, sizeof(BYTE)*iCardCount);
+	RemoveCard(iResultCard, 3, Tmp, iTempCount);
+	iTempCount -= 3;
 	int destCount = iBaseCount - 3;
 	//	TCHAR sz[200];
 	//	wsprintf(sz,"iValue=%d,destCount=%d",iValue,destCount);
 	//	WriteStr(sz,8,8);
-	switch(iValue)
+	switch (iValue)
 	{
 	case 1:
 	case 2:
-		{	
-			iCount=TackOutBySepcifyCardNumCount(Tmp,iTempCount,iTempCard,1);
-			if(iCount >= destCount)//查找到单牌
-			{
-				CopyMemory(&iResultCard[3],iTempCard,sizeof(BYTE)*destCount);
-				iResultCount = iBaseCount;
-				break;
-			}
-			//拆对来补单牌
-			iCount = TackOutBySepcifyCardNumCount(Tmp,iTempCount,iTempCard,2);
-			if(iCount >= destCount)
-			{
-				CopyMemory(&iResultCard[3],iTempCard,sizeof(BYTE)*destCount);
-				iResultCount = iBaseCount;
-				break;
-			}
-
-			//拆三张来补单牌
-			iCount = TackOutBySepcifyCardNumCount(Tmp,iTempCount,iTempCard,3);
-			if(iCount < 3)//仅一三张无法拆
-				break;
-			CopyMemory(&iResultCard[3],iTempCard,sizeof(BYTE)*destCount);
-			iResultCount=iBaseCount;
-			break;
-		}
-	case 3:
+	{
+		iCount = TackOutBySepcifyCardNumCount(Tmp, iTempCount, iTempCard, 1);
+		if (iCount >= destCount)//查找到单牌
 		{
-			iCount = TackOutBySepcifyCardNumCount(Tmp,iTempCount,iTempCard,2);
-			if(iCount > 0)
-			{
-				CopyMemory(&iResultCard[3],iTempCard,sizeof(BYTE)*destCount);
-				iResultCount = iBaseCount;
-				break;
-			}
-			//拆三张来补单牌
-			iCount = TackOutBySepcifyCardNumCount(Tmp,iTempCount,iTempCard,3);
-			if(iCount < 3)//仅一三张无法拆
-				break;
-			CopyMemory(&iResultCard[3],iTempCard,sizeof(BYTE)*destCount);
-			iResultCount=iBaseCount;
+			CopyMemory(&iResultCard[3], iTempCard, sizeof(BYTE)*destCount);
+			iResultCount = iBaseCount;
 			break;
-
 		}
+		//拆对来补单牌
+		iCount = TackOutBySepcifyCardNumCount(Tmp, iTempCount, iTempCard, 2);
+		if (iCount >= destCount)
+		{
+			CopyMemory(&iResultCard[3], iTempCard, sizeof(BYTE)*destCount);
+			iResultCount = iBaseCount;
+			break;
+		}
+
+		//拆三张来补单牌
+		iCount = TackOutBySepcifyCardNumCount(Tmp, iTempCount, iTempCard, 3);
+		if (iCount < 3)//仅一三张无法拆
+			break;
+		CopyMemory(&iResultCard[3], iTempCard, sizeof(BYTE)*destCount);
+		iResultCount = iBaseCount;
+		break;
+	}
+	case 3:
+	{
+		iCount = TackOutBySepcifyCardNumCount(Tmp, iTempCount, iTempCard, 2);
+		if (iCount > 0)
+		{
+			CopyMemory(&iResultCard[3], iTempCard, sizeof(BYTE)*destCount);
+			iResultCount = iBaseCount;
+			break;
+		}
+		//拆三张来补单牌
+		iCount = TackOutBySepcifyCardNumCount(Tmp, iTempCount, iTempCard, 3);
+		if (iCount < 3)//仅一三张无法拆
+			break;
+		CopyMemory(&iResultCard[3], iTempCard, sizeof(BYTE)*destCount);
+		iResultCount = iBaseCount;
+		break;
+
+	}
 	default:
 		iResultCount = 0;
 		break;
 	}
 	//		wsprintf(sz,"iResultCount=%d,iBaseCount=%d",iResultCount,iBaseCount);
 	//	WriteStr(sz,8,8);
-	if(iResultCount == iBaseCount )
+	if (iResultCount == iBaseCount)
 		return  TRUE;
-	iResultCount =0;
+	iResultCount = 0;
 	return FALSE;
 	//return (iResultCount == iBaseCount);
 }
@@ -1818,135 +1819,135 @@ BYTE CUpGradeGameLogic::TackOutThreeX(const BYTE iCardList[], int iCardCount,
 BOOL  CUpGradeGameLogic::TrackOut3Sequence2Sequence(const BYTE iCardList[], int iCardCount, const BYTE iBaseCard[], int iBaseCount, BYTE iResultCard[], int &iResultCardCount) const
 {
 	iResultCardCount = 0;
-	if(iCardCount < iBaseCount)	//张数不够
+	if (iCardCount < iBaseCount)	//张数不够
 		return false;
 	BYTE tmpBaseCard[45];//,destCard[54];
-	int tmpbaseCardCount =0,destCardCount =0;
+	int tmpbaseCardCount = 0, destCardCount = 0;
 	//将桌面牌的三条分离出来
-	tmpbaseCardCount =TackOutBySepcifyCardNumCount(iBaseCard,iBaseCount,tmpBaseCard,3);
-	if(tmpbaseCardCount < 6)	//至少六张以上
+	tmpbaseCardCount = TackOutBySepcifyCardNumCount(iBaseCard, iBaseCount, tmpBaseCard, 3);
+	if (tmpbaseCardCount < 6)	//至少六张以上
 		return FALSE;
 	//先提取比桌面大的三顺
-	if(!TackOutSequence(iCardList,iCardCount,tmpBaseCard,tmpbaseCardCount,iResultCard,iResultCardCount,3))
+	if (!TackOutSequence(iCardList, iCardCount, tmpBaseCard, tmpbaseCardCount, iResultCard, iResultCardCount, 3))
 		return FALSE;
 	//将手牌复制一份(移除三顺牌)
 	BYTE TMP[45];
-	int TmpCount = iCardCount ;
-	::CopyMemory(TMP,iCardList,sizeof(BYTE)*iCardCount);
-	RemoveCard(iResultCard,iResultCardCount,TMP,TmpCount);
+	int TmpCount = iCardCount;
+	::CopyMemory(TMP, iCardList, sizeof(BYTE)*iCardCount);
+	RemoveCard(iResultCard, iResultCardCount, TMP, TmpCount);
 	TmpCount -= iResultCardCount;
 	destCardCount = iBaseCount - iResultCardCount;	//补牌数量
 
 	BYTE twoList[45];
 	int twoCount;
 	//将桌面牌的二顺分离出来
-	tmpbaseCardCount =TackOutBySepcifyCardNumCount(iBaseCard,iBaseCount,tmpBaseCard,2);
-	if(!TackOutSequence(TMP,TmpCount,tmpBaseCard,tmpbaseCardCount,twoList,twoCount,2,true))
+	tmpbaseCardCount = TackOutBySepcifyCardNumCount(iBaseCard, iBaseCount, tmpBaseCard, 2);
+	if (!TackOutSequence(TMP, TmpCount, tmpBaseCard, tmpbaseCardCount, twoList, twoCount, 2, true))
 		return false;
 	//	int TwoSequenceLen = (iBaseCount- tmpbaseCardCount)/2;
 	//	tmpbaseCardCount =TackOutBySepcifyCardNumCount(TMP,TmpCount,tmpBaseCard,3);
-	::CopyMemory(&iResultCard[iResultCardCount],twoList,sizeof(BYTE)*twoCount);
-	iResultCardCount +=twoCount;
+	::CopyMemory(&iResultCard[iResultCardCount], twoList, sizeof(BYTE)*twoCount);
+	iResultCardCount += twoCount;
 	return true;
 }
 //提取指定三条带顺
 BOOL  CUpGradeGameLogic::TrackOut3XSequence(const BYTE iCardList[], int iCardCount, const BYTE iBaseCard[], int iBaseCount, BYTE iResultCard[], int &iResultCardCount, int xValue) const
 {
-	iResultCardCount=0;
-	if(iCardCount < iBaseCount)	//张数不够
+	iResultCardCount = 0;
+	if (iCardCount < iBaseCount)	//张数不够
 		return false;
 	BYTE tmpBaseCard[45];//,destCard[54];
-	int tmpbaseCardCount =0,destCardCount =0;
+	int tmpbaseCardCount = 0, destCardCount = 0;
 	//将桌面牌的三条分离出来
-	tmpbaseCardCount =TackOutBySepcifyCardNumCount(iBaseCard,iBaseCount,tmpBaseCard,3);
-	if(tmpbaseCardCount < 6)	//至少六张以上
+	tmpbaseCardCount = TackOutBySepcifyCardNumCount(iBaseCard, iBaseCount, tmpBaseCard, 3);
+	if (tmpbaseCardCount < 6)	//至少六张以上
 		return FALSE;
 	//TCHAR sz[200];
 	//wsprintf(sz,"三顺子提取之前%d",iResultCardCount);
 	//WriteStr(sz);	
 	//先提取比桌面大的三顺
-	if(!TackOutSequence(iCardList,iCardCount,tmpBaseCard,tmpbaseCardCount,iResultCard,iResultCardCount,3))
+	if (!TackOutSequence(iCardList, iCardCount, tmpBaseCard, tmpbaseCardCount, iResultCard, iResultCardCount, 3))
 		return FALSE;
 	//TCHAR sz[200];
 	//wsprintf(sz,"三顺子提取成功%d",iResultCardCount);
 	//WriteStr(sz);
 	//将手牌复制一份
 	BYTE TMP[45];
-	int TmpCount = iCardCount ;
-	::CopyMemory(TMP,iCardList,sizeof(BYTE)*iCardCount);
-	RemoveCard(iResultCard,iResultCardCount,TMP,TmpCount);
+	int TmpCount = iCardCount;
+	::CopyMemory(TMP, iCardList, sizeof(BYTE)*iCardCount);
+	RemoveCard(iResultCard, iResultCardCount, TMP, TmpCount);
 	TmpCount -= iResultCardCount;
 	destCardCount = iBaseCount - iResultCardCount;	//补牌数量
 
-	switch(xValue)
+	switch (xValue)
 	{
 	case 1:
 	case 2:
+	{
+		tmpbaseCardCount = TackOutBySepcifyCardNumCount(TMP, TmpCount, tmpBaseCard, 1);//凑单牌
+		if (tmpbaseCardCount >= destCardCount)
 		{
-			tmpbaseCardCount =TackOutBySepcifyCardNumCount(TMP,TmpCount,tmpBaseCard,1);//凑单牌
-			if(tmpbaseCardCount >= destCardCount)
+			::CopyMemory(&iResultCard[iResultCardCount], tmpBaseCard, sizeof(BYTE)*destCardCount);//够单
+			iResultCardCount += destCardCount;
+		}
+		else
+		{
+			::CopyMemory(&iResultCard[iResultCardCount], tmpBaseCard, sizeof(BYTE)*tmpbaseCardCount);
+			iResultCardCount += tmpbaseCardCount;
+			destCardCount -= tmpbaseCardCount;
+			tmpbaseCardCount = TackOutBySepcifyCardNumCount(TMP, TmpCount, tmpBaseCard, 2);//用对牌补
+			if (tmpbaseCardCount >= destCardCount)
 			{
-				::CopyMemory(&iResultCard[iResultCardCount],tmpBaseCard,sizeof(BYTE)*destCardCount);//够单
+				::CopyMemory(&iResultCard[iResultCardCount], tmpBaseCard, sizeof(BYTE)*destCardCount);
 				iResultCardCount += destCardCount;
 			}
 			else
 			{
-				::CopyMemory(&iResultCard[iResultCardCount],tmpBaseCard,sizeof(BYTE)*tmpbaseCardCount);
+				::CopyMemory(&iResultCard[iResultCardCount], tmpBaseCard, sizeof(BYTE)*tmpbaseCardCount);
 				iResultCardCount += tmpbaseCardCount;
 				destCardCount -= tmpbaseCardCount;
-				tmpbaseCardCount =TackOutBySepcifyCardNumCount(TMP,TmpCount,tmpBaseCard,2);//用对牌补
-				if(tmpbaseCardCount>=destCardCount)
+				tmpbaseCardCount = TackOutBySepcifyCardNumCount(TMP, TmpCount, tmpBaseCard, 3);//用三条补
+				//
+				if (tmpbaseCardCount >= destCardCount)
 				{
-					::CopyMemory(&iResultCard[iResultCardCount],tmpBaseCard,sizeof(BYTE)*destCardCount);
+					::CopyMemory(&iResultCard[iResultCardCount], tmpBaseCard, sizeof(BYTE)*destCardCount);
 					iResultCardCount += destCardCount;
 				}
-				else
-				{
-					::CopyMemory(&iResultCard[iResultCardCount],tmpBaseCard,sizeof(BYTE)*tmpbaseCardCount);
-					iResultCardCount += tmpbaseCardCount;
-					destCardCount -= tmpbaseCardCount;
-					tmpbaseCardCount =TackOutBySepcifyCardNumCount(TMP,TmpCount,tmpBaseCard,3);//用三条补
-					//
-					if(tmpbaseCardCount>=destCardCount)
-					{
-						::CopyMemory(&iResultCard[iResultCardCount],tmpBaseCard,sizeof(BYTE)*destCardCount);
-						iResultCardCount += destCardCount;
-					}
-				}
 			}
-			break;
 		}
+		break;
+	}
 	case 3:
+	{
+		tmpbaseCardCount = TackOutBySepcifyCardNumCount(TMP, TmpCount, tmpBaseCard, 2);//凑对牌
+		if (tmpbaseCardCount >= destCardCount)
 		{
-			tmpbaseCardCount =TackOutBySepcifyCardNumCount(TMP,TmpCount,tmpBaseCard,2);//凑对牌
-			if(tmpbaseCardCount>=destCardCount)
+			::CopyMemory(&iResultCard[iResultCardCount], tmpBaseCard, sizeof(BYTE)*destCardCount);
+			iResultCardCount += destCardCount;
+		}
+		else
+		{
+			::CopyMemory(&iResultCard[iResultCardCount], tmpBaseCard, sizeof(BYTE)*tmpbaseCardCount);
+			iResultCardCount += tmpbaseCardCount;
+			destCardCount -= tmpbaseCardCount;
+			//tmpbaseCardCount =TackOutBySepcifyCardNumCount(TMP,TmpCount,tmpBaseCard,3);//用三条补对
+			TackOutMuchToFew(TMP, TmpCount, tmpBaseCard, tmpbaseCardCount, 3, 2);	//将手中三条拆成对来配
+			if (tmpbaseCardCount >= destCardCount)//三条拆对够补
 			{
-				::CopyMemory(&iResultCard[iResultCardCount],tmpBaseCard,sizeof(BYTE)*destCardCount);
+				::CopyMemory(&iResultCard[iResultCardCount], tmpBaseCard, sizeof(BYTE)*destCardCount);
 				iResultCardCount += destCardCount;
 			}
-			else
-			{
-				::CopyMemory(&iResultCard[iResultCardCount],tmpBaseCard,sizeof(BYTE)*tmpbaseCardCount);
-				iResultCardCount += tmpbaseCardCount;
-				destCardCount -= tmpbaseCardCount;
-				//tmpbaseCardCount =TackOutBySepcifyCardNumCount(TMP,TmpCount,tmpBaseCard,3);//用三条补对
-				TackOutMuchToFew(TMP,TmpCount,tmpBaseCard,tmpbaseCardCount,3,2);	//将手中三条拆成对来配
-				if(tmpbaseCardCount >=destCardCount)//三条拆对够补
-				{
-					::CopyMemory(&iResultCard[iResultCardCount],tmpBaseCard,sizeof(BYTE)*destCardCount);
-					iResultCardCount += destCardCount;
-				}
-			}
-			break;
 		}
+		break;
+	}
 	default:
 		break;
 	}
 	//wsprintf(sz,"iResultCardCount=%d,iBaseCount=%d",iResultCardCount,iBaseCount);
 	//WriteStr(sz);
-	if(iResultCardCount == iBaseCount )
+	if (iResultCardCount == iBaseCount)
 		return true;
-	iResultCardCount =0;
+	iResultCardCount = 0;
 	return FALSE;
 	return (iResultCardCount == iBaseCount);
 	//	return FALSE;
@@ -1955,63 +1956,64 @@ BOOL  CUpGradeGameLogic::TrackOut3XSequence(const BYTE iCardList[], int iCardCou
 
 //重写提取单张的顺子,连对 or 连三
 BOOL CUpGradeGameLogic::TackOutSequence(const BYTE iCardList[], int iCardCount, //手中的牌
-										const BYTE iBaseCard[], int iBaseCount,   //桌面上最大的牌, 牌的个数
-										BYTE iResultCard[], int &iResultCount, //找到的牌
-										int xSequence,BOOL bNoComp)	const						//顺子的个数
+	const BYTE iBaseCard[], int iBaseCount,   //桌面上最大的牌, 牌的个数
+	BYTE iResultCard[], int &iResultCount, //找到的牌
+	int xSequence, BOOL bNoComp)	const						//顺子的个数
 {
-	iResultCount=0;
+	iResultCount = 0;
 	BYTE iTack[45];
-	int iTackCount=iCardCount;
+	int iTackCount = iCardCount;
 	//复制一份
-	::CopyMemory(iTack,iCardList,sizeof(BYTE)*iCardCount);
+	::CopyMemory(iTack, iCardList, sizeof(BYTE)*iCardCount);
 	BYTE iBuffer[45];
-	int iBufferCount=0;
-	int iBaseStart,iDestStart=0,iDestEnd=0;
-	int iSequenceLen=iBaseCount;
-	int temp[18]={0};
-	int num=0;
+	int iBufferCount = 0;
+	int iBaseStart, iDestStart = 0, iDestEnd = 0;
+	int iSequenceLen = iBaseCount;
+	int temp[18] = { 0 };
+	int num = 0;
 	//提取所有炸弹(从手中删除所有炸弹)
-	TackOutAllBomb(iTack,iTackCount,iBuffer,iBufferCount);
-	RemoveCard(iBuffer,iBufferCount,iTack,iTackCount);
-	iTackCount-=iBufferCount;
+	TackOutAllBomb(iTack, iTackCount, iBuffer, iBufferCount);
+	RemoveCard(iBuffer, iBufferCount, iTack, iTackCount);
+	iTackCount -= iBufferCount;
 	//进行一次系统序例化处理(按牌形排序，小->大测试
-	SortCard(iTack,NULL,iTackCount,TRUE);
+	SortCard(iTack, NULL, iTackCount, TRUE);
 	//用缓冲队例保存
-	for(int i=0;i<iTackCount;i++)
+	for (int i = 0; i < iTackCount; i++)
 	{
 		temp[GetCardBulk(iTack[i])]++;
 	}
 
-	switch(xSequence)
+	switch (xSequence)
 	{
 		//单顺
 	case 1:
 		iSequenceLen = iBaseCount;
-		if(!bNoComp)
-			iBaseStart = GetSequenceStartPostion(iBaseCard,iBaseCount,1);
+		if (!bNoComp)
+			iBaseStart = GetSequenceStartPostion(iBaseCard, iBaseCount, 1);
 		else
 			iBaseStart = 2;
-		for(int i=iBaseStart+1;i<15;i++)
+		for (int i = iBaseStart + 1; i < 15; i++)
 		{
-			if(temp[i]>=1)
+			if (temp[i] >= 1)
 			{
-				if(iDestStart == 0)
+				if (iDestStart == 0)
 					iDestStart = i;
 				iDestEnd++;
-				if(iDestEnd == iSequenceLen)
+				if (iDestEnd == iSequenceLen)
 					break;
-			}else
+			}
+			else
 			{
 				iDestStart = 0;
 				iDestEnd = 0;
 			}
 		}
-		if(iDestEnd != iSequenceLen)
+		if (iDestEnd != iSequenceLen)
 			return false;
 		//提取队列
-		for(int j=0;j<iTackCount;j++)
+		for (int j = 0; j < iTackCount; j++)
 		{
-			if(GetCardBulk(iTack[j]) == iDestStart)//找到一张牌
+			if (GetCardBulk(iTack[j]) == iDestStart)//找到一张牌
 			{
 				iResultCard[iResultCount++] = iTack[j];
 				iDestStart++;
@@ -2019,52 +2021,53 @@ BOOL CUpGradeGameLogic::TackOutSequence(const BYTE iCardList[], int iCardCount, 
 				//break;
 			}
 			//已经找全
-			if(iDestEnd == 0)
+			if (iDestEnd == 0)
 			{
 				return true;
 			}
 		}
 		break;
 	case 2:
-		iSequenceLen = iBaseCount/2;
-		if(!bNoComp)
-			iBaseStart=GetSequenceStartPostion(iBaseCard,iBaseCount,2);
+		iSequenceLen = iBaseCount / 2;
+		if (!bNoComp)
+			iBaseStart = GetSequenceStartPostion(iBaseCard, iBaseCount, 2);
 		else
-			iBaseStart =2;
-		for(int i=iBaseStart+1;i<15;i++)
+			iBaseStart = 2;
+		for (int i = iBaseStart + 1; i < 15; i++)
 		{
-			if(temp[i] >= 2)
+			if (temp[i] >= 2)
 			{
-				if(iDestStart == 0)
+				if (iDestStart == 0)
 					iDestStart = i;
 				iDestEnd++;
-				if(iDestEnd == iSequenceLen)
+				if (iDestEnd == iSequenceLen)
 					break;
-			}else
+			}
+			else
 			{
 				iDestStart = 0;
 				iDestEnd = 0;
 			}
 		}
-		if(iDestEnd != iSequenceLen)
+		if (iDestEnd != iSequenceLen)
 			return false;
-		num=0;
+		num = 0;
 		//提取队列
-		for(int j=0;j<iTackCount;j++)
+		for (int j = 0; j < iTackCount; j++)
 		{
-			if(GetCardBulk(iTack[j]) == iDestStart)
+			if (GetCardBulk(iTack[j]) == iDestStart)
 			{
 				iResultCard[iResultCount++] = iTack[j];
 				num++;
 			}
 
-			if(num ==2)//一对已经找到
+			if (num == 2)//一对已经找到
 			{
-				num=0;
+				num = 0;
 				iDestStart++;
 				iDestEnd--;
 				//已经找全
-				if(iDestEnd == 0)
+				if (iDestEnd == 0)
 					return true;
 				//break;
 				//i = 0;
@@ -2073,44 +2076,45 @@ BOOL CUpGradeGameLogic::TackOutSequence(const BYTE iCardList[], int iCardCount, 
 		}
 		break;
 	case 3:
-		iSequenceLen = iBaseCount/3;
-		if(!bNoComp)
-			iBaseStart=GetSequenceStartPostion(iBaseCard,iBaseCount,3);
+		iSequenceLen = iBaseCount / 3;
+		if (!bNoComp)
+			iBaseStart = GetSequenceStartPostion(iBaseCard, iBaseCount, 3);
 		else
 			iBaseStart = 2;
-		for(int i=iBaseStart+1;i<15;i++)
+		for (int i = iBaseStart + 1; i < 15; i++)
 		{
-			if(temp[i] >= 3)
+			if (temp[i] >= 3)
 			{
-				if(iDestStart == 0)
+				if (iDestStart == 0)
 					iDestStart = i;
 				iDestEnd++;
-				if(iDestEnd == iSequenceLen)
+				if (iDestEnd == iSequenceLen)
 					break;
-			}else
+			}
+			else
 			{
 				iDestStart = 0;
 				iDestEnd = 0;
 			}
 		}
-		if(iDestEnd != iSequenceLen)
+		if (iDestEnd != iSequenceLen)
 			return false;
-		num=0;
+		num = 0;
 		//提取队列
-		for(int j=0;j<iTackCount;j++)
+		for (int j = 0; j < iTackCount; j++)
 		{
-			if(GetCardBulk(iTack[j]) == iDestStart)
+			if (GetCardBulk(iTack[j]) == iDestStart)
 			{
 				iResultCard[iResultCount++] = iTack[j];
 				num++;
 
-				if(num == 3)//找到三张
+				if (num == 3)//找到三张
 				{
-					num=0;
+					num = 0;
 					iDestStart++;
 					iDestEnd--;
 					//已经找全
-					if(iDestEnd == 0)
+					if (iDestEnd == 0)
 						return true;
 				}
 			}
@@ -2122,58 +2126,59 @@ BOOL CUpGradeGameLogic::TackOutSequence(const BYTE iCardList[], int iCardCount, 
 }
 
 //提取同花順
-BOOL CUpGradeGameLogic::TackOutStraightFlush(const BYTE iCardList[],int iCardCount, const BYTE iBaseCard[],int iBaseCount,BYTE iResultCard[], int &iResultCardCount) const
+BOOL CUpGradeGameLogic::TackOutStraightFlush(const BYTE iCardList[], int iCardCount, const BYTE iBaseCard[], int iBaseCount, BYTE iResultCard[], int &iResultCardCount) const
 {
-	iResultCardCount=0;
-	if(iCardCount < iBaseCount)
+	iResultCardCount = 0;
+	if (iCardCount < iBaseCount)
 		return false;
 	BYTE iBaseMinCard = GetBulkBySepcifyMinOrMax(iBaseCard, iBaseCount, 1);//桌面的顺子中最小的牌
 	BYTE iTack[45];
-	int iTackCount=iCardCount;
+	int iTackCount = iCardCount;
 	//复制一份
-	::CopyMemory(iTack,iCardList,sizeof(BYTE)*iCardCount);
+	::CopyMemory(iTack, iCardList, sizeof(BYTE)*iCardCount);
 	BYTE iBuffer[45];
-	int iBufferCount=0;
-	int iDestStart=0,iDestEnd=0;
-	int iSequenceLen=iBaseCount;
-	int temp[18]={0};
-	int num=0;
+	int iBufferCount = 0;
+	int iDestStart = 0, iDestEnd = 0;
+	int iSequenceLen = iBaseCount;
+	int temp[18] = { 0 };
+	int num = 0;
 	//提取所有炸弹(从手中删除所有炸弹)
-	TackOutAllBomb(iTack,iTackCount,iBuffer,iBufferCount);
-	RemoveCard(iBuffer,iBufferCount,iTack,iTackCount);
-	iTackCount-=iBufferCount;
+	TackOutAllBomb(iTack, iTackCount, iBuffer, iBufferCount);
+	RemoveCard(iBuffer, iBufferCount, iTack, iTackCount);
+	iTackCount -= iBufferCount;
 
-	SortCard(iTack,NULL,iTackCount,TRUE);
+	SortCard(iTack, NULL, iTackCount, TRUE);
 
 	BYTE iTempKind[45];
-	int iTempKindCount =0;
+	int iTempKindCount = 0;
 	//TCHAR sz[200];
 	//wsprintf(sz,"iTackCount=%d,iBaseCount=%d",iTackCount,iBaseCount);
 	//WriteStr(sz);
 	//用缓冲队例保存
-	for(int kind = 0;kind<= 48 ;kind+=16)
+	for (int kind = 0; kind <= 48; kind += 16)
 	{	//提取方块
-		iResultCardCount=0;
-		iTempKindCount = TackOutByCardKind(iTack,iTackCount,iTempKind,kind);
+		iResultCardCount = 0;
+		iTempKindCount = TackOutByCardKind(iTack, iTackCount, iTempKind, kind);
 		//wsprintf(sz,"kind=%d,iTempKindCount=%d",kind,iTempKindCount);
 		//WriteStr(sz);
-		if(iTempKindCount >=iBaseCount )					//大于桌面
+		if (iTempKindCount >= iBaseCount)					//大于桌面
 		{
-			for(int i = 0 ;i < iTempKindCount;i++)
+			for (int i = 0; i < iTempKindCount; i++)
 			{
 				temp[GetCardBulk(iTempKind[i])]++;
 			}
 
-			for(int i = iBaseMinCard+1;i<15;i++)//对队例进行遍历
+			for (int i = iBaseMinCard + 1; i < 15; i++)//对队例进行遍历
 			{
-				if(temp[i]>=1)		//某花色有牌
+				if (temp[i] >= 1)		//某花色有牌
 				{
-					if(iDestStart == 0)
+					if (iDestStart == 0)
 						iDestStart = i;
 					iDestEnd++;
-					if(iDestEnd == iSequenceLen)
+					if (iDestEnd == iSequenceLen)
 						break;
-				}else
+				}
+				else
 				{
 					iDestStart = 0;
 					iDestEnd = 0;
@@ -2182,19 +2187,19 @@ BOOL CUpGradeGameLogic::TackOutStraightFlush(const BYTE iCardList[],int iCardCou
 			//wsprintf(sz,"iDestEnd=%d,iCardCount=%d",iDestEnd,iCardCount);
 			//WriteStr(sz);
 
-			if(iDestEnd != iBaseCount)	//某种花色不符合,换另外一种花色
+			if (iDestEnd != iBaseCount)	//某种花色不符合,换另外一种花色
 				continue;
 			//提取队列
-			for(int j=0;j<iTempKindCount;j++)
+			for (int j = 0; j < iTempKindCount; j++)
 			{
-				if(GetCardBulk(iTempKind[j]) == iDestStart)
+				if (GetCardBulk(iTempKind[j]) == iDestStart)
 				{
 					iResultCard[iResultCardCount++] = iTempKind[j];
 					iDestStart++;
 					iDestEnd--;
 				}
 				//已经找全
-				if(iDestEnd == 0)
+				if (iDestEnd == 0)
 					return true;
 			}
 		}
@@ -2205,18 +2210,18 @@ BOOL CUpGradeGameLogic::TackOutStraightFlush(const BYTE iCardList[],int iCardCou
 }
 
 //得到顺子的起始位置
-int CUpGradeGameLogic::GetSequenceStartPostion( const BYTE iCardList[],int iCardCount,int xSequence) const
+int CUpGradeGameLogic::GetSequenceStartPostion(const BYTE iCardList[], int iCardCount, int xSequence) const
 {
-	BYTE temp[18]={0};
-	int Postion=0;
-	for(int i=0;i<iCardCount;i++)
+	BYTE temp[18] = { 0 };
+	int Postion = 0;
+	for (int i = 0; i < iCardCount; i++)
 	{
 		temp[GetCardBulk(iCardList[i])]++;
 	}
 
-	for(int i=0;i<18;i++)
+	for (int i = 0; i < 18; i++)
 	{
-		if(temp[i] == xSequence)
+		if (temp[i] == xSequence)
 			return i;
 	}
 	return Postion;
@@ -2292,7 +2297,7 @@ ResCard[tmpCardBulk]++;
 
 iResultCard[iResultCount++] = iCardList[j]; //把牌copy到结果集
 
-if(iResultCount >= iBaseCount) 
+if(iResultCount >= iBaseCount)
 {
 return TRUE; //找够拉
 }
@@ -2303,9 +2308,9 @@ return FALSE;
 }
 */
 //提取同花顺,只找相同牌点的同花顺,牌点大的,有找一般顺子的函数来找
-/*BYTE CUpGradeGameLogic::TackOutStraightFlush(BYTE iCardList[], int iCardCount, 
-BYTE iBaseCard[], int iBaseCount, 
-BYTE iResultCard[], int &iResultCardCount, 
+/*BYTE CUpGradeGameLogic::TackOutStraightFlush(BYTE iCardList[], int iCardCount,
+BYTE iBaseCard[], int iBaseCount,
+BYTE iResultCard[], int &iResultCardCount,
 int bExtVal)
 {
 BYTE iBaseMinCard = GetBulkBySepcifyMinOrMax(iBaseCard, iBaseCount, 1);//桌面的顺子中最小的牌
@@ -2322,7 +2327,7 @@ vector<BYTE> MinCard; //存储最小的牌
 //把不属于顺子的数字全部剔除
 for(vector<BYTE>::iterator it = MyCardList.begin(); it != MyCardList.end(); it++)
 {
-if( GetCardBulk(*it) < iBaseMinCard || 
+if( GetCardBulk(*it) < iBaseMinCard ||
 GetCardBulk(*it) >= (iBaseMinCard+iBaseCount) )
 {
 MyCardList.erase(it);
@@ -2362,130 +2367,130 @@ return FALSE;
 */
 
 //提取510K
-BOOL CUpGradeGameLogic::TrackOut510K(const BYTE iCardList[],int iCardCount,BYTE iResultCard[],int &iResultCardCount, bool bExtVal) const
+BOOL CUpGradeGameLogic::TrackOut510K(const BYTE iCardList[], int iCardCount, BYTE iResultCard[], int &iResultCardCount, bool bExtVal) const
 {
-	iResultCardCount=0;
-	BYTE temp[48]={0};
-	BYTE huasei[4][16]={0};
-	int k = 0, num[4] = {0};
+	iResultCardCount = 0;
+	BYTE temp[48] = { 0 };
+	BYTE huasei[4][16] = { 0 };
+	int k = 0, num[4] = { 0 };
 	//得到510K数据
-	for(int i=0; i<iCardCount; i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
 		int n = GetCardNum(iCardList[i]);
-		if(n==5 || n==10 || n==13)
+		if (n == 5 || n == 10 || n == 13)
 		{
 			temp[k++] = iCardList[i];
-			int kind = GetCardHuaKind(iCardList[i],true) >> 4;
+			int kind = GetCardHuaKind(iCardList[i], true) >> 4;
 
 			huasei[kind][num[kind]++] = iCardList[i];
 		}
 	}
 	//5,10,k数目少于3个
-	if(num[0]+num[1]+num[2]+num[3] < 3)
+	if (num[0] + num[1] + num[2] + num[3] < 3)
 		return false;
 	//要求主510K数量少于3个
-	if(bExtVal && num[0]<3 && num[1]<3 && num[2]<3 && num[3]<3)
+	if (bExtVal && num[0] < 3 && num[1] < 3 && num[2] < 3 && num[3] < 3)
 		return false;
-	for(int i=0;i<4;i++)
+	for (int i = 0; i < 4; i++)
 	{
-		if(Test510K(huasei[i],num[i]))//某一花色是否为主510K
+		if (Test510K(huasei[i], num[i]))//某一花色是否为主510K
 		{
-			Copy510K(huasei[i],num[i],iResultCard,iResultCardCount);	
+			Copy510K(huasei[i], num[i], iResultCard, iResultCardCount);
 
-			if(bExtVal) //是否需要提取主510K
+			if (bExtVal) //是否需要提取主510K
 				return true;
 			else
 			{
-				RemoveCard(iResultCard,iResultCardCount,huasei[i],num[i]);//将主510K移出选定花色队伍
-				RemoveCard(iResultCard,iResultCardCount,temp,k);	//将主510K移出510K队伍
-				num[i]-=iResultCardCount;
-				k-=iResultCardCount;	
+				RemoveCard(iResultCard, iResultCardCount, huasei[i], num[i]);//将主510K移出选定花色队伍
+				RemoveCard(iResultCard, iResultCardCount, temp, k);	//将主510K移出510K队伍
+				num[i] -= iResultCardCount;
+				k -= iResultCardCount;
 			}
 			//			return true;
 		}
 	}
 
-	if(bExtVal) return false; //需要同花510K
+	if (bExtVal) return false; //需要同花510K
 
-	if(Test510K(temp,k))
+	if (Test510K(temp, k))
 	{
-		Copy510K(temp,k,iResultCard,iResultCardCount);
+		Copy510K(temp, k, iResultCard, iResultCardCount);
 		return true;
 	}
 	return FALSE;
 }
 
 //复制510K
-BOOL CUpGradeGameLogic::Copy510K(const BYTE iCardList[],int iCardCount,BYTE iResultCard[],int &iResultCardCount) const
+BOOL CUpGradeGameLogic::Copy510K(const BYTE iCardList[], int iCardCount, BYTE iResultCard[], int &iResultCardCount) const
 {
-	iResultCardCount=0;
-	BYTE five,ten,k;
-	for(int i=0;i<iCardCount;i++)
+	iResultCardCount = 0;
+	BYTE five, ten, k;
+	for (int i = 0; i < iCardCount; i++)
 	{
-		if(GetCardNum(iCardList[i])==5)
-			five=iCardList[i];
-		else if(GetCardNum(iCardList[i])==10)
-			ten=iCardList[i];
-		else k=iCardList[i];
+		if (GetCardNum(iCardList[i]) == 5)
+			five = iCardList[i];
+		else if (GetCardNum(iCardList[i]) == 10)
+			ten = iCardList[i];
+		else k = iCardList[i];
 	}
-	iResultCard[0]=five;
-	iResultCard[1]=ten;
-	iResultCard[2]=k;
-	iResultCardCount=3;
+	iResultCard[0] = five;
+	iResultCard[1] = ten;
+	iResultCard[2] = k;
+	iResultCardCount = 3;
 	return  TRUE;
 }
 
 //测试是否为5,10k
-BOOL CUpGradeGameLogic::Test510K(const BYTE iCardList[],int iCardCount, bool bExtVal) const
+BOOL CUpGradeGameLogic::Test510K(const BYTE iCardList[], int iCardCount, bool bExtVal) const
 {
-	BOOL five=false,ten=false,k=false;
-	for(int i=0;i<iCardCount;i++)
+	BOOL five = false, ten = false, k = false;
+	for (int i = 0; i < iCardCount; i++)
 	{
-		if(GetCardNum(iCardList[i])==5)
-			five=true;
-		else if (GetCardNum(iCardList[i])==10)
-			ten=true;
-		else 
-			k=true;
+		if (GetCardNum(iCardList[i]) == 5)
+			five = true;
+		else if (GetCardNum(iCardList[i]) == 10)
+			ten = true;
+		else
+			k = true;
 	}
 	//有5,10,k
-	if(five&&ten&&k)
+	if (five&&ten&&k)
 		return true;
 	return false;
 }
 
 
 //拆大
-BOOL CUpGradeGameLogic::TackOutCardByNoSameShape(const BYTE iCardList[],int iCardCount,BYTE iResultCard[],int &iResultCardCount, const BYTE iBaseCard[],int iBaseCardCount ) const
+BOOL CUpGradeGameLogic::TackOutCardByNoSameShape(const BYTE iCardList[], int iCardCount, BYTE iResultCard[], int &iResultCardCount, const BYTE iBaseCard[], int iBaseCardCount) const
 {
-	if(iCardCount <1)
+	if (iCardCount < 1)
 	{
-		return FALSE ; 
+		return FALSE;
 	}
 	iResultCardCount = 0;
-	BYTE temp[18] = {0};
+	BYTE temp[18] = { 0 };
 	int t = GetCardBulk(iBaseCard[0], false); //得到桌面上那个牌的值
-	for(int i = 0; i < iCardCount; i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
-		temp[GetCardBulk(iCardList[i],false)]++;
+		temp[GetCardBulk(iCardList[i], false)]++;
 	}
 
 	//拆(炸牌不拆)
-	for(int i = 0; i < 18; i++)
+	for (int i = 0; i < 18; i++)
 	{
-		if( temp[i] < 4 &&               //非炸弹牌
+		if (temp[i] < 4 &&               //非炸弹牌
 			temp[i] > iBaseCardCount &&  //张数比桌面牌多
-			i > t )                      //且数字大
+			i > t)                      //且数字大
 		{
-			for(int j = 0 ; j <iCardCount ; j ++ )  ///从小到达拷贝(考虑到牌的提取)
+			for (int j = 0; j < iCardCount; j++)  ///从小到达拷贝(考虑到牌的提取)
 			{
-				if(GetCardBulk(iCardList[j],false) == i)
+				if (GetCardBulk(iCardList[j], false) == i)
 				{
 					iResultCard[iResultCardCount++] = iCardList[j];
 
-					if(iResultCardCount == iBaseCardCount)
+					if (iResultCardCount == iBaseCardCount)
 					{
-						return TRUE ;			
+						return TRUE;
 					}
 				}
 			}
@@ -2495,201 +2500,201 @@ BOOL CUpGradeGameLogic::TackOutCardByNoSameShape(const BYTE iCardList[],int iCar
 }
 
 ///根据指定的牌提取
-BOOL CUpGradeGameLogic::TackOutCardBySpecifyCard(const BYTE iCardList[],int iCardCount, BYTE iResultCard[],int &iResultCardCount, const BYTE iBaseCard[],int iBaseCardCount ,BYTE iSepcifyCard) const
+BOOL CUpGradeGameLogic::TackOutCardBySpecifyCard(const BYTE iCardList[], int iCardCount, BYTE iResultCard[], int &iResultCardCount, const BYTE iBaseCard[], int iBaseCardCount, BYTE iSepcifyCard) const
 {
-	if(iCardCount <1)
+	if (iCardCount < 1)
 	{
-		return FALSE ; 
+		return FALSE;
 	}
 
-	if(iBaseCardCount>0 && (GetCardBulk(iBaseCard[0], false) >= GetCardBulk(iSepcifyCard , false)))
+	if (iBaseCardCount > 0 && (GetCardBulk(iBaseCard[0], false) >= GetCardBulk(iSepcifyCard, false)))
 	{
-		return FALSE ; 
+		return FALSE;
 	}
 
 	iResultCardCount = 0;
 
-	BYTE temp[18] = {0};
+	BYTE temp[18] = { 0 };
 
 	int t = GetCardBulk(iBaseCard[0], false); //得到桌面上那个牌的值
 
-	for(int i = 0; i < iCardCount; i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
-		temp[GetCardBulk(iCardList[i],false)]++;
+		temp[GetCardBulk(iCardList[i], false)]++;
 	}
 
 	iResultCard[iResultCardCount++] = iSepcifyCard;
-	
-	for(int j = iCardCount -1  ; j >= 0; j --  )  ///从小到达拷贝(考虑到牌的提取)
+
+	for (int j = iCardCount - 1; j >= 0; j--)  ///从小到达拷贝(考虑到牌的提取)
 	{
-		if(GetCardBulk(iCardList[j],false) == GetCardBulk(iSepcifyCard , false) 
-			&& iCardList[j] != iSepcifyCard )
+		if (GetCardBulk(iCardList[j], false) == GetCardBulk(iSepcifyCard, false)
+			&& iCardList[j] != iSepcifyCard)
 		{
-			if(temp[GetCardBulk(iSepcifyCard ,false)] >=4 && iBaseCardCount != 0)
+			if (temp[GetCardBulk(iSepcifyCard, false)] >= 4 && iBaseCardCount != 0)
 			{
-				return FALSE ; 
+				return FALSE;
 			}
 
 			iResultCard[iResultCardCount++] = iCardList[j];
 
-			if(iResultCardCount == iBaseCardCount)
+			if (iResultCardCount == iBaseCardCount)
 			{
-				return TRUE ;			
+				return TRUE;
 			}
 		}
 	}
 
-	if(iBaseCardCount ==0 &&iResultCardCount >0)
+	if (iBaseCardCount == 0 && iResultCardCount > 0)
 	{
-		return TRUE ; 
+		return TRUE;
 	}
 
-	return FALSE ; 
+	return FALSE;
 }
 
 
 //是否可以出牌
 BOOL CUpGradeGameLogic::CanOutCard(const BYTE iOutCard[], int iOutCount,  //要出的牌
-								   const BYTE iBaseCard[], int iBaseCount,//要压的牌
-								   const BYTE iHandCard[], int iHandCount,//手中的牌
-								   bool bFirstOut) const
+	const BYTE iBaseCard[], int iBaseCount,//要压的牌
+	const BYTE iHandCard[], int iHandCount,//手中的牌
+	bool bFirstOut) const
 {
 
 
 	BYTE iOutCardShape = GetCardShape(iOutCard, iOutCount);
 
-	if(iOutCardShape == UG_ERROR_KIND) //牌型不对
+	if (iOutCardShape == UG_ERROR_KIND) //牌型不对
 	{
 		return FALSE;
 	}
 
-	if(bFirstOut)
+	if (bFirstOut)
 	{
 		return TRUE;
 	}
 	BYTE iBaseCardShape = GetCardShape(iBaseCard, iBaseCount); //桌面上的牌型
 
-	if(iBaseCardShape > iOutCardShape)						//牌形<
+	if (iBaseCardShape > iOutCardShape)						//牌形<
 	{
 		return FALSE;
 	}
 
-	if( iBaseCardShape < iOutCardShape)						//牌形>
+	if (iBaseCardShape < iOutCardShape)						//牌形>
 	{
-		if(UG_SLAVE_510K <= iOutCardShape)					//炸弹
+		if (UG_SLAVE_510K <= iOutCardShape)					//炸弹
 		{
 			return TRUE;
-		}	
+		}
 		//处理不一样的牌形也可以大变种顺子和顺子大小比较
-		if(iBaseCount != iOutCount) //张数限制
+		if (iBaseCount != iOutCount) //张数限制
 		{
 			return FALSE;
 		}
 
-		switch(iBaseCardShape)
+		switch (iBaseCardShape)
 		{
 		case UG_STRAIGHT:									//同花順大于順子
-			{
-				if(iOutCardShape == UG_STRAIGHT_FLUSH)
-					return true;
-			}
+		{
+			if (iOutCardShape == UG_STRAIGHT_FLUSH)
+				return true;
+		}
 		case UG_VARIATION_STRAIGHT:							//最小变种顺子
-			{
-				if(iOutCardShape == UG_STRAIGHT)			//变咱顺子中有效最大值小于正常顺子中最大牌
-					return GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount,1) <  GetBulkBySpecifySequence(iOutCard, iOutCount,1) ;
-				return false;
-			}
+		{
+			if (iOutCardShape == UG_STRAIGHT)			//变咱顺子中有效最大值小于正常顺子中最大牌
+				return GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount, 1) < GetBulkBySpecifySequence(iOutCard, iOutCount, 1);
+			return false;
+		}
 
 		case UG_VARIATION_DOUBLE_SEQUENCE://最小变种顺子
-			{
-				if(iOutCardShape == UG_DOUBLE_SEQUENCE)	//变咱顺子中有效最大值小于正常顺子中最大牌
-					return GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount,2) <  GetBulkBySpecifySequence(iOutCard, iOutCount,2) ;
-				return false;
-			}
+		{
+			if (iOutCardShape == UG_DOUBLE_SEQUENCE)	//变咱顺子中有效最大值小于正常顺子中最大牌
+				return GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount, 2) < GetBulkBySpecifySequence(iOutCard, iOutCount, 2);
+			return false;
+		}
 
 		case UG_VARIATION_THREE_SEQUENCE:		//变种三顺
 		case UG_VARIATION_THREE_ONE_SEQUENCE://变种三顺
 		case UG_VARIATION_THREE_TWO_SEQUENCE://变种三带二顺
 		case UG_VARIATION_THREE_DOUBLE_SEQUENCE://变种三带二顺
 		case UG_VARIATION_THREE_SEQUENCE_DOUBLE_SEQUENCE://变种三顺带二顺
-			{
-				if(iOutCardShape == iBaseCardShape+1)
-					return GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount,3) <  GetBulkBySpecifySequence(iOutCard, iOutCount,3) ;
-				return false;
-			}
+		{
+			if (iOutCardShape == iBaseCardShape + 1)
+				return GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount, 3) < GetBulkBySpecifySequence(iOutCard, iOutCount, 3);
+			return false;
+		}
 		case UG_VARIATION_FOUR_SEQUENCE:		//变种四顺
 		case UG_VARIATION_FOUR_ONE_SEQUENCE:	//变种四带一顺
 		case UG_VARIATION_FOUR_TWO_SEQUENCE:	//变种四带二顺
 		case UG_VARIATION_FOUR_ONE_DOUBLE_SEQUENCE://变种四带一对顺
 		case UG_VARIATION_FOUR_TWO_DOUBLE_SEQUENCE://变种四带二对顺
-			{
-				if(iOutCardShape == iBaseCardShape+1)
-					return GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount,4) <  GetBulkBySpecifySequence(iOutCard, iOutCount,4) ;
-				return false;
-			}
+		{
+			if (iOutCardShape == iBaseCardShape + 1)
+				return GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount, 4) < GetBulkBySpecifySequence(iOutCard, iOutCount, 4);
+			return false;
+		}
 		case UG_THREE_TWO://三帶一對＞三帶二單
-			{
-				if(iOutCardShape == UG_THREE_DOUBLE)
-					return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount,3)<GetBulkBySpecifyCardCount(iOutCard, iOutCount,3);
-				return false;
-			}
+		{
+			if (iOutCardShape == UG_THREE_DOUBLE)
+				return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount, 3) < GetBulkBySpecifyCardCount(iOutCard, iOutCount, 3);
+			return false;
+		}
 		case UG_THREE_TWO_SEQUENCE://三帶一對順(或蝴蝶)>三帶二單順
-			{
-				if(iOutCardShape == UG_THREE_DOUBLE_SEQUENCE || iOutCardShape == UG_THREE_SEQUENCE_DOUBLE_SEQUENCE)
-					return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount,3)<GetBulkBySpecifyCardCount(iOutCard, iOutCount,3);
-				return false;
-			}
+		{
+			if (iOutCardShape == UG_THREE_DOUBLE_SEQUENCE || iOutCardShape == UG_THREE_SEQUENCE_DOUBLE_SEQUENCE)
+				return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount, 3) < GetBulkBySpecifyCardCount(iOutCard, iOutCount, 3);
+			return false;
+		}
 		case UG_FOUR_TWO://四帶一對＞四帶二單
-			{
-				if(iOutCardShape == UG_FOUR_ONE_DOUBLE)
-					return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount,4)<GetBulkBySpecifyCardCount(iOutCard, iOutCount,4);
-				return false;
-			}
+		{
+			if (iOutCardShape == UG_FOUR_ONE_DOUBLE)
+				return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount, 4) < GetBulkBySpecifyCardCount(iOutCard, iOutCount, 4);
+			return false;
+		}
 		case UG_FOUR_TWO_SEQUENCE://四帶一對順＞四帶二單順
-			{
-				if(iOutCardShape == UG_FOUR_ONE_DOUBLE_SEQUENCE)
-					return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount,4)<GetBulkBySpecifyCardCount(iOutCard, iOutCount,4);
-				return false;
-			}
+		{
+			if (iOutCardShape == UG_FOUR_ONE_DOUBLE_SEQUENCE)
+				return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount, 4) < GetBulkBySpecifyCardCount(iOutCard, iOutCount, 4);
+			return false;
+		}
 		case UG_THREE_DOUBLE_SEQUENCE:	//蝴蝶大于三順帶對
-			{
-				if(iOutCardShape == UG_THREE_SEQUENCE_DOUBLE_SEQUENCE)
-					return GetBulkBySpecifySequence(iBaseCard, iBaseCount,3) < GetBulkBySpecifySequence(iOutCard, iOutCount,3);
-				return false;
-			}
+		{
+			if (iOutCardShape == UG_THREE_SEQUENCE_DOUBLE_SEQUENCE)
+				return GetBulkBySpecifySequence(iBaseCard, iBaseCount, 3) < GetBulkBySpecifySequence(iOutCard, iOutCount, 3);
+			return false;
+		}
 		}
 
 		return false;
-	}	
+	}
 
-	switch(iBaseCardShape)			//处理牌形一致
+	switch (iBaseCardShape)			//处理牌形一致
 	{
 	case UG_ONLY_ONE:  //单张
 	case UG_DOUBLE:    //对牌
 	case UG_THREE:     //三张
-		{
-			return GetBulkBySepcifyMinOrMax(iBaseCard, iBaseCount, 1) < GetBulkBySepcifyMinOrMax(iOutCard, iOutCount, 1);
-		}		
+	{
+		return GetBulkBySepcifyMinOrMax(iBaseCard, iBaseCount, 1) < GetBulkBySepcifyMinOrMax(iOutCard, iOutCount, 1);
+	}
 	case UG_BOMB: //4+张 炸弹
-		{
-			if(iBaseCount > iOutCount) //张数大的炸弹大
-				return FALSE;
+	{
+		if (iBaseCount > iOutCount) //张数大的炸弹大
+			return FALSE;
 
-			if(iBaseCount == iOutCount) //张数相同,比点数
-				return GetBulkBySepcifyMinOrMax(iBaseCard, iBaseCount, 1) < GetBulkBySepcifyMinOrMax(iOutCard, iOutCount, 1);
-			return TRUE;
-		}
+		if (iBaseCount == iOutCount) //张数相同,比点数
+			return GetBulkBySepcifyMinOrMax(iBaseCard, iBaseCount, 1) < GetBulkBySepcifyMinOrMax(iOutCard, iOutCount, 1);
+		return TRUE;
+	}
 
 	case UG_FLUSH:			//同花(非顺子）比较同花中最大的牌
-		{
-			return GetBulkBySepcifyMinOrMax(iBaseCard, iBaseCount, 255) < GetBulkBySepcifyMinOrMax(iOutCard, iOutCount, 255);
-		}
+	{
+		return GetBulkBySepcifyMinOrMax(iBaseCard, iBaseCount, 255) < GetBulkBySepcifyMinOrMax(iOutCard, iOutCount, 255);
+	}
 	case UG_STRAIGHT_FLUSH: //同花顺
 	case UG_STRAIGHT:		//顺子
 	case UG_DOUBLE_SEQUENCE: //连对
 	case UG_THREE_SEQUENCE:  //连三  
 	case UG_FOUR_SEQUENCE:	//四顺
-		if(iOutCount != iBaseCount)
+		if (iOutCount != iBaseCount)
 			return FALSE;
 		{
 			return GetBulkBySepcifyMinOrMax(iBaseCard, iBaseCount, 1) < GetBulkBySepcifyMinOrMax(iOutCard, iOutCount, 1);
@@ -2700,80 +2705,80 @@ BOOL CUpGradeGameLogic::CanOutCard(const BYTE iOutCard[], int iOutCount,  //要出
 	case UG_THREE_DOUBLE:	//三带对
 		//比一下三张牌的牌点大小就行拉
 		//return (SearchThreeCard(iBaseCard, iBaseCount) < SearchThreeCard(iOutCard, iOutCount));
-		{
-			return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount,3)<GetBulkBySpecifyCardCount(iOutCard, iOutCount,3);
-		}
+	{
+		return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount, 3) < GetBulkBySpecifyCardCount(iOutCard, iOutCount, 3);
+	}
 	case UG_FOUR_ONE:						//四带一
 	case UG_FOUR_TWO:						//四带二
 	case UG_FOUR_ONE_DOUBLE:				//四带一对
 	case UG_FOUR_TWO_DOUBLE:				//四带二对
-		{
-			return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount,4)<GetBulkBySpecifyCardCount(iOutCard, iOutCount,4);
-		}
+	{
+		return GetBulkBySpecifyCardCount(iBaseCard, iBaseCount, 4) < GetBulkBySpecifyCardCount(iOutCard, iOutCount, 4);
+	}
 
 	case UG_THREE_ONE_SEQUENCE: //2+个三带一
 	case UG_THREE_TWO_SEQUENCE: //2+个三带二
 	case UG_THREE_DOUBLE_SEQUENCE://三带对顺
 	case UG_THREE_SEQUENCE_DOUBLE_SEQUENCE:		//三顺带二顺(蝴蝶)
-		{
-			if(iOutCount != iBaseCount)
-				return FALSE;
-			return(GetBulkBySpecifySequence(iBaseCard, iBaseCount,3) < GetBulkBySpecifyCardCount(iOutCard, iOutCount,3));
-		}
+	{
+		if (iOutCount != iBaseCount)
+			return FALSE;
+		return(GetBulkBySpecifySequence(iBaseCard, iBaseCount, 3) < GetBulkBySpecifyCardCount(iOutCard, iOutCount, 3));
+	}
 	case UG_FOUR_ONE_SEQUENCE:					//四顺
 	case UG_FOUR_TWO_SEQUENCE:
 	case UG_FOUR_ONE_DOUBLE_SEQUENCE:
 	case UG_FOUR_TWO_DOUBLE_SEQUENCE:
-		{
-			return(GetBulkBySpecifySequence(iBaseCard, iBaseCount,4) < GetBulkBySpecifyCardCount(iOutCard, iOutCount,4));
-		}
+	{
+		return(GetBulkBySpecifySequence(iBaseCard, iBaseCount, 4) < GetBulkBySpecifyCardCount(iOutCard, iOutCount, 4));
+	}
 	case UG_MASTER_510K: //同花510K，花色:黑桃 > 红桃 > 梅花 > 方片
-		{
-			return (GetCardHuaKind(iBaseCard[0],true) < GetCardHuaKind(iOutCard[0],true)); //比花色
-		}
+	{
+		return (GetCardHuaKind(iBaseCard[0], true) < GetCardHuaKind(iOutCard[0], true)); //比花色
+	}
 	case UG_SLAVE_510K: //副510K都一样大
-		{
-			return FALSE;
-		}
-		//变种牌形处理
+	{
+		return FALSE;
+	}
+	//变种牌形处理
 	case UG_VARIATION_STRAIGHT://单顺
-		{
-			if(iOutCount != iBaseCount)
-				return FALSE;
-			return(GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount,1) < GetBulkBySpecifyVariationSequence(iOutCard, iOutCount,1));
+	{
+		if (iOutCount != iBaseCount)
+			return FALSE;
+		return(GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount, 1) < GetBulkBySpecifyVariationSequence(iOutCard, iOutCount, 1));
 
-			break;
-		}
+		break;
+	}
 	case UG_VARIATION_DOUBLE_SEQUENCE://对顺
-		{
-			if(iOutCount != iBaseCount)
-				return FALSE;
-			return(GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount,2) < GetBulkBySpecifyVariationSequence(iOutCard, iOutCount,2));
-			break;
-		}
+	{
+		if (iOutCount != iBaseCount)
+			return FALSE;
+		return(GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount, 2) < GetBulkBySpecifyVariationSequence(iOutCard, iOutCount, 2));
+		break;
+	}
 	case UG_VARIATION_THREE_SEQUENCE://三顺
 	case UG_VARIATION_THREE_ONE_SEQUENCE://三带一顺
 	case UG_VARIATION_THREE_TWO_SEQUENCE://三带二顺
 	case UG_VARIATION_THREE_DOUBLE_SEQUENCE://三带对顺
 	case UG_VARIATION_THREE_SEQUENCE_DOUBLE_SEQUENCE://三顺带二顺
-		{
-			if(iOutCount != iBaseCount)
-				return FALSE;
-			return(GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount,3) < GetBulkBySpecifyVariationSequence(iOutCard, iOutCount,3));
-			break;
-		}
+	{
+		if (iOutCount != iBaseCount)
+			return FALSE;
+		return(GetBulkBySpecifyVariationSequence(iBaseCard, iBaseCount, 3) < GetBulkBySpecifyVariationSequence(iOutCard, iOutCount, 3));
+		break;
+	}
 	case UG_VARIATION_FOUR_SEQUENCE:		//变种四顺
 	case UG_VARIATION_FOUR_ONE_SEQUENCE:	//变种四带一顺
 	case UG_VARIATION_FOUR_TWO_SEQUENCE:	//变种四带二顺
 	case UG_VARIATION_FOUR_ONE_DOUBLE_SEQUENCE://变种四带一对顺
 	case UG_VARIATION_FOUR_TWO_DOUBLE_SEQUENCE://变种四带二对顺
-		{
-			if(iOutCount != iBaseCount)
-				return FALSE;
-			return(GetBulkBySpecifySequence(iBaseCard, iBaseCount,4) < GetBulkBySpecifyCardCount(iOutCard, iOutCount,4));
+	{
+		if (iOutCount != iBaseCount)
+			return FALSE;
+		return(GetBulkBySpecifySequence(iBaseCard, iBaseCount, 4) < GetBulkBySpecifyCardCount(iOutCard, iOutCount, 4));
 
-			return false;
-		}
+		return false;
+	}
 	}
 	return FALSE;
 }
@@ -2837,21 +2842,21 @@ return 0;
 }*/
 
 //提取所有炸弹为提反单顺,双顺,三顺做准备
-BOOL CUpGradeGameLogic::TackOutAllBomb(const BYTE iCardList[],int iCardCount,
-									   BYTE iResultCard[],int &iResultCardCount,int iNumCount) const
+BOOL CUpGradeGameLogic::TackOutAllBomb(const BYTE iCardList[], int iCardCount,
+	BYTE iResultCard[], int &iResultCardCount, int iNumCount) const
 {
-	iResultCardCount=0;
+	iResultCardCount = 0;
 	BYTE bCardBuffer[45];
-	BYTE bombcount=GetBombCount(iCardList,iCardCount,iNumCount);
-	if(bombcount<0)
+	BYTE bombcount = GetBombCount(iCardList, iCardCount, iNumCount);
+	if (bombcount < 0)
 		return false;
-	for(int i=iNumCount;i < 9;i++)
+	for (int i = iNumCount; i < 9; i++)
 	{
-		int count=TackOutBySepcifyCardNumCount(iCardList,iCardCount,bCardBuffer,i);
-		if(count > 0)
+		int count = TackOutBySepcifyCardNumCount(iCardList, iCardCount, bCardBuffer, i);
+		if (count > 0)
 		{
-			::CopyMemory(&iResultCard[iResultCardCount],bCardBuffer,sizeof(BYTE)*count);
-			iResultCardCount+=count;
+			::CopyMemory(&iResultCard[iResultCardCount], bCardBuffer, sizeof(BYTE)*count);
+			iResultCardCount += count;
 			break;
 		}
 	}
@@ -2860,48 +2865,48 @@ BOOL CUpGradeGameLogic::TackOutAllBomb(const BYTE iCardList[],int iCardCount,
 
 //提取炸弹
 BOOL CUpGradeGameLogic::TackOutBomb(const BYTE iCardList[], int iCardCount,
-									BYTE iResultCard[], int &iResultCardCount,int iNumCount) const
+	BYTE iResultCard[], int &iResultCardCount, int iNumCount) const
 {
-	iResultCardCount=0;
+	iResultCardCount = 0;
 	BYTE bCardBuffer[45];
-	BYTE bombcount=GetBombCount(iCardList,iCardCount,iNumCount);
-	if(bombcount<0)
+	BYTE bombcount = GetBombCount(iCardList, iCardCount, iNumCount);
+	if (bombcount < 0)
 		return false;
-	for(int i=iNumCount;i<9;i++)
+	for (int i = iNumCount; i < 9; i++)
 	{
-		int count=TackOutBySepcifyCardNumCount(iCardList,iCardCount,bCardBuffer,i);
-		if(count > 0)
+		int count = TackOutBySepcifyCardNumCount(iCardList, iCardCount, bCardBuffer, i);
+		if (count > 0)
 		{
-			::CopyMemory(iResultCard,bCardBuffer,sizeof(BYTE)*i);
-			iResultCardCount=i;
+			::CopyMemory(iResultCard, bCardBuffer, sizeof(BYTE)*i);
+			iResultCardCount = i;
 			break;
 		}
 	}
-	if(iResultCardCount == 0)
-		TackOutKingBomb(iCardList,iCardCount,iResultCard,iResultCardCount);
+	if (iResultCardCount == 0)
+		TackOutKingBomb(iCardList, iCardCount, iResultCard, iResultCardCount);
 	return true;
 }
 
 //提取王炸
-BOOL CUpGradeGameLogic::TackOutKingBomb(const BYTE iCardList[],int iCardCount,BYTE iResultCard[],int &iResultCardCount) const
+BOOL CUpGradeGameLogic::TackOutKingBomb(const BYTE iCardList[], int iCardCount, BYTE iResultCard[], int &iResultCardCount) const
 {
-	iResultCardCount=0;
+	iResultCardCount = 0;
 
 	BYTE bCardBuf[8];
-	int kingcount=0;
-	int SingKing= KING_COUNT/2;
-	int count=TackOutBySpecifyCard(iCardList,iCardCount,bCardBuf,kingcount,0x4e);
-	if(count != SingKing)
+	int kingcount = 0;
+	int SingKing = KING_COUNT / 2;
+	int count = TackOutBySpecifyCard(iCardList, iCardCount, bCardBuf, kingcount, 0x4e);
+	if (count != SingKing)
 		return false;
 
-	::CopyMemory(iResultCard,bCardBuf,sizeof(BYTE)*count);
+	::CopyMemory(iResultCard, bCardBuf, sizeof(BYTE)*count);
 
-	count=TackOutBySpecifyCard(iCardList,iCardCount,bCardBuf,kingcount,0x4f);
-	if(count != SingKing)
+	count = TackOutBySpecifyCard(iCardList, iCardCount, bCardBuf, kingcount, 0x4f);
+	if (count != SingKing)
 	{
 		return false;
-	}	
-	::CopyMemory(&(iResultCard[SingKing]),bCardBuf,sizeof(BYTE)*count);
+	}
+	::CopyMemory(&(iResultCard[SingKing]), bCardBuf, sizeof(BYTE)*count);
 	return iResultCardCount = KING_COUNT;
 }
 ///拖动选择牌
@@ -2920,96 +2925,96 @@ void CUpGradeGameLogic::DragCardAutoSetValidCard(BYTE iUpCardList[], int iUpCard
 	BYTE bLength = abs(GetCardNum(bMinCard) - GetCardNum(bMaxCard)) + 1; // 长度
 
 	// 不能满足顺子、连对要求
-	if (255==bMinCard || 255==bMaxCard || 3>bLength)
+	if (255 == bMinCard || 255 == bMaxCard || 3 > bLength)
 		return;
 
-	for (char i=bLength; i>=5; i--) //顺子最少五张
+	for (char i = bLength; i >= 5; i--) //顺子最少五张
 		if (TackOutSequence(iUpCardList, iUpCardCount, NULL, i, bSingleResult, iSingleResultCount, 1, TRUE))
 			break;
 
-	for (char i=bLength*2; i>=6; i--) //对子最少三对
+	for (char i = bLength * 2; i >= 6; i--) //对子最少三对
 		if (TackOutSequence(iUpCardList, iUpCardCount, NULL, i, bDoubleResult, iDoubleResultCount, 2, TRUE))
 			break;
 
-	if (0<iSingleResultCount && iSingleResultCount > iDoubleResultCount/2)
+	if (0 < iSingleResultCount && iSingleResultCount > iDoubleResultCount / 2)
 	{
 		memcpy(bResult, bSingleResult, sizeof(bSingleResult));
 		bResultCount = iSingleResultCount;
 	}
-	else if (0<iDoubleResultCount)
+	else if (0 < iDoubleResultCount)
 	{
 		memcpy(bResult, bDoubleResult, sizeof(bDoubleResult));
 		bResultCount = iDoubleResultCount;
 	}
 }
 ///玩家点击牌之后智能提取牌控件
-void  CUpGradeGameLogic::AITrackOutCard(BYTE  iCardList[] ,int iCardCount,     //玩家的手牌数据
-										BYTE  iUpCardList[], int iUpCardCount,  //玩家点击的牌数据
-										BYTE  iBaseCardList[] ,int iBaseCardCount, //玩家的桌面上的牌数据
-										BYTE  bResult[], int & bResultCount )      ///提取到的结果
+void  CUpGradeGameLogic::AITrackOutCard(BYTE  iCardList[], int iCardCount,     //玩家的手牌数据
+	BYTE  iUpCardList[], int iUpCardCount,  //玩家点击的牌数据
+	BYTE  iBaseCardList[], int iBaseCardCount, //玩家的桌面上的牌数据
+	BYTE  bResult[], int & bResultCount)      ///提取到的结果
 {
 
-	if(iUpCardCount <=0 || 0 == iBaseCardCount  )  //升起的牌和桌面上的牌如果为空的就不用提取
+	if (iUpCardCount <= 0 || 0 == iBaseCardCount)  //升起的牌和桌面上的牌如果为空的就不用提取
 	{
-		return ; 
+		return;
 	}
 
-	BYTE iCardValue = iUpCardList[0] ; 
-	BYTE iTempBaseCardList[45] ; 
-	memset(iTempBaseCardList , 0 ,sizeof(iTempBaseCardList)) ; 
-	int  iTempBaseCardCount = iBaseCardCount; 
-	memcpy(iTempBaseCardList ,iBaseCardList , sizeof(BYTE )* iBaseCardCount) ;
-	bResultCount = 0 ; 
+	BYTE iCardValue = iUpCardList[0];
+	BYTE iTempBaseCardList[45];
+	memset(iTempBaseCardList, 0, sizeof(iTempBaseCardList));
+	int  iTempBaseCardCount = iBaseCardCount;
+	memcpy(iTempBaseCardList, iBaseCardList, sizeof(BYTE)* iBaseCardCount);
+	bResultCount = 0;
 
-	BYTE  iCardShape = GetCardShape(iBaseCardList , iBaseCardCount) ; 
+	BYTE  iCardShape = GetCardShape(iBaseCardList, iBaseCardCount);
 
-	if(0 == iBaseCardCount)
+	if (0 == iBaseCardCount)
 	{
-		if(TRUE == TackOutCardBySpecifyCard(iCardList ,iCardCount ,bResult ,bResultCount ,iTempBaseCardList , iTempBaseCardCount, iCardValue))
+		if (TRUE == TackOutCardBySpecifyCard(iCardList, iCardCount, bResult, bResultCount, iTempBaseCardList, iTempBaseCardCount, iCardValue))
 		{
-			return ;
+			return;
 		}
 	}
 
-	if(iCardShape == UG_ERROR_KIND )
+	if (iCardShape == UG_ERROR_KIND)
 	{
-		return ; 
+		return;
 	}
 
-	if(iCardShape == UG_DOUBLE)
+	if (iCardShape == UG_DOUBLE)
 	{
-		if(TRUE == TackOutCardBySpecifyCard(iCardList ,iCardCount ,bResult ,bResultCount ,iTempBaseCardList , iTempBaseCardCount, iCardValue))
+		if (TRUE == TackOutCardBySpecifyCard(iCardList, iCardCount, bResult, bResultCount, iTempBaseCardList, iTempBaseCardCount, iCardValue))
 		{
-			return ;
+			return;
 		}
 	}
 
-	while(0 == GetCountBySpecifyCard(iTempBaseCardList,iTempBaseCardCount ,iCardValue))
+	while (0 == GetCountBySpecifyCard(iTempBaseCardList, iTempBaseCardCount, iCardValue))
 	{
-		AutoOutCard(iCardList , iCardCount , iTempBaseCardList , iTempBaseCardCount ,bResult ,bResultCount ,FALSE) ;
+		AutoOutCard(iCardList, iCardCount, iTempBaseCardList, iTempBaseCardCount, bResult, bResultCount, FALSE);
 
-		if(bResultCount == 0 )
+		if (bResultCount == 0)
 		{
 			break;
 		}
-	
-		iTempBaseCardCount = bResultCount; 
-		memcpy(iTempBaseCardList ,bResult , sizeof(BYTE )* bResultCount) ;
 
-		memset(bResult , 0 , sizeof(bResult)) ; 
-		bResultCount = 0 ; 
+		iTempBaseCardCount = bResultCount;
+		memcpy(iTempBaseCardList, bResult, sizeof(BYTE)* bResultCount);
+
+		memset(bResult, 0, sizeof(bResult));
+		bResultCount = 0;
 	}
 
-	if(GetCountBySpecifyCard(iTempBaseCardList,iTempBaseCardCount ,iCardValue)==0)
+	if (GetCountBySpecifyCard(iTempBaseCardList, iTempBaseCardCount, iCardValue) == 0)
 	{
-		memset(iTempBaseCardList , 0 , sizeof(iTempBaseCardList)) ; 
-		iTempBaseCardCount = 0 ; 
+		memset(iTempBaseCardList, 0, sizeof(iTempBaseCardList));
+		iTempBaseCardCount = 0;
 	}
 
-	bResultCount = iTempBaseCardCount; 
-	memcpy( bResult,iTempBaseCardList , sizeof(BYTE )* bResultCount) ;
+	bResultCount = iTempBaseCardCount;
+	memcpy(bResult, iTempBaseCardList, sizeof(BYTE)* bResultCount);
 
-	return  ; 
+	return;
 }
 //找出一个最小或最大的牌
 BYTE CUpGradeGameLogic::GetCardMinOrMax(BYTE iCardList[], int iCardCount, int MinOrMax/*1 or 255*/, bool bExtVal)
@@ -3017,31 +3022,31 @@ BYTE CUpGradeGameLogic::GetCardMinOrMax(BYTE iCardList[], int iCardCount, int Mi
 	int nIndex = 0;
 	int CardNum;
 
-	if(MinOrMax == 1) //找最小的
+	if (MinOrMax == 1) //找最小的
 	{
 		CardNum = 65536;
-		for(int i = 0; i < iCardCount; i++)
+		for (int i = 0; i < iCardCount; i++)
 		{
 			// 不考虑 2 、王
-			if (bExtVal  &&  (2==GetCardNum(iCardList[i]) || 0x4E==iCardList[i] || 0x4F==iCardList[i]))
+			if (bExtVal && (2 == GetCardNum(iCardList[i]) || 0x4E == iCardList[i] || 0x4F == iCardList[i]))
 				continue;
 
-			if(GetCardBulk(iCardList[i], false) < CardNum)
+			if (GetCardBulk(iCardList[i], false) < CardNum)
 			{
 				CardNum = GetCardBulk(iCardList[i], false);
 				nIndex = i;
 			}
 		}
 	}
-	else if(MinOrMax == 255)
+	else if (MinOrMax == 255)
 	{
 		CardNum = -1;
-		for(int i = 0; i < iCardCount; i++)
+		for (int i = 0; i < iCardCount; i++)
 		{
-			if (bExtVal  &&  (2==GetCardNum(iCardList[i]) || 0x4E==iCardList[i] || 0x4F==iCardList[i]))
+			if (bExtVal && (2 == GetCardNum(iCardList[i]) || 0x4E == iCardList[i] || 0x4F == iCardList[i]))
 				continue;
 
-			if(GetCardBulk(iCardList[i], false) > CardNum)
+			if (GetCardBulk(iCardList[i], false) > CardNum)
 			{
 				CardNum = GetCardBulk(iCardList[i], false);
 				nIndex = i;
@@ -3049,7 +3054,7 @@ BYTE CUpGradeGameLogic::GetCardMinOrMax(BYTE iCardList[], int iCardCount, int Mi
 		}
 	}
 
-	if ( bExtVal && (65536==CardNum || -1==CardNum) )
+	if (bExtVal && (65536 == CardNum || -1 == CardNum))
 		return 255;
 
 	return iCardList[nIndex];
@@ -3058,15 +3063,15 @@ BYTE CUpGradeGameLogic::GetCardMinOrMax(BYTE iCardList[], int iCardCount, int Mi
 //牌适配器、转换器
 void CUpGradeGameLogic::CardAdapter(BYTE &byCard, bool bTo)
 {
-	if(byCard == 0x4E || byCard == 0x4F) return;
-	if(bTo)
+	if (byCard == 0x4E || byCard == 0x4F) return;
+	if (bTo)
 	{
-		if( byCard % 16 == 13) byCard = byCard / 16 * 16 + 1;
+		if (byCard % 16 == 13) byCard = byCard / 16 * 16 + 1;
 		else byCard += 1;
 	}
 	else
 	{
-		if( byCard % 16 == 1) byCard = byCard / 16 * 16 + 13;
+		if (byCard % 16 == 1) byCard = byCard / 16 * 16 + 13;
 		else byCard -= 1;
 	}
 }
@@ -3074,72 +3079,67 @@ void CUpGradeGameLogic::CardAdapter(BYTE &byCard, bool bTo)
 //mark
 /// 1、优先选择匹配的组合的牌压，否则拆其他组合压； 已在服务端实现
 ///tParam 是包含了位置和玩家的手牌数据  ///sPlayCard 是 可出牌的一个集合 /// res 是个可出牌的一个
-void CUpGradeGameLogic::GetOptimalPlayCard(SGetPlayCardparam & tParam,T_S2C_PROMPT_CARD_RES & sPlayCard,T_C2S_PLAY_CARD_REQ & res)
+void CUpGradeGameLogic::GetOptimalPlayCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res)
 {
 	//// 出牌  //////
 	//庄家//地主
 	//todo 加一层条件.在对手只有5张牌的情况下.才出大牌
-	if( tParam.iMybSeatNO == tParam.iBanker  && tParam.bOutCard == true )
+	if (tParam.iMybSeatNO == tParam.iBanker  && tParam.bOutCard == true)
 	{
-		GetOptimalPlayCard_BankerOut(tParam,sPlayCard,res);
+		GetOptimalPlayCard_BankerOut(tParam, sPlayCard, res);
 		return;
 	}
 
 	//下面的农民
-	if( tParam.iMybSeatNO != tParam.iBanker  && tParam.bOutCard == true )
+	if (tParam.iMybSeatNO != tParam.iBanker  && tParam.bOutCard == true)
 	{
-		GetOptimalPlayCard_FarmerOut(tParam,sPlayCard,res);
+		GetOptimalPlayCard_FarmerOut(tParam, sPlayCard, res);
 		return;
 	}
 	//// 压牌  //////
 
 	//被动出牌
 	//③自己出炸弹后只剩下一手牌，
-	if( BombTwoHand(tParam, sPlayCard, res) ) 
+	if (BombTwoHand(tParam, sPlayCard, res))
 	{
 		return;
 	}
 	//如果是是用炸弹压，需要满足条件才押，不然直接过牌
-	if(sPlayCard.sCards[0].IsBomb(sPlayCard.sCards[0].eArrayType))
+	if (sPlayCard.sCards[0].IsBomb(sPlayCard.sCards[0].eArrayType))
 	{
 		bool bNeedOutBomb = false;
 		//押对手
-		if( (tParam.iBanker == tParam.iLastOutCardUser && tParam.iMybSeatNO != tParam.iBanker) || (tParam.iBanker != tParam.iLastOutCardUser && tParam.iMybSeatNO == tParam.iBanker))
+		if ((tParam.iBanker == tParam.iLastOutCardUser && tParam.iMybSeatNO != tParam.iBanker) || (tParam.iBanker != tParam.iLastOutCardUser && tParam.iMybSeatNO == tParam.iBanker))
 		{
 			//①对手报单或报双后
-			if(tParam.iUserCardCounts[tParam.iLastOutCardUser] == 1 || tParam.iUserCardCounts[tParam.iLastOutCardUser] == 2)	bNeedOutBomb = true;
+			if (tParam.iUserCardCounts[tParam.iLastOutCardUser] == 1 || tParam.iUserCardCounts[tParam.iLastOutCardUser] == 2)	bNeedOutBomb = true;
 			//②对手出炸或四带二
-			if( sPlayCard.sCards[0].IsBomb(tParam.iDeskShape) || tParam.iDeskShape == ARRAY_TYPE_4w2_ONE || tParam.iDeskShape == ARRAY_TYPE_4w2_DOUBLE)	bNeedOutBomb = true;
+			if (sPlayCard.sCards[0].IsBomb(tParam.iDeskShape) || tParam.iDeskShape == ARRAY_TYPE_4w2_ONE || tParam.iDeskShape == ARRAY_TYPE_4w2_DOUBLE)	bNeedOutBomb = true;
 			//4.队友报单报双（炸完后，如果继续自己出，则按队友的牌张数拆最小的对子或者单牌）
-			if(tParam.iMybSeatNO != tParam.iBanker)
+			if (tParam.iMybSeatNO != tParam.iBanker)
 			{
 				BYTE byFriend;
-				for(int i = 0; i < PLAY_COUNT; ++i)
+				for (int i = 0; i < PLAY_COUNT; ++i)
 				{
-					if(i != tParam.iMybSeatNO && i != tParam.iBanker)
+					if (i != tParam.iMybSeatNO && i != tParam.iBanker)
 					{
-						byFriend =i;
+						byFriend = i;
 					}
 				}
-				if(tParam.iUserCardCounts[byFriend] <= 2)	bNeedOutBomb = true;
+				if (tParam.iUserCardCounts[byFriend] <= 2)	bNeedOutBomb = true;
 			}
 		}
 
-		if(bNeedOutBomb)
+		if (bNeedOutBomb)
 		{
 			res = sPlayCard.sCards[0];
 			return;
 		}
 		else return;
 	}
-	//庄家
-	//日志
-	//FILE * fp = fopen("log.txt", "w");
-	//fprintf(fp, "123");
 
-	//fclose(fp);
 	//地主
-	if( tParam.iMybSeatNO == tParam.iBanker  && tParam.bOutCard == false )
+	if (tParam.iMybSeatNO == tParam.iBanker  && tParam.bOutCard == false)
 	{
 		// 能压必压
 		//res = sPlayCard.sCards[0];
@@ -3149,7 +3149,7 @@ void CUpGradeGameLogic::GetOptimalPlayCard(SGetPlayCardparam & tParam,T_S2C_PROM
 	}
 
 	//农民
-	if( tParam.iMybSeatNO != tParam.iBanker  && tParam.bOutCard == false )
+	if (tParam.iMybSeatNO != tParam.iBanker  && tParam.bOutCard == false)
 	{
 		//20190423 封装
 		this->follow_farmerOutCard(tParam, sPlayCard, res);
@@ -3194,24 +3194,24 @@ void CUpGradeGameLogic::GetOptimalPlayCard(SGetPlayCardparam & tParam,T_S2C_PROM
 //剩炸弹和一手牌
 bool CUpGradeGameLogic::BombTwoHand(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ& res)
 {
-	for(int i = 0; i < sPlayCard.iCardCount; ++i)
+	for (int i = 0; i < sPlayCard.iCardCount; ++i)
 	{
-		if(sPlayCard.sCards[i].IsBomb(sPlayCard.sCards[i].eArrayType))
+		if (sPlayCard.sCards[i].IsBomb(sPlayCard.sCards[i].eArrayType))
 		{
 			//临时手牌
-			BYTE byTempHandCards[ONE_HAND_CARD_COUNT] = {0};
+			BYTE byTempHandCards[ONE_HAND_CARD_COUNT] = { 0 };
 			memcpy(byTempHandCards, tParam.pHandCard[tParam.iMybSeatNO], tParam.iUserCardCounts[tParam.iMybSeatNO]);
-			BYTE byTempDeleteCards[ONE_HAND_CARD_COUNT] = {0};
+			BYTE byTempDeleteCards[ONE_HAND_CARD_COUNT] = { 0 };
 			memcpy(byTempDeleteCards, sPlayCard.sCards[i].uCards, sPlayCard.sCards[i].iCardCount);
-			for(int j = 0; j < sPlayCard.sCards[i].iCardCount; j++)
+			for (int j = 0; j < sPlayCard.sCards[i].iCardCount; j++)
 			{
 				CardAdapter(byTempDeleteCards[j], false);
 			}
 
 			//删除后看能否剩一手牌
-			DeleteCard(byTempDeleteCards, sPlayCard.sCards[i].iCardCount, byTempHandCards, tParam.iUserCardCounts[tParam.iMybSeatNO] );
+			DeleteCard(byTempDeleteCards, sPlayCard.sCards[i].iCardCount, byTempHandCards, tParam.iUserCardCounts[tParam.iMybSeatNO]);
 			int iLeftCount = tParam.iUserCardCounts[tParam.iMybSeatNO] - sPlayCard.sCards[i].iCardCount;
-			if(GetCardShape(byTempHandCards, iLeftCount) != UG_ERROR_KIND || 0 == iLeftCount)
+			if (GetCardShape(byTempHandCards, iLeftCount) != UG_ERROR_KIND || 0 == iLeftCount)
 			{
 				res = sPlayCard.sCards[i];
 				return true;
@@ -3221,8 +3221,13 @@ bool CUpGradeGameLogic::BombTwoHand(SGetPlayCardparam & tParam, T_S2C_PROMPT_CAR
 	return false;
 }
 
-void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,T_S2C_PROMPT_CARD_RES & sPlayCard,T_C2S_PLAY_CARD_REQ & res)
+void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res)
 {
+	int nextFarmerHandCardCout = 0;
+	int lastFarmerHandCardCout = 0;
+
+	nextFarmerHandCardCout = tParam.iUserCardCounts[GetNextDeskStation(tParam.iMybSeatNO)];
+	lastFarmerHandCardCout = tParam.iUserCardCounts[GetNextDeskStation(GetNextDeskStation(tParam.iMybSeatNO))];
 	//unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
 	//	2、手上只剩炸弹和另外一手牌时，优先出炸弹或王炸；（防止农民优先出完，炸弹出现的几率较小）
 	if (sPlayCard.iCardCount == 2)
@@ -3242,24 +3247,24 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 	//	4、农民只剩两张时，优先出非对子的牌，否则对子从大往小出；
 	//	（两个农民一个剩一张，一个剩2张，优先判断手上是否有大于2张的组合牌，若没有则出单张最大的）
 	int iType = 0;  /// 1 农民只剩一张 2 农民只剩两张 3 农民一个剩一张，一个剩2张
-	for(int i=0;i<PLAY_COUNT;i++)
+	for (int i = 0; i < PLAY_COUNT; i++)
 	{
-		if(i == tParam.iBanker)
+		if (i == tParam.iBanker)
 		{
 			continue;
 		}
-		if( tParam.iUserCardCounts[i] == 1 )
-		{ 
-			if(iType ==2 )
+		if (tParam.iUserCardCounts[i] == 1)
+		{
+			if (iType == 2)
 			{
 				iType = 3;
 				break;
 			}
 			iType = 1;
 		}
-		if( tParam.iUserCardCounts[i] == 2 )
+		if (tParam.iUserCardCounts[i] == 2)
 		{
-			if(iType == 1 )
+			if (iType == 1)
 			{
 				iType = 3;
 				break;
@@ -3267,37 +3272,37 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 			iType = 2;
 		}
 	}
-	if( iType > 0 )
+	if (iType > 0)
 	{
-		if( iType == 3 )
+		if (iType == 3)
 		{
 			bool bIsDanMax = false;
 			T_C2S_PLAY_CARD_REQ tRes;
-			for(int i = 0;i< sPlayCard.iCardCount;i++)
+			for (int i = 0; i < sPlayCard.iCardCount; i++)
 			{
 				res = sPlayCard.sCards[i];
-				if( res.iCardCount != 1 && res.iCardCount != 2)
+				if (res.iCardCount != 1 && res.iCardCount != 2)
 				{
 					return;
 				}
-				if( res.iCardCount == 1 )
+				if (res.iCardCount == 1)
 				{
 					tRes = res;
-					bIsDanMax = true; 
+					bIsDanMax = true;
 				}
 			}
-			if( bIsDanMax == true )
+			if (bIsDanMax == true)
 			{
 				res = tRes;
 				return;
 			}
 		}
-		if( iType == 1 || iType == 2  )
+		if (iType == 1 || iType == 2)
 		{
-			for(int i = 0;i< sPlayCard.iCardCount;i++)
+			for (int i = 0; i < sPlayCard.iCardCount; i++)
 			{
 				res = sPlayCard.sCards[i];
-				if( res.iCardCount != iType )
+				if (res.iCardCount != iType)
 				{
 					return;
 				}
@@ -3305,26 +3310,31 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 		}
 	}
 	/// 默认第一个
-	// todo 主动出牌需要逻辑
 
-	for (int i = 0; i < sPlayCard.iCardCount; ++i)
+	//FILE * fp = fopen("bankerhandcard.txt", "a");
+	//for (int i = 0; i < sPlayCard.sCards->iCardCount; ++i)
+	//{
+	//	fprintf(fp, "%c ", sPlayCard.sCards[0].uActualCards[i]);
+	//}
+	//fprintf(fp,"\n");
+	//fclose(fp);
+
+
+	if (nextFarmerHandCardCout > 5 || lastFarmerHandCardCout > 5)
 	{
-		bool ishavebigValue = false;
-		//不出2
-		T_C2S_PLAY_CARD_REQ tmp = sPlayCard.sCards[i];
-		for (int j = 0; j < tmp.iCardCount; j++)
+		for (int i = 0; i < sPlayCard.iCardCount; ++i)
 		{
-			unsigned char cardValue = tmp.uActualCards[j] % 0x10;
-			if (cardValue == 2)
+
+			//bool ishavebigValue = false;
+			//不出2
+			T_C2S_PLAY_CARD_REQ tmp = sPlayCard.sCards[i];
+			//unsigned char cardValue = tmp.uActualCards[0] % 0x10;
+			int value = tmp.uActualCards[0] & 0x0f;
+			if (value != 2 && value != 14 && value != 15)
 			{
-				ishavebigValue = true;
-				break;
+				res = tmp;
+				return;
 			}
-		}
-		if (!ishavebigValue)
-		{
-			res = tmp;
-			return;
 		}
 	}
 	//for (auto cardValue : sPlayCard.sCards)
@@ -3337,6 +3347,22 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 	//	res = cardValue;
 	//	return;
 	//}
+	if (nextFarmerHandCardCout <= 2 || lastFarmerHandCardCout<=2)
+	{
+		for (int i = 0; i < sPlayCard.iCardCount; ++i)
+		{
+
+			//bool ishavebigValue = false;
+			//不出2
+			//T_C2S_PLAY_CARD_REQ tmp = sPlayCard.sCards[i];
+			res = sPlayCard.sCards[i];
+			if (res.iCardCount >= nextFarmerHandCardCout)
+			{
+				return;
+			}
+		}
+		res = sPlayCard.sCards[sPlayCard.iCardCount - 1];
+	}
 
 	res = sPlayCard.sCards[0];
 	return;
@@ -3345,15 +3371,15 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 //获取下一个玩家位置
 BYTE CUpGradeGameLogic::GetNextDeskStation(BYTE bDeskStation, bool bClock)
 {
-	if(bClock)//顺时针
+	if (bClock)//顺时针
 	{
-		return (bDeskStation + 1 ) % PLAY_COUNT;
+		return (bDeskStation + 1) % PLAY_COUNT;
 	}
 	//逆时针
 	return 	(bDeskStation + (PLAY_COUNT - 1)) % PLAY_COUNT;
 }
 
-void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,T_S2C_PROMPT_CARD_RES & sPlayCard,T_C2S_PLAY_CARD_REQ & res)
+void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res)
 {
 	//手上只剩炸弹和另外一手牌时，优先出炸弹；
 	if (sPlayCard.iCardCount == 2)
@@ -3370,11 +3396,11 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 		}
 	}
 
-	BYTE byFriend ;
+	BYTE byFriend;
 	bool nextisBanker;
-	for(int i = 0; i < PLAY_COUNT; ++i)
+	for (int i = 0; i < PLAY_COUNT; ++i)
 	{
-		if( i != tParam.iBanker && i != tParam.iMybSeatNO)
+		if (i != tParam.iBanker && i != tParam.iMybSeatNO)
 		{
 			byFriend = i;
 		}
@@ -3394,71 +3420,133 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 	int iBankerCount = tParam.iUserCardCounts[tParam.iBanker];
 	int iFriendCount = tParam.iUserCardCounts[byFriend];
 
-	//下家是地主//主动出牌的时候注意
-	if (nextisBanker)
+	//下家是队友
+	if (!nextisBanker && iFriendCount <= 2)
 	{
-		if (iBankerCount == 1 || 2 == iBankerCount )
+		for (int i = 0; i < sPlayCard.iCardCount; i++)
 		{
-			bool bIsDanMax = false; //最大的单双
-			for (int i = 0; i < sPlayCard.iCardCount; i++)
+			if (sPlayCard.sCards[i].iCardCount == iFriendCount)
 			{
 				res = sPlayCard.sCards[i];
-				//出一些比地主牌多的组合牌
-				if(res.iCardCount > iBankerCount)
-				{
-					return;
-				}
-			}
-
-			res = sPlayCard.sCards[0];
-		}
-	}
-	else if (!nextisBanker)
-	{
-		for(int i = 0; i< sPlayCard.iCardCount; i++)
-		{
-			T_C2S_PLAY_CARD_REQ tmp= sPlayCard.sCards[i];
-			if (tmp.eArrayType == ARRAY_TYPE_SINGLE || tmp.eArrayType == ARRAY_TYPE_DOUBLE)
-			{
-				res = tmp;
 				return;
 			}
 		}
 	}
 
 
-	//只有在地主在下家的时候才顶牌
-	//if(iBankerCount == 1 || 2 == iBankerCount )
 
-	
 	/// 默认第一个
 	//todo 需要看地主的牌的数量 判断下家是否为队友
 	//20190423 //修改AI主动出牌的方式
 
-
-	for (int i = 0; i < sPlayCard.iCardCount; ++i)
+	if (iBankerCount == 1 || 2 == iBankerCount)
 	{
-		bool ishavebigValue = false;
-		//不出带2 的牌
-		T_C2S_PLAY_CARD_REQ tmp = sPlayCard.sCards[i];
-		for (int j = 0; j < tmp.iCardCount; j++)
+		//bool bIsDanMax = false; //最大的单双
+		for (int i = 0; i < sPlayCard.iCardCount; i++)
 		{
-			unsigned char cardValue = tmp.uActualCards[j] % 0x10;
-			if (cardValue == 2)
+
+			res = sPlayCard.sCards[i];
+			if (res.iCardCount > iBankerCount)
 			{
-				ishavebigValue = true;
-				break;
+				return;
 			}
+
 		}
-		if (!ishavebigValue)
+		res = sPlayCard.sCards[sPlayCard.iCardCount - 1];
+		return;
+	}
+
+	//if (iBankerCount >=5)
+	//{
+	//	FILE *fp = fopen("debug.txt", "a");
+	//	
+	//		//int tmp = 0;
+	//		//unsigned char tmp = sPlayCard.sCards[i].uActualCards[0] % 0x10;
+	//	for (int i = 0; i < sPlayCard.iCardCount; ++i)
+	//	{
+
+	//		int value = sPlayCard.sCards[i].uCards[0] & 0x0f;
+	//		fprintf(fp, "sPlayCard.iCardCount[%d]:%d\n ",i, value);
+	//		if (  value != 2 && value != 14 && value != 15)
+	//		{
+	//			res = sPlayCard.sCards[i];
+	//			return;
+	//		}
+
+	//	}
+	//	fprintf(fp, "\n");
+	//	fclose(fp);
+	//}
+
+
+	if (iBankerCount > 5 )
+	{
+		for (int i = 0; i < sPlayCard.iCardCount; ++i)
 		{
-			res = tmp;
-			return;
+			
+			res = sPlayCard.sCards[i];
+			int value = res.uActualCards[0] & 0x0f;
+			if (value != 2 && value != 14 && value != 15)
+			{
+				return;
+			}
+
 		}
 	}
 
 	res = sPlayCard.sCards[0];
 	return;
+
+
+	/*
+
+
+
+T_C2S_PLAY_CARD_REQ tRes;
+
+	//压完对手报单双的牌后，优先出飞机、顺子、连对、三带一，如果只剩下对子、单牌，对手报双出小单牌，对手报单出小对子
+	//只剩单牌出最大的单排，只剩对子出最小的对子
+	int iBankerCount = tParam.iUserCardCounts[tParam.iBanker];
+	int iFriendCount = tParam.iUserCardCounts[byFriend];
+
+	if(iBankerCount == 1 || 2 == iBankerCount)
+	{
+		bool bIsDanMax = false; //最大的单双
+		for(int i = 0; i< sPlayCard.iCardCount; i++)
+		{
+			res = sPlayCard.sCards[i];
+			if( res.iCardCount != iBankerCount)
+			{
+				return;
+			}
+			if( ( res.iCardCount == 1 && iBankerCount == 1) || ( res.iCardCount == 2 && iBankerCount == 2) )
+			{
+				tRes = res;
+				bIsDanMax = true;
+			}
+		}
+		if( bIsDanMax == true )
+		{
+			res = tRes;
+			return;
+		}
+	}
+	//else if(iFriendCount == 1 || 2 == iFriendCount)
+	//{
+	//	for(int i = 0; i< sPlayCard.iCardCount; i++)
+	//	{
+	//		res = sPlayCard.sCards[i];
+	//		if( res.iCardCount == iFriendCount)
+	//		{
+	//			return;
+	//		}
+
+	//	}
+	//}
+	/// 默认第一个
+	res = sPlayCard.sCards[0];
+	return;
+	*/
 }
 
 //有大王或者小王
@@ -3466,13 +3554,13 @@ bool CUpGradeGameLogic::HaveKing(const BYTE iCardList[], int iCardCount, bool bB
 {
 	bool bBig = false;
 	bool bSmall = false;
-	for(int i = 0; i < iCardCount; ++i)
+	for (int i = 0; i < iCardCount; ++i)
 	{
-		if(iCardList[i] == King_big)
+		if (iCardList[i] == King_big)
 		{
 			bBig = true;
 		}
-		if(iCardList[i] == King_Small)
+		if (iCardList[i] == King_Small)
 		{
 			bSmall = true;
 		}
@@ -3481,29 +3569,29 @@ bool CUpGradeGameLogic::HaveKing(const BYTE iCardList[], int iCardCount, bool bB
 }
 
 //获取指定牌的张数
-BYTE CUpGradeGameLogic::GetOneCardCount(const BYTE iCardList[],int iCardCount,BYTE byValue)
+BYTE CUpGradeGameLogic::GetOneCardCount(const BYTE iCardList[], int iCardCount, BYTE byValue)
 {
-	BYTE temp[18] = {0};
-	for(int i = 0;i < iCardCount;i ++)
+	BYTE temp[18] = { 0 };
+	for (int i = 0; i < iCardCount; i++)
 		temp[GetCardBulk(iCardList[i])]++;
 
-	for(int i = 17;i> 0;i--)
-		if(i == byValue)
+	for (int i = 17; i > 0; i--)
+		if (i == byValue)
 			return temp[i];
 	return 0;
 }
 
 //获取指定牌张数牌大小,例如炸弹有多少个。
-BYTE CUpGradeGameLogic::GetSpecifyCardCount(const BYTE iCardList[],int iCardCount,int iCount) const
+BYTE CUpGradeGameLogic::GetSpecifyCardCount(const BYTE iCardList[], int iCardCount, int iCount) const
 {
-	BYTE temp[18] = {0};
-	for(int i = 0;i < iCardCount;i ++)
+	BYTE temp[18] = { 0 };
+	for (int i = 0; i < iCardCount; i++)
 		temp[GetCardBulk(iCardList[i])]++;
 
 	int iTotalCount = 0;
-	for(int i = 17;i> 0;i--)
+	for (int i = 17; i > 0; i--)
 	{
-		if(temp[i] == iCount)
+		if (temp[i] == iCount)
 		{
 			iTotalCount++;
 		}
@@ -3525,7 +3613,7 @@ int CUpGradeGameLogic::DeleteCard(BYTE iRemoveCard[],   //要删除的牌面
 	int iCardCount)		//处理数组的上限
 {
 	//检验数据
-	if(iRemoveCount > iCardCount) return 0;
+	if (iRemoveCount > iCardCount) return 0;
 
 	int iRecount;
 	int iDeleteCount = 0; //把要删除的牌置零
@@ -3544,7 +3632,7 @@ int CUpGradeGameLogic::DeleteCard(BYTE iRemoveCard[],   //要删除的牌面
 	}
 	iRecount = RemoveNummCard(iCardList, iCardCount); //删除做了标记的牌
 
-	if (iDeleteCount!=iRecount)
+	if (iDeleteCount != iRecount)
 		return 0;
 
 	return iDeleteCount;
@@ -3553,19 +3641,19 @@ int CUpGradeGameLogic::DeleteCard(BYTE iRemoveCard[],   //要删除的牌面
 //清除 0 位扑克
 int CUpGradeGameLogic::RemoveNummCard(BYTE iCardList[], int iCardCount)
 {
-	int iRemoveCount=0;
+	int iRemoveCount = 0;
 	BYTE iCards[45];
-	memset(iCards,0,sizeof(iCards));
-	memcpy(iCards,iCardList,sizeof(BYTE)*iCardCount);
-	memset(iCardList,0,sizeof(BYTE)*iCardCount);
+	memset(iCards, 0, sizeof(iCards));
+	memcpy(iCards, iCardList, sizeof(BYTE)*iCardCount);
+	memset(iCardList, 0, sizeof(BYTE)*iCardCount);
 	int index = 0;
-	for (int i=0;i<iCardCount;i++)
+	for (int i = 0; i < iCardCount; i++)
 	{
-		if (iCards[i]!=0)
+		if (iCards[i] != 0)
 		{
 			iCardList[index++] = iCards[i];
 		}
-		else 
+		else
 		{
 			iRemoveCount++;
 		}
@@ -3582,176 +3670,27 @@ int CUpGradeGameLogic::RemoveNummCard(BYTE iCardList[], int iCardCount)
 }
 
 
-//地主被动出牌
-void CUpGradeGameLogic::passive_bankerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res)
-{
-	//先找出下一家的位置
-	BYTE isnextStation,islastStation;
-	isnextStation = GetNextDeskStation(tParam.iMybSeatNO);
-	islastStation = GetNextDeskStation(isnextStation);
 
-	//获取下家的牌
-	int nextStationCount = tParam.iUserCardCounts[isnextStation];
-	//上家的也要取出
-	int islastStationCount = tParam.iUserCardCounts[islastStation];
-
-	if (nextStationCount == 1 || 2 == nextStationCount )
-	{
-		//出最大的
-		res = sPlayCard.sCards[sPlayCard.iCardCount - 1];
-		return;
-	}
-
-	//if (nextStationCount <= 10)
-	//{
-	//	res = sPlayCard.sCards[0];
-	//	return;
-	//}
-
-	//获取可出牌中的第一个
-	unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
-
-	if (islastStationCount <= 2)
-	{
-		res = sPlayCard.sCards[0];
-		return;
-	}
-	//地主在5张前不出和2
-	if (nextStationCount >= 5 || islastStationCount>=5  && tData != 2 && tData != 14)
-	{
-		res = sPlayCard.sCards[0];
-		return;
-	}
-
-	//if (sPlayCard.sCards[0].uCards[0] == 1 || sPlayCard.sCards[0].uCards[0] == 2)
-	//{
-	//	return;
-	//}
-
-	res = sPlayCard.sCards[0];
-}
-//农民被动出牌
-void CUpGradeGameLogic::passive_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res)
-{
-	BYTE byFriend;
-	bool nextisBanker;
-	for (int i = 0; i < PLAY_COUNT; ++i)
-	{
-		if (i != tParam.iBanker && i != tParam.iMybSeatNO)
-		{
-			byFriend = i;
-		}
-	}
-
-	//找地主家的位置//标记下家是否为地主
-	if (GetNextDeskStation(tParam.iMybSeatNO) != byFriend)
-		nextisBanker = true;
-	else
-		nextisBanker = false;
-
-
-
-
-	T_C2S_PLAY_CARD_REQ tRes;
-	//压完对手报单双的牌后，优先出飞机、顺子、连对、三带一，如果只剩下对子、单牌，对手报双出小单牌，对手报单出小对子
-	//只剩单牌出最大的单排，只剩对子出最小的对子
-	int iBankerCount = tParam.iUserCardCounts[tParam.iBanker];
-	int iFriendCount = tParam.iUserCardCounts[byFriend];
-
-	//地主只剩2张牌以下必须压 且 下家是地主的时候 必须出牌
-	if (iBankerCount == 1 || 2 == iBankerCount && nextisBanker)
-	{
-		//出最大的
-		res = sPlayCard.sCards[0];
-		return;
-	}
-
-	//队友//只剩2张 且 下家是队友 
-	//todo 单双牌的时候不出,给队友出 //其他情况出
-	//else if (iFriendCount == 1 || 2 == iFriendCount && !nextisBanker)
-	//{
-	//	//todo 需要 判断可出牌里的值的大小. 有必要抢到主动权给队友过牌
-	//	//判断可出牌里是否有单双的,
-	//	if (sPlayCard.sCards[0].eArrayType == ARRAY_TYPE_SINGLE || sPlayCard.sCards[0].eArrayType == ARRAY_TYPE_DOUBLE)
-	//		return;
-	//}
-
-	//队友没压牌.下家又是地主.必须压
-	//if (tParam.iBanker == tParam.iLastOutCardUser && nextisBanker)  /// 地主出牌 能压必压
-	//{
-	//	/// 能压必压
-	//	res = sPlayCard.sCards[0];
-	//	return;
-	//}
-
-	//地主没出牌 
-	if (tParam.iBanker != tParam.iLastOutCardUser && !nextisBanker)
-		return;
-
-	////跟牌
-	//for (int i = 0; i < sPlayCard.iCardCount; i++)
-	//{
-	//	res = sPlayCard.sCards[i];
-	//	if (res.iCardCount == iFriendCount)
-	//	{
-	//		return;
-	//	}
-	//}
-
-	//todo 逻辑出牌点都要在位置的基础上建立
-
-	
-
-	if (tParam.iBanker == tParam.iLastOutCardUser)  /// 地主出牌 能压必压
-	{
-		/// 能压必压
-		res = sPlayCard.sCards[0];
-		return;
-	}
-	else
-	{
-
-		//正常跟牌//设定是K以下的跟
-		do
-		{
-
-			//
-			unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
-
-			//// 能出完 必跟
-			if (sPlayCard.sCards[0].iCardCount == tParam.iUserCardCounts[tParam.iMybSeatNO])
-			{
-				res = sPlayCard.sCards[0];
-				break;
-			}
-
-			if ((sPlayCard.sCards[0].iCardCount == 2) &&
-				(tData <= 13 && tData != 1 && tData != 2))
-			{
-				res = sPlayCard.sCards[0];
-				break;
-			}
-
-			//地主在5张前不出2还有小王
-			if (iBankerCount >= 5   && tData != 2 && tData != 14 && tData != 15)
-			{
-				res = sPlayCard.sCards[0];
-				break;
-			}
-
-			if (sPlayCard.sCards[0].iCardCount == 2 && (tData <= 13 && tData != 1 && tData != 2))
-			{
-				res = sPlayCard.sCards[0];
-				break;
-			}
-		} while (false);
-	}
-}
 
 
 
 void CUpGradeGameLogic::follow_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res)
 {
+	//手上只剩炸弹和另外一手牌时，优先出炸弹；
+	if (sPlayCard.iCardCount == 2)
+	{
+		res = sPlayCard.sCards[0];
+		if (res.IsBomb(res.eArrayType))
+		{
+			return;
+		}
+		res = sPlayCard.sCards[1];
+		if (res.IsBomb(res.eArrayType))
+		{
+			return;
+		}
+	}
+
 	BYTE byFriend;
 	bool nextisBanker;
 	for (int i = 0; i < PLAY_COUNT; ++i)
@@ -3768,178 +3707,149 @@ void CUpGradeGameLogic::follow_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_P
 	else
 		nextisBanker = false;
 
+	//获取附近手牌
+	int bankerhandcount = tParam.iUserCardCounts[tParam.iBanker];
+	int friendhandcount = tParam.iUserCardCounts[byFriend];
 
-
-	T_C2S_PLAY_CARD_REQ tRes;
-	//压完对手报单双的牌后，优先出飞机、顺子、连对、三带一，如果只剩下对子、单牌，对手报双出小单牌，对手报单出小对子
-	//只剩单牌出最大的单排，只剩对子出最小的对子
-	int iBankerCount = tParam.iUserCardCounts[tParam.iBanker];
-	int iFriendCount = tParam.iUserCardCounts[byFriend];
-
-	if (nextisBanker)
-	{
-
-		if (iBankerCount == 1 || 2 == iBankerCount )
-		{
-			//出最大的
-			res = sPlayCard.sCards[0];
-			return;
-		}
-
-		//队友没压牌.下家又是地主.地主手牌少于8张必须压
-		if (tParam.iBanker == tParam.iLastOutCardUser &&
-			iBankerCount<=10)  /// 地主出牌 能压必压
-		{
-			/// 能压必压
-			res = sPlayCard.sCards[0];
-			return;
-		}
-
-
-	}
-	//下家是队友
-	else if (!nextisBanker)
-	{//需要分优先级
-
-		//地主不打.自己也不打
-		if (tParam.iLastOutCardUser != tParam.iBanker)
-			return;
-
-		unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
-		//队友只剩2张牌,且可出牌堆中是小于10的,不出,给队友出
-		if (iFriendCount <= 2)
-			if (sPlayCard.sCards[0].eArrayType == ARRAY_TYPE_SINGLE || sPlayCard.sCards[0].eArrayType == ARRAY_TYPE_DOUBLE 
-				&& (tData <= 10))
-				return;
-
-	}
-
-	unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
-	//todo 地主还再10张牌上打单排不出2和大小王
-	if (iBankerCount >= 12 &&
-		(sPlayCard.sCards[0].eArrayType == ARRAY_TYPE_SINGLE ||
-			sPlayCard.sCards[0].eArrayType == ARRAY_TYPE_DOUBLE) &&
-		tData == 2 || tData == 14 || tData == 15)
+	if (tParam.iLastOutCardUser == byFriend && !nextisBanker)
 		return;
 
-	//
-	//if (tParam.iBanker == tParam.iLastOutCardUser)  /// 地主出牌 能压必压
-	//{
-	//	/// 能压必压
-	//	res = sPlayCard.sCards[0];
-	//	return;
-	//}
-	//else
-	//{
+	//FILE *fp = fopen("handcard.txt", "a");
+	//fprintf(fp, "\n bankerhandcount:%d\n", bankerhandcount);
+	//fprintf(fp, "friendhandcount:%d\n", friendhandcount);
+	//fprintf(fp, "myself:%d\n\n", tParam.iUserCardCounts[tParam.iMybSeatNO]);
+	//fclose(fp);
 
-		//正常跟牌//设定是K以下的跟
-		do
+	//12张牌以上不打 对2 或者 小王大王
+	if (bankerhandcount > 11)
+	{
+		if (sPlayCard.sCards[0].iCardCount == 1 || sPlayCard.sCards[0].iCardCount == 2)
 		{
+			//unsigned char tmp = sPlayCard.sCards[0].uCards[0] % 0x10;
+			int value = sPlayCard.sCards[0].uCards[0] & 0x0f;
+			if (value == 2 || value == 14 || value == 15 || sPlayCard.sCards[0].eArrayType >= ARRAY_TYPE_SBOMB) return;
+		}
+	}
 
-			//
+
+
+	if (tParam.iBanker == tParam.iLastOutCardUser  && bankerhandcount <=10)  /// 地主出牌 能压必压
+	{
+		/// 能压必压
+		res = sPlayCard.sCards[0];
+	}
+	else
+	{
+		//	前提是不拆其他组合下，单双小于10压。如果是正好能压过结束时，压；
+
 			unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
 
-			//// 能出完 必跟
+			int value = sPlayCard.sCards[0].uCards[0] & 0x0f;
+			
+			 //能出完 必跟
 			if (sPlayCard.sCards[0].iCardCount == tParam.iUserCardCounts[tParam.iMybSeatNO])
 			{
 				res = sPlayCard.sCards[0];
-				break;
+				return;
 			}
+
+			//Q 以下都可以跟
+			//if ((sPlayCard.sCards[0].iCardCount == 2) &&
+			//	(tData <= 10 && tData != 1 && tData != 2)
+
+			//if ((sPlayCard.sCards[0].iCardCount == 4) &&
+			//	(tData <= 12 && tData != 2)
+			if ((sPlayCard.sCards[0].iCardCount == 4) &&
+					(tData <= 12 && value != 2 && sPlayCard.sCards[0].eArrayType < ARRAY_TYPE_SBOMB)
+				)
+			{
+				res = sPlayCard.sCards[0];
+				return;
+			}
+
+
+			if ((sPlayCard.sCards[0].iCardCount == 3) &&
+				(tData <= 12 && value != 2 && sPlayCard.sCards[0].eArrayType < ARRAY_TYPE_SBOMB)
+				)
+			{
+				res = sPlayCard.sCards[0];
+				return;
+			}
+
 
 			if ((sPlayCard.sCards[0].iCardCount == 2) &&
-				(tData <= 13 && tData != 1 && tData != 2))
+				(tData <= 12  &&  value != 2 && sPlayCard.sCards[0].eArrayType < ARRAY_TYPE_SBOMB))
 			{
 				res = sPlayCard.sCards[0];
-				break;
+				return;
 			}
 
-			//地主在12张前不出2还有小王
-			if (iBankerCount >= 12 && tData != 2 && tData != 14 && tData != 15)
+			//if (sPlayCard.sCards[0].iCardCount == 1 && (tData <= 10 && tData != 1 && tData != 2))
+			//if (sPlayCard.sCards[0].iCardCount == 1 && (tData <= 12  && tData != 2 && tData != 14 && tData != 15))
+			if (sPlayCard.sCards[0].iCardCount == 1 && (tData <= 12 && value != 2 && value != 14 && value != 15 && sPlayCard.sCards[0].eArrayType < ARRAY_TYPE_SBOMB))
 			{
 				res = sPlayCard.sCards[0];
-				break;
+				return;
 			}
-
-			if (sPlayCard.sCards[0].iCardCount == 2 && (tData <= 13 && tData != 1 && tData != 2))
-			{
-				res = sPlayCard.sCards[0];
-				break;
-			}
-		} while (false);
-	//}
-
-	/*
-
-	//???
-	////跟牌
-	//for (int i = 0; i < sPlayCard.iCardCount; i++)
-	//{
-	//	res = sPlayCard.sCards[i];
-	//	if (res.iCardCount == iFriendCount)
-	//	{
-	//		return;
-	//	}
-	//}
-
-	
-	*/
+		
+	}
+	//res = sPlayCard.sCards[0];
+	return;
 }
 
 
 //地主被动出牌
 void CUpGradeGameLogic::follow_bankerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res)
 {
-	//先找出下一家的位置
-	BYTE isnextStation, islastStation;
-	isnextStation = GetNextDeskStation(tParam.iMybSeatNO);
-	islastStation = GetNextDeskStation(isnextStation);
+	int nextFarmerHandCardCout = 0;
+	int lastFarmerHandCardCout = 0;
 
-	//获取下家的牌
-	int nextStationCount = tParam.iUserCardCounts[isnextStation];
-	//上家的也要取出
-	int islastStationCount = tParam.iUserCardCounts[islastStation];
+	nextFarmerHandCardCout = tParam.iUserCardCounts[GetNextDeskStation(tParam.iMybSeatNO)];
+	lastFarmerHandCardCout = tParam.iUserCardCounts[GetNextDeskStation(GetNextDeskStation(tParam.iMybSeatNO))];
 
+	FILE *fp = fopen("bankerhancard.txt", "a");
+	fprintf(fp, "\n nextFarmerHandCardCout:%d\n", nextFarmerHandCardCout);
+	fprintf(fp, "lastFarmerHandCardCout:%d\n", lastFarmerHandCardCout);
+	fprintf(fp, "myself:%d\n\n", tParam.iUserCardCounts[tParam.iMybSeatNO]);
+	fclose(fp);
 
-
-
-	//然后是下家的手牌
-	if (nextStationCount == 1 || 2 == nextStationCount)
+	//手上只剩炸弹和另外一手牌时，优先出炸弹；
+	if (sPlayCard.iCardCount == 2)
 	{
-		//出最大的
-		//todo找最大的牌
 		res = sPlayCard.sCards[0];
-		return;
+		if (res.IsBomb(res.eArrayType))
+		{
+			return;
+		}
+		res = sPlayCard.sCards[1];
+		if (res.IsBomb(res.eArrayType))
+		{
+			return;
+		}
 	}
-
-	//if (nextStationCount <= 10)
-	//{
-	//	res = sPlayCard.sCards[0];
-	//	return;
-	//}
-
-	//优先级最高//手里有炸弹//游戏结束
 
 
 	//获取可出牌中的第一个
-	unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
-
-
-	if (islastStationCount <= 2)
+	//unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
+	//T_C2S_PLAY_CARD_REQ tmp= sPlayCard.sCards[0];
+	if (nextFarmerHandCardCout > 10 || nextFarmerHandCardCout > 10)
 	{
-		res = sPlayCard.sCards[0];
-		return;
-	}
-	//地主在5张前不出和2
-	if (nextStationCount >= 8 || islastStationCount >= 8 && tData != 2 && tData != 14 && tData != 15)
-	{
-		res = sPlayCard.sCards[0];
-		return;
+
+			
+			T_C2S_PLAY_CARD_REQ tmp = sPlayCard.sCards[0];
+			if (tmp.eArrayType >= ARRAY_TYPE_SBOMB) return;
+
+			//unsigned char tData = tmp.uActualCards[0] % 0x10;
+			int value = sPlayCard.sCards[0].uCards[0] & 0x0f;
+			if (value == 2 || value == 14 || value == 15) return;
+
+			//memcpy(res,tmp,sizeof(T_C2S_PLAY_CARD_REQ));
+			res = tmp;
+			return;
+		
 	}
 
-	//if (sPlayCard.sCards[0].uCards[0] == 1 || sPlayCard.sCards[0].uCards[0] == 2)
-	//{
-	//	return;
-	//}
 
 	res = sPlayCard.sCards[0];
+	return;
 }

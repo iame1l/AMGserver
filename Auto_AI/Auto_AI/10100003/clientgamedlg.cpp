@@ -799,6 +799,8 @@ void CClientGameDlg::UserOutCard()
 	const int nNtStation = gs->GetNtPeople();
 	bool bFirstOut = (nMyStation == nBigOutStation);
 
+	
+	
 	//获取手牌
 	int nHandCardCount;
 	const Card * pHandCard = cardMgr->GetHandCard( nMyStation, &nHandCardCount );
@@ -837,26 +839,47 @@ void CClientGameDlg::UserOutCard()
 	}
 
 	std::vector<T_C2S_PLAY_CARD_REQ>  tPlayCardList; 
-	//是否主动出牌
+	bool isfirstoutcard;
+	//地主第一手
 	if(bFirstOut)
 	{
-		//主动出牌不需要管桌上的牌
+
 		_dataMange.getPickUpOutAll(HandCard,tPlayCardList);
 	}
 	else
 	{
-		//跟牌
+
 		_dataMange.getPickUpFollowAll(HandCard, tLastCard, tPlayCardList);
 	}
-	
+
+
+
+	//if(bFirstOut)_dataMange.getPickUpOutAll(HandCard, tPlayCardList);
+	//else _dataMange.getPickUpFollowAll(HandCard, tLastCard, tPlayCardList);
+
+
+
 	/// 结果赋值//可出牌 牌堆
 	T_S2C_PROMPT_CARD_RES m_sPlayCard;
 	for(int i = 0;i < ONE_HAND_CARD_COUNT && i < tPlayCardList.size();i++ )
 	{
+
 		m_sPlayCard.sCards[i] = tPlayCardList[i];
 		m_sPlayCard.iCardCount = i+1;
 	}
 	
+	//FILE *fp = fopen("m_splayCard.txt", "a");
+	//for (int i = 0; i < m_sPlayCard.iCardCount; ++i)
+	//{
+	//	fprintf(fp, "m_sPlayCard[%d]",i);
+	//	for (int j = 0; j < m_sPlayCard.sCards[i].iCardCount; ++j)
+	//	{
+	//		fprintf(fp, "%02X ", m_sPlayCard.sCards[i].uActualCards[j]);
+	//	}
+	//	fprintf(fp, "\n");
+	//}
+	//fprintf(fp, "\n");
+	//fclose(fp);
 	if(m_sPlayCard.iCardCount == 0)										/// 过
 	{
 		OnControlHitPass();
@@ -875,7 +898,8 @@ void CClientGameDlg::UserOutCard()
 		GetOutCardCount(outCardCount);
 		for(int i = 0; i < PLAY_COUNT; ++i)
 		{
-			tParam.pHandCard[i] = cardMgr->GetHandCard( nMyStation, &tParam.iUserCardCounts[i] );
+			//坑位.是获取i位置手牌
+			tParam.pHandCard[i] = cardMgr->GetHandCard( i, &tParam.iUserCardCounts[i] );
 		}
 		/// 挑选出最优的出牌
 		logic->GetOptimalPlayCard(tParam, m_sPlayCard, res);

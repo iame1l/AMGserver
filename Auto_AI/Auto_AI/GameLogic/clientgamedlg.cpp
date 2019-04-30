@@ -843,18 +843,12 @@ void CClientGameDlg::UserOutCard()
 	//地主第一手
 	if(bFirstOut)
 	{
-/*		FILE *fp = fopen("bFirstOut.txt", "a");
-		fprintf(fp, "%d\n", bFirstOut);
-		fclose(fp)*/;
-		//这是第一手
+
 		_dataMange.getPickUpOutAll(HandCard,tPlayCardList);
 	}
 	else
 	{
-		//FILE *fp = fopen("bFirstOut.txt", "a");
-		//fprintf(fp, "%d\n", bFirstOut);
-		//fclose(fp);
-		//往后的
+
 		_dataMange.getPickUpFollowAll(HandCard, tLastCard, tPlayCardList);
 	}
 
@@ -874,18 +868,18 @@ void CClientGameDlg::UserOutCard()
 		m_sPlayCard.iCardCount = i+1;
 	}
 	
-	FILE *fp = fopen("m_splayCard.txt", "a");
-	for (int i = 0; i < m_sPlayCard.iCardCount; ++i)
-	{
-		fprintf(fp, "m_sPlayCard[%d]",i);
-		for (int j = 0; j < m_sPlayCard.sCards[i].iCardCount; ++j)
-		{
-			fprintf(fp, "%02X ", m_sPlayCard.sCards[i].uActualCards[j]);
-		}
-		fprintf(fp, "\n");
-	}
-	fprintf(fp, "\n");
-	fclose(fp);
+	//FILE *fp = fopen("m_splayCard.txt", "a");
+	//for (int i = 0; i < m_sPlayCard.iCardCount; ++i)
+	//{
+	//	fprintf(fp, "m_sPlayCard[%d]",i);
+	//	for (int j = 0; j < m_sPlayCard.sCards[i].iCardCount; ++j)
+	//	{
+	//		fprintf(fp, "%02X ", m_sPlayCard.sCards[i].uActualCards[j]);
+	//	}
+	//	fprintf(fp, "\n");
+	//}
+	//fprintf(fp, "\n");
+	//fclose(fp);
 	if(m_sPlayCard.iCardCount == 0)										/// 过
 	{
 		OnControlHitPass();
@@ -904,10 +898,8 @@ void CClientGameDlg::UserOutCard()
 		GetOutCardCount(outCardCount);
 		for(int i = 0; i < PLAY_COUNT; ++i)
 		{
-			//this->vChuCard[i];
 			//坑位.是获取i位置手牌
 			tParam.pHandCard[i] = cardMgr->GetHandCard( i, &tParam.iUserCardCounts[i] );
-			//this->GetOutCardCount(&tParam.iUserCardCounts[i]);
 		}
 		/// 挑选出最优的出牌
 		logic->GetOptimalPlayCard(tParam, m_sPlayCard, res);

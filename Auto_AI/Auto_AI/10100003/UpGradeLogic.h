@@ -337,6 +337,7 @@ public:
 	//获取指定牌张数牌大小,例如炸弹有多少个。
 	BYTE GetSpecifyCardCount(const BYTE iCardList[],int iCardCount,int iCount) const;
 
+	//主动出牌逻辑点
 	void GetOptimalPlayCard(SGetPlayCardparam & tParam,T_S2C_PROMPT_CARD_RES & sPlayCard,T_C2S_PLAY_CARD_REQ & res);
 	void GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,T_S2C_PROMPT_CARD_RES & sPlayCard,T_C2S_PLAY_CARD_REQ & res);
 	void GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,T_S2C_PROMPT_CARD_RES & sPlayCard,T_C2S_PLAY_CARD_REQ & res);
@@ -354,10 +355,7 @@ public:
 
 //20190423 被动出牌
 private:
-	//地主跟牌
-	void passive_bankerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res);
-	//农民跟牌
-	void passive_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res);
+
 
 	//*******
 	void follow_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res);

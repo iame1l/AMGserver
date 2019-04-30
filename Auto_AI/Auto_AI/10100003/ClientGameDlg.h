@@ -23,7 +23,8 @@ enum TimerID{
 	TID_MAX,				// 最大值
 };
 
-#define GAME_RAND_TIME				(rand() % 5 + 1)					//智能时间
+//mark
+#define GAME_RAND_TIME				(/*rand() % 5 +*/ 1)					//智能时间
 //#define GAME_RAND_TIME				(0)					//智能时间
 
 //游戏框架类 
@@ -87,6 +88,7 @@ private:
 	/// 记录自己和其它几人出过的牌，主要用于分析对方手中的牌，和了解对方对自己的认识
 	std::vector<OutCardStruct>     vChuCard[PLAY_COUNT];
 
+	
 
 private:
 	//数据管理

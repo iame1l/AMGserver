@@ -378,10 +378,16 @@ BOOL CUpGradeGameLogic::IsSmallSingleContinue(BYTE iCardList[],int iCardCount)
 	BYTE Temp[18] = {0};
 	for(int i = 0; i < iCardCount; i ++)
 	{
+		
 		Temp[GetCardNum(iCardList[i])] ++;
+		//Temp[iCardList[i]] ++;
 	}
 	
-	if(Temp[14] && Temp[1] && Temp[2] && Temp[3] && Temp[4])
+	//Temp[1]ÊÇÊ²Ã´¹í....
+	//if(Temp[14] && Temp[1] && Temp[2] && Temp[3] && Temp[4])
+
+	//20190430 
+	if (Temp[14] && Temp[2] && Temp[3] && Temp[4] && Temp[5])
 		return TRUE;
 	
 	return FALSE;
