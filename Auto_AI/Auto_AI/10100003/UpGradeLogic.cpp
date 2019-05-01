@@ -3228,7 +3228,17 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 
 	nextFarmerHandCardCout = tParam.iUserCardCounts[GetNextDeskStation(tParam.iMybSeatNO)];
 	lastFarmerHandCardCout = tParam.iUserCardCounts[GetNextDeskStation(GetNextDeskStation(tParam.iMybSeatNO))];
-	//unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
+
+
+	vector<T_C2S_PLAY_CARD_REQ> handcard;
+
+	for (int i = 0; i < sPlayCard.iCardCount; ++i)
+	{
+		handcard.push_back(sPlayCard.sCards[i]);
+	}
+
+
+
 	//	2、手上只剩炸弹和另外一手牌时，优先出炸弹或王炸；（防止农民优先出完，炸弹出现的几率较小）
 	if (sPlayCard.iCardCount == 2)
 	{
@@ -3320,6 +3330,21 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 	//fclose(fp);
 
 
+	if (nextFarmerHandCardCout > 3 && lastFarmerHandCardCout > 3 && handcard.size()>=2)
+	{
+		
+		for (int i = 0; i < handcard.size(); ++i)
+		{
+			int value = handcard[i].uActualCards[0] & 0x0f;
+
+			if (value == 2 || value == 14 || value == 15 || value == 1 ||handcard[i].eArrayType >= ARRAY_TYPE_SBOMB)
+				continue;
+
+			res = handcard[i];
+			return;
+		}
+	}
+	/*
 	if (nextFarmerHandCardCout > 5 || lastFarmerHandCardCout > 5)
 	{
 		for (int i = 0; i < sPlayCard.iCardCount; ++i)
@@ -3337,6 +3362,7 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 			}
 		}
 	}
+	*/
 	//for (auto cardValue : sPlayCard.sCards)
 	//{
 	//	//正常出牌先出单张的
@@ -3352,9 +3378,7 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 		for (int i = 0; i < sPlayCard.iCardCount; ++i)
 		{
 
-			//bool ishavebigValue = false;
-			//不出2
-			//T_C2S_PLAY_CARD_REQ tmp = sPlayCard.sCards[i];
+			memset(&res, 0, sizeof(res));
 			res = sPlayCard.sCards[i];
 			if (res.iCardCount >= nextFarmerHandCardCout)
 			{
@@ -3413,8 +3437,15 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 		nextisBanker = false;
 
 
-	T_C2S_PLAY_CARD_REQ tRes;
+	//T_C2S_PLAY_CARD_REQ tRes;
 
+
+	vector<T_C2S_PLAY_CARD_REQ> handcard;
+
+	for (int i = 0; i < sPlayCard.iCardCount; ++i)
+	{
+		handcard.push_back(sPlayCard.sCards[i]);
+	}
 	//压完对手报单双的牌后，优先出飞机、顺子、连对、三带一，如果只剩下对子、单牌，对手报双出小单牌，对手报单出小对子
 	//只剩单牌出最大的单排，只剩对子出最小的对子
 	int iBankerCount = tParam.iUserCardCounts[tParam.iBanker];
@@ -3479,11 +3510,12 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 	//}
 
 
+	/*
 	if (iBankerCount > 5 )
 	{
 		for (int i = 0; i < sPlayCard.iCardCount; ++i)
 		{
-			
+			memset(&res, 0, sizeof(res));
 			res = sPlayCard.sCards[i];
 			int value = res.uActualCards[0] & 0x0f;
 			if (value != 2 && value != 14 && value != 15)
@@ -3493,6 +3525,23 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 
 		}
 	}
+	*/
+
+	if (iBankerCount > 3 && handcard.size() >=2)
+	{
+		for (int i = 0; i < handcard.size(); ++i)
+		{
+			int value = handcard[i].uActualCards[0] & 0x0f;
+			if (value == 2 || value == 14 || value == 15 || value==1 || handcard[i].eArrayType >= ARRAY_TYPE_SBOMB) 
+				continue;
+
+			res = handcard[i];
+			return;
+
+		}
+	}
+
+
 
 	res = sPlayCard.sCards[0];
 	return;
@@ -3677,19 +3726,7 @@ int CUpGradeGameLogic::RemoveNummCard(BYTE iCardList[], int iCardCount)
 void CUpGradeGameLogic::follow_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_PROMPT_CARD_RES & sPlayCard, T_C2S_PLAY_CARD_REQ & res)
 {
 	//手上只剩炸弹和另外一手牌时，优先出炸弹；
-	if (sPlayCard.iCardCount == 2)
-	{
-		res = sPlayCard.sCards[0];
-		if (res.IsBomb(res.eArrayType))
-		{
-			return;
-		}
-		res = sPlayCard.sCards[1];
-		if (res.IsBomb(res.eArrayType))
-		{
-			return;
-		}
-	}
+
 
 	BYTE byFriend;
 	bool nextisBanker;
@@ -3807,32 +3844,19 @@ void CUpGradeGameLogic::follow_bankerOutCard(SGetPlayCardparam & tParam, T_S2C_P
 	nextFarmerHandCardCout = tParam.iUserCardCounts[GetNextDeskStation(tParam.iMybSeatNO)];
 	lastFarmerHandCardCout = tParam.iUserCardCounts[GetNextDeskStation(GetNextDeskStation(tParam.iMybSeatNO))];
 
-	FILE *fp = fopen("bankerhancard.txt", "a");
-	fprintf(fp, "\n nextFarmerHandCardCout:%d\n", nextFarmerHandCardCout);
-	fprintf(fp, "lastFarmerHandCardCout:%d\n", lastFarmerHandCardCout);
-	fprintf(fp, "myself:%d\n\n", tParam.iUserCardCounts[tParam.iMybSeatNO]);
-	fclose(fp);
+	//FILE *fp = fopen("bankerhancard.txt", "a");
+	//fprintf(fp, "\n nextFarmerHandCardCout:%d\n", nextFarmerHandCardCout);
+	//fprintf(fp, "lastFarmerHandCardCout:%d\n", lastFarmerHandCardCout);
+	//fprintf(fp, "myself:%d\n\n", tParam.iUserCardCounts[tParam.iMybSeatNO]);
+	//fclose(fp);
 
-	//手上只剩炸弹和另外一手牌时，优先出炸弹；
-	if (sPlayCard.iCardCount == 2)
-	{
-		res = sPlayCard.sCards[0];
-		if (res.IsBomb(res.eArrayType))
-		{
-			return;
-		}
-		res = sPlayCard.sCards[1];
-		if (res.IsBomb(res.eArrayType))
-		{
-			return;
-		}
-	}
+
 
 
 	//获取可出牌中的第一个
 	//unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
 	//T_C2S_PLAY_CARD_REQ tmp= sPlayCard.sCards[0];
-	if (nextFarmerHandCardCout > 10 || nextFarmerHandCardCout > 10)
+	if (nextFarmerHandCardCout > 10 && lastFarmerHandCardCout > 10)
 	{
 
 			
