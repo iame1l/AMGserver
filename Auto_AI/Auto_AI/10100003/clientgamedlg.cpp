@@ -296,7 +296,7 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 			}
 		}
 		return true;
-	case ASS_CALL_SCORE:			//叫分//计算牌权值的地方
+	case ASS_CALL_SCORE:			//叫分
 		{	
 			SetStationParameter(GS_WAIT_BACK);
 			if (sizeof(CallScoreStruct)!= uDataSize) return false;
@@ -308,6 +308,7 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 		return true;
 	case ASS_ROB_NT:	//抢地主
 		{
+			
 			if (uDataSize != sizeof(RobNTStruct)) return false;
 				
 			RobNTStruct * pRobNT = (RobNTStruct *)pNetData;
@@ -555,6 +556,7 @@ bool CClientGameDlg::OnGameTimer(BYTE bDeskStation, UINT uTimeID, UINT uTimeCoun
 		break;
 	case TID_ROB_NT:
 		{
+			//todo
 			KillGameTimer( TID_ROB_NT );
 			int iCallType = 0;
 			if(iChoice == Choice_OK)
@@ -861,11 +863,13 @@ void CClientGameDlg::UserOutCard()
 
 	/// 结果赋值//可出牌 牌堆
 	T_S2C_PROMPT_CARD_RES m_sPlayCard;
-	for(int i = 0;i < ONE_HAND_CARD_COUNT && i < tPlayCardList.size();i++ )
+	for(int i = 0;/*i < ONE_HAND_CARD_COUNT &&*/ i < tPlayCardList.size();i++ )
+		
 	{
 
 		m_sPlayCard.sCards[i] = tPlayCardList[i];
-		m_sPlayCard.iCardCount = i+1;
+		//m_sPlayCard.iCardCount = i+1;
+		m_sPlayCard.iCardCount++;
 	}
 	
 	//FILE *fp = fopen("m_splayCard.txt", "a");
@@ -1005,6 +1009,7 @@ int CClientGameDlg::AI_DaTongHuo(OutCardStruct & outCard)
 	return outCard.iCardCount;
 }
 
+//mark//权值计算点
 void CClientGameDlg::PreDealing(UINT uTimeID, int& iChoice)
 {
 	OBJ_GET_EXT(m_pExt, CUpGradeGameLogic, logic);
@@ -1013,6 +1018,25 @@ void CClientGameDlg::PreDealing(UINT uTimeID, int& iChoice)
 
 	int nHandCardCount;
 	const Card * pHandCard = cardMgr->GetHandCard( nMyStation, &nHandCardCount );
+
+
+
+
+	//获取底牌加上底牌一起算//mark
+	if (uTimeID == TID_ROB_NT)
+	{
+
+
+
+		FILE *hfp = fopen("shoupai.txt", "a");
+		for (int i = 0; i < nHandCardCount; ++i)
+		{
+			fprintf(hfp, "%04X ", pHandCard[i]);
+		}
+		fprintf(hfp, "\n");
+		fclose(hfp);
+	}
+	//
 	std::vector<T_C2S_PLAY_CARD_REQ>  tPlayCardList; 
 	HN::CardArrayBase HandCard;
 	for(int i = 0; i < nHandCardCount; ++i)
@@ -1082,5 +1106,12 @@ bool CClientGameDlg::SetMyGameTimer(BYTE bDeskStation,UINT uTimeCount,UINT uTime
 		uTimeCount = (rand() + bDeskStation) % m_iDefaultTime + 1;
 	}
 	return SetGameTimer(bDeskStation, uTimeCount, uTimeID);
+}
+
+
+
+unsigned char *getbackCard()
+{
+
 }
 

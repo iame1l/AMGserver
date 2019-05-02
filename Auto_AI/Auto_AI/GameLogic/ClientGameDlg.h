@@ -84,7 +84,6 @@ public:
 	HN::CSmartPointer<ExtensionObject> m_pExt;
 	
 private:
-	//mark
 	/// 记录自己和其它几人出过的牌，主要用于分析对方手中的牌，和了解对方对自己的认识
 	std::vector<OutCardStruct>     vChuCard[PLAY_COUNT];
 
@@ -106,5 +105,8 @@ private:
 	void ShapeAdapter(BYTE &byShape, EArrayType &eArrayType);
 	bool SetMyGameTimer(BYTE bDeskStation,UINT uTimeCount,UINT uTimeID);
 
+//20190501
+private:
+	unsigned char *getbackCard();
 };
 

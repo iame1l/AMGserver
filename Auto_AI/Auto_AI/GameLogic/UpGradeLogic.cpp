@@ -3328,21 +3328,23 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 	//}
 	//fprintf(fp,"\n");
 	//fclose(fp);
-
-
+;
 	if (nextFarmerHandCardCout > 3 && lastFarmerHandCardCout > 3 && handcard.size()>=2)
 	{
-		
+
+
+
 		for (int i = 0; i < handcard.size(); ++i)
 		{
 			int value = handcard[i].uActualCards[0] & 0x0f;
-
 			if (value == 2 || value == 14 || value == 15 || value == 1 ||handcard[i].eArrayType >= ARRAY_TYPE_SBOMB)
 				continue;
 
+			memset(&res, 0, sizeof(res));
 			res = handcard[i];
 			return;
 		}
+
 	}
 	/*
 	if (nextFarmerHandCardCout > 5 || lastFarmerHandCardCout > 5)
@@ -3385,9 +3387,11 @@ void CUpGradeGameLogic::GetOptimalPlayCard_BankerOut(SGetPlayCardparam & tParam,
 				return;
 			}
 		}
+		memset(&res, 0, sizeof(res));
 		res = sPlayCard.sCards[sPlayCard.iCardCount - 1];
 	}
 
+	memset(&res, 0, sizeof(res));
 	res = sPlayCard.sCards[0];
 	return;
 }
@@ -3483,6 +3487,8 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 			}
 
 		}
+
+		memset(&res, 0, sizeof(res));
 		res = sPlayCard.sCards[sPlayCard.iCardCount - 1];
 		return;
 	}
@@ -3529,6 +3535,9 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 
 	if (iBankerCount > 3 && handcard.size() >=2)
 	{
+		//FILE *fp = fopen("farmerhandcardsize.txt", "a");
+		//fprintf(fp, "handcard.size():%d\n", handcard.size());
+
 		for (int i = 0; i < handcard.size(); ++i)
 		{
 			int value = handcard[i].uActualCards[0] & 0x0f;
@@ -3537,12 +3546,11 @@ void CUpGradeGameLogic::GetOptimalPlayCard_FarmerOut(SGetPlayCardparam & tParam,
 
 			res = handcard[i];
 			return;
-
 		}
 	}
 
 
-
+	memset(&res, 0, sizeof(res));
 	res = sPlayCard.sCards[0];
 	return;
 
@@ -3768,7 +3776,21 @@ void CUpGradeGameLogic::follow_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_P
 		}
 	}
 
+	if (bankerhandcount <= 2 && nextisBanker)
+	{
+		if(sPlayCard.iCardCount >=2)
+			res= sPlayCard.sCards[sPlayCard.iCardCount-1];
+		else
+			res = sPlayCard.sCards[0];
+	}
 
+
+	vector<T_C2S_PLAY_CARD_REQ> handcard;
+
+	for (int i = 0; i < sPlayCard.iCardCount; ++i)
+	{
+		handcard.push_back(sPlayCard.sCards[i]);
+	}
 
 	if (tParam.iBanker == tParam.iLastOutCardUser  && bankerhandcount <=10)  /// 地主出牌 能压必压
 	{
@@ -3777,6 +3799,18 @@ void CUpGradeGameLogic::follow_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_P
 	}
 	else
 	{
+
+
+		for (int i = 0; i < handcard.size(); ++i)
+		{
+			int value = handcard[i].uActualCards[0] & 0x0f;
+			if (value <= 12 && value != 2 && value != 14 && value != 15 && handcard[i].eArrayType < ARRAY_TYPE_SBOMB)
+			{
+				res = handcard[i];
+				return;
+			}
+		}
+		/*
 		//	前提是不拆其他组合下，单双小于10压。如果是正好能压过结束时，压；
 
 			unsigned char tData = sPlayCard.sCards[0].uCards[0] % 0x10;
@@ -3828,6 +3862,7 @@ void CUpGradeGameLogic::follow_farmerOutCard(SGetPlayCardparam & tParam, T_S2C_P
 				res = sPlayCard.sCards[0];
 				return;
 			}
+			*/
 		
 	}
 	//res = sPlayCard.sCards[0];
@@ -3850,7 +3885,12 @@ void CUpGradeGameLogic::follow_bankerOutCard(SGetPlayCardparam & tParam, T_S2C_P
 	//fprintf(fp, "myself:%d\n\n", tParam.iUserCardCounts[tParam.iMybSeatNO]);
 	//fclose(fp);
 
+	vector<T_C2S_PLAY_CARD_REQ> handcard;
 
+	for (int i = 0; i < sPlayCard.iCardCount; ++i)
+	{
+		handcard.push_back(sPlayCard.sCards[i]);
+	}
 
 
 	//获取可出牌中的第一个
@@ -3858,20 +3898,28 @@ void CUpGradeGameLogic::follow_bankerOutCard(SGetPlayCardparam & tParam, T_S2C_P
 	//T_C2S_PLAY_CARD_REQ tmp= sPlayCard.sCards[0];
 	if (nextFarmerHandCardCout > 10 && lastFarmerHandCardCout > 10)
 	{
+		for (int i = 0; i < handcard.size(); ++i)
+		{
+			int value = handcard[i].uActualCards[0] & 0x0f;
+			if (value == 2 || value == 14 || value == 15 && handcard[i].eArrayType < ARRAY_TYPE_SBOMB) continue;
 
-			
-			T_C2S_PLAY_CARD_REQ tmp = sPlayCard.sCards[0];
-			if (tmp.eArrayType >= ARRAY_TYPE_SBOMB) return;
-
-			//unsigned char tData = tmp.uActualCards[0] % 0x10;
-			int value = sPlayCard.sCards[0].uCards[0] & 0x0f;
-			if (value == 2 || value == 14 || value == 15) return;
-
-			//memcpy(res,tmp,sizeof(T_C2S_PLAY_CARD_REQ));
-			res = tmp;
+			res = handcard[i];
 			return;
+		}
+			
+			//T_C2S_PLAY_CARD_REQ tmp = sPlayCard.sCards[0];
+			//if (tmp.eArrayType >= ARRAY_TYPE_SBOMB) return;
+
+			////unsigned char tData = tmp.uActualCards[0] % 0x10;
+			//int value = sPlayCard.sCards[0].uCards[0] & 0x0f;
+			//if (value == 2 || value == 14 || value == 15) return;
+
+			////memcpy(res,tmp,sizeof(T_C2S_PLAY_CARD_REQ));
+			//res = tmp;
+			//return;
 		
 	}
+
 
 
 	res = sPlayCard.sCards[0];
