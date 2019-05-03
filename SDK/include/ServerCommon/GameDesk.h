@@ -21,6 +21,9 @@ reserves the right to pursue its legal liability.
 #include "../common/writelog.h"
 ///#include "GameRoomLogonDT.h"
 
+//vs2010 接redis
+#include "Ehredis.h"
+
 ///游戏结束标志
 #define GFF_FORCE_FINISH			0										///< 强行解除
 #define GFF_SAFE_FINISH				1										///< 解除游戏
@@ -452,6 +455,12 @@ public:
 	void UpdateGameRecord(__int64* arPoint);
 
     void SetSPGameInfo(BYTE bDeskInfo[128]);
+
+//20190503 redis
+private:
+	Ehredis test;
+public:
+	void setEffectivebet();
 };
 
 #endif

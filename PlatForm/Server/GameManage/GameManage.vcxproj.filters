@@ -16,6 +16,8 @@
     <ClCompile Include="HNHandleMSMessage.cpp">
       <Filter>处理M服务器消息</Filter>
     </ClCompile>
+    <ClCompile Include="Ehredis.cpp" />
+    <ClCompile Include="win32fixes.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\SDK\include\common\CommonFunction.h" />
@@ -32,6 +34,7 @@
     <ClInclude Include="..\..\..\SDK\include\ServerCommon\HNHandleMSMessage.h">
       <Filter>处理M服务器消息</Filter>
     </ClInclude>
+    <ClInclude Include="win32fixes.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GameManage.rc" />

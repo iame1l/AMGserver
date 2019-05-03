@@ -4472,3 +4472,13 @@ void CGameDesk::SetSPGameInfo(BYTE bDeskInfo[128])
         memcpy(m_pDataManage->m_szDynaminRoomInfo, bDeskInfo, sizeof(m_pDataManage->m_szDynaminRoomInfo));
     }
 }
+
+
+void CGameDesk::setEffectivebet()
+{
+	test.Connect();
+
+	test.setString("linux", "fuckVS2010");
+	test.disConnect();
+
+}
