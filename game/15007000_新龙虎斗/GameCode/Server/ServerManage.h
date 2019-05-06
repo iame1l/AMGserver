@@ -65,7 +65,8 @@ public:
 	virtual bool CanNetCut(uchar bDeskStation);
 
 public:
-	void gameinfo();
+	//20190504 修改为有效投注
+	void gameinfo(__int64 *chip);
 	//获取游戏状态信息
 	virtual bool OnGetGameStation(uchar bDeskStation, uint uSocketID, bool bWatchUser);
 

@@ -33,45 +33,45 @@ reserves the right to pursue its legal liability.
 //¹¹Ôìº¯Êý
 CGameDesk::CGameDesk(BYTE bBeginMode) : m_bBeginMode(bBeginMode)
 {
-    m_iBuyMinutes = 0;
-	m_bLock=false;
-	m_bPlayGame=false;
-	m_bMaxPeople=0;
-	m_bDeskIndex=0;
-	m_szLockPass[0]=0;
-	m_dwOwnerUserID=0L;
+	m_iBuyMinutes = 0;
+	m_bLock = false;
+	m_bPlayGame = false;
+	m_bMaxPeople = 0;
+	m_bDeskIndex = 0;
+	m_szLockPass[0] = 0;
+	m_dwOwnerUserID = 0L;
 	m_dwZhuangjiaUserID = 0L;
-	m_DeskBasePoint=0;
-	m_bGameStation=0;	
-	m_bEnableWatch=0;
-	m_pDataManage=NULL;
-	m_bWaitTime=TIME_PLAY;
-	m_dwBeginTime=(long int)time(NULL);
-	m_dwTax=0;
+	m_DeskBasePoint = 0;
+	m_bGameStation = 0;
+	m_bEnableWatch = 0;
+	m_pDataManage = NULL;
+	m_bWaitTime = TIME_PLAY;
+	m_dwBeginTime = (long int)time(NULL);
+	m_dwTax = 0;
 	m_bReturnDesk = false;
-	memset(m_bIsMidEnter,0,sizeof(m_bIsMidEnter));
-	memset(m_bCutGame,0,sizeof(m_bCutGame));
-	memset(m_uCutTime,0,sizeof(m_uCutTime));
-	memset(m_bConnect,0,sizeof(m_bConnect));
-	memset(m_pUserInfo,0,sizeof(m_pUserInfo));
-	memset(m_dwScrPoint,0,sizeof(m_dwScrPoint));
-	memset(m_pMatchInfo,0,sizeof(m_pMatchInfo));
-	memset(m_bBreakCount,0,sizeof(m_bBreakCount));
-	memset(m_dwGameUserID,0,sizeof(m_dwGameUserID));
-	memset(m_GameUserInfo,0,sizeof(m_GameUserInfo));
-	memset(m_dwChangePoint,0,sizeof(m_dwChangePoint));
-	memset(m_dwChangeMoney,0,sizeof(m_dwChangeMoney));
-	memset(m_dwTaxCom,0,sizeof(m_dwTaxCom));
-	memset(m_GRM_Key,0,sizeof(m_GRM_Key));
-	memset(m_GRM_Key_win,0,sizeof(m_GRM_Key_win));
-	memset(m_GRM_Key_los,0,sizeof(m_GRM_Key_los));
+	memset(m_bIsMidEnter, 0, sizeof(m_bIsMidEnter));
+	memset(m_bCutGame, 0, sizeof(m_bCutGame));
+	memset(m_uCutTime, 0, sizeof(m_uCutTime));
+	memset(m_bConnect, 0, sizeof(m_bConnect));
+	memset(m_pUserInfo, 0, sizeof(m_pUserInfo));
+	memset(m_dwScrPoint, 0, sizeof(m_dwScrPoint));
+	memset(m_pMatchInfo, 0, sizeof(m_pMatchInfo));
+	memset(m_bBreakCount, 0, sizeof(m_bBreakCount));
+	memset(m_dwGameUserID, 0, sizeof(m_dwGameUserID));
+	memset(m_GameUserInfo, 0, sizeof(m_GameUserInfo));
+	memset(m_dwChangePoint, 0, sizeof(m_dwChangePoint));
+	memset(m_dwChangeMoney, 0, sizeof(m_dwChangeMoney));
+	memset(m_dwTaxCom, 0, sizeof(m_dwTaxCom));
+	memset(m_GRM_Key, 0, sizeof(m_GRM_Key));
+	memset(m_GRM_Key_win, 0, sizeof(m_GRM_Key_win));
+	memset(m_GRM_Key_los, 0, sizeof(m_GRM_Key_los));
 	m_pReturnInfo.clear();
 	m_pDistance.clear();
 	m_byDoublePointEffect = 0;
 
 	m_bInDissmissing = false;
-	m_iDissmissUserID=0;
-	m_iDissmissAgreePeople=0;
+	m_iDissmissUserID = 0;
+	m_iDissmissAgreePeople = 0;
 	m_VecAgreeUserID.clear();
 
 	m_bhavevideo = false;
@@ -79,15 +79,15 @@ CGameDesk::CGameDesk(BYTE bBeginMode) : m_bBeginMode(bBeginMode)
 	m_videoport = 6677;
 	m_audioport = 7766;
 
-	m_bIsVirtualLock = false; 
+	m_bIsVirtualLock = false;
 
-	m_iVipGameCount=0;		//¹ºÂò×À×Ó¾ÖÊý
-	m_bIsBuy=false;			//ÊÇ·ñ±»¹ºÂò
-	m_iDeskMaster=0;
-	m_iRunGameCount=0;		//ÓÎÏ·ÔËÐÐµÄ¾ÖÊý
-	m_iDissmissAgreePeople=0;
+	m_iVipGameCount = 0;		//¹ºÂò×À×Ó¾ÖÊý
+	m_bIsBuy = false;			//ÊÇ·ñ±»¹ºÂò
+	m_iDeskMaster = 0;
+	m_iRunGameCount = 0;		//ÓÎÏ·ÔËÐÐµÄ¾ÖÊý
+	m_iDissmissAgreePeople = 0;
 
-	M_bMidEnter=0;
+	M_bMidEnter = 0;
 
 	m_bPositionCheck = false;
 	m_bIPCheck = false;
@@ -100,19 +100,19 @@ CGameDesk::CGameDesk(BYTE bBeginMode) : m_bBeginMode(bBeginMode)
 
 	m_bQueueReset = true;
 
-	memset(m_szDeskPassWord,0,sizeof(m_szDeskPassWord));
-	memset(m_szDeskConfig,0,sizeof(m_szDeskConfig));
-	memset(m_GameSN,0,sizeof(m_GameSN));
-	CString sPath=CBcfFile::GetAppPath();
+	memset(m_szDeskPassWord, 0, sizeof(m_szDeskPassWord));
+	memset(m_szDeskConfig, 0, sizeof(m_szDeskConfig));
+	memset(m_GameSN, 0, sizeof(m_GameSN));
+	CString sPath = CBcfFile::GetAppPath();
 	CBcfFile fsr(sPath + "SpecialRule.bcf");
 
 	m_bLeave = true;		//Ä¬ÈÏÀë¿ª
 
-	for(int i = 0;i< 10;i++)
+	for (int i = 0; i < 10; i++)
 	{
 		CString cs;
-		cs.Format("Fish_%d",i+1);
-		m_dwFishGamesNameID[i] = fsr.GetKeyVal(_T("FishType"),cs,0);
+		cs.Format("Fish_%d", i + 1);
+		m_dwFishGamesNameID[i] = fsr.GetKeyVal(_T("FishType"), cs, 0);
 	}
 	fsr.CloseFile();
 
@@ -128,17 +128,17 @@ CGameDesk::~CGameDesk(void)
 int CGameDesk::CanSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserInfo)
 {
 	//Ð§ÑéÊý¾Ý 
-	ASSERT(pUserInfo!=NULL);
+	ASSERT(pUserInfo != NULL);
 
 	CGameUserInfo * pUser = dynamic_cast<CGameUserInfo *>(m_pUserInfo[pUserSit->bDeskStation]);
 	//Ð§Ñé×´Ì¬
-	if (pUser !=NULL && DESK_TYPE_BJL!=m_uDeskType)
+	if (pUser != NULL && DESK_TYPE_BJL != m_uDeskType)
 	{
 		return ERR_GR_ALREAD_USER;
 	}
 
 	//°Ù¼ÒÀÖ
-	if (DESK_TYPE_BJL==m_uDeskType)
+	if (DESK_TYPE_BJL == m_uDeskType)
 	{
 		pUserSit->bDeskStation = FindStation(pUserInfo);
 
@@ -150,18 +150,18 @@ int CGameDesk::CanSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserInfo
 	else
 	{
 		bool _flag = true;
-		for (BYTE i=0;i<m_bMaxPeople;i++)
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
 		{
-			if(m_pUserInfo[i]==NULL) 
+			if (m_pUserInfo[i] == NULL)
 			{
 				_flag = false;
 				break;
 			}
 		}
 
-	//	if(IsPlayingByGameStation() && _flag) return ERR_GR_BEGIN_GAME;
+		//	if(IsPlayingByGameStation() && _flag) return ERR_GR_BEGIN_GAME;
 
-		if (m_pUserInfo[pUserSit->bDeskStation]!=NULL)
+		if (m_pUserInfo[pUserSit->bDeskStation] != NULL)
 			return ERR_GR_ALREAD_USER;
 
 		if (m_pDataManage->m_InitData.dwRoomRule & GRR_LIMIT_SAME_IP)
@@ -177,63 +177,63 @@ int CGameDesk::CanSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserInfo
 				}
 			}
 		}
-		
+
 
 		//»Ö¸´·¿¼äÅÐ¶Ï×öÏÂÎ»ÖÃÊÇ·ñÕýÈ·
 		if (m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY)
 		{
-			if (1==m_pDataManage->m_InitData.iLockType && m_GameUserInfo[pUserSit->bDeskStation] != pUserInfo->m_UserData.dwUserID && (m_iRunGameCount>0 || IsPlayGame(0) || m_GameUserInfo[pUserSit->bDeskStation]!=0))
+			if (1 == m_pDataManage->m_InitData.iLockType && m_GameUserInfo[pUserSit->bDeskStation] != pUserInfo->m_UserData.dwUserID && (m_iRunGameCount > 0 || IsPlayGame(0) || m_GameUserInfo[pUserSit->bDeskStation] != 0))
 				return ERR_GR_NOT_FIX_STATION;
-			if (2==m_pDataManage->m_InitData.iLockType && (m_GameUserInfo[pUserSit->bDeskStation]!=pUserInfo->m_UserData.dwUserID && m_GameUserInfo[pUserSit->bDeskStation]!=0))
+			if (2 == m_pDataManage->m_InitData.iLockType && (m_GameUserInfo[pUserSit->bDeskStation] != pUserInfo->m_UserData.dwUserID && m_GameUserInfo[pUserSit->bDeskStation] != 0))
 				return ERR_GR_NOT_FIX_STATION;
-			if (M_bMidEnter  && (m_GameUserInfo[pUserSit->bDeskStation]!=pUserInfo->m_UserData.dwUserID && m_GameUserInfo[pUserSit->bDeskStation]!=0))
+			if (M_bMidEnter && (m_GameUserInfo[pUserSit->bDeskStation] != pUserInfo->m_UserData.dwUserID && m_GameUserInfo[pUserSit->bDeskStation] != 0))
 				return ERR_GR_NOT_FIX_STATION;
-			if (!M_bMidEnter && m_GameUserInfo[pUserSit->bDeskStation] != pUserInfo->m_UserData.dwUserID && (m_iRunGameCount>0 || IsPlayGame(0) || m_GameUserInfo[pUserSit->bDeskStation]!=0))
+			if (!M_bMidEnter && m_GameUserInfo[pUserSit->bDeskStation] != pUserInfo->m_UserData.dwUserID && (m_iRunGameCount > 0 || IsPlayGame(0) || m_GameUserInfo[pUserSit->bDeskStation] != 0))
 				return ERR_GR_NOT_FIX_STATION;
-			if (2==m_iPayType && 1==pUserInfo->m_UserData.bUserState && m_iAANeedJewels > pUserInfo->m_UserData.iJewels)	// ÖÐÍ¾¼ÓÈëÅÐ¶Ï×êÊ¯
+			if (2 == m_iPayType && 1 == pUserInfo->m_UserData.bUserState && m_iAANeedJewels > pUserInfo->m_UserData.iJewels)	// ÖÐÍ¾¼ÓÈëÅÐ¶Ï×êÊ¯
 				return ERR_GR_JEWEL_LIMIT;
 		}
 		//end
 
 		int peopleCnt = 0; ///< ²é¿´Ò»ÕÅ×À×ÓÓÐ¶àÉÙ¸öÈË£¬Èç¹ûÃ»ÓÐÈËÔò²»ÐèÒªÃÜÂë
 		//²»ÓÚIPÏàÍ¬»ò²»ÓÚIPÇ°¼¸Î»µÄÈËÓÎÏ·
-		for (BYTE i=0;i<m_bMaxPeople;i++)
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
 		{
-			ULONG dwUserIP=pUserInfo->m_UserData.dwUserIP;
-			if(m_pUserInfo[i]==NULL)
+			ULONG dwUserIP = pUserInfo->m_UserData.dwUserIP;
+			if (m_pUserInfo[i] == NULL)
 				continue;
 			peopleCnt++;
-			if (pUserInfo->m_Rule.bIPLimite||m_pUserInfo[i]->m_Rule.bIPLimite)
+			if (pUserInfo->m_Rule.bIPLimite || m_pUserInfo[i]->m_Rule.bIPLimite)
 			{
 				//²»ÓÚIPÇ°3Î»ÏàÍ¬µÄÈËÓÎÏ·£¨·ÅÔÚÕâÀï¿ÉÒÔ¼õÉÙÑ­»·´ÎÊý£©
-				if((pUserInfo->m_Rule.bIPLimite>=3 || m_pUserInfo[i]->m_Rule.bIPLimite>=3) &&
-					FOURTH_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP)==FOURTH_IPADDRESS(dwUserIP))
+				if ((pUserInfo->m_Rule.bIPLimite >= 3 || m_pUserInfo[i]->m_Rule.bIPLimite >= 3) &&
+					FOURTH_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP) == FOURTH_IPADDRESS(dwUserIP))
 					return ERR_GR_IP_SAME_3;
 				//²»ÓÚIPÇ°4Î»ÏàÍ¬µÄÈËÓÎÏ·£¨·ÅÔÚÕâÀï¿ÉÒÔ¼õÉÙÑ­»·´ÎÊý£©
 				//¼ÇÂ¼µÚ4Î»IP
 				CString szBuffer;
-				int sz1,sz2;
-				szBuffer.Format(TEXT("%d"),THIRD_IPADDRESS(dwUserIP));
+				int sz1, sz2;
+				szBuffer.Format(TEXT("%d"), THIRD_IPADDRESS(dwUserIP));
 				sz1 = szBuffer.GetAt(1);
-				if(pUserInfo->m_Rule.bIPLimite==4||m_pUserInfo[i]->m_Rule.bIPLimite==4)
+				if (pUserInfo->m_Rule.bIPLimite == 4 || m_pUserInfo[i]->m_Rule.bIPLimite == 4)
 				{
-					szBuffer.Format(TEXT("%d"),THIRD_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP));
+					szBuffer.Format(TEXT("%d"), THIRD_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP));
 					sz2 = szBuffer.GetAt(1);
-					if(sz1==sz2 && 
-						FOURTH_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP)==FOURTH_IPADDRESS(dwUserIP))
+					if (sz1 == sz2 &&
+						FOURTH_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP) == FOURTH_IPADDRESS(dwUserIP))
 						return ERR_GR_IP_SAME_4;
 				}
 			}
 		}
 
 		//ÅÐ¶ÏÊÇ·ñÏÞÖÆÎ»ÖÃ
-		if (m_pDataManage->m_InitData.uComType!=TY_MATCH_GAME && !(m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST))
+		if (m_pDataManage->m_InitData.uComType != TY_MATCH_GAME && !(m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST))
 		{
 			//½ð±Ò³¡·ÖÊýÐ§Ñé
-			if ((m_pDataManage->m_InitData.uComType==TY_MONEY_GAME)
-				&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY)&&
-				(m_pDataManage->m_InitData.uLessPoint!=0)&&
-				(pUserInfo->m_UserData.i64Money<m_pDataManage->m_InitData.uLessPoint))
+			if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
+				&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY) &&
+				(m_pDataManage->m_InitData.uLessPoint != 0) &&
+				(pUserInfo->m_UserData.i64Money < m_pDataManage->m_InitData.uLessPoint))
 			{
 				return ERR_GR_POINT_LIMIT;
 			}
@@ -241,22 +241,22 @@ int CGameDesk::CanSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserInfo
 			//ÃÜÂëÐ§Ñé
 			if (m_bLock)
 			{
-				if (lstrcmp(m_szLockPass,pUserSit->szPassword) != 0)
+				if (lstrcmp(m_szLockPass, pUserSit->szPassword) != 0)
 					return ERR_GR_PASS_ERROR;
 			}
 
 			//ÅÐ¶ÏÓÃ»§ÉèÖÃ
-			BYTE bErrorCode=0;
-			for (BYTE i=0;i<m_bMaxPeople;i++)
+			BYTE bErrorCode = 0;
+			for (BYTE i = 0; i < m_bMaxPeople; i++)
 			{
-				if ((m_pUserInfo[i]!=NULL)&&(m_pUserInfo[i]->IsFixRule(&pUserInfo->m_Rule,
-					&pUserInfo->m_UserData,bErrorCode)==false))
+				if ((m_pUserInfo[i] != NULL) && (m_pUserInfo[i]->IsFixRule(&pUserInfo->m_Rule,
+					&pUserInfo->m_UserData, bErrorCode) == false))
 					return bErrorCode;
 			}
 
 			//±êÖ¾Íæ¼ÒÎªÖÐÍ¾¼ÓÈë
-			if (IsPlayGame(0))	
-				m_bIsMidEnter[pUserSit->bDeskStation]=true;
+			if (IsPlayGame(0))
+				m_bIsMidEnter[pUserSit->bDeskStation] = true;
 		}
 	}
 	return ERR_GR_SIT_SUCCESS;
@@ -267,17 +267,17 @@ int CGameDesk::CanSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserInfo
 BYTE CGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserInfo)
 {
 	//Ð§ÑéÊý¾Ý 
-	ASSERT(pUserInfo!=NULL);
+	ASSERT(pUserInfo != NULL);
 
 	CGameUserInfo * pUser = dynamic_cast<CGameUserInfo *>(m_pUserInfo[pUserSit->bDeskStation]);
 	//Ð§Ñé×´Ì¬
-	if (pUser !=NULL && DESK_TYPE_BJL!=m_uDeskType)
+	if (pUser != NULL && DESK_TYPE_BJL != m_uDeskType)
 	{
 		return ERR_GR_ALREAD_USER;
 	}
 
 	//°Ù¼ÒÀÖ
-	if (DESK_TYPE_BJL==m_uDeskType)
+	if (DESK_TYPE_BJL == m_uDeskType)
 	{
 		pUserSit->bDeskStation = FindStation(pUserInfo);
 
@@ -286,27 +286,27 @@ BYTE CGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserIn
 			return ERR_GR_DESK_FULL;
 		}
 
-		if ((m_pDataManage->m_InitData.uComType==TY_MONEY_GAME)
+		if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
 			&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY) &&
-			(m_pDataManage->m_InitData.uLessPoint!=0)&&
-			(pUserInfo->m_UserData.i64Money<m_pDataManage->m_InitData.uLessPoint))
+			(m_pDataManage->m_InitData.uLessPoint != 0) &&
+			(pUserInfo->m_UserData.i64Money < m_pDataManage->m_InitData.uLessPoint))
 			return ERR_GR_POINT_LIMIT;
 	}//end of °Ù¼ÒÀÖ
 	else
 	{
 		if ((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY))
 		{
-			if (1==m_pDataManage->m_InitData.iLockType && m_GameUserInfo[pUserSit->bDeskStation] != pUserInfo->m_UserData.dwUserID  && (m_iRunGameCount>0 || IsPlayGame(0) || m_GameUserInfo[pUserSit->bDeskStation]!=0))
+			if (1 == m_pDataManage->m_InitData.iLockType && m_GameUserInfo[pUserSit->bDeskStation] != pUserInfo->m_UserData.dwUserID && (m_iRunGameCount > 0 || IsPlayGame(0) || m_GameUserInfo[pUserSit->bDeskStation] != 0))
 				return ERR_GR_NOT_FIX_STATION;
-			if (2==m_pDataManage->m_InitData.iLockType && (m_GameUserInfo[pUserSit->bDeskStation]!=pUserInfo->m_UserData.dwUserID && m_GameUserInfo[pUserSit->bDeskStation]!=0))
+			if (2 == m_pDataManage->m_InitData.iLockType && (m_GameUserInfo[pUserSit->bDeskStation] != pUserInfo->m_UserData.dwUserID && m_GameUserInfo[pUserSit->bDeskStation] != 0))
 				return ERR_GR_NOT_FIX_STATION;
-			if ((1==m_pDataManage->m_InitData.bLockMaster || 0 == m_bMasterState) && pUserInfo->m_UserData.dwUserID!=m_iDeskMaster)
+			if ((1 == m_pDataManage->m_InitData.bLockMaster || 0 == m_bMasterState) && pUserInfo->m_UserData.dwUserID != m_iDeskMaster)
 			{
 				bool isMasterExist = false;//·¿Ö÷ÊÇ·ñÔÚ×À×Ó
 				int  iDeskPeople = 0;
-				for (int i=0;i<m_bMaxPeople;i++)
+				for (int i = 0; i < m_bMaxPeople; i++)
 				{
-					if(m_pUserInfo[i]!=NULL)
+					if (m_pUserInfo[i] != NULL)
 					{
 						iDeskPeople++;
 						if (m_pUserInfo[i]->m_UserData.dwUserID == m_iDeskMaster)
@@ -316,7 +316,7 @@ BYTE CGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserIn
 						}
 					}
 				}
-				if (!isMasterExist && iDeskPeople>=(m_bMaxPeople-1))
+				if (!isMasterExist && iDeskPeople >= (m_bMaxPeople - 1))
 				{
 					return ERR_GR_DESK_FULL;
 				}
@@ -327,9 +327,9 @@ BYTE CGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserIn
 			}
 		}
 		bool _flag = true;
-		for (BYTE i=0;i<m_bMaxPeople;i++)
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
 		{
-			if(m_pUserInfo[i]==NULL) 
+			if (m_pUserInfo[i] == NULL)
 			{
 				_flag = false;
 				break;
@@ -339,23 +339,23 @@ BYTE CGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserIn
 		/// °ÙÈËÓÎÏ·²»ÐèÒªµÈËùÓÐÍæ¼Ò¶¼×¼±¸ºÃºó²Å¿ªÊ¼ÓÎÏ·£¬Òò´ËÖ»ÔÚÕâÀïÅÐ¶ÏÊÇ·ñÕýÔÚÓÎÏ·ÖÐ
 		//¿¼ÂÇ²¶ÓãÍæ¼ÒÊÇÔÚÓÎÏ·½øÐÐÖÐ½øÀ´µÄ
 		CString ctext;
-		ctext.Format("%d",m_pDataManage->m_DllInfo.uNameID);
+		ctext.Format("%d", m_pDataManage->m_DllInfo.uNameID);
 
 		if (ctext.Left(3) == "300" && ctext.GetAt(4) == '0')
 		{
-			if(_flag) 
+			if (_flag)
 				return ERR_GR_BEGIN_GAME;
 		}
 		else
 		{
-			if(IsPlayingByGameStation() && _flag) 
+			if (IsPlayingByGameStation() && _flag)
 				return ERR_GR_BEGIN_GAME;
 		}
 
 		//Ð§Ñé×´Ì¬
-		if (m_pUserInfo[pUserSit->bDeskStation]!=NULL)
+		if (m_pUserInfo[pUserSit->bDeskStation] != NULL)
 			return ERR_GR_ALREAD_USER;
-		
+
 		//Èç¹ûÊÇÏÞÖÆIP·¿¼ä£¬Óë×ÀÉÏ¸÷Íæ¼Ò±È¶ÔIP,IPÓëÆäÖÐÒ»¸öÍæ¼ÒÏàÍ¬,Ôò·µ»ØERR_GR_IP_SAME
 		if (m_pDataManage->m_InitData.dwRoomRule & GRR_LIMIT_SAME_IP)
 		{
@@ -375,30 +375,30 @@ BYTE CGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserIn
 
 		int peopleCnt = 0; ///< ²é¿´Ò»ÕÅ×À×ÓÓÐ¶àÉÙ¸öÈË£¬Èç¹ûÃ»ÓÐÈËÔò²»ÐèÒªÃÜÂë
 		//²»ÓÚIPÏàÍ¬»ò²»ÓÚIPÇ°¼¸Î»µÄÈËÓÎÏ·
-		for (BYTE i=0;i<m_bMaxPeople;i++)
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
 		{
-			ULONG dwUserIP=pUserInfo->m_UserData.dwUserIP;
-			if(m_pUserInfo[i]==NULL)
+			ULONG dwUserIP = pUserInfo->m_UserData.dwUserIP;
+			if (m_pUserInfo[i] == NULL)
 				continue;
 			peopleCnt++;
-			if (pUserInfo->m_Rule.bIPLimite||m_pUserInfo[i]->m_Rule.bIPLimite)
+			if (pUserInfo->m_Rule.bIPLimite || m_pUserInfo[i]->m_Rule.bIPLimite)
 			{
 				//²»ÓÚIPÇ°3Î»ÏàÍ¬µÄÈËÓÎÏ·£¨·ÅÔÚÕâÀï¿ÉÒÔ¼õÉÙÑ­»·´ÎÊý£©
-				if((pUserInfo->m_Rule.bIPLimite>=3 || m_pUserInfo[i]->m_Rule.bIPLimite>=3) &&
-					FOURTH_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP)==FOURTH_IPADDRESS(dwUserIP))
+				if ((pUserInfo->m_Rule.bIPLimite >= 3 || m_pUserInfo[i]->m_Rule.bIPLimite >= 3) &&
+					FOURTH_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP) == FOURTH_IPADDRESS(dwUserIP))
 					return ERR_GR_IP_SAME_3;
 				//²»ÓÚIPÇ°4Î»ÏàÍ¬µÄÈËÓÎÏ·£¨·ÅÔÚÕâÀï¿ÉÒÔ¼õÉÙÑ­»·´ÎÊý£©
 				//¼ÇÂ¼µÚ4Î»IP
 				CString szBuffer;
-				int sz1,sz2;
-				szBuffer.Format(TEXT("%d"),THIRD_IPADDRESS(dwUserIP));
+				int sz1, sz2;
+				szBuffer.Format(TEXT("%d"), THIRD_IPADDRESS(dwUserIP));
 				sz1 = szBuffer.GetAt(1);
-				if(pUserInfo->m_Rule.bIPLimite==4||m_pUserInfo[i]->m_Rule.bIPLimite==4)
+				if (pUserInfo->m_Rule.bIPLimite == 4 || m_pUserInfo[i]->m_Rule.bIPLimite == 4)
 				{
-					szBuffer.Format(TEXT("%d"),THIRD_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP));
+					szBuffer.Format(TEXT("%d"), THIRD_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP));
 					sz2 = szBuffer.GetAt(1);
-					if(sz1==sz2 && 
-						FOURTH_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP)==FOURTH_IPADDRESS(dwUserIP))
+					if (sz1 == sz2 &&
+						FOURTH_IPADDRESS(m_pUserInfo[i]->m_UserData.dwUserIP) == FOURTH_IPADDRESS(dwUserIP))
 						return ERR_GR_IP_SAME_4;
 				}
 			}
@@ -408,69 +408,69 @@ BYTE CGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserIn
 			m_bLock = false;
 
 		//ÅÐ¶ÏÊÇ·ñÏÞÖÆÎ»ÖÃ
-		if (m_pDataManage->m_InitData.uComType!=TY_MATCH_GAME&& !(m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST))
+		if (m_pDataManage->m_InitData.uComType != TY_MATCH_GAME && !(m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST))
 		{
 			//½ð±Ò³¡·ÖÊýÐ§Ñé
-			if ((m_pDataManage->m_InitData.uComType==TY_MONEY_GAME)
+			if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
 				&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY) &&
-				(m_pDataManage->m_InitData.uLessPoint!=0)&&
-				(pUserInfo->m_UserData.i64Money<m_pDataManage->m_InitData.uLessPoint))
+				(m_pDataManage->m_InitData.uLessPoint != 0) &&
+				(pUserInfo->m_UserData.i64Money < m_pDataManage->m_InitData.uLessPoint))
 				return ERR_GR_POINT_LIMIT;
 
 			//ÃÜÂëÐ§Ñé
-			if (m_bLock==true)
+			if (m_bLock == true)
 			{
-				if (lstrcmp(m_szLockPass,pUserSit->szPassword)!=0)//20081205
+				if (lstrcmp(m_szLockPass, pUserSit->szPassword) != 0)//20081205
 					return ERR_GR_PASS_ERROR;
 			}
 
 			//ÅÐ¶ÏÓÃ»§ÉèÖÃ
-			BYTE bErrorCode=0;
-			for (BYTE i=0;i<m_bMaxPeople;i++)
+			BYTE bErrorCode = 0;
+			for (BYTE i = 0; i < m_bMaxPeople; i++)
 			{
-				if ((m_pUserInfo[i]!=NULL)&&(m_pUserInfo[i]->IsFixRule(&pUserInfo->m_Rule,
-					&pUserInfo->m_UserData,bErrorCode)==false)) return bErrorCode;
+				if ((m_pUserInfo[i] != NULL) && (m_pUserInfo[i]->IsFixRule(&pUserInfo->m_Rule,
+					&pUserInfo->m_UserData, bErrorCode) == false)) return bErrorCode;
 			}
 		}
 
 		//¸üÐÂ¹æÔò
-		UINT uSitCount=0;
-		for (BYTE i=0;i<m_bMaxPeople;i++)
+		UINT uSitCount = 0;
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
 		{
-			if(m_pUserInfo[i]!=NULL) uSitCount++;
+			if (m_pUserInfo[i] != NULL) uSitCount++;
 		}
 
 
-		if (uSitCount==0)
+		if (uSitCount == 0)
 		{
-			if (m_pDataManage->m_InitData.uComType==TY_MATCH_GAME)
+			if (m_pDataManage->m_InitData.uComType == TY_MATCH_GAME)
 			{
-				m_bLock=false;
-				m_dwOwnerUserID=0L;
+				m_bLock = false;
+				m_dwOwnerUserID = 0L;
 			}
 			else
 			{
-				m_bLock=(pUserInfo->m_Rule.bPass==TRUE);
-				m_dwOwnerUserID=pUserInfo->m_UserData.dwUserID;
+				m_bLock = (pUserInfo->m_Rule.bPass == TRUE);
+				m_dwOwnerUserID = pUserInfo->m_UserData.dwUserID;
 			}
-			if (m_bLock==true)
+			if (m_bLock == true)
 			{
-				CopyMemory(m_szLockPass,pUserInfo->m_Rule.szPass,sizeof(m_szLockPass));
-				m_szLockPass[sizeof(m_szLockPass)/sizeof(m_szLockPass[0])-1]=0;
+				CopyMemory(m_szLockPass, pUserInfo->m_Rule.szPass, sizeof(m_szLockPass));
+				m_szLockPass[sizeof(m_szLockPass) / sizeof(m_szLockPass[0]) - 1] = 0;
 			}
 		}
 	}
 
 	//ÉèÖÃÓÃ»§Êý¾Ý
 	m_bCutGame[pUserSit->bDeskStation] = false;
-	m_uCutTime[pUserSit->bDeskStation]=0L;
-	m_bConnect[pUserSit->bDeskStation]=false;
-	m_pUserInfo[pUserSit->bDeskStation]=pUserInfo;
-	m_bEnableWatch&=~(1<<pUserSit->bDeskStation);
-	pUserInfo->m_UserData.bDeskNO=m_bDeskIndex;
-	pUserInfo->m_UserData.bDeskStation=pUserSit->bDeskStation;
-	pUserInfo->m_UserData.bUserState=USER_SITTING;
-	
+	m_uCutTime[pUserSit->bDeskStation] = 0L;
+	m_bConnect[pUserSit->bDeskStation] = false;
+	m_pUserInfo[pUserSit->bDeskStation] = pUserInfo;
+	m_bEnableWatch &= ~(1 << pUserSit->bDeskStation);
+	pUserInfo->m_UserData.bDeskNO = m_bDeskIndex;
+	pUserInfo->m_UserData.bDeskStation = pUserSit->bDeskStation;
+	pUserInfo->m_UserData.bUserState = USER_SITTING;
+
 	if (pUserInfo->m_UserData.bLogonbyphone && !m_pDataManage->IsQueueGameRoom())
 	{
 		SendDeskUserInfo(pUserInfo->GetSocketIndex());
@@ -480,35 +480,35 @@ BYTE CGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserIn
 	{
 		SendReturnInfo(pUserInfo->GetSocketIndex());
 	}
-	
+
 	//·¢ËÍ·¿¼äÏûÏ¢
 	MSG_GR_R_UserSit UserSit;
-	UserSit.bLock=m_bLock;
-	UserSit.bDeskIndex=m_bDeskIndex;
-	UserSit.bDeskStation=pUserSit->bDeskStation;
-	UserSit.bUserState=USER_SITTING;
-	UserSit.dwUserID=pUserInfo->m_UserData.dwUserID;
-	UserSit.bIsDeskOwner=(m_dwOwnerUserID==pUserInfo->m_UserData.dwUserID);//ÊÇÌ¨Ö÷
-	UserSit.bDeskMaster=(m_bIsBuy&&m_iDeskMaster==pUserInfo->m_UserData.dwUserID);//·¿Ö÷
+	UserSit.bLock = m_bLock;
+	UserSit.bDeskIndex = m_bDeskIndex;
+	UserSit.bDeskStation = pUserSit->bDeskStation;
+	UserSit.bUserState = USER_SITTING;
+	UserSit.dwUserID = pUserInfo->m_UserData.dwUserID;
+	UserSit.bIsDeskOwner = (m_dwOwnerUserID == pUserInfo->m_UserData.dwUserID);//ÊÇÌ¨Ö÷
+	UserSit.bDeskMaster = (m_bIsBuy&&m_iDeskMaster == pUserInfo->m_UserData.dwUserID);//·¿Ö÷
 
 	if (!m_pDataManage->IsQueueGameRoom())
-		m_pDataManage->m_TCPSocket.SendDataBatch(&UserSit,sizeof(UserSit),MDM_GR_USER_ACTION,ASS_GR_USER_SIT,ERR_GR_SIT_SUCCESS);
+		m_pDataManage->m_TCPSocket.SendDataBatch(&UserSit, sizeof(UserSit), MDM_GR_USER_ACTION, ASS_GR_USER_SIT, ERR_GR_SIT_SUCCESS);
 
 	KillTimer(IDT_CHECK_DESK);
 
-	if (m_bIsBuy &&m_bInDissmissing && m_iDissmissUserID!=0 && DESK_TYPE_BJL!=m_uDeskType)
+	if (m_bIsBuy &&m_bInDissmissing && m_iDissmissUserID != 0 && DESK_TYPE_BJL != m_uDeskType)
 	{
-		vector<int>::iterator result = find( m_VecAgreeUserID.begin( ), m_VecAgreeUserID.end( ), pUserInfo->m_UserData.dwUserID ); 
-		if ( result == m_VecAgreeUserID.end( ) ) 
+		vector<int>::iterator result = find(m_VecAgreeUserID.begin(), m_VecAgreeUserID.end(), pUserInfo->m_UserData.dwUserID);
+		if (result == m_VecAgreeUserID.end())
 		{
 
 		}
-		else 
+		else
 		{
 			m_iDissmissAgreePeople++;
 		}
 	}
-	
+
 	if (m_bIsBuy)
 	{
 		if (pUserInfo->m_UserData.dwUserID == m_iDeskMaster)
@@ -519,7 +519,7 @@ BYTE CGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserIn
 			MasterLeave.iDeskID = m_bDeskIndex;
 			MasterLeave.iUserID = pUserInfo->m_UserData.dwUserID;
 
-			m_pDataManage->m_SQLDataManage.PushLine(&MasterLeave.DataBaseHead, sizeof(MasterLeave), DTK_GR_MASTER_LEAVE, 0, 0);	
+			m_pDataManage->m_SQLDataManage.PushLine(&MasterLeave.DataBaseHead, sizeof(MasterLeave), DTK_GR_MASTER_LEAVE, 0, 0);
 
 			m_bMasterState = 0;
 		}
@@ -531,7 +531,7 @@ BYTE CGameDesk::UserSitDesk(MSG_GR_S_UserSit * pUserSit, CGameUserInfo * pUserIn
 			MasterLeave.iDeskID = m_bDeskIndex;
 			MasterLeave.iUserID = pUserInfo->m_UserData.dwUserID;
 
-			m_pDataManage->m_SQLDataManage.PushLine(&MasterLeave.DataBaseHead, sizeof(MasterLeave), DTK_GR_MASTER_LEAVE, 0, 0);	
+			m_pDataManage->m_SQLDataManage.PushLine(&MasterLeave.DataBaseHead, sizeof(MasterLeave), DTK_GR_MASTER_LEAVE, 0, 0);
 		}
 	}
 
@@ -549,19 +549,19 @@ BYTE CGameDesk::FindStation(CGameUserInfo * pUserInfo)
 	::EnterCriticalSection(&m_csLock_);
 	try
 	{
-		for (i=0;i<m_bMaxPeople;i++)
+		for (i = 0; i < m_bMaxPeople; i++)
 		{
-			if(m_pUserInfo[i]!=NULL && m_pUserInfo[i]->m_UserData.bDeskStation == pUserInfo->m_UserData.bDeskStation)
+			if (m_pUserInfo[i] != NULL && m_pUserInfo[i]->m_UserData.bDeskStation == pUserInfo->m_UserData.bDeskStation)
 			{
 				return i;
 			}
 		}
 
-		for (i=0;i<m_bMaxPeople;i++)
+		for (i = 0; i < m_bMaxPeople; i++)
 		{
-			if(m_pUserInfo[i]==NULL)
+			if (m_pUserInfo[i] == NULL)
 			{
-				m_pUserInfo[i]=pUserInfo;
+				m_pUserInfo[i] = pUserInfo;
 				break;
 			}
 		}
@@ -569,7 +569,7 @@ BYTE CGameDesk::FindStation(CGameUserInfo * pUserInfo)
 	catch (...)
 	{
 		::LeaveCriticalSection(&m_csLock_);
-		throw; 
+		throw;
 	}
 
 	::LeaveCriticalSection(&m_csLock_);
@@ -588,45 +588,45 @@ TCHAR *GetCryptedPasswd(TCHAR *szMD5Pass, TCHAR *szSrcPass)
 	unsigned char szMDTemp[16];
 	TCHAR myKey = 'G';
 	MD5_CTX Md5;
-	Md5.MD5Update((unsigned char *)szSrcPass,lstrlen(szSrcPass));
+	Md5.MD5Update((unsigned char *)szSrcPass, lstrlen(szSrcPass));
 	Md5.MD5Final(szMDTemp);
-	for (int i = 0; i < 16; i ++) 
-		wsprintf(&szMD5Pass[i * 2], "%02x", szMDTemp[i]^myKey);
+	for (int i = 0; i < 16; i++)
+		wsprintf(&szMD5Pass[i * 2], "%02x", szMDTemp[i] ^ myKey);
 	return szMD5Pass;
 }
 CString innerGetMac()
 {
-	CString retMac="";
+	CString retMac = "";
 	PIP_ADAPTER_INFO pAdapterInfo;
-	PIP_ADAPTER_INFO pAdapter=NULL;
-	DWORD dwRetVal=0;
-	pAdapterInfo=(IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO));
-	ULONG ulOutBufLen=sizeof(IP_ADAPTER_INFO);
-	if(GetAdaptersInfo(pAdapterInfo,&ulOutBufLen)!=ERROR_SUCCESS)
+	PIP_ADAPTER_INFO pAdapter = NULL;
+	DWORD dwRetVal = 0;
+	pAdapterInfo = (IP_ADAPTER_INFO*)malloc(sizeof(IP_ADAPTER_INFO));
+	ULONG ulOutBufLen = sizeof(IP_ADAPTER_INFO);
+	if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) != ERROR_SUCCESS)
 	{
 		free(pAdapterInfo);
-		pAdapterInfo=(IP_ADAPTER_INFO*)malloc(ulOutBufLen);
+		pAdapterInfo = (IP_ADAPTER_INFO*)malloc(ulOutBufLen);
 	}
-	if((dwRetVal=GetAdaptersInfo(pAdapterInfo,&ulOutBufLen))==NO_ERROR)
+	if ((dwRetVal = GetAdaptersInfo(pAdapterInfo, &ulOutBufLen)) == NO_ERROR)
 	{
-		pAdapter=pAdapterInfo;
+		pAdapter = pAdapterInfo;
 		CString temp;
-		while(pAdapter)
+		while (pAdapter)
 		{
-			if(pAdapter->Type==6)//pAdapter->DescriptionÖÐ°üº¬"PCI"Îª£ºÎïÀíÍø¿¨//pAdapter->TypeÊÇ71Îª£ºÎÞÏßÍø¿¨
+			if (pAdapter->Type == 6)//pAdapter->DescriptionÖÐ°üº¬"PCI"Îª£ºÎïÀíÍø¿¨//pAdapter->TypeÊÇ71Îª£ºÎÞÏßÍø¿¨
 			{
-				for(UINT i=0;i<pAdapter->AddressLength;i++)
+				for (UINT i = 0; i < pAdapter->AddressLength; i++)
 				{
-					temp.Format("%02X",pAdapter->Address[i]);
-					retMac+=temp;
+					temp.Format("%02X", pAdapter->Address[i]);
+					retMac += temp;
 					//	printf("%02X%c",pAdapter->Address[i],i==pAdapter->AddressLength-1?¡¯n¡¯:¡¯-¡¯);
 				}
 				break;
 			}
-			pAdapter=pAdapter->Next;
+			pAdapter = pAdapter->Next;
 		}
 	}
-	if(pAdapterInfo)
+	if (pAdapterInfo)
 		free(pAdapterInfo);
 	return retMac;
 }
@@ -634,44 +634,44 @@ CString innerGetMac()
 //»ñÈ¡»úÆ÷ÂëÏà¹Øº¯Êý
 CString coreGetCode()
 {
-	CString strRet="";
-	CString str=innerGetMac(),s;
-	if(str=="")
-	{		
+	CString strRet = "";
+	CString str = innerGetMac(), s;
+	if (str == "")
+	{
 		return _T("");
 	}
 
-	int r=0;
-	int l=str.GetLength();
-	for(int i=0;i<l;i+=2)
+	int r = 0;
+	int l = str.GetLength();
+	for (int i = 0; i < l; i += 2)
 	{
-		int r1=0,r2=0;
-		s=str.Mid(i,1);
-		if(s>="0" && s<="9")
-			r1=atoi(s);
-		if(s=="A" || s=="a")	r1=10;
-		if(s=="B" || s=="b")	r1=11;
-		if(s=="C" || s=="c")	r1=12;
-		if(s=="D" || s=="d")	r1=13;
-		if(s=="E" || s=="e")	r1=14;
-		if(s=="F" || s=="f")	r1=15;
-		s=str.Mid(i+1,1);
-		if(s>="0" && s<="9")
-			r2=atoi(s);
-		if(s=="A" || s=="a")	r2=10;
-		if(s=="B" || s=="b")	r2=11;
-		if(s=="C" || s=="c")	r2=12;
-		if(s=="D" || s=="d")	r2=13;
-		if(s=="E" || s=="e")	r2=14;
-		if(s=="F" || s=="f")	r2=15;
+		int r1 = 0, r2 = 0;
+		s = str.Mid(i, 1);
+		if (s >= "0" && s <= "9")
+			r1 = atoi(s);
+		if (s == "A" || s == "a")	r1 = 10;
+		if (s == "B" || s == "b")	r1 = 11;
+		if (s == "C" || s == "c")	r1 = 12;
+		if (s == "D" || s == "d")	r1 = 13;
+		if (s == "E" || s == "e")	r1 = 14;
+		if (s == "F" || s == "f")	r1 = 15;
+		s = str.Mid(i + 1, 1);
+		if (s >= "0" && s <= "9")
+			r2 = atoi(s);
+		if (s == "A" || s == "a")	r2 = 10;
+		if (s == "B" || s == "b")	r2 = 11;
+		if (s == "C" || s == "c")	r2 = 12;
+		if (s == "D" || s == "d")	r2 = 13;
+		if (s == "E" || s == "e")	r2 = 14;
+		if (s == "F" || s == "f")	r2 = 15;
 
 		CString t;
-		r+=r1*16+r2;
+		r += r1 * 16 + r2;
 		srand(r);
-		t.Format("%s%04X%s-",str.Mid(l-i-1,1),rand(),str.Mid(l-i-2,1));
-		strRet+=t;
+		t.Format("%s%04X%s-", str.Mid(l - i - 1, 1), rand(), str.Mid(l - i - 2, 1));
+		strRet += t;
 	}
-	if(strRet.Right(1)=="-")strRet=strRet.Left(strRet.GetLength()-1);
+	if (strRet.Right(1) == "-")strRet = strRet.Left(strRet.GetLength() - 1);
 	return strRet;
 }
 //---------------------------------------ÒÔÉÏÎª»ñÈ¡ÊÓÆµÊÇ·ñÆô¶¯µÄ¼ÓÃÜÂë-----------------------
@@ -679,29 +679,29 @@ CString coreGetCode()
 //³õÊ¼»¯º¯Êý
 bool CGameDesk::Init(BYTE bDeskIndex, BYTE bMaxPeople, CGameMainManage * pDataManage, UINT	uDeskType)//°Ù¼ÒÀÖlym
 {
-	m_bDeskIndex=bDeskIndex;
-	m_bMaxPeople=bMaxPeople;
-	m_pDataManage=pDataManage;
-	if (pDataManage->m_InitData.dwRoomRule&GRR_ENABLE_WATCH) m_bEnableWatch=0xFF;
-	if (pDataManage->m_InitData.dwRoomRule&GRR_UNENABLE_WATCH) m_bEnableWatch=0x00;
+	m_bDeskIndex = bDeskIndex;
+	m_bMaxPeople = bMaxPeople;
+	m_pDataManage = pDataManage;
+	if (pDataManage->m_InitData.dwRoomRule&GRR_ENABLE_WATCH) m_bEnableWatch = 0xFF;
+	if (pDataManage->m_InitData.dwRoomRule&GRR_UNENABLE_WATCH) m_bEnableWatch = 0x00;
 	SetTableBasePoint(pDataManage->m_InitData.uBasePoint);
 	m_uDeskType = uDeskType;
 	InitDeskGameStation();
 
 	//³õÊ¼»¯ÊÓÆµ·þÎñÆ÷ÐÅÏ¢
-	CString s = CINIFile::GetAppPath ();/////±¾µØÂ·¾¶
+	CString s = CINIFile::GetAppPath();/////±¾µØÂ·¾¶
 	CString nid;
 	nid.Format("%d", m_pDataManage->m_KernelData.uNameID);
-	CINIFile f( s +nid +"_s.ini");
-	CString strPswd = f.GetKeyVal("videosrv","videocode","");
+	CINIFile f(s + nid + "_s.ini");
+	CString strPswd = f.GetKeyVal("videosrv", "videocode", "");
 	CString strSrcCode;//Ô­Ê¼Âë
 	strSrcCode.Format(_T("%s%d"), coreGetCode(), pDataManage->m_KernelData.uNameID);
 	TCHAR szMD5Pass[64];	memset(szMD5Pass, 0, 64);
 	m_bhavevideo = !strcmp(strPswd, GetCryptedPasswd(szMD5Pass, strSrcCode.GetBuffer(strSrcCode.GetLength())));
 	m_bhavevideo &= !m_pDataManage->IsQueueGameRoom();//·À×÷±×·¿¼äºÍ±ÈÈü·¿²»¿ªÆôÊÓÆµ¹¦ÄÜ
-	m_videoip = f.GetKeyVal("videosrv","ip",m_videoip.c_str()).GetBuffer();	
-	m_videoport = f.GetKeyVal("videosrv","videoport",m_videoport);
-	m_audioport = f.GetKeyVal("videosrv","audioport",m_audioport);	
+	m_videoip = f.GetKeyVal("videosrv", "ip", m_videoip.c_str()).GetBuffer();
+	m_videoport = f.GetKeyVal("videosrv", "videoport", m_videoport);
+	m_audioport = f.GetKeyVal("videosrv", "audioport", m_audioport);
 
 	return true;
 }
@@ -714,107 +714,107 @@ void CGameDesk::send_video_ip(BYTE bDeskStation)
 	strcpy(msg.szIP, m_videoip.c_str());
 	msg.videoport = m_videoport;
 	msg.audioport = m_audioport;
-	SendGameData(bDeskStation,&msg,sizeof(msg),MDM_GM_GAME_FRAME,ASS_GM_SET_VIDEOADDR,0);
+	SendGameData(bDeskStation, &msg, sizeof(msg), MDM_GM_GAME_FRAME, ASS_GM_SET_VIDEOADDR, 0);
 }
 
 //ÊÇ·ñÔÊÐíÅÔ¹Û
 bool CGameDesk::IsEnableWatch(BYTE bDeskStation)
 {
-	return ((m_bEnableWatch&(1<<bDeskStation))!=0);
+	return ((m_bEnableWatch&(1 << bDeskStation)) != 0);
 }
 
 //ÉèÖÃ¶¨Ê±Æ÷
 bool CGameDesk::SetTimer(UINT uTimerID, int uElapse)
 {
-	if (uTimerID>=TIME_SPACE) return false;
-	return m_pDataManage->SetTimer(m_bDeskIndex*TIME_SPACE+uTimerID+TIME_START_ID,uElapse);
+	if (uTimerID >= TIME_SPACE) return false;
+	return m_pDataManage->SetTimer(m_bDeskIndex*TIME_SPACE + uTimerID + TIME_START_ID, uElapse);
 }
 
 //É¾³ý¶¨Ê±Æ÷
 bool CGameDesk::KillTimer(UINT uTimerID)
 {
-	if (uTimerID>=TIME_SPACE) return false;
-	return m_pDataManage->KillTimer(m_bDeskIndex*TIME_SPACE+TIME_START_ID+uTimerID);
+	if (uTimerID >= TIME_SPACE) return false;
+	return m_pDataManage->KillTimer(m_bDeskIndex*TIME_SPACE + TIME_START_ID + uTimerID);
 }
 
 //»ñÈ¡ÓÎÏ·Ê±¼ä
 long int CGameDesk::GetPlayTimeCount()
 {
-	if (m_bPlayGame==false) return 0L;
-	return (long int)time(NULL)-m_dwBeginTime;
+	if (m_bPlayGame == false) return 0L;
+	return (long int)time(NULL) - m_dwBeginTime;
 }
 
 //ÓÃ»§¶ÏÏßÀë¿ª
 bool CGameDesk::UserNetCut(BYTE bDeskStation, CGameUserInfo * pLostUserInfo)
 {
 	//Ð§ÑéÊý¾Ý
-	ASSERT(m_bCutGame[bDeskStation]==false);
-	ASSERT(m_pUserInfo[bDeskStation]!=NULL);
-	ASSERT(m_pUserInfo[bDeskStation]->m_UserData.dwUserID==pLostUserInfo->m_UserData.dwUserID);
+	ASSERT(m_bCutGame[bDeskStation] == false);
+	ASSERT(m_pUserInfo[bDeskStation] != NULL);
+	ASSERT(m_pUserInfo[bDeskStation]->m_UserData.dwUserID == pLostUserInfo->m_UserData.dwUserID);
 
 	//ÉèÖÃÊý¾Ý
-	m_bCutGame[bDeskStation]=true;
-	m_bConnect[bDeskStation]=false;
+	m_bCutGame[bDeskStation] = true;
+	m_bConnect[bDeskStation] = false;
 	m_bBreakCount[bDeskStation]++;
-	m_pUserInfo[bDeskStation]=pLostUserInfo;
+	m_pUserInfo[bDeskStation] = pLostUserInfo;
 	//·¢ËÍÓÃ»§¶ÏÏßÏûÏ¢
 	MSG_GR_R_UserCut UserCut;
-	UserCut.bDeskNO=m_bDeskIndex;
-	UserCut.bDeskStation=bDeskStation;
-	UserCut.dwUserID=pLostUserInfo->m_UserData.dwUserID;
-	m_pDataManage->m_TCPSocket.SendDataBatch(&UserCut,sizeof(UserCut),MDM_GR_USER_ACTION,ASS_GR_USER_CUT,0);
-	if((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY))
+	UserCut.bDeskNO = m_bDeskIndex;
+	UserCut.bDeskStation = bDeskStation;
+	UserCut.dwUserID = pLostUserInfo->m_UserData.dwUserID;
+	m_pDataManage->m_TCPSocket.SendDataBatch(&UserCut, sizeof(UserCut), MDM_GR_USER_ACTION, ASS_GR_USER_CUT, 0);
+	if ((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY))
 	{
-		int iCutPeople=0;
-		for(int i=0;i<m_bMaxPeople;i++)
+		int iCutPeople = 0;
+		for (int i = 0; i < m_bMaxPeople; i++)
 		{
-			if(!m_pUserInfo[i] || !m_bCutGame[i])
+			if (!m_pUserInfo[i] || !m_bCutGame[i])
 			{
 				continue;
 			}
 			iCutPeople++;
 		}
-		if(iCutPeople>=GetDeskPlayerNum())
+		if (iCutPeople >= GetDeskPlayerNum())
 		{
 			KillTimer(IDT_CHECK_DESK);
-			SetTimer(IDT_CHECK_DESK,3*60*1000);
+			SetTimer(IDT_CHECK_DESK, 3 * 60 * 1000);
 		}
 	}
 	//Éè¶¨¶¨Ê±Æ÷
-	if (DESK_TYPE_BJL==m_uDeskType)	// Èç¹ûÊÇ°Ù¼ÒÀÖÀàÐÍµÄÓÎÏ·£¬ÔòÖ±½ÓÁîÍæ¼Ò½áÊø£¬·ñÔò»á²úÉú¶¨Ê±Æ÷ID»ìÂÒ
+	if (DESK_TYPE_BJL == m_uDeskType)	// Èç¹ûÊÇ°Ù¼ÒÀÖÀàÐÍµÄÓÎÏ·£¬ÔòÖ±½ÓÁîÍæ¼Ò½áÊø£¬·ñÔò»á²úÉú¶¨Ê±Æ÷ID»ìÂÒ
 	{
-		if ((m_pUserInfo[bDeskStation]!=NULL)&&(m_bCutGame[bDeskStation]==true))
+		if ((m_pUserInfo[bDeskStation] != NULL) && (m_bCutGame[bDeskStation] == true))
 		{
-			GameFinish(bDeskStation,GFF_FORCE_FINISH);
+			GameFinish(bDeskStation, GFF_FORCE_FINISH);
 		}
 	}
-	
-	if(m_bIsBuy && m_bInDissmissing)
+
+	if (m_bIsBuy && m_bInDissmissing)
 	{
-		vector<int>::iterator result = find( m_VecAgreeUserID.begin( ), m_VecAgreeUserID.end( ), pLostUserInfo->m_UserData.dwUserID ); 
-		if ( result == m_VecAgreeUserID.end( ) ) 
+		vector<int>::iterator result = find(m_VecAgreeUserID.begin(), m_VecAgreeUserID.end(), pLostUserInfo->m_UserData.dwUserID);
+		if (result == m_VecAgreeUserID.end())
 		{
-			if(m_iDissmissAgreePeople>=GetOnlineDeskPlayerNum())
+			if (m_iDissmissAgreePeople >= GetOnlineDeskPlayerNum())
 			{
-				GameFinish(0,GFF_DISSMISS_FINISH);
+				GameFinish(0, GFF_DISSMISS_FINISH);
 			}
 			else
 			{
 				m_VecAgreeUserID.push_back(pLostUserInfo->m_UserData.dwUserID);
 				VipDeskDismissAgreeRes tAgreeData;
-				tAgreeData.bAgree=true;
-				tAgreeData.iUserID=pLostUserInfo->m_UserData.dwUserID;
-				for(int i=0;i<m_bMaxPeople;i++)
+				tAgreeData.bAgree = true;
+				tAgreeData.iUserID = pLostUserInfo->m_UserData.dwUserID;
+				for (int i = 0; i < m_bMaxPeople; i++)
 				{
-					if(!m_pUserInfo[i])
+					if (!m_pUserInfo[i])
 					{
 						continue;
 					}
-					m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex,&tAgreeData,sizeof(tAgreeData),MDM_GR_DESKRUNOUT,ASS_GR_DISSMISS_AGREE,0,0);
+					m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex, &tAgreeData, sizeof(tAgreeData), MDM_GR_DESKRUNOUT, ASS_GR_DISSMISS_AGREE, 0, 0);
 				}
 			}
 		}
-		else 
+		else
 		{
 			m_iDissmissAgreePeople--;
 
@@ -828,12 +828,12 @@ bool CGameDesk::UserNetCut(BYTE bDeskStation, CGameUserInfo * pLostUserInfo)
 bool CGameDesk::UserReCome(BYTE bDeskStation, CGameUserInfo * pNewUserInfo)
 {
 	//Ð§ÑéÊý¾Ý
-	ASSERT(m_bCutGame[bDeskStation]==true);
-	ASSERT(m_pUserInfo[bDeskStation]!=NULL);
-	ASSERT(m_pUserInfo[bDeskStation]->m_UserData.dwUserID==pNewUserInfo->m_UserData.dwUserID);
+	ASSERT(m_bCutGame[bDeskStation] == true);
+	ASSERT(m_pUserInfo[bDeskStation] != NULL);
+	ASSERT(m_pUserInfo[bDeskStation]->m_UserData.dwUserID == pNewUserInfo->m_UserData.dwUserID);
 	//ÉèÖÃÊý¾Ý
-	m_bCutGame[bDeskStation]=false;
-	m_pUserInfo[bDeskStation]=pNewUserInfo;
+	m_bCutGame[bDeskStation] = false;
+	m_pUserInfo[bDeskStation] = pNewUserInfo;
 	m_pUserInfo[bDeskStation]->m_UserData.bUserState = pNewUserInfo->m_UserData.bUserState; // »¹Ô­Ö®Ç°µÄ×´Ì¬
 
 
@@ -841,7 +841,7 @@ bool CGameDesk::UserReCome(BYTE bDeskStation, CGameUserInfo * pNewUserInfo)
 	DL_GR_I_UserRecome userRecome;
 	memset(&userRecome, 0, sizeof(userRecome));
 	userRecome.lUserID = pNewUserInfo->m_UserData.dwUserID;
-	m_pDataManage->m_SQLDataManage.PushLine(&userRecome.DataBaseHead,sizeof(userRecome),DTK_GR_USER_RECOME,0,0);
+	m_pDataManage->m_SQLDataManage.PushLine(&userRecome.DataBaseHead, sizeof(userRecome), DTK_GR_USER_RECOME, 0, 0);
 	//Ìí¼Ó½áÊø}
 
 	if (pNewUserInfo->m_UserData.bLogonbyphone /*&& !m_pDataManage->IsQueueGameRoom()*/)
@@ -856,22 +856,22 @@ bool CGameDesk::UserReCome(BYTE bDeskStation, CGameUserInfo * pNewUserInfo)
 
 	//·¢ËÍ·¿¼äÏûÏ¢
 	MSG_GR_R_UserSit UserSit;
-	UserSit.bLock=m_bLock;
-	UserSit.bDeskIndex=m_bDeskIndex;
-	UserSit.bDeskStation=bDeskStation;
-	UserSit.bUserState=m_pUserInfo[bDeskStation]->m_UserData.bUserState;
-	UserSit.dwUserID=pNewUserInfo->m_UserData.dwUserID;
-	UserSit.bDeskMaster=(m_bIsBuy&&m_iDeskMaster==pNewUserInfo->m_UserData.dwUserID);//·¿Ö÷
-	m_pDataManage->m_TCPSocket.SendDataBatch(&UserSit,sizeof(UserSit),MDM_GR_USER_ACTION,ASS_GR_USER_SIT,ERR_GR_SIT_SUCCESS);
+	UserSit.bLock = m_bLock;
+	UserSit.bDeskIndex = m_bDeskIndex;
+	UserSit.bDeskStation = bDeskStation;
+	UserSit.bUserState = m_pUserInfo[bDeskStation]->m_UserData.bUserState;
+	UserSit.dwUserID = pNewUserInfo->m_UserData.dwUserID;
+	UserSit.bDeskMaster = (m_bIsBuy&&m_iDeskMaster == pNewUserInfo->m_UserData.dwUserID);//·¿Ö÷
+	m_pDataManage->m_TCPSocket.SendDataBatch(&UserSit, sizeof(UserSit), MDM_GR_USER_ACTION, ASS_GR_USER_SIT, ERR_GR_SIT_SUCCESS);
 
-	if (m_bIsBuy &&m_bInDissmissing && m_iDissmissUserID!=0 && DESK_TYPE_BJL!=m_uDeskType)
+	if (m_bIsBuy &&m_bInDissmissing && m_iDissmissUserID != 0 && DESK_TYPE_BJL != m_uDeskType)
 	{
-		vector<int>::iterator result = find( m_VecAgreeUserID.begin( ), m_VecAgreeUserID.end( ), pNewUserInfo->m_UserData.dwUserID ); 
-		if ( result == m_VecAgreeUserID.end( ) ) 
+		vector<int>::iterator result = find(m_VecAgreeUserID.begin(), m_VecAgreeUserID.end(), pNewUserInfo->m_UserData.dwUserID);
+		if (result == m_VecAgreeUserID.end())
 		{
-			
+
 		}
-		else 
+		else
 		{
 			m_iDissmissAgreePeople++;
 		}
@@ -886,17 +886,17 @@ bool CGameDesk::UserReCome(BYTE bDeskStation, CGameUserInfo * pNewUserInfo)
 //ÉèÖÃ±ÈÈüÐÅÏ¢
 bool CGameDesk::SetMatchInfo(BYTE bDeskStation, MatchInfoStruct * pMatchInfo, bool bNotify)
 {
-	ASSERT(bDeskStation<m_bMaxPeople);
-	m_pMatchInfo[bDeskStation]=pMatchInfo;
+	ASSERT(bDeskStation < m_bMaxPeople);
+	m_pMatchInfo[bDeskStation] = pMatchInfo;
 	return true;
 }
 
 //ÇåÀí¶ÏÏß×ÊÁÏ
 bool CGameDesk::CleanCutGameInfo()
 {
-	for (BYTE i=0;i<m_bMaxPeople;i++)
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
-		if ((m_pUserInfo[i]!=NULL)&&(m_bCutGame[i]==true))
+		if ((m_pUserInfo[i] != NULL) && (m_bCutGame[i] == true))
 		{
 			//ÓÃ»§Àë¿ª
 			CGameUserInfo * pUserInfo = m_pUserInfo[i];
@@ -907,12 +907,12 @@ bool CGameDesk::CleanCutGameInfo()
 			m_pDataManage->m_SQLDataManage.PushLine(&dtClearOnlineFlag.DataBaseHead, sizeof(dtClearOnlineFlag), DTK_GR_CLEAR_ONLINE_FLAG, 0, 0);
 			MakeUserOffLine(i);
 		}
-		m_bCutGame[i]=false;
+		m_bCutGame[i] = false;
 		if (m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST)
 		{
 			if (m_pUserInfo[i] == NULL)
 				continue;
-			m_pUserInfo[i]=NULL;
+			m_pUserInfo[i] = NULL;
 		}
 	}
 
@@ -926,9 +926,9 @@ bool CGameDesk::CleanCutGameInfoContest()
 		return true;
 	}
 
-	for (BYTE i=0;i<m_bMaxPeople;i++)
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
-		if ((m_pUserInfo[i]!=NULL)&&(m_bCutGame[i]==true))
+		if ((m_pUserInfo[i] != NULL) && (m_bCutGame[i] == true))
 		{
 			//ÇåÀíÊý¾Ý
 			//ÓÃ»§Àë¿ª
@@ -940,8 +940,8 @@ bool CGameDesk::CleanCutGameInfoContest()
 			dtClearOnlineFlag.lUserID = pUserInfo->m_UserData.dwUserID;
 			m_pDataManage->m_SQLDataManage.PushLine(&dtClearOnlineFlag.DataBaseHead, sizeof(dtClearOnlineFlag), DTK_GR_CLEAR_ONLINE_FLAG, 0, 0);
 		}
-		m_bCutGame[i]=false;
-		m_pUserInfo[i]=NULL;
+		m_bCutGame[i] = false;
+		m_pUserInfo[i] = NULL;
 	}
 
 	return true;
@@ -949,16 +949,16 @@ bool CGameDesk::CleanCutGameInfoContest()
 //ÇåÀí¶ÏÏßÖ¸¶¨¶ÏÏßÍæ¼Ò×ÊÁÏ
 bool CGameDesk::CleanCutGameInfo(BYTE bDeskStation)
 {
-	if ((m_pUserInfo[bDeskStation]!=NULL)&&(m_bCutGame[bDeskStation]==true))
+	if ((m_pUserInfo[bDeskStation] != NULL) && (m_bCutGame[bDeskStation] == true))
 	{
 		//ÓÃ»§Àë¿ª
-		CGameUserInfo * pUserInfo=m_pUserInfo[bDeskStation];
+		CGameUserInfo * pUserInfo = m_pUserInfo[bDeskStation];
 		MakeUserOffLine(bDeskStation);
 		//ÇåÀíÓÃ»§×ÊÁÏ
 		//m_pDataManage->CleanUserInfo(pUserInfo);
 		//m_pDataManage->m_UserManage.FreeUser(pUserInfo,false);
 	}
-	m_bCutGame[bDeskStation]=false;
+	m_bCutGame[bDeskStation] = false;
 
 	return true;
 }
@@ -966,35 +966,39 @@ bool CGameDesk::CleanCutGameInfo(BYTE bDeskStation)
 //¼ÇÂ¼ÓÎÏ·ÐÅÏ¢
 bool CGameDesk::RecoderGameInfo(__int64 *ChangeMoney)
 {
-	if ((m_pDataManage->m_InitData.dwRoomRule&GRR_RECORD_GAME)!=0L/* && !m_bAllRobot*/)
+	if ((m_pDataManage->m_InitData.dwRoomRule&GRR_RECORD_GAME) != 0L/* && !m_bAllRobot*/)
 	{
-		memset(ChangeMoney,0,sizeof(ChangeMoney));
+		//20190504 ¸ÄÎªÓÐÐ§Í¶×¢
+		//memset(ChangeMoney,0,sizeof(ChangeMoney));
 		//¶¨ÒåÊý¾Ý
 		DL_GR_I_GameRecord GameRecord;
-		memset(&GameRecord,0,sizeof(GameRecord));
+		memset(&GameRecord, 0, sizeof(GameRecord));
 
 		//Ð´ÈëÊý¾Ý
-		GameRecord.dwTax=m_dwTax;//Ã¿¾ÖËùÓÐÍæ¼Ò×ÜÊµ½ÉË°ÊÕ
-		GameRecord.bDeskIndex=m_bDeskIndex;
-		GameRecord.uRoomID=m_pDataManage->m_InitData.uRoomID;
-		GameRecord.dwBeginTime=m_dwBeginTime;
+		GameRecord.dwTax = m_dwTax;//Ã¿¾ÖËùÓÐÍæ¼Ò×ÜÊµ½ÉË°ÊÕ
+		GameRecord.bDeskIndex = m_bDeskIndex;
+		GameRecord.uRoomID = m_pDataManage->m_InitData.uRoomID;
+		GameRecord.dwBeginTime = m_dwBeginTime;
 
-		int iCount =0;
-		for (BYTE i=0;i<m_bMaxPeople;i++)
+		int iCount = 0;
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
 		{
-			if(m_pUserInfo[i]== NULL)
+			if (m_pUserInfo[i] == NULL)
 				continue;
 
-			ChangeMoney[i]=m_dwChangeMoney[i];
+			//ChangeMoney[i]=m_dwChangeMoney[i];
 
 			{
-				GameRecord.dwUserID[i]=m_pUserInfo[i]->m_UserData.dwUserID;
-				GameRecord.dwScrPoint[i]=m_dwScrPoint[i]+m_dwChangePoint[i];
-				GameRecord.dwTaxCom[i]=m_dwTaxCom[i];
-				GameRecord.dwChangePoint[i]=m_dwChangePoint[i];
-				GameRecord.dwChangeMoney[i]=m_dwChangeMoney[i];
+				GameRecord.dwUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID;
+				GameRecord.dwScrPoint[i] = m_dwScrPoint[i] + m_dwChangePoint[i];
+				GameRecord.dwTaxCom[i] = m_dwTaxCom[i];
+				//GameRecord.dwChangePoint[i]=m_dwChangePoint[i];
+				//20190504ÓÐÐ§Í¶×¢
+				GameRecord.dwChangePoint[i] = ChangeMoney[i];
+				//
+				GameRecord.dwChangeMoney[i] = m_dwChangeMoney[i];
 
-				GameRecord.i64ScrMoney[i]=m_pUserInfo[i]->m_UserData.i64Money;
+				GameRecord.i64ScrMoney[i] = m_pUserInfo[i]->m_UserData.i64Money;
 
 
 				iCount++;
@@ -1002,7 +1006,7 @@ bool CGameDesk::RecoderGameInfo(__int64 *ChangeMoney)
 		}
 		if (iCount > 0)
 		{
-			return m_pDataManage->m_SQLDataManage.PushLine(&GameRecord.DataBaseHead,sizeof(GameRecord),DTK_GR_RECORD_GAME,0,0);
+			return m_pDataManage->m_SQLDataManage.PushLine(&GameRecord.DataBaseHead, sizeof(GameRecord), DTK_GR_RECORD_GAME, 0, 0);
 		}
 	}
 	return true;
@@ -1023,14 +1027,14 @@ int I64ToInt(__int64 i64Value)
 	if (flag != 0)
 	{
 		/// ÊÇ¸ºÊý
-		if (i64Value<0xFFFFFFFF80000001)
+		if (i64Value < 0xFFFFFFFF80000001)
 		{
 			return 0x80000001;
 		}
 	}
 	else
 	{
-		if (i64Value>0x7FFFFFFF)
+		if (i64Value > 0x7FFFFFFF)
 		{
 			return 0x7FFFFFFF;
 		}
@@ -1044,30 +1048,30 @@ bool CGameDesk::ChangeUserPointContest(__int64 *arPoint, bool *bCut, int nTaxInd
 	ZeroMemory(arLoseMoney, sizeof(arLoseMoney));
 
 	MSG_GR_ContestChange _tmp;
-	DL_GR_I_UserContestData _p;	
+	DL_GR_I_UserContestData _p;
 	bool bSomeOneNotEnoughMoney = false;
 	// ÊäµÄ×Ü·ÖºÍ½ð±Ò
 	__int64 i64TotalLosePoint = 0;
 	__int64 i64TotalLoseMoney = 0;
 
-	for (int i=0; i<m_bMaxPeople; ++i)
+	for (int i = 0; i < m_bMaxPeople; ++i)
 	{
-		if (NULL==m_pUserInfo[i])
+		if (NULL == m_pUserInfo[i])
 		{
 			continue;
 		}
 		//¼ÆËã×Ü¹²¸ÃÊäµÄÇ®
 		if (arPoint[i] < 0)
-		{			
-			arLoseMoney[i] = arPoint[i]* m_pDataManage->m_InitData.uBasePoint;
+		{
+			arLoseMoney[i] = arPoint[i] * m_pDataManage->m_InitData.uBasePoint;
 
-			if (m_pUserInfo[i]->m_UserData.i64ContestScore < 0-arLoseMoney[i])
+			if (m_pUserInfo[i]->m_UserData.i64ContestScore < 0 - arLoseMoney[i])
 			{
 				bSomeOneNotEnoughMoney = true;
 				if (0 >= m_pUserInfo[i]->m_UserData.i64ContestScore)
 				{
 					//Íæ¼ÒÉíÉÏÃ»Ç®
-					arLoseMoney[i] = 0;					
+					arLoseMoney[i] = 0;
 				}
 				else
 				{
@@ -1095,19 +1099,19 @@ bool CGameDesk::ChangeUserPointContest(__int64 *arPoint, bool *bCut, int nTaxInd
 			m_pDataManage->m_SQLDataManage.PushLine(&_p.DataBaseHead, sizeof(DL_GR_I_UserContestData), DTK_GR_UPDATE_CONTEST_RESULT, 0, 0);
 		}
 	}
-	for (int i=0; i<m_bMaxPeople; ++i)
+	for (int i = 0; i < m_bMaxPeople; ++i)
 	{
-		if (NULL==m_pUserInfo[i])
+		if (NULL == m_pUserInfo[i])
 		{
 			continue;
 		}
 		if (arPoint[i] > 0)
 		{
-			arLoseMoney[i] = arPoint[i]* m_pDataManage->m_InitData.uBasePoint;
+			arLoseMoney[i] = arPoint[i] * m_pDataManage->m_InitData.uBasePoint;
 			if (bSomeOneNotEnoughMoney)
 			{
 				if (i64TotalLosePoint != 0)
-					arLoseMoney[i] = i64TotalLoseMoney*arPoint[i]/i64TotalLosePoint;
+					arLoseMoney[i] = i64TotalLoseMoney * arPoint[i] / i64TotalLosePoint;
 				else
 					arLoseMoney[i] = 0;
 			}
@@ -1150,13 +1154,13 @@ bool CGameDesk::ChangeUserPointContest(int *arPoint, bool *bCut, int nTaxIndex)
 	_p_rank.iIDNums = 0;
 	if (_p_rank.pUserIDs)
 	{
-		::memset(_p_rank.pUserIDs,0,sizeof(int)*m_bMaxPeople);
+		::memset(_p_rank.pUserIDs, 0, sizeof(int)*m_bMaxPeople);
 		_p_rank.iIDNums = m_bMaxPeople;
 	}
 
-	for (int i=0; i<m_bMaxPeople; ++i)
+	for (int i = 0; i < m_bMaxPeople; ++i)
 	{
-		if (NULL==m_pUserInfo[i])
+		if (NULL == m_pUserInfo[i])
 		{
 			continue;
 		}
@@ -1164,7 +1168,7 @@ bool CGameDesk::ChangeUserPointContest(int *arPoint, bool *bCut, int nTaxIndex)
 		_p_rank.pUserIDs[i] = m_pUserInfo[i]->m_UserData.dwUserID;
 
 		/// ¼ÆËãÓ¦ÊäÕß½ð±ÒÊÇ·ñ¹»
-		arLoseMoney[i] = arPoint[i]*m_DeskBasePoint;
+		arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;
 
 		m_pUserInfo[i]->m_UserData.i64ContestScore += arLoseMoney[i];
 		m_pUserInfo[i]->m_UserData.iContestCount++;
@@ -1189,7 +1193,7 @@ bool CGameDesk::ChangeUserPointContest(int *arPoint, bool *bCut, int nTaxIndex)
 	return true;
 }
 
-bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex,int iCount)
+bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex, int iCount)
 {
 	/// ¼ÆËã±¾¾ÖÓÎÏ·Ó®¼ÒËùÓ®½ð±ÒµÄ×ÜºÍ
 	/// ¼ÆËã±¾¾ÖÓÎÏ·Êä¼ÒËùÊä½ð±ÒµÄ×ÜºÍ
@@ -1205,11 +1209,11 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 	}
 
 	m_tEndTime = CTime::GetCurrentTime();
-	
+
 	/// È¡µ±Ç°Ê±¼ä
 	CString stime;
-	stime.Format("%d",CTime::GetCurrentTime());
-	int curtime=atoi(stime);
+	stime.Format("%d", CTime::GetCurrentTime());
+	int curtime = atoi(stime);
 
 	/// ÊÇ·ñÎª´ó¼Ò¶¼Òª½»Ì¨·ÑµÄ·¿¼ä¹æÔò£¬Ò»°ã¶¼ÎªÓ®¼Ò½»Ì¨·Ñ
 	bool bIsAllNeedTax = (m_pDataManage->m_InitData.dwRoomRule & GRR_ALL_NEED_TAX) > 0;
@@ -1217,7 +1221,7 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 
 	bool bNotCostPoint = (m_pDataManage->m_InitData.dwRoomRule & GRR_NOT_COST_POINT) > 0; /// ½ð±Ò³¡²»¿Û»ý·Ö
 
-	BYTE i=0;	///< Ñ­»·±äÁ¿
+	BYTE i = 0;	///< Ñ­»·±äÁ¿
 
 	/// ÊäµÄ×Ü·ÖºÍ½ð±Ò
 	__int64 i64TotalLosePoint = 0;
@@ -1230,7 +1234,7 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 	/// ¶ÏÏßÍæ¼ÒÊÇÄÄ¸ö
 	BYTE bCutDeskStation = 255;
 
-	for (i=0; i<m_bMaxPeople; ++i)
+	for (i = 0; i < m_bMaxPeople; ++i)
 	{
 		if (m_pUserInfo[i] == NULL)
 			continue;
@@ -1240,7 +1244,7 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 			bCutDeskStation = i;
 		}
 
-		if (!bTaxMain && nTaxIndex>=0)
+		if (!bTaxMain && nTaxIndex >= 0)
 		{
 			if (i == nTaxIndex) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
 			{
@@ -1264,7 +1268,7 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 
 	__int64 i64Tmp = 1;	/// ÎªÁË·ÀÖ¹ÉÏÒç£¬ÒýÈëÒ»¸öint64ÀàÐÍµÄÊý£¬ÃâµÃÐ´ºÃ¶à¸öÇ¿ÖÆÀàÐÍ×ª»»
 
-	long int dwNowTime=(long int)time(NULL);
+	long int dwNowTime = (long int)time(NULL);
 
 	if (m_pDataManage->m_nRate < 100)
 	{
@@ -1273,28 +1277,28 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 
 	/// ½ð±Ò³¡²ÅÐèÒª¼ÆËã£¬
 	/// ¸ù¾ÝÓ¦Êä»ý·Ö£¬¼ÆËãÓ¦ÊäÍæ¼ÒÓ¦ÊäµÄÇ®£¬Í¬Ê±¿¼ÂÇÉíÉÏµÄÇ®ÊÇ·ñ¹»Ö§¸¶
-	if(m_pDataManage->m_InitData.uComType == TY_MONEY_GAME )
+	if (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
 	{
-		for (i=0; i<m_bMaxPeople; ++i)
+		for (i = 0; i < m_bMaxPeople; ++i)
 		{
-			if (NULL==m_pUserInfo[i] || (m_bIsMidEnter[i]==true)&&m_pDataManage->m_InitData.uDeskType!=DESK_TYPE_BJL)
+			if (NULL == m_pUserInfo[i] || (m_bIsMidEnter[i] == true) && m_pDataManage->m_InitData.uDeskType != DESK_TYPE_BJL)
 			{
 				continue;
 			}
-            WriteLog("UserID=%d,arPoint[%d]=%I64d",m_pUserInfo[i]->m_UserData.dwUserID,i,arPoint[i]);
+			WriteLog("UserID=%d,arPoint[%d]=%I64d", m_pUserInfo[i]->m_UserData.dwUserID, i, arPoint[i]);
 			/// ¼ÆËãÓ¦ÊäÕß½ð±ÒÊÇ·ñ¹»
-			if (arPoint[i]<=0)
-			{	
-				arLoseMoney[i] = arPoint[i]*m_DeskBasePoint;	///< ¸ÃÊýÎª¸ºÊý
+			if (arPoint[i] <= 0)
+			{
+				arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;	///< ¸ÃÊýÎª¸ºÊý
 				/// ÊÇ²»ÊÇ´ó¼Ò¶¼Òª¿ÛË°£¬ÎÞÂÛÊäÓ®
-				if (bIsAllNeedTax && (m_pDataManage->m_InitData.uTax>0) && (nTaxIndex < 0 || nTaxIndex == i))
+				if (bIsAllNeedTax && (m_pDataManage->m_InitData.uTax > 0) && (nTaxIndex < 0 || nTaxIndex == i))
 				{
 					arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
 					arLoseMoney[i] -= arTaxCount[i];
 				}
 
 				/// ¼ì²é¸ÃÍæ¼ÒµÄÇ®ÊÇ·ñÒÑ¾­²»¹»ÁË
-				if (m_pUserInfo[i]->m_UserData.i64Money < (0-arLoseMoney[i])&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY)) ///<Ç®²»¹»ÊäÁË
+				if (m_pUserInfo[i]->m_UserData.i64Money < (0 - arLoseMoney[i]) && !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY)) ///<Ç®²»¹»ÊäÁË
 				{
 					bSomeOneNoEnoughMoney = true;
 					if (m_pUserInfo[i]->m_UserData.i64Money <= 0) ///<ÕâÖÖÇé¿öÓ¦¸Ã²»»á³öÏÖ
@@ -1303,7 +1307,7 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 					}
 					else
 					{
-						arLoseMoney[i] = 0-m_pUserInfo[i]->m_UserData.i64Money; ///< °ÑÍæ¼ÒÉíÉÏµÄÇ®¶¼¿Û¹â
+						arLoseMoney[i] = 0 - m_pUserInfo[i]->m_UserData.i64Money; ///< °ÑÍæ¼ÒÉíÉÏµÄÇ®¶¼¿Û¹â
 					}
 				}
 				/// ×Ü¹²ÊäµÄ·ÖÊýºÍÇ®Êý£¬Èç¹ûÓÐÈË²»¹»Ç®£¬ÓÃÀ´¼ÆËãÓ®¼Ò·ÖÅäÇ®µÄ±ÈÀý
@@ -1314,52 +1318,52 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 	}
 
 	/// ËùÓÐÊä¼Ò¸ÃÊäµÄ½ð±Ò¶¼ÒÑ¾­È·¶¨£¬¿ÉÒÔ¿ªÊ¼¼ÆËãÓ®¼ÒµÄÊÕÈëÁË
-	for (i=0; i<m_bMaxPeople; ++i)
+	for (i = 0; i < m_bMaxPeople; ++i)
 	{
-		if (NULL==m_pUserInfo[i])
+		if (NULL == m_pUserInfo[i])
 		{
 			continue;
 		}
 		arUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID; ///<°ÑÓÐÐ§Íæ¼ÒµÄdwUsreID·Åµ½Êý×éÖÐ
 		arLogonTime[i] = m_pUserInfo[i]->m_dwLogonTime; ///<°ÑÓÐÐ§Íæ¼ÒµÄµÇÂ¼Ê±¼ä·Åµ½Êý×éÖÐ
 		/// Ó®Ç®µÄÐèÒªÖØÐÂ¼ÆËã£¬Êä¼ÒÒÑ¾­¼ÆËã¹ýÁË
-		if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i]>0) && !bTaxMain)
+		if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i] > 0) && !bTaxMain)
 		{
 			/// ÅÐ¶ÏÊÇ·ñÓÐÍæ¼Ò²»¹»Ç®£¬ÈôÓÐ£¬ÔòÓ®²»ÁËÕâÃ´¶àÇ®
 			if (bSomeOneNoEnoughMoney)
 			{
 
 				if (i64TotalLosePoint != 0)
-					arLoseMoney[i] = i64TotalLoseMoney*arPoint[i]/i64TotalLosePoint;
+					arLoseMoney[i] = i64TotalLoseMoney * arPoint[i] / i64TotalLosePoint;
 				else
 					arLoseMoney[i] = 0;
 			}
 			else
 			{
-				arLoseMoney[i] = arPoint[i]*m_DeskBasePoint;
+				arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;
 			}
 			i64Tmp = 1;
 			/// ¼ÆËãºÃ¸ÃÓ®½ð¶îºó£¬¿ÛË°
 			/// ´ó¼Ò¶¼½»
 			if (bIsAllNeedTax)
 			{
-				if (m_pDataManage->m_InitData.uTax>0)
+				if (m_pDataManage->m_InitData.uTax > 0)
 				{
 					arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
 					arLoseMoney[i] -= arTaxCount[i];
-			
+
 				}
 			}
 			else
 			{
-				if ((m_pDataManage->m_InitData.uTax>0) && (arLoseMoney[i]>=2))
-				{	
-					arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax/m_pDataManage->m_nRate;
+				if ((m_pDataManage->m_InitData.uTax > 0) && (arLoseMoney[i] >= 2))
+				{
+					arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax / m_pDataManage->m_nRate;
 					arLoseMoney[i] -= arTaxCount[i];
 				}
 			}
 		}
-		else if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i]>0) && bTaxMain)///< Ö»¿Û¸ÃÍæ¼ÒµÄË°
+		else if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i] > 0) && bTaxMain)///< Ö»¿Û¸ÃÍæ¼ÒµÄË°
 		{
 
 			/// ÅÐ¶ÏÊÇ·ñÓÐÍæ¼Ò²»¹»Ç®£¬ÈôÓÐ£¬ÔòÓ®²»ÁËÕâÃ´¶àÇ®
@@ -1367,45 +1371,45 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 			{
 
 				if (i64TotalLosePoint != 0)
-					arLoseMoney[i] = i64TotalLoseMoney*arPoint[i]/i64TotalLosePoint;
+					arLoseMoney[i] = i64TotalLoseMoney * arPoint[i] / i64TotalLosePoint;
 				else
 					arLoseMoney[i] = 0;
 
 			}
-			
+
 			else
 			{
-				arLoseMoney[i] = arPoint[i]*m_DeskBasePoint;
+				arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;
 			}
 			i64Tmp = 1;
-            if (bIsAllNeedTax && i == nTaxIndex)
-            {
-                if (m_pDataManage->m_InitData.uTax>0)
-                {
-                    arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
+			if (bIsAllNeedTax && i == nTaxIndex)
+			{
+				if (m_pDataManage->m_InitData.uTax > 0)
+				{
+					arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
 
-                    arLoseMoney[i] -= arTaxCount[i];
+					arLoseMoney[i] -= arTaxCount[i];
 
-                }
-            }
-            else
-            {
+				}
+			}
+			else
+			{
 
-			    if (i == nTaxIndex && m_pDataManage->m_InitData.uTax>0) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
-			    {
-				    if (arLoseMoney[i] >= 2)
-				    {
-					    arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax/m_pDataManage->m_nRate;
+				if (i == nTaxIndex && m_pDataManage->m_InitData.uTax > 0) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
+				{
+					if (arLoseMoney[i] >= 2)
+					{
+						arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax / m_pDataManage->m_nRate;
 
-					    arLoseMoney[i] -= arTaxCount[i];
-				    }
-			    }
-            }
+						arLoseMoney[i] -= arTaxCount[i];
+					}
+				}
+			}
 		}
 		/// ¸ø³ÉÔ±±äÁ¿¸³Öµ
 		m_dwTaxCom[i] = arTaxCount[i];
 
-		if(bNotCostPoint)		//½ð±Ò³¡²»¿Û»ý·Ö
+		if (bNotCostPoint)		//½ð±Ò³¡²»¿Û»ý·Ö
 		{
 			m_dwChangePoint[i] = 0;
 		}
@@ -1415,7 +1419,7 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 		}
 
 		/// ¸üÐÂm_pUserInfoÀïµÄÊý¾Ý
-		m_pUserInfo[i]->ChangePoint(m_dwChangePoint[i], m_dwTaxCom[i], arPoint[i]>0, arPoint[i]<0,arPoint[i]==0, bCut[i], dwNowTime-m_dwBeginTime, arLoseMoney[i],m_bIsBuy);
+		m_pUserInfo[i]->ChangePoint(m_dwChangePoint[i], m_dwTaxCom[i], arPoint[i] > 0, arPoint[i] < 0, arPoint[i] == 0, bCut[i], dwNowTime - m_dwBeginTime, arLoseMoney[i], m_bIsBuy);
 
 		/// ¾­¹ýÔÙ´ÎÅÐ¶Ïºó£¬ÔÙ¸³Öµ¸ø½áËã
 		m_dwChangeMoney[i] = arLoseMoney[i];
@@ -1424,11 +1428,11 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 
 	/// ÔÚÉÏÃæµÄÑ­»·ÖÐÒÑ¾­Í³¼Æ¹ýÍæ¼ÒÈËÊýnTotalPlayerCount
 	UpdateUserInfo_t *pUpdateUserInfo = NULL;
-	int nIndex=0;
-	
+	int nIndex = 0;
+
 
 	pUpdateUserInfo = new UpdateUserInfo_t[nTotalPlayerCount];
-	for (i=0; i<m_bMaxPeople; ++i)
+	for (i = 0; i < m_bMaxPeople; ++i)
 	{
 		if (NULL == m_pUserInfo[i])
 		{
@@ -1436,7 +1440,7 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 		}
 		//½áËãÖ®ºó£¬½ð±Ò²»×ã·¿¼äÏÂÏÞ£¬×Ô¶¯ÔùËÍ 
 		__int64 i64Money = m_pUserInfo[i]->m_UserData.i64Money + m_pUserInfo[i]->m_UserData.i64Bank;
-		if(m_pDataManage->m_InitData.bSendAlms && (i64Money <= m_pDataManage->m_InitData.iAlmsMinMoney)
+		if (m_pDataManage->m_InitData.bSendAlms && (i64Money <= m_pDataManage->m_InitData.iAlmsMinMoney)
 			&& (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
 			&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_EXPERCISE_ROOM))
 		{
@@ -1444,15 +1448,15 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 		}
 
 		/// °´´ÎÐò¸³Öµ
-		pUpdateUserInfo[nIndex].dwUserID			= m_pUserInfo[i]->m_UserData.dwUserID;
-		pUpdateUserInfo[nIndex].dwOnLineTimeCount	= dwNowTime-m_pUserInfo[i]->m_dwLogonTime;
+		pUpdateUserInfo[nIndex].dwUserID = m_pUserInfo[i]->m_UserData.dwUserID;
+		pUpdateUserInfo[nIndex].dwOnLineTimeCount = dwNowTime - m_pUserInfo[i]->m_dwLogonTime;
 		__int64 iPoint = arPoint[i];
-		
+
 		if (bNotCostPoint)//½ð±Ò³¡²»¿Û»ý·Ö
 		{
 			pUpdateUserInfo[nIndex].dwChangePoint = 0;
 		}
-		else 
+		else
 		{
 			pUpdateUserInfo[nIndex].dwChangePoint = iPoint;
 		}
@@ -1460,11 +1464,11 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 		pUpdateUserInfo[nIndex].dwChangeMoney = arLoseMoney[i];
 		pUpdateUserInfo[nIndex].dwChangeTaxCom = m_dwTaxCom[i];
 
-		if (arPoint[i]==0)
+		if (arPoint[i] == 0)
 		{
 			pUpdateUserInfo[nIndex].uMidCount = 1;
 		}
-		else if (arPoint[i]>0)
+		else if (arPoint[i] > 0)
 		{
 			pUpdateUserInfo[nIndex].uWinCount = 1;
 		}
@@ -1473,7 +1477,7 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 			pUpdateUserInfo[nIndex].uLostCount = 1;
 		}
 
-		pUpdateUserInfo[nIndex].uCutCount = bCut[i]? 1 : 0;
+		pUpdateUserInfo[nIndex].uCutCount = bCut[i] ? 1 : 0;
 		++nIndex;
 	}
 
@@ -1481,20 +1485,20 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 	/// ÅúÁ¿¸üÐÂÓÃ»§Êý¾Ý
 	UpdateAllUserInfo(pUpdateUserInfo, nTotalPlayerCount, m_tEndTime.GetTime() - m_tBeginTime.GetTime());
 
-	
+
 	m_dwTax = 0;
 	/// ·¢ËÍÓÃ»§¸ü¸ÄÊý¾Ýµ½¿Í»§¶Ë
 
-	for (i=0; i<m_bMaxPeople; ++i)
+	for (i = 0; i < m_bMaxPeople; ++i)
 	{
 		if (NULL == m_pUserInfo[i])
 		{
 			continue;
 		}
-		
+
 		m_dwTax += m_dwTaxCom[i];
 
-		m_pUserInfo[i]->m_dwLogonTime=(long int)time(NULL);
+		m_pUserInfo[i]->m_dwLogonTime = (long int)time(NULL);
 		//·¢ËÍÏûÏ¢
 		MSG_GR_R_UserPoint UserPoint;
 		ZeroMemory(&UserPoint, sizeof(UserPoint));
@@ -1505,7 +1509,7 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 		{
 			UserPoint.dwPoint = 0;
 		}
-		
+
 		UserPoint.dwMoney = arLoseMoney[i];
 
 
@@ -1517,15 +1521,15 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 			UserPoint.bLostCount = 1;
 		}
 
-		if (arPoint[i] == 0) 
+		if (arPoint[i] == 0)
 			UserPoint.bMidCount = 1;
 
-		if (bCut[i] == true) 
+		if (bCut[i] == true)
 			UserPoint.bCutCount = 1;
 
 		UserPoint.dwSend = -1;
 
-		m_pDataManage->m_TCPSocket.SendDataBatch(&UserPoint,sizeof(UserPoint),MDM_GR_ROOM,ASS_GR_USER_POINT,0);
+		m_pDataManage->m_TCPSocket.SendDataBatch(&UserPoint, sizeof(UserPoint), MDM_GR_ROOM, ASS_GR_USER_POINT, 0);
 	}
 
 	//Õ½¼¨
@@ -1538,389 +1542,777 @@ bool CGameDesk::ChangeUserPointint64(__int64 *arPoint, bool *bCut, int nTaxIndex
 
 	return true;
 }
-bool CGameDesk::ChangeUserPointint64_IsJoin(__int64 *arPoint, bool *bCut,bool *IsJoin, int nTaxIndex,int iCount)
+bool CGameDesk::ChangeUserPointint64_IsJoin(__int64 *arPoint, bool *bCut, bool *IsJoin, int nTaxIndex, int iCount)
 {
-    /// ¼ÆËã±¾¾ÖÓÎÏ·Ó®¼ÒËùÓ®½ð±ÒµÄ×ÜºÍ
-    /// ¼ÆËã±¾¾ÖÓÎÏ·Êä¼ÒËùÊä½ð±ÒµÄ×ÜºÍ
-    /// ÅÐ¶ÏÃ¿¸öÊä¼ÒÉíÉÏµÄ½ð±ÒÊÇ·ñ×ã¹»Êä
-    /// ÈôÓÐÊä¼Ò½ð±Ò²»¹»Ö§¸¶£¬ÔòÓ®¼ÒÒªÏàÓ¦¼õÉÙËùµÃ
-    /// ¸üÐÂm_pInfoÀï¸÷Íæ¼ÒÊý¾Ý£¬¹©ÓÎÏ·ÖÐ¶ÁÈ¡µ½ÕýÈ·µÄÖµ
-    /// Í³Ò»°ÑËùÓÐÍæ¼ÒµÄ½áËã½á¹û´æÈëÊý¾Ý¿â
-    /// ·¢ËÍÏûÏ¢µ½¿Í»§¶Ë£¬±íÊ¾ÓÐÈËÊäÇ®»òÓ®Ç®ÁË
+	/// ¼ÆËã±¾¾ÖÓÎÏ·Ó®¼ÒËùÓ®½ð±ÒµÄ×ÜºÍ
+	/// ¼ÆËã±¾¾ÖÓÎÏ·Êä¼ÒËùÊä½ð±ÒµÄ×ÜºÍ
+	/// ÅÐ¶ÏÃ¿¸öÊä¼ÒÉíÉÏµÄ½ð±ÒÊÇ·ñ×ã¹»Êä
+	/// ÈôÓÐÊä¼Ò½ð±Ò²»¹»Ö§¸¶£¬ÔòÓ®¼ÒÒªÏàÓ¦¼õÉÙËùµÃ
+	/// ¸üÐÂm_pInfoÀï¸÷Íæ¼ÒÊý¾Ý£¬¹©ÓÎÏ·ÖÐ¶ÁÈ¡µ½ÕýÈ·µÄÖµ
+	/// Í³Ò»°ÑËùÓÐÍæ¼ÒµÄ½áËã½á¹û´æÈëÊý¾Ý¿â
+	/// ·¢ËÍÏûÏ¢µ½¿Í»§¶Ë£¬±íÊ¾ÓÐÈËÊäÇ®»òÓ®Ç®ÁË
 
-    if (m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST)
-    {
-        return ChangeUserPointContest(arPoint, bCut, nTaxIndex);
-    }
+	if (m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST)
+	{
+		return ChangeUserPointContest(arPoint, bCut, nTaxIndex);
+	}
 
-    m_tEndTime = CTime::GetCurrentTime();
+	m_tEndTime = CTime::GetCurrentTime();
 
-    /// È¡µ±Ç°Ê±¼ä
-    CString stime;
-    stime.Format("%d",CTime::GetCurrentTime());
-    int curtime=atoi(stime);
+	/// È¡µ±Ç°Ê±¼ä
+	CString stime;
+	stime.Format("%d", CTime::GetCurrentTime());
+	int curtime = atoi(stime);
 
-    /// ÊÇ·ñÎª´ó¼Ò¶¼Òª½»Ì¨·ÑµÄ·¿¼ä¹æÔò£¬Ò»°ã¶¼ÎªÓ®¼Ò½»Ì¨·Ñ
-    bool bIsAllNeedTax = (m_pDataManage->m_InitData.dwRoomRule & GRR_ALL_NEED_TAX) > 0;
-    bool bTaxMain = false; ///< ÊÇ·ñÖ»ÊÇ×¯¼Ò¿ÛË°¡£
+	/// ÊÇ·ñÎª´ó¼Ò¶¼Òª½»Ì¨·ÑµÄ·¿¼ä¹æÔò£¬Ò»°ã¶¼ÎªÓ®¼Ò½»Ì¨·Ñ
+	bool bIsAllNeedTax = (m_pDataManage->m_InitData.dwRoomRule & GRR_ALL_NEED_TAX) > 0;
+	bool bTaxMain = false; ///< ÊÇ·ñÖ»ÊÇ×¯¼Ò¿ÛË°¡£
 
-    bool bNotCostPoint = (m_pDataManage->m_InitData.dwRoomRule & GRR_NOT_COST_POINT) > 0; /// ½ð±Ò³¡²»¿Û»ý·Ö
+	bool bNotCostPoint = (m_pDataManage->m_InitData.dwRoomRule & GRR_NOT_COST_POINT) > 0; /// ½ð±Ò³¡²»¿Û»ý·Ö
 
-    BYTE i=0;	///< Ñ­»·±äÁ¿
+	BYTE i = 0;	///< Ñ­»·±äÁ¿
 
-    /// ÊäµÄ×Ü·ÖºÍ½ð±Ò
-    __int64 i64TotalLosePoint = 0;
-    __int64 i64TotalWinPoint = 0;
-    __int64 i64TotalLoseMoney = 0;
-    __int64 i64TotalWinMoney = 0;
+	/// ÊäµÄ×Ü·ÖºÍ½ð±Ò
+	__int64 i64TotalLosePoint = 0;
+	__int64 i64TotalWinPoint = 0;
+	__int64 i64TotalLoseMoney = 0;
+	__int64 i64TotalWinMoney = 0;
 
-    /// Êµ¼ÊÍæ¼ÒÓÐ¶àÉÙ
-    int nTotalPlayerCount = 0;
-    /// ¶ÏÏßÍæ¼ÒÊÇÄÄ¸ö
-    BYTE bCutDeskStation = 255;
+	/// Êµ¼ÊÍæ¼ÒÓÐ¶àÉÙ
+	int nTotalPlayerCount = 0;
+	/// ¶ÏÏßÍæ¼ÒÊÇÄÄ¸ö
+	BYTE bCutDeskStation = 255;
 
-    for (i=0; i<m_bMaxPeople; ++i)
-    {
-        if (m_pUserInfo[i] == NULL)
-            continue;
-        ++nTotalPlayerCount;
-        if (bCut[i])
-        {
-            bCutDeskStation = i;
-        }
+	for (i = 0; i < m_bMaxPeople; ++i)
+	{
+		if (m_pUserInfo[i] == NULL)
+			continue;
+		++nTotalPlayerCount;
+		if (bCut[i])
+		{
+			bCutDeskStation = i;
+		}
 
-        if (!bTaxMain && nTaxIndex>=0)
-        {
-            if (i == nTaxIndex) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
-            {
-                bTaxMain = true;
-            }
-        }
+		if (!bTaxMain && nTaxIndex >= 0)
+		{
+			if (i == nTaxIndex) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
+			{
+				bTaxMain = true;
+			}
+		}
 
-    }
-
-    __int64 arLoseMoney[MAX_PEOPLE];
-    __int64 arTaxCount[MAX_PEOPLE];
-    ZeroMemory(arLoseMoney, sizeof(arLoseMoney));
-    ZeroMemory(arTaxCount, sizeof(arTaxCount));
-    /// ÓÃ»§IDÊý×é
-    long arUserID[MAX_PEOPLE];
-    ZeroMemory(arUserID, sizeof(arUserID));
-    long arLogonTime[MAX_PEOPLE];
-    ZeroMemory(arLogonTime, sizeof(arLogonTime));
-    /// ÊÇ·ñÓÐÈË²»¹»Ç®
-    bool bSomeOneNoEnoughMoney = false;
-
-    __int64 i64Tmp = 1;	/// ÎªÁË·ÀÖ¹ÉÏÒç£¬ÒýÈëÒ»¸öint64ÀàÐÍµÄÊý£¬ÃâµÃÐ´ºÃ¶à¸öÇ¿ÖÆÀàÐÍ×ª»»
-
-    long int dwNowTime=(long int)time(NULL);
-
-    if (m_pDataManage->m_nRate < 100)
-    {
-        m_pDataManage->m_nRate = 100;
-    }
-
-    /// ½ð±Ò³¡²ÅÐèÒª¼ÆËã£¬
-    /// ¸ù¾ÝÓ¦Êä»ý·Ö£¬¼ÆËãÓ¦ÊäÍæ¼ÒÓ¦ÊäµÄÇ®£¬Í¬Ê±¿¼ÂÇÉíÉÏµÄÇ®ÊÇ·ñ¹»Ö§¸¶
-    if(m_pDataManage->m_InitData.uComType == TY_MONEY_GAME )
-    {
-        for (i=0; i<m_bMaxPeople; ++i)
-        {
-            if ((NULL==m_pUserInfo[i] || (m_bIsMidEnter[i]==true)&&m_pDataManage->m_InitData.uDeskType!=DESK_TYPE_BJL)||IsJoin[i]==false)
-            {
-                continue;
-            }
-            WriteLog("UserID=%d,arPoint[%d]=%I64d",m_pUserInfo[i]->m_UserData.dwUserID,i,arPoint[i]);
-            /// ¼ÆËãÓ¦ÊäÕß½ð±ÒÊÇ·ñ¹»
-            if (arPoint[i]<=0)
-            {	
-                arLoseMoney[i] = arPoint[i]*m_DeskBasePoint;	///< ¸ÃÊýÎª¸ºÊý
-                /// ÊÇ²»ÊÇ´ó¼Ò¶¼Òª¿ÛË°£¬ÎÞÂÛÊäÓ®
-                if (bIsAllNeedTax && (m_pDataManage->m_InitData.uTax>0) && (nTaxIndex < 0 || nTaxIndex == i))
-                {
-                    arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
-                    arLoseMoney[i] -= arTaxCount[i];
-                }
-
-                /// ¼ì²é¸ÃÍæ¼ÒµÄÇ®ÊÇ·ñÒÑ¾­²»¹»ÁË
-                if (m_pUserInfo[i]->m_UserData.i64Money < (0-arLoseMoney[i])&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY)) ///<Ç®²»¹»ÊäÁË
-                {
-                    bSomeOneNoEnoughMoney = true;
-                    if (m_pUserInfo[i]->m_UserData.i64Money <= 0) ///<ÕâÖÖÇé¿öÓ¦¸Ã²»»á³öÏÖ
-                    {
-                        arLoseMoney[i] = 0;	///< Ò»·ÖÇ®¶¼Ã»ÓÐÁË
-                    }
-                    else
-                    {
-                        arLoseMoney[i] = 0-m_pUserInfo[i]->m_UserData.i64Money; ///< °ÑÍæ¼ÒÉíÉÏµÄÇ®¶¼¿Û¹â
-                    }
-                }
-                /// ×Ü¹²ÊäµÄ·ÖÊýºÍÇ®Êý£¬Èç¹ûÓÐÈË²»¹»Ç®£¬ÓÃÀ´¼ÆËãÓ®¼Ò·ÖÅäÇ®µÄ±ÈÀý
-                i64TotalLosePoint -= arPoint[i];
-                i64TotalLoseMoney -= arLoseMoney[i];
-            }
-        }
-    }
-
-    /// ËùÓÐÊä¼Ò¸ÃÊäµÄ½ð±Ò¶¼ÒÑ¾­È·¶¨£¬¿ÉÒÔ¿ªÊ¼¼ÆËãÓ®¼ÒµÄÊÕÈëÁË
-    for (i=0; i<m_bMaxPeople; ++i)
-    {
-        if (NULL==m_pUserInfo[i]||IsJoin[i]==false)
-        {
-            continue;
-        }
-        arUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID; ///<°ÑÓÐÐ§Íæ¼ÒµÄdwUsreID·Åµ½Êý×éÖÐ
-        arLogonTime[i] = m_pUserInfo[i]->m_dwLogonTime; ///<°ÑÓÐÐ§Íæ¼ÒµÄµÇÂ¼Ê±¼ä·Åµ½Êý×éÖÐ
-        /// Ó®Ç®µÄÐèÒªÖØÐÂ¼ÆËã£¬Êä¼ÒÒÑ¾­¼ÆËã¹ýÁË
-        if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i]>0) && !bTaxMain)
-        {
-            /// ÅÐ¶ÏÊÇ·ñÓÐÍæ¼Ò²»¹»Ç®£¬ÈôÓÐ£¬ÔòÓ®²»ÁËÕâÃ´¶àÇ®
-            if (bSomeOneNoEnoughMoney)
-            {
-
-                if (i64TotalLosePoint != 0)
-                    arLoseMoney[i] = i64TotalLoseMoney*arPoint[i]/i64TotalLosePoint;
-                else
-                    arLoseMoney[i] = 0;
-            }
-            else
-            {
-                arLoseMoney[i] = arPoint[i]*m_DeskBasePoint;
-            }
-            i64Tmp = 1;
-            /// ¼ÆËãºÃ¸ÃÓ®½ð¶îºó£¬¿ÛË°
-            /// ´ó¼Ò¶¼½»
-            if (bIsAllNeedTax)
-            {
-                if (m_pDataManage->m_InitData.uTax>0)
-                {
-                    arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
-                    arLoseMoney[i] -= arTaxCount[i];
-
-                }
-            }
-            else
-            {
-                if ((m_pDataManage->m_InitData.uTax>0) && (arLoseMoney[i]>=2))
-                {	
-                    arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax/m_pDataManage->m_nRate;
-                    arLoseMoney[i] -= arTaxCount[i];
-                }
-            }
-        }
-        else if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i]>0) && bTaxMain)///< Ö»¿Û¸ÃÍæ¼ÒµÄË°
-        {
-
-            /// ÅÐ¶ÏÊÇ·ñÓÐÍæ¼Ò²»¹»Ç®£¬ÈôÓÐ£¬ÔòÓ®²»ÁËÕâÃ´¶àÇ®
-            if (bSomeOneNoEnoughMoney)
-            {
-
-                if (i64TotalLosePoint != 0)
-                    arLoseMoney[i] = i64TotalLoseMoney*arPoint[i]/i64TotalLosePoint;
-                else
-                    arLoseMoney[i] = 0;
-
-            }
-
-            else
-            {
-                arLoseMoney[i] = arPoint[i]*m_DeskBasePoint;
-            }
-            i64Tmp = 1;
-            if (bIsAllNeedTax && i == nTaxIndex)
-            {
-                if (m_pDataManage->m_InitData.uTax>0)
-                {
-                    arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
-
-                    arLoseMoney[i] -= arTaxCount[i];
-
-                }
-            }
-            else
-            {
-
-                if (i == nTaxIndex && m_pDataManage->m_InitData.uTax>0) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
-                {
-                    if (arLoseMoney[i] >= 2)
-                    {
-                        arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax/m_pDataManage->m_nRate;
-
-                        arLoseMoney[i] -= arTaxCount[i];
-                    }
-                }
-            }
-        }
-        /// ¸ø³ÉÔ±±äÁ¿¸³Öµ
-        m_dwTaxCom[i] = arTaxCount[i];
-
-        if(bNotCostPoint)		//½ð±Ò³¡²»¿Û»ý·Ö
-        {
-            m_dwChangePoint[i] = 0;
-        }
-        else
-        {
-            m_dwChangePoint[i] = arPoint[i];
-        }
-
-        /// ¸üÐÂm_pUserInfoÀïµÄÊý¾Ý
-        m_pUserInfo[i]->ChangePoint(m_dwChangePoint[i], m_dwTaxCom[i], arPoint[i]>0, arPoint[i]<0,arPoint[i]==0, bCut[i], dwNowTime-m_dwBeginTime, arLoseMoney[i],m_bIsBuy);
-
-        /// ¾­¹ýÔÙ´ÎÅÐ¶Ïºó£¬ÔÙ¸³Öµ¸ø½áËã
-        m_dwChangeMoney[i] = arLoseMoney[i];
-    }
-    /// Í³Ò»°ÑËùÓÐÍæ¼ÒµÄ½áËã½á¹û´æÈëÊý¾Ý¿â
-
-    /// ÔÚÉÏÃæµÄÑ­»·ÖÐÒÑ¾­Í³¼Æ¹ýÍæ¼ÒÈËÊýnTotalPlayerCount
-    UpdateUserInfo_t *pUpdateUserInfo = NULL;
-    int nIndex=0;
+	}
 
 
-    pUpdateUserInfo = new UpdateUserInfo_t[nTotalPlayerCount];
-    for (i=0; i<m_bMaxPeople; ++i)
-    {
-        if (NULL == m_pUserInfo[i]||IsJoin[i]==false)
-        {
-            continue;
-        }
-        //½áËãÖ®ºó£¬½ð±Ò²»×ã·¿¼äÏÂÏÞ£¬×Ô¶¯ÔùËÍ 
-        __int64 i64Money = m_pUserInfo[i]->m_UserData.i64Money + m_pUserInfo[i]->m_UserData.i64Bank;
-        if(m_pDataManage->m_InitData.bSendAlms && (i64Money <= m_pDataManage->m_InitData.iAlmsMinMoney)
-            && (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
-            && !(m_pDataManage->m_InitData.dwRoomRule&GRR_EXPERCISE_ROOM))
-        {
-            pUpdateUserInfo[nIndex].bISAutoSendMoney = true;
-        }
 
-        /// °´´ÎÐò¸³Öµ
-        pUpdateUserInfo[nIndex].dwUserID			= m_pUserInfo[i]->m_UserData.dwUserID;
-        pUpdateUserInfo[nIndex].dwOnLineTimeCount	= dwNowTime-m_pUserInfo[i]->m_dwLogonTime;
-        __int64 iPoint = arPoint[i];
+	__int64 arLoseMoney[MAX_PEOPLE];
+	__int64 arTaxCount[MAX_PEOPLE];
+	ZeroMemory(arLoseMoney, sizeof(arLoseMoney));
+	ZeroMemory(arTaxCount, sizeof(arTaxCount));
+	/// ÓÃ»§IDÊý×é
+	long arUserID[MAX_PEOPLE];
+	ZeroMemory(arUserID, sizeof(arUserID));
+	long arLogonTime[MAX_PEOPLE];
+	ZeroMemory(arLogonTime, sizeof(arLogonTime));
+	/// ÊÇ·ñÓÐÈË²»¹»Ç®
+	bool bSomeOneNoEnoughMoney = false;
 
-        if (bNotCostPoint)//½ð±Ò³¡²»¿Û»ý·Ö
-        {
-            pUpdateUserInfo[nIndex].dwChangePoint = 0;
-        }
-        else 
-        {
+	__int64 i64Tmp = 1;	/// ÎªÁË·ÀÖ¹ÉÏÒç£¬ÒýÈëÒ»¸öint64ÀàÐÍµÄÊý£¬ÃâµÃÐ´ºÃ¶à¸öÇ¿ÖÆÀàÐÍ×ª»»
+
+	long int dwNowTime = (long int)time(NULL);
+
+	if (m_pDataManage->m_nRate < 100)
+	{
+		m_pDataManage->m_nRate = 100;
+	}
+
+	/// ½ð±Ò³¡²ÅÐèÒª¼ÆËã£¬
+	/// ¸ù¾ÝÓ¦Êä»ý·Ö£¬¼ÆËãÓ¦ÊäÍæ¼ÒÓ¦ÊäµÄÇ®£¬Í¬Ê±¿¼ÂÇÉíÉÏµÄÇ®ÊÇ·ñ¹»Ö§¸¶
+	if (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
+	{
+		for (i = 0; i < m_bMaxPeople; ++i)
+		{
+			if ((NULL == m_pUserInfo[i] || (m_bIsMidEnter[i] == true) && m_pDataManage->m_InitData.uDeskType != DESK_TYPE_BJL) || IsJoin[i] == false)
+			{
+				continue;
+			}
+			WriteLog("UserID=%d,arPoint[%d]=%I64d", m_pUserInfo[i]->m_UserData.dwUserID, i, arPoint[i]);
+			/// ¼ÆËãÓ¦ÊäÕß½ð±ÒÊÇ·ñ¹»
+			if (arPoint[i] <= 0)
+			{
+				arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;	///< ¸ÃÊýÎª¸ºÊý
+				/// ÊÇ²»ÊÇ´ó¼Ò¶¼Òª¿ÛË°£¬ÎÞÂÛÊäÓ®
+				if (bIsAllNeedTax && (m_pDataManage->m_InitData.uTax > 0) && (nTaxIndex < 0 || nTaxIndex == i))
+				{
+					arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
+					arLoseMoney[i] -= arTaxCount[i];
+				}
+
+				/// ¼ì²é¸ÃÍæ¼ÒµÄÇ®ÊÇ·ñÒÑ¾­²»¹»ÁË
+				if (m_pUserInfo[i]->m_UserData.i64Money < (0 - arLoseMoney[i]) && !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY)) ///<Ç®²»¹»ÊäÁË
+				{
+					bSomeOneNoEnoughMoney = true;
+					if (m_pUserInfo[i]->m_UserData.i64Money <= 0) ///<ÕâÖÖÇé¿öÓ¦¸Ã²»»á³öÏÖ
+					{
+						arLoseMoney[i] = 0;	///< Ò»·ÖÇ®¶¼Ã»ÓÐÁË
+					}
+					else
+					{
+						arLoseMoney[i] = 0 - m_pUserInfo[i]->m_UserData.i64Money; ///< °ÑÍæ¼ÒÉíÉÏµÄÇ®¶¼¿Û¹â
+					}
+				}
+				/// ×Ü¹²ÊäµÄ·ÖÊýºÍÇ®Êý£¬Èç¹ûÓÐÈË²»¹»Ç®£¬ÓÃÀ´¼ÆËãÓ®¼Ò·ÖÅäÇ®µÄ±ÈÀý
+				i64TotalLosePoint -= arPoint[i];
+				i64TotalLoseMoney -= arLoseMoney[i];
+			}
+		}
+	}
+
+	/// ËùÓÐÊä¼Ò¸ÃÊäµÄ½ð±Ò¶¼ÒÑ¾­È·¶¨£¬¿ÉÒÔ¿ªÊ¼¼ÆËãÓ®¼ÒµÄÊÕÈëÁË
+	for (i = 0; i < m_bMaxPeople; ++i)
+	{
+		if (NULL == m_pUserInfo[i] || IsJoin[i] == false)
+		{
+			continue;
+		}
+		arUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID; ///<°ÑÓÐÐ§Íæ¼ÒµÄdwUsreID·Åµ½Êý×éÖÐ
+		arLogonTime[i] = m_pUserInfo[i]->m_dwLogonTime; ///<°ÑÓÐÐ§Íæ¼ÒµÄµÇÂ¼Ê±¼ä·Åµ½Êý×éÖÐ
+		/// Ó®Ç®µÄÐèÒªÖØÐÂ¼ÆËã£¬Êä¼ÒÒÑ¾­¼ÆËã¹ýÁË
+		if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i] > 0) && !bTaxMain)
+		{
+			/// ÅÐ¶ÏÊÇ·ñÓÐÍæ¼Ò²»¹»Ç®£¬ÈôÓÐ£¬ÔòÓ®²»ÁËÕâÃ´¶àÇ®
+			if (bSomeOneNoEnoughMoney)
+			{
+
+				if (i64TotalLosePoint != 0)
+					arLoseMoney[i] = i64TotalLoseMoney * arPoint[i] / i64TotalLosePoint;
+				else
+					arLoseMoney[i] = 0;
+			}
+			else
+			{
+				arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;
+			}
+			i64Tmp = 1;
+			/// ¼ÆËãºÃ¸ÃÓ®½ð¶îºó£¬¿ÛË°
+			/// ´ó¼Ò¶¼½»
+			if (bIsAllNeedTax)
+			{
+				if (m_pDataManage->m_InitData.uTax > 0)
+				{
+					arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
+					arLoseMoney[i] -= arTaxCount[i];
+
+				}
+			}
+			else
+			{
+				if ((m_pDataManage->m_InitData.uTax > 0) && (arLoseMoney[i] >= 2))
+				{
+					arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax / m_pDataManage->m_nRate;
+					arLoseMoney[i] -= arTaxCount[i];
+				}
+			}
+		}
+		else if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i] > 0) && bTaxMain)///< Ö»¿Û¸ÃÍæ¼ÒµÄË°
+		{
+
+			/// ÅÐ¶ÏÊÇ·ñÓÐÍæ¼Ò²»¹»Ç®£¬ÈôÓÐ£¬ÔòÓ®²»ÁËÕâÃ´¶àÇ®
+			if (bSomeOneNoEnoughMoney)
+			{
+
+				if (i64TotalLosePoint != 0)
+					arLoseMoney[i] = i64TotalLoseMoney * arPoint[i] / i64TotalLosePoint;
+				else
+					arLoseMoney[i] = 0;
+
+			}
+
+			else
+			{
+				arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;
+			}
+			i64Tmp = 1;
+			if (bIsAllNeedTax && i == nTaxIndex)
+			{
+				if (m_pDataManage->m_InitData.uTax > 0)
+				{
+					arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
+
+					arLoseMoney[i] -= arTaxCount[i];
+
+				}
+			}
+			else
+			{
+
+				if (i == nTaxIndex && m_pDataManage->m_InitData.uTax > 0) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
+				{
+					if (arLoseMoney[i] >= 2)
+					{
+						arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax / m_pDataManage->m_nRate;
+
+						arLoseMoney[i] -= arTaxCount[i];
+					}
+				}
+			}
+		}
+		/// ¸ø³ÉÔ±±äÁ¿¸³Öµ
+		m_dwTaxCom[i] = arTaxCount[i];
+
+		if (bNotCostPoint)		//½ð±Ò³¡²»¿Û»ý·Ö
+		{
+			m_dwChangePoint[i] = 0;
+		}
+		else
+		{
+			m_dwChangePoint[i] = arPoint[i];
+		}
+
+		/// ¸üÐÂm_pUserInfoÀïµÄÊý¾Ý
+		m_pUserInfo[i]->ChangePoint(m_dwChangePoint[i], m_dwTaxCom[i], arPoint[i] > 0, arPoint[i] < 0, arPoint[i] == 0, bCut[i], dwNowTime - m_dwBeginTime, arLoseMoney[i], m_bIsBuy);
+
+		/// ¾­¹ýÔÙ´ÎÅÐ¶Ïºó£¬ÔÙ¸³Öµ¸ø½áËã
+		m_dwChangeMoney[i] = arLoseMoney[i];
+	}
+	/// Í³Ò»°ÑËùÓÐÍæ¼ÒµÄ½áËã½á¹û´æÈëÊý¾Ý¿â
+
+	/// ÔÚÉÏÃæµÄÑ­»·ÖÐÒÑ¾­Í³¼Æ¹ýÍæ¼ÒÈËÊýnTotalPlayerCount
+	UpdateUserInfo_t *pUpdateUserInfo = NULL;
+	int nIndex = 0;
+
+
+	pUpdateUserInfo = new UpdateUserInfo_t[nTotalPlayerCount];
+	for (i = 0; i < m_bMaxPeople; ++i)
+	{
+		if (NULL == m_pUserInfo[i] || IsJoin[i] == false)
+		{
+			continue;
+		}
+		//½áËãÖ®ºó£¬½ð±Ò²»×ã·¿¼äÏÂÏÞ£¬×Ô¶¯ÔùËÍ 
+		__int64 i64Money = m_pUserInfo[i]->m_UserData.i64Money + m_pUserInfo[i]->m_UserData.i64Bank;
+		if (m_pDataManage->m_InitData.bSendAlms && (i64Money <= m_pDataManage->m_InitData.iAlmsMinMoney)
+			&& (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
+			&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_EXPERCISE_ROOM))
+		{
+			pUpdateUserInfo[nIndex].bISAutoSendMoney = true;
+		}
+
+		/// °´´ÎÐò¸³Öµ
+		pUpdateUserInfo[nIndex].dwUserID = m_pUserInfo[i]->m_UserData.dwUserID;
+		pUpdateUserInfo[nIndex].dwOnLineTimeCount = dwNowTime - m_pUserInfo[i]->m_dwLogonTime;
+		__int64 iPoint = arPoint[i];
+
+		if (bNotCostPoint)//½ð±Ò³¡²»¿Û»ý·Ö
+		{
+			pUpdateUserInfo[nIndex].dwChangePoint = 0;
+		}
+		else
+		{
 			//Ð´Èë»ý·ÖµÄµã
-            pUpdateUserInfo[nIndex].dwChangePoint = iPoint;
-        }
+			pUpdateUserInfo[nIndex].dwChangePoint = iPoint;
+		}
 
-        pUpdateUserInfo[nIndex].dwChangeMoney = arLoseMoney[i];
-        pUpdateUserInfo[nIndex].dwChangeTaxCom = m_dwTaxCom[i];
+		pUpdateUserInfo[nIndex].dwChangeMoney = arLoseMoney[i];
+		pUpdateUserInfo[nIndex].dwChangeTaxCom = m_dwTaxCom[i];
 
-        if (arPoint[i]==0)
-        {
-            pUpdateUserInfo[nIndex].uMidCount = 1;
-        }
-        else if (arPoint[i]>0)
-        {
-            pUpdateUserInfo[nIndex].uWinCount = 1;
-        }
-        else
-        {
-            pUpdateUserInfo[nIndex].uLostCount = 1;
-        }
+		if (arPoint[i] == 0)
+		{
+			pUpdateUserInfo[nIndex].uMidCount = 1;
+		}
+		else if (arPoint[i] > 0)
+		{
+			pUpdateUserInfo[nIndex].uWinCount = 1;
+		}
+		else
+		{
+			pUpdateUserInfo[nIndex].uLostCount = 1;
+		}
 
-        pUpdateUserInfo[nIndex].uCutCount = bCut[i]? 1 : 0;
-        ++nIndex;
-    }
-
-
-    /// ÅúÁ¿¸üÐÂÓÃ»§Êý¾Ý
-    UpdateAllUserInfo(pUpdateUserInfo, nTotalPlayerCount, m_tEndTime.GetTime() - m_tBeginTime.GetTime());
+		pUpdateUserInfo[nIndex].uCutCount = bCut[i] ? 1 : 0;
+		++nIndex;
+	}
 
 
-    m_dwTax = 0;
-    /// ·¢ËÍÓÃ»§¸ü¸ÄÊý¾Ýµ½¿Í»§¶Ë
-
-    for (i=0; i<m_bMaxPeople; ++i)
-    {
-        if (NULL == m_pUserInfo[i]||IsJoin[i]==false)
-        {
-            continue;
-        }
-
-        m_dwTax += m_dwTaxCom[i];
-
-        m_pUserInfo[i]->m_dwLogonTime=(long int)time(NULL);
-        //·¢ËÍÏûÏ¢
-        MSG_GR_R_UserPoint UserPoint;
-        ZeroMemory(&UserPoint, sizeof(UserPoint));
-        UserPoint.dwUserID = m_pUserInfo[i]->m_UserData.dwUserID;
-        UserPoint.dwPoint = arPoint[i];
-
-        if (bNotCostPoint)
-        {
-            UserPoint.dwPoint = 0;
-        }
-
-        UserPoint.dwMoney = arLoseMoney[i];
+	/// ÅúÁ¿¸üÐÂÓÃ»§Êý¾Ý
+	UpdateAllUserInfo(pUpdateUserInfo, nTotalPlayerCount, m_tEndTime.GetTime() - m_tBeginTime.GetTime());
 
 
-        if (arPoint[i] > 0)
-            UserPoint.bWinCount = 1;
+	m_dwTax = 0;
+	/// ·¢ËÍÓÃ»§¸ü¸ÄÊý¾Ýµ½¿Í»§¶Ë
 
-        if (arPoint[i] < 0)
-        {
-            UserPoint.bLostCount = 1;
-        }
+	for (i = 0; i < m_bMaxPeople; ++i)
+	{
+		if (NULL == m_pUserInfo[i] || IsJoin[i] == false)
+		{
+			continue;
+		}
 
-        if (arPoint[i] == 0) 
-            UserPoint.bMidCount = 1;
+		m_dwTax += m_dwTaxCom[i];
 
-        if (bCut[i] == true) 
-            UserPoint.bCutCount = 1;
+		m_pUserInfo[i]->m_dwLogonTime = (long int)time(NULL);
+		//·¢ËÍÏûÏ¢
+		MSG_GR_R_UserPoint UserPoint;
+		ZeroMemory(&UserPoint, sizeof(UserPoint));
+		UserPoint.dwUserID = m_pUserInfo[i]->m_UserData.dwUserID;
+		UserPoint.dwPoint = arPoint[i];
 
-        UserPoint.dwSend = -1;
+		if (bNotCostPoint)
+		{
+			UserPoint.dwPoint = 0;
+		}
 
-        m_pDataManage->m_TCPSocket.SendDataBatch(&UserPoint,sizeof(UserPoint),MDM_GR_ROOM,ASS_GR_USER_POINT,0);
-    }
+		UserPoint.dwMoney = arLoseMoney[i];
 
-    //Õ½¼¨
-    if ((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY) && m_bIsBuy)
-    {
-        m_iRunGameCount++;
-    }
-    //±£´æÕ½¼¨
-    UpdateGameRecord(arPoint);
 
-    return true;
+		if (arPoint[i] > 0)
+			UserPoint.bWinCount = 1;
+
+		if (arPoint[i] < 0)
+		{
+			UserPoint.bLostCount = 1;
+		}
+
+		if (arPoint[i] == 0)
+			UserPoint.bMidCount = 1;
+
+		if (bCut[i] == true)
+			UserPoint.bCutCount = 1;
+
+		UserPoint.dwSend = -1;
+
+		m_pDataManage->m_TCPSocket.SendDataBatch(&UserPoint, sizeof(UserPoint), MDM_GR_ROOM, ASS_GR_USER_POINT, 0);
+	}
+
+	//Õ½¼¨
+	if ((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY) && m_bIsBuy)
+	{
+		m_iRunGameCount++;
+	}
+	//±£´æÕ½¼¨
+	UpdateGameRecord(arPoint);
+
+	return true;
 }
+
+
+//20190506 ¶àÈËÓÎÏ·ÏÈÍ³¼ÆÓ®ÇøÓò³ïÂë
+bool CGameDesk::ChangeUserPointint64_IsJoin_hunderd(__int64 *arPoint, bool *bCut, bool *IsJoin, __int64 *losePoint, int nTaxIndex, int iCount)
+{
+	/// ¼ÆËã±¾¾ÖÓÎÏ·Ó®¼ÒËùÓ®½ð±ÒµÄ×ÜºÍ
+	/// ¼ÆËã±¾¾ÖÓÎÏ·Êä¼ÒËùÊä½ð±ÒµÄ×ÜºÍ
+	/// ÅÐ¶ÏÃ¿¸öÊä¼ÒÉíÉÏµÄ½ð±ÒÊÇ·ñ×ã¹»Êä
+	/// ÈôÓÐÊä¼Ò½ð±Ò²»¹»Ö§¸¶£¬ÔòÓ®¼ÒÒªÏàÓ¦¼õÉÙËùµÃ
+	/// ¸üÐÂm_pInfoÀï¸÷Íæ¼ÒÊý¾Ý£¬¹©ÓÎÏ·ÖÐ¶ÁÈ¡µ½ÕýÈ·µÄÖµ
+	/// Í³Ò»°ÑËùÓÐÍæ¼ÒµÄ½áËã½á¹û´æÈëÊý¾Ý¿â
+	/// ·¢ËÍÏûÏ¢µ½¿Í»§¶Ë£¬±íÊ¾ÓÐÈËÊäÇ®»òÓ®Ç®ÁË
+	FILE *fp = fopen("taxLog.txt", "a");
+	if (m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST)
+	{
+		return ChangeUserPointContest(arPoint, bCut, nTaxIndex);
+	}
+
+	m_tEndTime = CTime::GetCurrentTime();
+
+	/// È¡µ±Ç°Ê±¼ä
+	CString stime;
+	stime.Format("%d", CTime::GetCurrentTime());
+	int curtime = atoi(stime);
+
+	/// ÊÇ·ñÎª´ó¼Ò¶¼Òª½»Ì¨·ÑµÄ·¿¼ä¹æÔò£¬Ò»°ã¶¼ÎªÓ®¼Ò½»Ì¨·Ñ
+	bool bIsAllNeedTax = (m_pDataManage->m_InitData.dwRoomRule & GRR_ALL_NEED_TAX) > 0;
+	bool bTaxMain = false; ///< ÊÇ·ñÖ»ÊÇ×¯¼Ò¿ÛË°¡£
+
+	bool bNotCostPoint = (m_pDataManage->m_InitData.dwRoomRule & GRR_NOT_COST_POINT) > 0; /// ½ð±Ò³¡²»¿Û»ý·Ö
+
+	BYTE i = 0;	///< Ñ­»·±äÁ¿
+
+	/// ÊäµÄ×Ü·ÖºÍ½ð±Ò
+	__int64 i64TotalLosePoint = 0;
+	__int64 i64TotalWinPoint = 0;
+	__int64 i64TotalLoseMoney = 0;
+	__int64 i64TotalWinMoney = 0;
+
+	/// Êµ¼ÊÍæ¼ÒÓÐ¶àÉÙ
+	int nTotalPlayerCount = 0;
+	/// ¶ÏÏßÍæ¼ÒÊÇÄÄ¸ö
+	BYTE bCutDeskStation = 255;
+	fprintf(fp, "init\n");
+
+	for (i = 0; i < m_bMaxPeople; ++i)
+	{
+		if (m_pUserInfo[i] == NULL)
+			continue;
+
+		++nTotalPlayerCount;
+		if (bCut[i])
+		{
+			bCutDeskStation = i;
+		}
+
+		if (!bTaxMain && nTaxIndex >= 0)
+		{
+			if (i == nTaxIndex) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
+			{
+				bTaxMain = true;
+			}
+		}
+	}
+
+
+
+	__int64 arLoseMoney[MAX_PEOPLE];
+	__int64 arTaxCount[MAX_PEOPLE];
+	ZeroMemory(arLoseMoney, sizeof(arLoseMoney));
+	ZeroMemory(arTaxCount, sizeof(arTaxCount));
+	/// ÓÃ»§IDÊý×é
+	long arUserID[MAX_PEOPLE];
+	ZeroMemory(arUserID, sizeof(arUserID));
+	long arLogonTime[MAX_PEOPLE];
+	ZeroMemory(arLogonTime, sizeof(arLogonTime));
+	/// ÊÇ·ñÓÐÈË²»¹»Ç®
+	bool bSomeOneNoEnoughMoney = false;
+
+	__int64 i64Tmp = 1;	/// ÎªÁË·ÀÖ¹ÉÏÒç£¬ÒýÈëÒ»¸öint64ÀàÐÍµÄÊý£¬ÃâµÃÐ´ºÃ¶à¸öÇ¿ÖÆÀàÐÍ×ª»»
+
+	long int dwNowTime = (long int)time(NULL);
+
+	if (m_pDataManage->m_nRate < 100)
+	{
+		m_pDataManage->m_nRate = 100;
+	}
+
+	fprintf(fp, "m_nRate:%d\n", m_pDataManage->m_nRate);
+	fprintf(fp, "m_InitData.uComType:%d\n", m_pDataManage->m_InitData.uComType);
+	//fclose(fp);
+	/// ½ð±Ò³¡²ÅÐèÒª¼ÆËã£¬
+	/// ¸ù¾ÝÓ¦Êä»ý·Ö£¬¼ÆËãÓ¦ÊäÍæ¼ÒÓ¦ÊäµÄÇ®£¬Í¬Ê±¿¼ÂÇÉíÉÏµÄÇ®ÊÇ·ñ¹»Ö§¸¶
+	if (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
+	{
+		
+
+		for (i = 0; i < m_bMaxPeople; ++i)
+		{
+			if ((NULL == m_pUserInfo[i] || (m_bIsMidEnter[i] == true) && m_pDataManage->m_InitData.uDeskType != DESK_TYPE_BJL) || IsJoin[i] == false)
+			{
+				continue;
+			}
+			WriteLog("UserID=%d,arPoint[%d]=%I64d", m_pUserInfo[i]->m_UserData.dwUserID, i, arPoint[i]);
+			/// ¼ÆËãÓ¦ÊäÕß½ð±ÒÊÇ·ñ¹»
+			if (arPoint[i] <= 0)
+			{
+				arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;	///< ¸ÃÊýÎª¸ºÊý
+				/// ÊÇ²»ÊÇ´ó¼Ò¶¼Òª¿ÛË°£¬ÎÞÂÛÊäÓ®
+				if (bIsAllNeedTax && (m_pDataManage->m_InitData.uTax > 0) && (nTaxIndex < 0 || nTaxIndex == i))
+				{
+					arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
+					arLoseMoney[i] -= arTaxCount[i];
+				}
+
+				/// ¼ì²é¸ÃÍæ¼ÒµÄÇ®ÊÇ·ñÒÑ¾­²»¹»ÁË
+				if (m_pUserInfo[i]->m_UserData.i64Money < (0 - arLoseMoney[i]) && !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY)) ///<Ç®²»¹»ÊäÁË
+				{
+					bSomeOneNoEnoughMoney = true;
+					if (m_pUserInfo[i]->m_UserData.i64Money <= 0) ///<ÕâÖÖÇé¿öÓ¦¸Ã²»»á³öÏÖ
+					{
+						arLoseMoney[i] = 0;	///< Ò»·ÖÇ®¶¼Ã»ÓÐÁË
+					}
+					else
+					{
+						arLoseMoney[i] = 0 - m_pUserInfo[i]->m_UserData.i64Money; ///< °ÑÍæ¼ÒÉíÉÏµÄÇ®¶¼¿Û¹â
+					}
+				}
+				/// ×Ü¹²ÊäµÄ·ÖÊýºÍÇ®Êý£¬Èç¹ûÓÐÈË²»¹»Ç®£¬ÓÃÀ´¼ÆËãÓ®¼Ò·ÖÅäÇ®µÄ±ÈÀý
+				i64TotalLosePoint -= arPoint[i];
+				i64TotalLoseMoney -= arLoseMoney[i];
+			}
+		}
+	}
+
+	fprintf(fp, "bTaxMain%d\n", bTaxMain);
+	fprintf(fp, "bIsAllNeedTax:%d\n", bIsAllNeedTax);
+	//fclose(fp);
+	/// ËùÓÐÊä¼Ò¸ÃÊäµÄ½ð±Ò¶¼ÒÑ¾­È·¶¨£¬¿ÉÒÔ¿ªÊ¼¼ÆËãÓ®¼ÒµÄÊÕÈëÁË
+	for (i = 0; i < m_bMaxPeople; ++i)
+	{
+		if (NULL == m_pUserInfo[i] || IsJoin[i] == false)
+		{
+			continue;
+		}
+		arUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID; ///<°ÑÓÐÐ§Íæ¼ÒµÄdwUsreID·Åµ½Êý×éÖÐ
+		arLogonTime[i] = m_pUserInfo[i]->m_dwLogonTime; ///<°ÑÓÐÐ§Íæ¼ÒµÄµÇÂ¼Ê±¼ä·Åµ½Êý×éÖÐ
+		/// Ó®Ç®µÄÐèÒªÖØÐÂ¼ÆËã£¬Êä¼ÒÒÑ¾­¼ÆËã¹ýÁË
+		if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i] > 0) && !bTaxMain)
+		{
+			
+			//fprintf(fp, "bSomeOneNoEnoughMoney:%d\n", bSomeOneNoEnoughMoney);
+			fclose(fp);
+			/// ÅÐ¶ÏÊÇ·ñÓÐÍæ¼Ò²»¹»Ç®£¬ÈôÓÐ£¬ÔòÓ®²»ÁËÕâÃ´¶àÇ®
+			if (bSomeOneNoEnoughMoney)
+			{
+
+				if (i64TotalLosePoint != 0)
+					arLoseMoney[i] = i64TotalLoseMoney * arPoint[i] / i64TotalLosePoint;
+				else
+					arLoseMoney[i] = 0;
+			}
+			else
+			{
+				arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;
+			}
+
+
+
+			i64Tmp = 1;
+			/// ¼ÆËãºÃ¸ÃÓ®½ð¶îºó£¬¿ÛË°
+			/// ´ó¼Ò¶¼½»
+			if (bIsAllNeedTax)//Ì¨·Ñ
+			{
+				
+				if (m_pDataManage->m_InitData.uTax > 0)
+				{
+					arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
+					arLoseMoney[i] -= arTaxCount[i];
+
+				}
+			}
+			else
+			{
+				if ((m_pDataManage->m_InitData.uTax > 0) && (arLoseMoney[i] >= 2))
+				{
+					//mark
+					arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax / m_pDataManage->m_nRate;
+					arLoseMoney[i] -= arTaxCount[i];
+					//20190506´«³öÖµ //mark
+
+				}
+			}
+		}
+		else if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i] > 0) && bTaxMain)///< Ö»¿Û¸ÃÍæ¼ÒµÄË°
+		{
+
+			/// ÅÐ¶ÏÊÇ·ñÓÐÍæ¼Ò²»¹»Ç®£¬ÈôÓÐ£¬ÔòÓ®²»ÁËÕâÃ´¶àÇ®
+			if (bSomeOneNoEnoughMoney)
+			{
+
+				if (i64TotalLosePoint != 0)
+					arLoseMoney[i] = i64TotalLoseMoney * arPoint[i] / i64TotalLosePoint;
+				else
+					arLoseMoney[i] = 0;
+
+			}
+
+			else
+			{
+				arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;
+			}
+			i64Tmp = 1;
+			if (bIsAllNeedTax && i == nTaxIndex)
+			{
+				if (m_pDataManage->m_InitData.uTax > 0)
+				{
+					arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
+
+					arLoseMoney[i] -= arTaxCount[i];
+
+				}
+			}
+			else
+			{
+
+				if (i == nTaxIndex && m_pDataManage->m_InitData.uTax > 0) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
+				{
+					if (arLoseMoney[i] >= 2)
+					{
+						//mark
+						arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax / m_pDataManage->m_nRate;
+
+						arLoseMoney[i] -= arTaxCount[i];
+
+						arPoint[i] = arLoseMoney[i];
+
+
+
+					}
+				}
+			}
+		}
+		/// ¸ø³ÉÔ±±äÁ¿¸³Öµ
+		m_dwTaxCom[i] = arTaxCount[i];
+
+		//20190506 ¿ÛÍêË°ÔÙ¿ÛÊäÇ®ÇøÓò
+		arLoseMoney[i] -= losePoint[i];
+		arPoint[i] = arLoseMoney[i];
+
+		if (bNotCostPoint)		//½ð±Ò³¡²»¿Û»ý·Ö
+		{
+			m_dwChangePoint[i] = 0;
+		}
+		else
+		{
+			m_dwChangePoint[i] = arPoint[i];
+		}
+
+		/// ¸üÐÂm_pUserInfoÀïµÄÊý¾Ý
+		m_pUserInfo[i]->ChangePoint(m_dwChangePoint[i], m_dwTaxCom[i], arPoint[i] > 0, arPoint[i] < 0, arPoint[i] == 0, bCut[i], dwNowTime - m_dwBeginTime, arLoseMoney[i], m_bIsBuy);
+
+		/// ¾­¹ýÔÙ´ÎÅÐ¶Ïºó£¬ÔÙ¸³Öµ¸ø½áËã
+		m_dwChangeMoney[i] = arLoseMoney[i];
+	}
+	/// Í³Ò»°ÑËùÓÐÍæ¼ÒµÄ½áËã½á¹û´æÈëÊý¾Ý¿â
+
+	/// ÔÚÉÏÃæµÄÑ­»·ÖÐÒÑ¾­Í³¼Æ¹ýÍæ¼ÒÈËÊýnTotalPlayerCount
+	UpdateUserInfo_t *pUpdateUserInfo = NULL;
+	int nIndex = 0;
+
+
+	pUpdateUserInfo = new UpdateUserInfo_t[nTotalPlayerCount];
+	for (i = 0; i < m_bMaxPeople; ++i)
+	{
+		if (NULL == m_pUserInfo[i] || IsJoin[i] == false)
+		{
+			continue;
+		}
+		//½áËãÖ®ºó£¬½ð±Ò²»×ã·¿¼äÏÂÏÞ£¬×Ô¶¯ÔùËÍ 
+		__int64 i64Money = m_pUserInfo[i]->m_UserData.i64Money + m_pUserInfo[i]->m_UserData.i64Bank;
+		if (m_pDataManage->m_InitData.bSendAlms && (i64Money <= m_pDataManage->m_InitData.iAlmsMinMoney)
+			&& (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
+			&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_EXPERCISE_ROOM))
+		{
+			pUpdateUserInfo[nIndex].bISAutoSendMoney = true;
+		}
+
+		/// °´´ÎÐò¸³Öµ
+		pUpdateUserInfo[nIndex].dwUserID = m_pUserInfo[i]->m_UserData.dwUserID;
+		pUpdateUserInfo[nIndex].dwOnLineTimeCount = dwNowTime - m_pUserInfo[i]->m_dwLogonTime;
+		__int64 iPoint = arPoint[i];
+
+		if (bNotCostPoint)//½ð±Ò³¡²»¿Û»ý·Ö
+		{
+			pUpdateUserInfo[nIndex].dwChangePoint = 0;
+		}
+		else
+		{
+			//Ð´Èë»ý·ÖµÄµã
+			pUpdateUserInfo[nIndex].dwChangePoint = iPoint;
+		}
+
+		pUpdateUserInfo[nIndex].dwChangeMoney = arLoseMoney[i];
+		pUpdateUserInfo[nIndex].dwChangeTaxCom = m_dwTaxCom[i];
+
+		if (arPoint[i] == 0)
+		{
+			pUpdateUserInfo[nIndex].uMidCount = 1;
+		}
+		else if (arPoint[i] > 0)
+		{
+			pUpdateUserInfo[nIndex].uWinCount = 1;
+		}
+		else
+		{
+			pUpdateUserInfo[nIndex].uLostCount = 1;
+		}
+
+		pUpdateUserInfo[nIndex].uCutCount = bCut[i] ? 1 : 0;
+		++nIndex;
+	}
+
+
+	/// ÅúÁ¿¸üÐÂÓÃ»§Êý¾Ý
+	UpdateAllUserInfo(pUpdateUserInfo, nTotalPlayerCount, m_tEndTime.GetTime() - m_tBeginTime.GetTime());
+
+
+	m_dwTax = 0;
+	/// ·¢ËÍÓÃ»§¸ü¸ÄÊý¾Ýµ½¿Í»§¶Ë
+
+	for (i = 0; i < m_bMaxPeople; ++i)
+	{
+		if (NULL == m_pUserInfo[i] || IsJoin[i] == false)
+		{
+			continue;
+		}
+
+		m_dwTax += m_dwTaxCom[i];
+
+		m_pUserInfo[i]->m_dwLogonTime = (long int)time(NULL);
+		//·¢ËÍÏûÏ¢
+		MSG_GR_R_UserPoint UserPoint;
+		ZeroMemory(&UserPoint, sizeof(UserPoint));
+		UserPoint.dwUserID = m_pUserInfo[i]->m_UserData.dwUserID;
+		UserPoint.dwPoint = arPoint[i];
+
+		if (bNotCostPoint)
+		{
+			UserPoint.dwPoint = 0;
+		}
+
+		UserPoint.dwMoney = arLoseMoney[i];
+
+
+		if (arPoint[i] > 0)
+			UserPoint.bWinCount = 1;
+
+		if (arPoint[i] < 0)
+		{
+			UserPoint.bLostCount = 1;
+		}
+
+		if (arPoint[i] == 0)
+			UserPoint.bMidCount = 1;
+
+		if (bCut[i] == true)
+			UserPoint.bCutCount = 1;
+
+		UserPoint.dwSend = -1;
+
+		m_pDataManage->m_TCPSocket.SendDataBatch(&UserPoint, sizeof(UserPoint), MDM_GR_ROOM, ASS_GR_USER_POINT, 0);
+	}
+
+	//Õ½¼¨
+	if ((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY) && m_bIsBuy)
+	{
+		m_iRunGameCount++;
+	}
+	//±£´æÕ½¼¨
+	UpdateGameRecord(arPoint);
+
+	return true;
+}
+
+
 //±£´æÕ½¼¨
 void CGameDesk::UpdateGameRecord(__int64* arPoint)
 {
-	if (DESK_TYPE_BJL!=m_uDeskType && !m_bAllRobot)
+	if (DESK_TYPE_BJL != m_uDeskType && !m_bAllRobot)
 	{
 		DL_GR_I_BUYDESK_GameRecord _indata;
-		strcpy_s(_indata.szDeskPassWord,m_szDeskPassWord);
+		strcpy_s(_indata.szDeskPassWord, m_szDeskPassWord);
 		_indata.iUserCount = m_bMaxPeople;
 		_indata.iGameCount = m_iRunGameCount;
 
-		for (BYTE i=0;i<m_bMaxPeople;i++)
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
 		{
 			if (NULL == m_pUserInfo[i])
 			{
 				continue;
 			}
 
-            if (20 <= i)
-            {
-                _indata.iUserCount = 20;
-                break;
-            }
+			if (20 <= i)
+			{
+				_indata.iUserCount = 20;
+				break;
+			}
 
 			_indata.pGameUserRecord[i].iScore = arPoint[i];
 			_indata.pGameUserRecord[i].iUserID = m_pUserInfo[i]->m_UserData.dwUserID;
 		}
 
-		strcpy_s(_indata.szGameSN,m_GameSN);
-		if((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY))
+		strcpy_s(_indata.szGameSN, m_GameSN);
+		if ((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY))
 			_indata.iGameType = 1;
-		else if(m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST)
+		else if (m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST)
 			_indata.iGameType = 2;
-		else 
+		else
 			_indata.iGameType = 0;
 
 		m_pDataManage->m_SQLDataManage.PushLine(&_indata.DataBaseHead, sizeof(_indata), DTK_GR_GAMERECORD, 0, 0);
@@ -1934,7 +2326,7 @@ void CGameDesk::UpdateGameRecord(__int64* arPoint)
 /// @param[in] nTaxIndex -1±íÊ¾¿ÛËùÒÔÍæ¼ÒµÄË°£¬·ñÔòÖ»¿Û¸ÃÓÃ»§µÄÇ®
 /// ¸Ãº¯Êý»áÐÞ¸Äm_dwChangeMoney[]Êý×é³ÉÔ±µÄÖµ
 /// ÓÎÏ··þÎñÆ÷³ÌÐòµ÷ÓÃÍê´Ëº¯ÊýµÄ£¬¿ÉÍ¨¹ýRecordGameInfoº¯Êý»ñÈ¡¸ÃÖµ
-bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
+bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut, int nTaxIndex)
 {
 	/// ¼ÆËã±¾¾ÖÓÎÏ·Ó®¼ÒËùÓ®½ð±ÒµÄ×ÜºÍ
 	/// ¼ÆËã±¾¾ÖÓÎÏ·Êä¼ÒËùÊä½ð±ÒµÄ×ÜºÍ
@@ -1950,17 +2342,17 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 
 	/// È¡µ±Ç°Ê±¼ä
 	CString stime;
-	stime.Format("%d",CTime::GetCurrentTime());
-	int curtime=atoi(stime);
+	stime.Format("%d", CTime::GetCurrentTime());
+	int curtime = atoi(stime);
 
 	/// ÊÇ·ñÎª´ó¼Ò¶¼Òª½»Ì¨·ÑµÄ·¿¼ä¹æÔò£¬Ò»°ã¶¼ÎªÓ®¼Ò½»Ì¨·Ñ
 	bool bIsAllNeedTax = (m_pDataManage->m_InitData.dwRoomRule & GRR_ALL_NEED_TAX) > 0;
 	bool bTaxMain = false; ///< ÊÇ·ñÖ»ÊÇ×¯¼Ò¿ÛË°¡£
-	
+
 	bool bNotCostPoint = (m_pDataManage->m_InitData.dwRoomRule & GRR_NOT_COST_POINT) > 0; /// ½ð±Ò³¡²»¿Û»ý·Ö  add by lxl 2010-10-26
 
-	BYTE i=0;	///< Ñ­»·±äÁ¿
-	
+	BYTE i = 0;	///< Ñ­»·±äÁ¿
+
 	/// ÊäµÄ×Ü·ÖºÍ½ð±Ò
 	__int64 i64TotalLosePoint = 0;
 	__int64 i64TotalWinPoint = 0;
@@ -1972,7 +2364,7 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 	/// ¶ÏÏßÍæ¼ÒÊÇÄÄ¸ö
 	BYTE bCutDeskStation = 255;
 
-	for (i=0; i<m_bMaxPeople; ++i)
+	for (i = 0; i < m_bMaxPeople; ++i)
 	{
 		if (m_pUserInfo[i] == NULL)
 			continue;
@@ -1982,13 +2374,13 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 			bCutDeskStation = i;
 		}
 
-		if (!bTaxMain && nTaxIndex>=0)
+		if (!bTaxMain && nTaxIndex >= 0)
 		{
 			if (i == nTaxIndex) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
 			{
 				bTaxMain = true;
 			}
-			if(nTaxIndex > 1000000) ///Èç¹ûÊÇ³´¹øÂé½«¹æÔò£¬¿ÛÐèÒª¿ÛË°µÄÍæ¼Ò add by lxl 2010-12-14
+			if (nTaxIndex > 1000000) ///Èç¹ûÊÇ³´¹øÂé½«¹æÔò£¬¿ÛÐèÒª¿ÛË°µÄÍæ¼Ò add by lxl 2010-12-14
 			{
 				bTaxMain = true;
 			}
@@ -2010,7 +2402,7 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 
 	__int64 i64Tmp = 1;	/// ÎªÁË·ÀÖ¹ÉÏÒç£¬ÒýÈëÒ»¸öint64ÀàÐÍµÄÊý£¬ÃâµÃÐ´ºÃ¶à¸öÇ¿ÖÆÀàÐÍ×ª»»
 
-	long int dwNowTime=(long int)time(NULL);
+	long int dwNowTime = (long int)time(NULL);
 
 	if (m_pDataManage->m_nRate < 100)
 		m_pDataManage->m_nRate = 100;
@@ -2018,25 +2410,25 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 
 	/// ½ð±Ò³¡²ÅÐèÒª¼ÆËã£¬
 	/// ¸ù¾ÝÓ¦Êä»ý·Ö£¬¼ÆËãÓ¦ÊäÍæ¼ÒÓ¦ÊäµÄÇ®£¬Í¬Ê±¿¼ÂÇÉíÉÏµÄÇ®ÊÇ·ñ¹»Ö§¸¶
-	if(m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
+	if (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
 	{
-		for (i=0; i<m_bMaxPeople; ++i)
+		for (i = 0; i < m_bMaxPeople; ++i)
 		{
-			if (NULL==m_pUserInfo[i])
+			if (NULL == m_pUserInfo[i])
 			{
 				continue;
 			}
 			/// ¼ÆËãÓ¦ÊäÕß½ð±ÒÊÇ·ñ¹»
-			if (arPoint[i]<=0)
+			if (arPoint[i] <= 0)
 			{
-				if(nTaxIndex > 1000000) //³´¹ø¹æÔò½ð±Ò==»ý·Ö
+				if (nTaxIndex > 1000000) //³´¹ø¹æÔò½ð±Ò==»ý·Ö
 					arLoseMoney[i] = arPoint[i];
 				else
-					arLoseMoney[i] = arPoint[i]*m_DeskBasePoint;	///< ¸ÃÊýÎª¸ºÊý
+					arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;	///< ¸ÃÊýÎª¸ºÊý
 				/// ÊÇ²»ÊÇ´ó¼Ò¶¼Òª¿ÛË°£¬ÎÞÂÛÊäÓ®
-				if (bIsAllNeedTax && (m_pDataManage->m_InitData.uTax>0))
+				if (bIsAllNeedTax && (m_pDataManage->m_InitData.uTax > 0))
 				{
-					if(bCutDeskStation == 255)
+					if (bCutDeskStation == 255)
 					{
 						arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
 						arLoseMoney[i] -= arTaxCount[i];
@@ -2044,7 +2436,7 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 				}
 
 				/// ¼ì²é¸ÃÍæ¼ÒµÄÇ®ÊÇ·ñÒÑ¾­²»¹»ÁË
-				if (m_pUserInfo[i]->m_UserData.i64Money < (0-arLoseMoney[i])) ///<Ç®²»¹»ÊäÁË
+				if (m_pUserInfo[i]->m_UserData.i64Money < (0 - arLoseMoney[i])) ///<Ç®²»¹»ÊäÁË
 				{
 					bSomeOneNoEnoughMoney = true;
 					if (m_pUserInfo[i]->m_UserData.i64Money <= 0) ///<ÕâÖÖÇé¿öÓ¦¸Ã²»»á³öÏÖ
@@ -2053,7 +2445,7 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 					}
 					else
 					{
-						arLoseMoney[i] = 0-m_pUserInfo[i]->m_UserData.i64Money; ///< °ÑÍæ¼ÒÉíÉÏµÄÇ®¶¼¿Û¹â
+						arLoseMoney[i] = 0 - m_pUserInfo[i]->m_UserData.i64Money; ///< °ÑÍæ¼ÒÉíÉÏµÄÇ®¶¼¿Û¹â
 					}
 				}
 
@@ -2067,7 +2459,7 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 	//³´¹øÂé½«¿ÛË° add by lxl 2010-12-14
 	int nCGTax = 0;
 	//³´¹øÂé½«¿ÛË°Ô¤´¦Àí  
-	if(nTaxIndex > 1000000)
+	if (nTaxIndex > 1000000)
 	{
 		int nBasePoint; //³´¹øµãÊý
 		int nPointRate; //µãÊýºÍ½ð±ÒµÄ±ÈÂÊ 
@@ -2075,55 +2467,55 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 		//ÈçnTaxIndex = 1000100£¬Ôò±ÈÂÊÎª100£¬¼´1µã = 100¸ö½ð±Ò
 		nPointRate = nTaxIndex - 1000000;
 		nBasePoint = 50;
-		
-	    int nCount = 0; //Òª¿ÛË°µÄÈËÊý
+
+		int nCount = 0; //Òª¿ÛË°µÄÈËÊý
 		//Í³¼ÆÒª¿ÛË°µÄÈËÊý,arPoint[8]Êý×éÇ°4¸öÎªÍæ¼Ò»ý·ÖÊýÖµ£¬ºó4¸ö±íÊ¾ÎªÊÇ·ñ¿ÛË°£¨1ÎªÒª¿ÛË°£©
-		for(int i = 4; i < 8; i++)
+		for (int i = 4; i < 8; i++)
 		{
-			if(arPoint[i] == 1)
-			  nCount++;
+			if (arPoint[i] == 1)
+				nCount++;
 		}
 
 		//¿ÛË°¼ÆËã¹«Ê½£º¿ÛË°½ð±Ò =  ·¿¼ä±¶Êý * µãÊý * ±ÈÂÊ(µãÊý:½ð±Ò) * Ë°ÂÊ
-		if(nCount > 0)
+		if (nCount > 0)
 		{
-			nCGTax = (i64Tmp  * m_DeskBasePoint * nBasePoint * nPointRate * m_pDataManage->m_InitData.uTax / nCount ) / m_pDataManage->m_nRate;
+			nCGTax = (i64Tmp  * m_DeskBasePoint * nBasePoint * nPointRate * m_pDataManage->m_InitData.uTax / nCount) / m_pDataManage->m_nRate;
 		}
 	}
 
 	/// ËùÓÐÊä¼Ò¸ÃÊäµÄ½ð±Ò¶¼ÒÑ¾­È·¶¨£¬¿ÉÒÔ¿ªÊ¼¼ÆËãÓ®¼ÒµÄÊÕÈëÁË
-	for (i=0; i<m_bMaxPeople; ++i)
+	for (i = 0; i < m_bMaxPeople; ++i)
 	{
-		if (NULL==m_pUserInfo[i])
+		if (NULL == m_pUserInfo[i])
 		{
 			continue;
 		}
 		arUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID; ///<°ÑÓÐÐ§Íæ¼ÒµÄdwUsreID·Åµ½Êý×éÖÐ
 		arLogonTime[i] = m_pUserInfo[i]->m_dwLogonTime; ///<°ÑÓÐÐ§Íæ¼ÒµÄµÇÂ¼Ê±¼ä·Åµ½Êý×éÖÐ
 		/// Ó®Ç®µÄÐèÒªÖØÐÂ¼ÆËã£¬Êä¼ÒÒÑ¾­¼ÆËã¹ýÁË
-		if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i]>0) && !bTaxMain)
+		if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i] > 0) && !bTaxMain)
 		{
 			/// ÅÐ¶ÏÊÇ·ñÓÐÍæ¼Ò²»¹»Ç®£¬ÈôÓÐ£¬ÔòÓ®²»ÁËÕâÃ´¶àÇ®
 			if (bSomeOneNoEnoughMoney)
 			{
 				if (i64TotalLosePoint != 0 && arPoint[i] != 0)
-					arLoseMoney[i] = i64TotalLoseMoney/i64TotalLosePoint*arPoint[i];
+					arLoseMoney[i] = i64TotalLoseMoney / i64TotalLosePoint * arPoint[i];
 				else
 					arLoseMoney[i] = 0;
 			}
 			else
 			{
-				if(nTaxIndex > 1000000) //³´¹ø¹æÔò½ð±Ò==»ý·Ö
+				if (nTaxIndex > 1000000) //³´¹ø¹æÔò½ð±Ò==»ý·Ö
 					arLoseMoney[i] = arPoint[i];
 				else
-					arLoseMoney[i] = arPoint[i]*m_DeskBasePoint;
+					arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;
 			}
 			i64Tmp = 1;
 			/// ¼ÆËãºÃ¸ÃÓ®½ð¶îºó£¬¿ÛË°
 			/// ´ó¼Ò¶¼½»
 			if (bIsAllNeedTax)
 			{
-				if (m_pDataManage->m_InitData.uTax>0)
+				if (m_pDataManage->m_InitData.uTax > 0)
 				{
 					//if (i == bCutDeskStation) ///Ó®¼ÒÎªÇ¿ÍËµÄÈË¡£Òª¿Û³ýËùÓÐÈËµÄÌ¨·Ñ£¬ÕâÖÖÇé¿öÔÚÓÎÏ·Î´´¦ÀíºÃÊ±»á³öÏÖ
 					//{
@@ -2134,7 +2526,7 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 					//	arTaxCount[i] = m_pDataManage->m_InitData.uTax;
 					//}
 					//arLoseMoney[i] -= arTaxCount[i];   //Ì¨·ÑÖµÒ²Ðè¼ÆËãÔÚÄÚ
-					if(bCutDeskStation == 255)
+					if (bCutDeskStation == 255)
 					{
 						arTaxCount[i] = i64Tmp * m_pDataManage->m_InitData.uTax;
 						arLoseMoney[i] -= arTaxCount[i];
@@ -2145,41 +2537,41 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 			}
 			else
 			{
-				if ((m_pDataManage->m_InitData.uTax>0) && (arLoseMoney[i]>=2))
-				{	
-					arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax/m_pDataManage->m_nRate;
-			//		if (arTaxCount[i] == 0)	/// ×îÉÙÒª³é1¸ö½ð±Ò
-			//		{
-			//			arTaxCount[i] = 1;
-			//		} 2010 5 14 ³éË®²»¹»Ò»¸ö½ð±ÒµÄÊ±ºò½«²»³éË®
+				if ((m_pDataManage->m_InitData.uTax > 0) && (arLoseMoney[i] >= 2))
+				{
+					arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax / m_pDataManage->m_nRate;
+					//		if (arTaxCount[i] == 0)	/// ×îÉÙÒª³é1¸ö½ð±Ò
+					//		{
+					//			arTaxCount[i] = 1;
+					//		} 2010 5 14 ³éË®²»¹»Ò»¸ö½ð±ÒµÄÊ±ºò½«²»³éË®
 					arLoseMoney[i] -= arTaxCount[i];
 				}
 			}
 		}
-		else if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i]>0) && bTaxMain)///< Ö»¿Û¸ÃÍæ¼ÒµÄË°
+		else if ((m_pDataManage->m_InitData.uComType == TY_MONEY_GAME) && (arPoint[i] > 0) && bTaxMain)///< Ö»¿Û¸ÃÍæ¼ÒµÄË°
 		{
 			/// ÅÐ¶ÏÊÇ·ñÓÐÍæ¼Ò²»¹»Ç®£¬ÈôÓÐ£¬ÔòÓ®²»ÁËÕâÃ´¶àÇ®
 			if (bSomeOneNoEnoughMoney)
 			{
 				if (i64TotalLosePoint != 0 && arPoint[i] != 0)
-					arLoseMoney[i] = i64TotalLoseMoney/i64TotalLosePoint*arPoint[i];
+					arLoseMoney[i] = i64TotalLoseMoney / i64TotalLosePoint * arPoint[i];
 				else
 					arLoseMoney[i] = 0;
 			}
 			else
 			{
-				if(nTaxIndex > 1000000) //³´¹ø¹æÔò½ð±Ò==»ý·Ö
+				if (nTaxIndex > 1000000) //³´¹ø¹æÔò½ð±Ò==»ý·Ö
 					arLoseMoney[i] = arPoint[i];
 				else
-					arLoseMoney[i] = arPoint[i]*m_DeskBasePoint;
+					arLoseMoney[i] = arPoint[i] * m_DeskBasePoint;
 			}
 			i64Tmp = 1;
 
-			if (i == nTaxIndex && m_pDataManage->m_InitData.uTax>0) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
+			if (i == nTaxIndex && m_pDataManage->m_InitData.uTax > 0) ///< Ö»¿Û¸ÃÍæ¼ÒµÄË°¡£
 			{
 				if (arLoseMoney[i] >= 2)
 				{
-					arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax/m_pDataManage->m_nRate;
+					arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax / m_pDataManage->m_nRate;
 					//if (arTaxCount[i] == 0)	/// ×îÉÙÒª³é1¸ö½ð±Ò
 					//{
 					//	arTaxCount[i] = 1;
@@ -2188,9 +2580,9 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 				}
 			}
 			//³´¹øÂé½«¿ÛË°¹æÔò  add by lxl 2010-12-14
-			if(nTaxIndex > 1000000 && m_pDataManage->m_InitData.uTax>0)
+			if (nTaxIndex > 1000000 && m_pDataManage->m_InitData.uTax > 0)
 			{
-				if (arPoint[i+4] == 1 && arLoseMoney[i] >= 2) //ÅÐ¶ÏÊÇ·ñÒª¿ÛË°
+				if (arPoint[i + 4] == 1 && arLoseMoney[i] >= 2) //ÅÐ¶ÏÊÇ·ñÒª¿ÛË°
 				{
 					arTaxCount[i] = nCGTax;
 					arLoseMoney[i] -= arTaxCount[i];
@@ -2202,7 +2594,7 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 		/// ¸ø³ÉÔ±±äÁ¿¸³Öµ
 		m_dwTaxCom[i] = arTaxCount[i];
 
-		if(bNotCostPoint)		//½ð±Ò³¡²»¿Û»ý·Ö add by lxl 2010-10-26
+		if (bNotCostPoint)		//½ð±Ò³¡²»¿Û»ý·Ö add by lxl 2010-10-26
 			m_dwChangePoint[i] = 0;
 		else
 			m_dwChangePoint[i] = arPoint[i];
@@ -2210,7 +2602,7 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 
 		__int64 _sendmoney = 0;
 		/// ¸üÐÂm_pUserInfoÀïµÄÊý¾Ý
-		m_pUserInfo[i]->ChangePoint(arPoint[i], m_dwTaxCom[i], arPoint[i]>0, arPoint[i]<0,arPoint[i]==0, bCut[i], dwNowTime-m_dwBeginTime, arLoseMoney[i]);
+		m_pUserInfo[i]->ChangePoint(arPoint[i], m_dwTaxCom[i], arPoint[i] > 0, arPoint[i] < 0, arPoint[i] == 0, bCut[i], dwNowTime - m_dwBeginTime, arLoseMoney[i]);
 		m_pUserInfo[i]->m_UserData.i64Money += _sendmoney;
 
 		/// ¾­¹ýÔÙ´ÎÅÐ¶Ïºó£¬ÔÙ¸³Öµ¸ø½áËã
@@ -2220,35 +2612,35 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 
 	/// ÔÚÉÏÃæµÄÑ­»·ÖÐÒÑ¾­Í³¼Æ¹ýÍæ¼ÒÈËÊýnTotalPlayerCount
 	UpdateUserInfo_t *pUpdateUserInfo = new UpdateUserInfo_t[nTotalPlayerCount];
-	int nIndex=0;
-	for (i=0; i<m_bMaxPeople; ++i)
+	int nIndex = 0;
+	for (i = 0; i < m_bMaxPeople; ++i)
 	{
 		if (NULL == m_pUserInfo[i])
 		{
 			continue;
 		}
 		/// °´´ÎÐò¸³Öµ
-		pUpdateUserInfo[nIndex].dwUserID			= m_pUserInfo[i]->m_UserData.dwUserID;
-		pUpdateUserInfo[nIndex].dwOnLineTimeCount	= dwNowTime-m_pUserInfo[i]->m_dwLogonTime;
+		pUpdateUserInfo[nIndex].dwUserID = m_pUserInfo[i]->m_UserData.dwUserID;
+		pUpdateUserInfo[nIndex].dwOnLineTimeCount = dwNowTime - m_pUserInfo[i]->m_dwLogonTime;
 		int iPoint = arPoint[i];
-		
+
 		if (bNotCostPoint)//½ð±Ò³¡²»¿Û»ý·Ö
 		{
 			pUpdateUserInfo[nIndex].dwChangePoint = 0;
 		}
-		else 
+		else
 		{
 			pUpdateUserInfo[nIndex].dwChangePoint = iPoint;
 		}
 
 		pUpdateUserInfo[nIndex].dwChangeMoney = arLoseMoney[i];
 		pUpdateUserInfo[nIndex].dwChangeTaxCom = m_dwTaxCom[i];
-		
-		if (arPoint[i]==0)
+
+		if (arPoint[i] == 0)
 		{
 			pUpdateUserInfo[nIndex].uMidCount = 1;
 		}
-		else if (arPoint[i]>0)
+		else if (arPoint[i] > 0)
 		{
 			pUpdateUserInfo[nIndex].uWinCount = 1;
 		}
@@ -2256,22 +2648,22 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 		{
 			pUpdateUserInfo[nIndex].uLostCount = 1;
 		}
-	
-		pUpdateUserInfo[nIndex].uCutCount = bCut[i]? 1 : 0;
+
+		pUpdateUserInfo[nIndex].uCutCount = bCut[i] ? 1 : 0;
 		++nIndex;
 	}
-		
-//	if (TY_MONEY_GAME == m_pDataManage->m_InitData.uComType && m_pDataManage->m_bPresentCoin) ///< ½ð±Ò³¡²ÅÓÐÔùËÍ½ð±Ò
-//	{
-//		PresentCoin();
-//	}
 
-	/// ÅúÁ¿¸üÐÂÓÃ»§Êý¾Ý
+	//	if (TY_MONEY_GAME == m_pDataManage->m_InitData.uComType && m_pDataManage->m_bPresentCoin) ///< ½ð±Ò³¡²ÅÓÐÔùËÍ½ð±Ò
+	//	{
+	//		PresentCoin();
+	//	}
+
+		/// ÅúÁ¿¸üÐÂÓÃ»§Êý¾Ý
 	UpdateAllUserInfo(pUpdateUserInfo, nTotalPlayerCount, m_tEndTime.GetTime() - m_tBeginTime.GetTime());
 	m_dwTax = 0;
 	/// ·¢ËÍÓÃ»§¸ü¸ÄÊý¾Ýµ½¿Í»§¶Ë
 
-	for (i=0; i<m_bMaxPeople; ++i)
+	for (i = 0; i < m_bMaxPeople; ++i)
 	{
 		if (NULL == m_pUserInfo[i])
 		{
@@ -2279,18 +2671,18 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 		}
 		m_dwTax += m_dwTaxCom[i];
 
-		m_pUserInfo[i]->m_dwLogonTime=(long int)time(NULL);
+		m_pUserInfo[i]->m_dwLogonTime = (long int)time(NULL);
 		//·¢ËÍÏûÏ¢
 		MSG_GR_R_UserPoint UserPoint;
 		ZeroMemory(&UserPoint, sizeof(UserPoint));
 		UserPoint.dwUserID = m_pUserInfo[i]->m_UserData.dwUserID;
 		UserPoint.dwPoint = arPoint[i];
 
-		if(bNotCostPoint)
+		if (bNotCostPoint)
 		{
 			UserPoint.dwPoint = 0;
 		}
-		
+
 		UserPoint.dwMoney = arLoseMoney[i];
 		if (arPoint[i] > 0)
 			UserPoint.bWinCount = 1;
@@ -2300,15 +2692,15 @@ bool CGameDesk::ChangeUserPoint(int *arPoint, bool *bCut,int nTaxIndex)
 			UserPoint.bLostCount = 1;
 		}
 
-		if (arPoint[i] == 0) 
+		if (arPoint[i] == 0)
 			UserPoint.bMidCount = 1;
 
-		if (bCut[i] == true) 
+		if (bCut[i] == true)
 			UserPoint.bCutCount = 1;
 
 		UserPoint.dwSend = -1;
-		
-		m_pDataManage->m_TCPSocket.SendDataBatch(&UserPoint,sizeof(UserPoint),MDM_GR_ROOM,ASS_GR_USER_POINT,0);
+
+		m_pDataManage->m_TCPSocket.SendDataBatch(&UserPoint, sizeof(UserPoint), MDM_GR_ROOM, ASS_GR_USER_POINT, 0);
 	}
 
 	return true;
@@ -2328,7 +2720,7 @@ int *dwMoneyInput: Ä£Ê½1ÏÂ£¨ÊäÈë£©Ö¸Ïò´óÐ¡Îª8µÄÒ»Î¬ÕûÐÍÊý×é£¬¼ÇÂ¼ÁË´Ë×ÀÓÃ»§½ð±Ò£
 bool IsCheckInMoney: Ä£Ê½Ñ¡Ôñ,trueÎªÄ£Ê½1,false ÎªÄ£Ê½2(Ä¬ÈÏ)¡£
 
 */
-bool CGameDesk::ChangeUserPoint_old(int *dwPoint, bool *bCut,int *dwMoneyInput,bool IsCheckInMoney)//, bool bWin, bool bLost, bool bMid)
+bool CGameDesk::ChangeUserPoint_old(int *dwPoint, bool *bCut, int *dwMoneyInput, bool IsCheckInMoney)//, bool bWin, bool bLost, bool bMid)
 {
 	return true;
 }
@@ -2344,10 +2736,10 @@ int CGameDesk::GetOrderClass(int dwPoint)
 		26214400,	52428800,	104857600
 	};
 
-	for (int i = 0; i < 19; i ++)	
+	for (int i = 0; i < 19; i++)
 	{
-		if (dwPoint < uBasePoint[i]) 
-			return i+1;
+		if (dwPoint < uBasePoint[i])
+			return i + 1;
 	}
 	return 20;
 }
@@ -2359,51 +2751,51 @@ int CGameDesk::GetOrderClass(int dwPoint)
 void CGameDesk::UpdateAllUserInfo(UpdateUserInfo_t * pUpdateUserInfo, int nCount, int iroundtime)
 {
 	DL_GR_I_AllUserData_t allUserData;
-	UINT dwNowTime=(UINT)time(NULL);
+	UINT dwNowTime = (UINT)time(NULL);
 	allUserData.nUserCount = nCount;
 	allUserData.nPlayTime = dwNowTime - m_dwBeginTime;
 	allUserData.iRoundPlayTime = iroundtime;
 	allUserData.pUpdateUserInfo = pUpdateUserInfo;
-	m_pDataManage->m_SQLDataManage.PushLine(&allUserData.DataBaseHead,sizeof(allUserData),DTK_GR_UPDATE_GAME_RESULT_ALLUSER,0,0);
+	m_pDataManage->m_SQLDataManage.PushLine(&allUserData.DataBaseHead, sizeof(allUserData), DTK_GR_UPDATE_GAME_RESULT_ALLUSER, 0, 0);
 }
-void CGameDesk::UpdateUserPoint(BYTE *pbDeskStation,__int64 *arPoint,int nCount)
+void CGameDesk::UpdateUserPoint(BYTE *pbDeskStation, __int64 *arPoint, int nCount)
 {
 	UpdateUserInfo_t * pUpdateUserInfo = new UpdateUserInfo_t[nCount];    //´Ë´¦µÄÄÚ´æ»áÔÚ£¬Êý¾Ý¿â´¦ÀíÏß³ÌÉ¾³ý
-    
+
 	MSG_GR_R_UserPoint UserPoint;
 	ZeroMemory(&UserPoint, sizeof(UserPoint));
-    for(int i=0;i<nCount;i++)
+	for (int i = 0; i < nCount; i++)
 	{
-		pUpdateUserInfo[i].dwUserID			 = m_pUserInfo[pbDeskStation[i]]->m_UserData.dwUserID;
+		pUpdateUserInfo[i].dwUserID = m_pUserInfo[pbDeskStation[i]]->m_UserData.dwUserID;
 		pUpdateUserInfo[i].dwOnLineTimeCount = 0;                                  //´Ë´¦Ò²²»¼ÇÂ¼
-		pUpdateUserInfo[i].dwChangePoint     = 0;
-		pUpdateUserInfo[i].dwChangeMoney     = arPoint[i];
-		pUpdateUserInfo[i].dwChangeTaxCom    = 0;                                  //´Ë´¦²»ÊÕ·Ñ
+		pUpdateUserInfo[i].dwChangePoint = 0;
+		pUpdateUserInfo[i].dwChangeMoney = arPoint[i];
+		pUpdateUserInfo[i].dwChangeTaxCom = 0;                                  //´Ë´¦²»ÊÕ·Ñ
 
-		UserPoint.dwUserID                   = m_pUserInfo[pbDeskStation[i]]->m_UserData.dwUserID;
-		UserPoint.dwMoney                    = arPoint[i];
-        UserPoint.dwPoint                    = 0;
-		m_pDataManage->m_TCPSocket.SendDataBatch(&UserPoint,sizeof(UserPoint),MDM_GR_ROOM,ASS_GR_USER_POINT,0);
+		UserPoint.dwUserID = m_pUserInfo[pbDeskStation[i]]->m_UserData.dwUserID;
+		UserPoint.dwMoney = arPoint[i];
+		UserPoint.dwPoint = 0;
+		m_pDataManage->m_TCPSocket.SendDataBatch(&UserPoint, sizeof(UserPoint), MDM_GR_ROOM, ASS_GR_USER_POINT, 0);
 	}
 
 	DL_GR_I_AllUserData_t allUserData;
 	allUserData.nUserCount = nCount;
 	allUserData.nPlayTime = 0;
 	allUserData.pUpdateUserInfo = pUpdateUserInfo;
-	m_pDataManage->m_SQLDataManage.PushLine(&allUserData.DataBaseHead,sizeof(allUserData),DTK_GR_UPDATE_GAME_RESULT_ALLUSER,0,0);	
-	
-	
+	m_pDataManage->m_SQLDataManage.PushLine(&allUserData.DataBaseHead, sizeof(allUserData), DTK_GR_UPDATE_GAME_RESULT_ALLUSER, 0, 0);
+
+
 }
 //¼ÇÂ¼ÓÃ»§·ÖÊý
-void CGameDesk::UpdateUserInfo(long dwUserID,int iPoint,int Money, int taxCom,bool bcut,long playTime,long logonTime)
+void CGameDesk::UpdateUserInfo(long dwUserID, int iPoint, int Money, int taxCom, bool bcut, long playTime, long logonTime)
 {//½«Point¸ÄÎªiPoint£¬ÒòÎªPointÊÇMFCÄÚ²¿µÄÒ»¸öÀà£¬ËäÈ»ÖØÔØÃû³Æ¿ÉÒÔÊ¹ÓÃ£¬µ«Ò×ÒýÆðÆçÒå
  //µ÷ÕûÁËÕû¸öº¯ÊýµÄÎ»ÖÃ£¬ÊÇÒòÎª²»½ö½ö¼ÇÂ¼ÁË»ý·Ö£¬»¹¸ù¾Ý·ÖÊý¶ÔÊäÓ®½øÐÐÅÐ¶Ï
 	//´¦Àívip¹¦ÄÜ
 	DL_GR_I_UserLeft m_UserInfo;
-	memset(&m_UserInfo,0,sizeof(m_UserInfo));
-	m_UserInfo.uWinCount = (iPoint > 0 ? 1:0);
-	m_UserInfo.uLostCount =(iPoint < 0 ? 1:0);
-	m_UserInfo.uMidCount = (iPoint == 0 ? 1:0);
+	memset(&m_UserInfo, 0, sizeof(m_UserInfo));
+	m_UserInfo.uWinCount = (iPoint > 0 ? 1 : 0);
+	m_UserInfo.uLostCount = (iPoint < 0 ? 1 : 0);
+	m_UserInfo.uMidCount = (iPoint == 0 ? 1 : 0);
 	m_UserInfo.dwUserID = dwUserID;
 	m_UserInfo.dwChangeMoney = Money;
 	m_UserInfo.dwChangeTaxCom = taxCom;
@@ -2412,36 +2804,36 @@ void CGameDesk::UpdateUserInfo(long dwUserID,int iPoint,int Money, int taxCom,bo
 	m_UserInfo.dwOnLineTimeCount = logonTime;
 
 	DL_GR_I_SendMonet_By_Times sSendMoneyByTimes;//µ±Ç°ÓÃ»§ÎªÒªËÍµÄÓÃ»§
-	memset(&sSendMoneyByTimes,0,sizeof(sSendMoneyByTimes));
-	sSendMoneyByTimes.dwUserID =dwUserID;
-	sSendMoneyByTimes.dwGameFinishCount+=1;
+	memset(&sSendMoneyByTimes, 0, sizeof(sSendMoneyByTimes));
+	sSendMoneyByTimes.dwUserID = dwUserID;
+	sSendMoneyByTimes.dwGameFinishCount += 1;
 
-	for(int i = 0; i < MAX_PEOPLE; i ++)
+	for (int i = 0; i < MAX_PEOPLE; i++)
 	{
-		if(m_pUserInfo[i] == NULL)
+		if (m_pUserInfo[i] == NULL)
 			continue;
 
 		CString stime;
-		stime.Format("%d",CTime::GetCurrentTime());        //µ±Ç°µÄÊ±¼ä£¬String¸ñÊ½
-		int curtime=atoi(stime);                           //×ª»»Îªint
+		stime.Format("%d", CTime::GetCurrentTime());        //µ±Ç°µÄÊ±¼ä£¬String¸ñÊ½
+		int curtime = atoi(stime);                           //×ª»»Îªint
 
-		if(dwUserID == m_pUserInfo[i]->m_UserData.dwUserID)
+		if (dwUserID == m_pUserInfo[i]->m_UserData.dwUserID)
 		{
 			m_UserInfo.dwChangePoint = iPoint;
 
 			sSendMoneyByTimes.i64SrcGameMoney = m_pUserInfo[i]->m_UserData.i64Money;//Ç®
 			sSendMoneyByTimes.i64SrcMoneyInBank = m_pUserInfo[i]->m_UserData.i64Bank;//ÒøÐÐ
-			
-			
+
+
 			break;
 		}
 	}
-	m_pDataManage->m_SQLDataManage.PushLine(&m_UserInfo.DataBaseHead,sizeof(m_UserInfo),DTK_GR_UPDATE_GAME_RESULT,0,0);
+	m_pDataManage->m_SQLDataManage.PushLine(&m_UserInfo.DataBaseHead, sizeof(m_UserInfo), DTK_GR_UPDATE_GAME_RESULT, 0, 0);
 
 	//°´´ÎËÍ½ð±Ò
-	
-	m_pDataManage->m_SQLDataManage.PushLine(&sSendMoneyByTimes.DataBaseHead,sizeof(sSendMoneyByTimes),DTK_GR_SENDMONEY_TIMES,0,0);
-	return ;
+
+	m_pDataManage->m_SQLDataManage.PushLine(&sSendMoneyByTimes.DataBaseHead, sizeof(sSendMoneyByTimes), DTK_GR_SENDMONEY_TIMES, 0, 0);
+	return;
 }
 //·¢ËÍ
 bool CGameDesk::SendGameData(BYTE bDeskStation, BYTE bMainID, BYTE bAssID, BYTE bHandleCode)
@@ -2452,17 +2844,17 @@ bool CGameDesk::SendGameData(BYTE bDeskStation, BYTE bMainID, BYTE bAssID, BYTE 
 		if ((m_pUserInfo[bDeskStation] != NULL))
 		{
 			UINT uSocketIndex = m_pUserInfo[bDeskStation]->m_uSocketIndex;
-			m_pDataManage->m_TCPSocket.SendData(uSocketIndex,bMainID,bAssID,bHandleCode,m_pUserInfo[bDeskStation]->m_dwHandleID);
+			m_pDataManage->m_TCPSocket.SendData(uSocketIndex, bMainID, bAssID, bHandleCode, m_pUserInfo[bDeskStation]->m_dwHandleID);
 		}
 	}
-	else 
+	else
 	{
-		for (BYTE i = 0; i < m_bMaxPeople; i ++)
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
 		{
 			if (m_pUserInfo[i] != NULL)
 			{
-				UINT uSocketIndex=m_pUserInfo[i]->m_uSocketIndex;
-				m_pDataManage->m_TCPSocket.SendData(uSocketIndex,bMainID,bAssID,bHandleCode,m_pUserInfo[i]->m_dwHandleID);
+				UINT uSocketIndex = m_pUserInfo[i]->m_uSocketIndex;
+				m_pDataManage->m_TCPSocket.SendData(uSocketIndex, bMainID, bAssID, bHandleCode, m_pUserInfo[i]->m_dwHandleID);
 			}
 		}
 	}
@@ -2473,13 +2865,13 @@ bool CGameDesk::SendGameData(BYTE bDeskStation, BYTE bMainID, BYTE bAssID, BYTE 
 bool CGameDesk::SendWatchData(BYTE bDeskStation, BYTE bMainID, BYTE bAssID, BYTE bHandleCode)
 {
 	ASSERT(bDeskStation <= m_bMaxPeople);
-	for (INT_PTR i = 0; i< m_WatchUserPtr.GetCount(); i ++)
+	for (INT_PTR i = 0; i < m_WatchUserPtr.GetCount(); i++)
 	{
 		CGameUserInfo * pUserInfo = (CGameUserInfo *)m_WatchUserPtr.GetAt(i);
-		if (((pUserInfo != NULL)&&(pUserInfo->m_UserData.bUserState != USER_CUT_GAME))
-			&&((pUserInfo->m_UserData.bDeskStation == bDeskStation)||(bDeskStation == m_bMaxPeople)))
+		if (((pUserInfo != NULL) && (pUserInfo->m_UserData.bUserState != USER_CUT_GAME))
+			&& ((pUserInfo->m_UserData.bDeskStation == bDeskStation) || (bDeskStation == m_bMaxPeople)))
 		{
-			m_pDataManage->m_TCPSocket.SendData(pUserInfo->m_uSocketIndex,bMainID,bAssID,bHandleCode,pUserInfo->m_dwHandleID);
+			m_pDataManage->m_TCPSocket.SendData(pUserInfo->m_uSocketIndex, bMainID, bAssID, bHandleCode, pUserInfo->m_dwHandleID);
 		}
 	}
 	return true;
@@ -2495,35 +2887,35 @@ bool CGameDesk::SendGameData(BYTE bDeskStation, void * pData, UINT uSize, BYTE b
 		GameNoticeMessage* p = (GameNoticeMessage*)pData;
 		if (p != NULL)
 		{
-			m_pDataManage->m_TCPSocket.SendDataBatch(pData, uSize, MDM_GM_GAME_NOTIFY, ASS_GM_MESSAGE_EX,0);
+			m_pDataManage->m_TCPSocket.SendDataBatch(pData, uSize, MDM_GM_GAME_NOTIFY, ASS_GM_MESSAGE_EX, 0);
 
 			//·¢ËÍÊý¾Ý
 			//	¶¨ÒåÊý¾Ý 
 			MSG_GA_S_Message Message;
-			memset(&Message,0,sizeof(Message));
-			Message.bFontSize=0;
-			Message.bCloseFace=false;
-			Message.bShowStation=SHS_TALK_MESSAGE;
+			memset(&Message, 0, sizeof(Message));
+			Message.bFontSize = 0;
+			Message.bCloseFace = false;
+			Message.bShowStation = SHS_TALK_MESSAGE;
 			sprintf(Message.szMessage, p->szMessage);
-			m_pDataManage->m_TCPSocket.SendDataBatch(&Message,sizeof(Message),MDM_GR_MESSAGE,ASS_GR_SYSTEM_MESSAGE,0);
+			m_pDataManage->m_TCPSocket.SendDataBatch(&Message, sizeof(Message), MDM_GR_MESSAGE, ASS_GR_SYSTEM_MESSAGE, 0);
 			return true;
 		}
 	}
 	if (bDeskStation < m_bMaxPeople)
 	{
-		if ((m_pUserInfo[bDeskStation] != NULL)&&(m_pUserInfo[bDeskStation]->m_UserData.bUserState != USER_CUT_GAME))
+		if ((m_pUserInfo[bDeskStation] != NULL) && (m_pUserInfo[bDeskStation]->m_UserData.bUserState != USER_CUT_GAME))
 		{
 			UINT uSocketIndex = m_pUserInfo[bDeskStation]->m_uSocketIndex;
-			m_pDataManage->m_TCPSocket.SendData(uSocketIndex,pData,uSize,bMainID,bAssID,bHandleCode,m_pUserInfo[bDeskStation]->m_dwHandleID);
+			m_pDataManage->m_TCPSocket.SendData(uSocketIndex, pData, uSize, bMainID, bAssID, bHandleCode, m_pUserInfo[bDeskStation]->m_dwHandleID);
 		}
 	}
-	else 
+	else
 	{
-		for (BYTE i = 0; i < m_bMaxPeople; i ++)
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
 		{
-			if ((m_pUserInfo[i] != NULL)&&(m_pUserInfo[i]->m_UserData.bUserState != USER_CUT_GAME))
+			if ((m_pUserInfo[i] != NULL) && (m_pUserInfo[i]->m_UserData.bUserState != USER_CUT_GAME))
 			{
-				m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex,pData,uSize,bMainID,bAssID,bHandleCode,m_pUserInfo[i]->m_dwHandleID);
+				m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex, pData, uSize, bMainID, bAssID, bHandleCode, m_pUserInfo[i]->m_dwHandleID);
 			}
 		}
 	}
@@ -2534,13 +2926,13 @@ bool CGameDesk::SendGameData(BYTE bDeskStation, void * pData, UINT uSize, BYTE b
 bool CGameDesk::SendWatchData(BYTE bDeskStation, void * pData, UINT uSize, BYTE bMainID, BYTE bAssID, BYTE bHandleCode)
 {
 	ASSERT(bDeskStation <= m_bMaxPeople);
-	for (INT_PTR i = 0; i < m_WatchUserPtr.GetCount(); i ++)
+	for (INT_PTR i = 0; i < m_WatchUserPtr.GetCount(); i++)
 	{
 		CGameUserInfo * pUserInfo = (CGameUserInfo *)m_WatchUserPtr.GetAt(i);
-		if (((pUserInfo!=NULL)&&(pUserInfo->m_UserData.bUserState != USER_CUT_GAME))&&
-			((pUserInfo->m_UserData.bDeskStation == bDeskStation)||(bDeskStation == m_bMaxPeople)))
+		if (((pUserInfo != NULL) && (pUserInfo->m_UserData.bUserState != USER_CUT_GAME)) &&
+			((pUserInfo->m_UserData.bDeskStation == bDeskStation) || (bDeskStation == m_bMaxPeople)))
 		{
-			m_pDataManage->m_TCPSocket.SendData(pUserInfo->m_uSocketIndex,pData,uSize,bMainID,bAssID,bHandleCode,pUserInfo->m_dwHandleID);
+			m_pDataManage->m_TCPSocket.SendData(pUserInfo->m_uSocketIndex, pData, uSize, bMainID, bAssID, bHandleCode, pUserInfo->m_dwHandleID);
 		}
 	}
 	return true;
@@ -2549,13 +2941,13 @@ bool CGameDesk::SendWatchData(BYTE bDeskStation, void * pData, UINT uSize, BYTE 
 //·¢ËÍÅÔ¹ÛÊý¾Ý £¨·¢ËÍÏûÏ¢¸øÅÔ¹ÛÕß£©
 bool CGameDesk::SendWatchDataByID(UINT uSendSocketID, void * pData, UINT uSize, BYTE bMainID, BYTE bAssID, BYTE bHandleCode)
 {
-	for (INT_PTR i = 0; i < m_WatchUserPtr.GetCount(); i ++)
+	for (INT_PTR i = 0; i < m_WatchUserPtr.GetCount(); i++)
 	{
 		CGameUserInfo * pUserInfo = (CGameUserInfo *)m_WatchUserPtr.GetAt(i);
-		if ((pUserInfo != NULL)&&(pUserInfo->m_uSocketIndex == uSendSocketID)
-			&&(pUserInfo->m_UserData.bUserState != USER_CUT_GAME))
+		if ((pUserInfo != NULL) && (pUserInfo->m_uSocketIndex == uSendSocketID)
+			&& (pUserInfo->m_UserData.bUserState != USER_CUT_GAME))
 		{
-			m_pDataManage->m_TCPSocket.SendData(uSendSocketID,pData,uSize,bMainID,bAssID,bHandleCode,pUserInfo->m_dwHandleID);
+			m_pDataManage->m_TCPSocket.SendData(uSendSocketID, pData, uSize, bMainID, bAssID, bHandleCode, pUserInfo->m_dwHandleID);
 			return true;
 		}
 	}
@@ -2572,7 +2964,7 @@ bool CGameDesk::CanNetCut(BYTE bDeskStation)
 int CGameDesk::GetDeskPlayerNum()
 {
 	int iPeopoleCount = 0;
-	for (BYTE i = 0 ; i < m_bMaxPeople; i ++) 
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
 		if (m_pUserInfo[i] != NULL)
 		{
@@ -2586,7 +2978,7 @@ int CGameDesk::GetDeskPlayerNum()
 int CGameDesk::GetOnlineDeskPlayerNum()
 {
 	int iPeopoleCount = 0;
-	for (BYTE i = 0 ; i < m_bMaxPeople; i ++) 
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
 		if (m_pUserInfo[i] != NULL && !m_bCutGame[i])
 		{
@@ -2602,7 +2994,7 @@ int CGameDesk::GetOnlineDeskPlayerNum()
 int CGameDesk::GetDeskNoPlayerStation()
 {
 	int iDeskStation = 0;
-	for (BYTE i = 0 ; i < m_bMaxPeople; i ++) 
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
 		if (m_pUserInfo[i] != NULL)
 		{
@@ -2621,7 +3013,7 @@ int CGameDesk::GetDeskNoPlayerStation()
 	else
 	{
 		return -1;
-	}	
+	}
 }
 
 /// ÅÐ¶Ï´Ë×ÀÖÐÍæ¼ÒµÄipÊÇ·ñÓÐÏàÍ¬µÄ,ÎªÅÅ¶Ó»úÌí¼Ó
@@ -2629,36 +3021,36 @@ int CGameDesk::GetDeskNoPlayerStation()
 bool CGameDesk::IsDeskIpSame(CGameUserInfo * pUserInfo)
 {
 	return false;
-	
+
 	if (NULL == pUserInfo)
 	{
 		return false;
 	}
 
-	ULONG dwUserIP=pUserInfo->m_UserData.dwUserIP;
-	for (BYTE i=0;i<m_bMaxPeople;i++)
+	ULONG dwUserIP = pUserInfo->m_UserData.dwUserIP;
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
-		if(m_pUserInfo[i]==NULL)
+		if (m_pUserInfo[i] == NULL)
 			continue;
 
 		//ÊÇ·ñIPÏàÍ¬
-		if ((m_pUserInfo[i]->m_UserData.dwUserIP==dwUserIP)
-			/*&& pUserInfo->m_UserData.bGameMaster==0*/) 
+		if ((m_pUserInfo[i]->m_UserData.dwUserIP == dwUserIP)
+			/*&& pUserInfo->m_UserData.bGameMaster==0*/)
 		{
 			return true;
 		}
 	}
 
-	for (BYTE i=0;i<m_bMaxPeople-1;i++)
+	for (BYTE i = 0; i < m_bMaxPeople - 1; i++)
 	{
-		if (m_pUserInfo[i]==NULL) 
+		if (m_pUserInfo[i] == NULL)
 			continue;
 
-		for (BYTE j=i+1;j<m_bMaxPeople;j++)
+		for (BYTE j = i + 1; j < m_bMaxPeople; j++)
 		{
-			if ((m_pUserInfo[j]!=NULL)
-				&& (m_pUserInfo[i]->m_UserData.dwUserIP==m_pUserInfo[j]->m_UserData.dwUserIP)
-				/*&& pUserInfo->m_UserData.bGameMaster==0*/) 
+			if ((m_pUserInfo[j] != NULL)
+				&& (m_pUserInfo[i]->m_UserData.dwUserIP == m_pUserInfo[j]->m_UserData.dwUserIP)
+				/*&& pUserInfo->m_UserData.bGameMaster==0*/)
 			{
 				return true;
 			}
@@ -2686,35 +3078,35 @@ void CGameDesk::SetDeskUserInfo(CGameUserInfo * pUserInfo, int iDeskStation)
 			m_pUserInfo[iDeskStation] = NULL;
 		}
 	}
-	
+
 	return;
 }
 
 //ÅÐ¶ÏÊÇ·ñ¿ÉÒÔ¿ªÊ¼ÓÎÏ·
 bool CGameDesk::CanBeginGame()
 {
-    if(m_bFinishCondition == 3 && m_bIsPlay)
-    {// Ê±Ð§·¿¼äÐ¡ÓÚ3Ãë²»×¼ÔÚ¿ªÊ¼ÓÎÏ·
-        COleDateTime nowTime = COleDateTime::GetCurrentTime();
-        int iDay  = m_iBuyMinutes / (60*24);
-        int iHour = (m_iBuyMinutes - iDay * 60 * 24) / 60;
-        int iMinutes = (m_iBuyMinutes - iDay * 60 * 24 - iHour * 60);
-        //int iSecond = iMinutes * 60;
-        COleDateTimeSpan timespan( iDay, iHour, iMinutes, 0 );
-        COleDateTimeSpan tmDiff = (m_iBuyMinutesDeskBeginTime + timespan - nowTime);
+	if (m_bFinishCondition == 3 && m_bIsPlay)
+	{// Ê±Ð§·¿¼äÐ¡ÓÚ3Ãë²»×¼ÔÚ¿ªÊ¼ÓÎÏ·
+		COleDateTime nowTime = COleDateTime::GetCurrentTime();
+		int iDay = m_iBuyMinutes / (60 * 24);
+		int iHour = (m_iBuyMinutes - iDay * 60 * 24) / 60;
+		int iMinutes = (m_iBuyMinutes - iDay * 60 * 24 - iHour * 60);
+		//int iSecond = iMinutes * 60;
+		COleDateTimeSpan timespan(iDay, iHour, iMinutes, 0);
+		COleDateTimeSpan tmDiff = (m_iBuyMinutesDeskBeginTime + timespan - nowTime);
 
-        if((long)tmDiff.GetTotalSeconds() < 3)
-        {
-            return false;
-        }
-    }
+		if ((long)tmDiff.GetTotalSeconds() < 3)
+		{
+			return false;
+		}
+	}
 	//ÅÐ¶ÏËùÓÐÈËÊÇ·ñÍ¬Òâ
 	BYTE bPeopoleCount = 0;
-	for (BYTE i = 0 ; i < m_bMaxPeople; i ++) 
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
 		if (m_pUserInfo[i] != NULL)
 		{
-			bPeopoleCount ++;
+			bPeopoleCount++;
 			if (m_pUserInfo[i]->m_UserData.bUserState != USER_ARGEE)
 				return false;
 		}
@@ -2725,30 +3117,30 @@ bool CGameDesk::CanBeginGame()
 	{
 		if (m_bBeginMode == SYMMETRY_ARGEE)
 		{
-			if ((bPeopoleCount % 2) != 0) 
+			if ((bPeopoleCount % 2) != 0)
 				return false;
 
 			if (bPeopoleCount == m_bMaxPeople)
 				return true;
-			BYTE bHalfCount = m_bMaxPeople/2;
+			BYTE bHalfCount = m_bMaxPeople / 2;
 
-			for (BYTE i = 0; i < bHalfCount; i ++)
+			for (BYTE i = 0; i < bHalfCount; i++)
 			{
-				if ((m_pUserInfo[i] == NULL)&&(m_pUserInfo[i + bHalfCount] != NULL)) 
+				if ((m_pUserInfo[i] == NULL) && (m_pUserInfo[i + bHalfCount] != NULL))
 					return false;
 
-				if ((m_pUserInfo[i] != NULL)&&(m_pUserInfo[i + bHalfCount] == NULL)) 
+				if ((m_pUserInfo[i] != NULL) && (m_pUserInfo[i + bHalfCount] == NULL))
 					return false;
 			}
 			return true;
 		}
-		else 
+		else
 		{
-			if (m_bBeginMode == FULL_BEGIN) 
+			if (m_bBeginMode == FULL_BEGIN)
 				return (bPeopoleCount == m_bMaxPeople);
-			else if (m_bBeginMode == ALL_ARGEE && bPeopoleCount >= m_pDataManage->m_KernelData.uMinDeskPeople) 
+			else if (m_bBeginMode == ALL_ARGEE && bPeopoleCount >= m_pDataManage->m_KernelData.uMinDeskPeople)
 			{
-				if (m_bIsBuy && m_bPlayerNum!=0 && m_iRunGameCount==0)
+				if (m_bIsBuy && m_bPlayerNum != 0 && m_iRunGameCount == 0)
 				{
 					if (bPeopoleCount == m_bPlayerNum)
 					{
@@ -2759,15 +3151,15 @@ bool CGameDesk::CanBeginGame()
 				return true;
 			}
 			//-----------6¸öÈËÖÐÓÐ4¸öÈË¿ªÊ¼---------------------
-			else if (m_bBeginMode==FOUR_SIX_ARGEE)
+			else if (m_bBeginMode == FOUR_SIX_ARGEE)
 			{
-				if(bPeopoleCount >=4)
+				if (bPeopoleCount >= 4)
 					return true;
 				if (bPeopoleCount == m_bMaxPeople)
 					return true;
 				return false;
 			}
-		   //-----------6¸öÈËÖÐÓÐ4¸öÈË¿ªÊ¼---------------------
+			//-----------6¸öÈËÖÐÓÐ4¸öÈË¿ªÊ¼---------------------
 		}
 	}
 
@@ -2782,42 +3174,42 @@ bool CGameDesk::CanBeginGame()
 /// 
 /// @param bDeskStation Íæ¼ÒÔÚ×À×ÓÖÐµÄÎ»ÖÃºÅ
 /// @return Èç¹ûbDeskStation´óÓÚ±¾·¿¼äÒ»×À×î´óÈËÊý£¬»òm_pUserInfo[bDeskStation]ÒÑ¾­ÊÇ¿ÕÖµNULL£¬Ôò·µ»Øfalse£¬·ñÔò·µ»Øtrue
-bool CGameDesk::MakeUserOffLine(BYTE bDeskStation,bool bSendUserUp /*= true*/)
+bool CGameDesk::MakeUserOffLine(BYTE bDeskStation, bool bSendUserUp /*= true*/)
 {
 	/// Èç¹ûÃ»ÕÒµ½Õâ¸öÍæ¼Ò£¬Ôò·µ»Ø false
-	if (bDeskStation>=m_bMaxPeople)
+	if (bDeskStation >= m_bMaxPeople)
 	{
 		return false;
 	}
-	if(m_pUserInfo[bDeskStation] == NULL) 
+	if (m_pUserInfo[bDeskStation] == NULL)
 	{
 		return false;
 	}
 
 	//¹ã²¥ÓÃ»§Àë¿ª
 	MSG_GR_R_UserSit UserSit;
-	UserSit.bLock=m_bLock;
-	UserSit.bDeskIndex=m_bDeskIndex;
-	UserSit.bDeskStation=bDeskStation;
-	UserSit.bUserState=USER_LOOK_STATE;
-	UserSit.dwUserID=m_pUserInfo[bDeskStation]->m_UserData.dwUserID;
-	UserSit.bIsDeskOwner=false;
+	UserSit.bLock = m_bLock;
+	UserSit.bDeskIndex = m_bDeskIndex;
+	UserSit.bDeskStation = bDeskStation;
+	UserSit.bUserState = USER_LOOK_STATE;
+	UserSit.dwUserID = m_pUserInfo[bDeskStation]->m_UserData.dwUserID;
+	UserSit.bIsDeskOwner = false;
 	UserSit.bLeave = bSendUserUp;
-	UserSit.bDeskMaster=(m_bIsBuy&&m_iDeskMaster==m_pUserInfo[bDeskStation]->m_UserData.dwUserID);//·¿Ö÷
-	m_pDataManage->m_TCPSocket.SendDataBatch(&UserSit,sizeof(UserSit),MDM_GR_USER_ACTION,ASS_GR_USER_UP,ERR_GR_SIT_SUCCESS);
+	UserSit.bDeskMaster = (m_bIsBuy&&m_iDeskMaster == m_pUserInfo[bDeskStation]->m_UserData.dwUserID);//·¿Ö÷
+	m_pDataManage->m_TCPSocket.SendDataBatch(&UserSit, sizeof(UserSit), MDM_GR_USER_ACTION, ASS_GR_USER_UP, ERR_GR_SIT_SUCCESS);
 
 	m_pDataManage->AutoAllotDeskDeleteUser(m_pUserInfo[bDeskStation]);
 
 	CGameUserInfo *pUserInfo = m_pDataManage->m_UserManage.FindOnLineUser(m_pUserInfo[bDeskStation]->m_UserData.dwUserID);
 	if (pUserInfo)
 	{
-		pUserInfo->m_UserData.bDeskNO=255;
-		pUserInfo->m_UserData.bDeskStation=255;
-		pUserInfo->m_UserData.bUserState=USER_LOOK_STATE;
+		pUserInfo->m_UserData.bDeskNO = 255;
+		pUserInfo->m_UserData.bDeskStation = 255;
+		pUserInfo->m_UserData.bUserState = USER_LOOK_STATE;
 
 		if (bSendUserUp)
 		{
-			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[bDeskStation]->GetSocketIndex(),MDM_GR_USER_ACTION,ASS_GR_FORCE_QUITE,0,0);
+			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[bDeskStation]->GetSocketIndex(), MDM_GR_USER_ACTION, ASS_GR_FORCE_QUITE, 0, 0);
 		}
 	}
 	else
@@ -2825,21 +3217,21 @@ bool CGameDesk::MakeUserOffLine(BYTE bDeskStation,bool bSendUserUp /*= true*/)
 		pUserInfo = m_pDataManage->m_UserManage.FindNetCutUser(m_pUserInfo[bDeskStation]->m_UserData.dwUserID);
 		if (pUserInfo)
 		{
-			pUserInfo->m_UserData.bDeskNO=255;
-			pUserInfo->m_UserData.bDeskStation=255;
-			pUserInfo->m_UserData.bUserState=USER_LOOK_STATE;
+			pUserInfo->m_UserData.bDeskNO = 255;
+			pUserInfo->m_UserData.bDeskStation = 255;
+			pUserInfo->m_UserData.bUserState = USER_LOOK_STATE;
 
 			m_pDataManage->CleanUserInfo(pUserInfo);
-			m_pDataManage->m_UserManage.FreeUser(pUserInfo,false);
-			m_pUserInfo[bDeskStation]=NULL;
+			m_pDataManage->m_UserManage.FreeUser(pUserInfo, false);
+			m_pUserInfo[bDeskStation] = NULL;
 		}
 	}
 
-	m_uCutTime[bDeskStation]=0L;
-	m_bConnect[bDeskStation]=false;
-	m_pUserInfo[bDeskStation]=NULL;
-	m_bEnableWatch&=~(1<<bDeskStation);
-	
+	m_uCutTime[bDeskStation] = 0L;
+	m_bConnect[bDeskStation] = false;
+	m_pUserInfo[bDeskStation] = NULL;
+	m_bEnableWatch &= ~(1 << bDeskStation);
+
 	if (m_pDataManage->IsQueueGameRoom())
 	{
 		for (int i = 0; i < m_bMaxPeople; i++)
@@ -2851,13 +3243,13 @@ bool CGameDesk::MakeUserOffLine(BYTE bDeskStation,bool bSendUserUp /*= true*/)
 				if (p && p != pUserInfo)
 				{
 					UINT uSocketIndex = p->m_uSocketIndex;
-					m_pDataManage->m_TCPSocket.SendData(uSocketIndex,&p->m_UserData.dwUserID,sizeof(int),MDM_GR_ROOM,ASS_GR_ROOM_QUEUE_READY, 0, 0);
+					m_pDataManage->m_TCPSocket.SendData(uSocketIndex, &p->m_UserData.dwUserID, sizeof(int), MDM_GR_ROOM, ASS_GR_ROOM_QUEUE_READY, 0, 0);
 
 					m_bLeave = false;
-					UserLeftDesk(p->m_UserData.bDeskStation,p);
+					UserLeftDesk(p->m_UserData.bDeskStation, p);
 					m_bLeave = true;
 
-					if((m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST) || (m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST))
+					if ((m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST) || (m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST))
 					{
 						//ÖØÖÃ¸Ã×À×ÓµÄ×´Ì¬
 						/*m_pUserInfo[i]->m_UserData.bDeskNO=255;
@@ -2884,12 +3276,12 @@ bool CGameDesk::MakeUserOffLine(BYTE bDeskStation,bool bSendUserUp /*= true*/)
 //ÓÃ»§Àë¿ªÓÎÏ·×À
 BYTE CGameDesk::UserLeftDesk(BYTE bDeskStation, CGameUserInfo * pUserInfo)
 {
-	if(m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY)
+	if (m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY)
 	{
-		if(GetOnlineDeskPlayerNum()<=1)
+		if (GetOnlineDeskPlayerNum() <= 1)
 		{
 			KillTimer(IDT_CHECK_DESK);
-			SetTimer(IDT_CHECK_DESK,3*60*1000);
+			SetTimer(IDT_CHECK_DESK, 3 * 60 * 1000);
 		}
 	}
 	//·ÀÖ¹ÓÉÓÚÊý¾Ý·ÃÎÊÔ½½çÔì³É±ÀÀ££¬ÔÚ27ÍõÓÎÏ·ÖÐ³öÏÖ¹ý
@@ -2898,59 +3290,59 @@ BYTE CGameDesk::UserLeftDesk(BYTE bDeskStation, CGameUserInfo * pUserInfo)
 	{
 		return ERR_GR_SIT_SUCCESS;
 	}
-	if (! pUserInfo )
+	if (!pUserInfo)
 	{
 		return ERR_GR_SIT_SUCCESS;
 	}
 	///////////
 
-	if(m_pUserInfo[bDeskStation] == NULL) 
+	if (m_pUserInfo[bDeskStation] == NULL)
 		return ERR_GR_SIT_SUCCESS;
 	//Ð§ÑéÊý¾Ý 
 	ASSERT(m_pUserInfo[bDeskStation] == pUserInfo);
-    DWORD dwUserID = pUserInfo->m_UserData.dwUserID;
+	DWORD dwUserID = pUserInfo->m_UserData.dwUserID;
 	//ÉèÖÃÊý¾Ý
 	m_bConnect[bDeskStation] = false;
 	if (IsPlayGame(bDeskStation))
-		GameFinish(bDeskStation,GFF_FORCE_FINISH);
+		GameFinish(bDeskStation, GFF_FORCE_FINISH);
 
 
 	//¸üÐÂ¹æÔò
 	UINT uSitCount = 0L;
-	for (BYTE i = 0; i < m_bMaxPeople; i ++)
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
-		if (m_pUserInfo[i] != NULL) 
-			uSitCount ++;
+		if (m_pUserInfo[i] != NULL)
+			uSitCount++;
 	}
 	if (uSitCount == 1)
 	{
-		m_bLock=false;
-		m_szLockPass[0]=0;
+		m_bLock = false;
+		m_szLockPass[0] = 0;
 	}
 
 	//·¢ËÍ·¿¼äÏûÏ¢
 	MSG_GR_R_UserSit UserSit;
-	UserSit.bLock=m_bLock;
-	UserSit.bDeskIndex=m_bDeskIndex;
-	UserSit.bDeskStation=bDeskStation;
-	UserSit.bUserState=USER_LOOK_STATE;
-	UserSit.dwUserID=dwUserID;
-	UserSit.bIsDeskOwner=(m_dwOwnerUserID==dwUserID);
+	UserSit.bLock = m_bLock;
+	UserSit.bDeskIndex = m_bDeskIndex;
+	UserSit.bDeskStation = bDeskStation;
+	UserSit.bUserState = USER_LOOK_STATE;
+	UserSit.dwUserID = dwUserID;
+	UserSit.bIsDeskOwner = (m_dwOwnerUserID == dwUserID);
 	UserSit.bLeave = m_bLeave;
-	UserSit.bDeskMaster=(m_bIsBuy&&m_iDeskMaster==dwUserID);//·¿Ö÷
-	m_pDataManage->m_TCPSocket.SendDataBatch(&UserSit,sizeof(UserSit),MDM_GR_USER_ACTION,ASS_GR_USER_UP,ERR_GR_SIT_SUCCESS);
+	UserSit.bDeskMaster = (m_bIsBuy&&m_iDeskMaster == dwUserID);//·¿Ö÷
+	m_pDataManage->m_TCPSocket.SendDataBatch(&UserSit, sizeof(UserSit), MDM_GR_USER_ACTION, ASS_GR_USER_UP, ERR_GR_SIT_SUCCESS);
 
 	//¸üÐÂÌ¨Ö÷
-	if (m_dwOwnerUserID==dwUserID)
+	if (m_dwOwnerUserID == dwUserID)
 	{
-		m_dwOwnerUserID=0L;
+		m_dwOwnerUserID = 0L;
 		//m_DeskBasePoint=0;
-		for(int i=0; i<MAX_PEOPLE; i++)
+		for (int i = 0; i < MAX_PEOPLE; i++)
 		{
-			if(i == bDeskStation)
+			if (i == bDeskStation)
 				continue;
 			// ²éÕÒÏÂÒ»¸öÌ¨Ö÷
-			if(m_pUserInfo[i])
+			if (m_pUserInfo[i])
 			{
 				m_dwOwnerUserID = m_pUserInfo[i]->m_UserData.dwUserID;
 				break;
@@ -2959,46 +3351,46 @@ BYTE CGameDesk::UserLeftDesk(BYTE bDeskStation, CGameUserInfo * pUserInfo)
 	}
 
 	//ÉèÖÃÊý¾Ý
-	m_uCutTime[bDeskStation]=0L;
-	m_bConnect[bDeskStation]=false;
-	m_pUserInfo[bDeskStation]=NULL;
-	m_bEnableWatch&=~(1<<bDeskStation);
-    if (NULL != pUserInfo)
-    {
-        pUserInfo->m_UserData.bDeskNO = 255;
-        pUserInfo->m_UserData.bDeskStation = 255;
-        pUserInfo->m_UserData.bUserState = USER_LOOK_STATE;
-    }
+	m_uCutTime[bDeskStation] = 0L;
+	m_bConnect[bDeskStation] = false;
+	m_pUserInfo[bDeskStation] = NULL;
+	m_bEnableWatch &= ~(1 << bDeskStation);
+	if (NULL != pUserInfo)
+	{
+		pUserInfo->m_UserData.bDeskNO = 255;
+		pUserInfo->m_UserData.bDeskStation = 255;
+		pUserInfo->m_UserData.bUserState = USER_LOOK_STATE;
+	}
 
 	//ÅÐ¶ÏÊÇ·ñ¿ÉÒÔ¿ªÊ¼
-	if (CanBeginGame()==true) GameBegin(0);
+	if (CanBeginGame() == true) GameBegin(0);
 
-	if(m_bIsBuy && m_bInDissmissing)
+	if (m_bIsBuy && m_bInDissmissing)
 	{
-		vector<int>::iterator result = find( m_VecAgreeUserID.begin( ), m_VecAgreeUserID.end( ), pUserInfo->m_UserData.dwUserID ); 
-		if ( result == m_VecAgreeUserID.end( ) ) 
+		vector<int>::iterator result = find(m_VecAgreeUserID.begin(), m_VecAgreeUserID.end(), pUserInfo->m_UserData.dwUserID);
+		if (result == m_VecAgreeUserID.end())
 		{
-			if(m_iDissmissAgreePeople>=GetOnlineDeskPlayerNum())
+			if (m_iDissmissAgreePeople >= GetOnlineDeskPlayerNum())
 			{
-				GameFinish(0,GFF_DISSMISS_FINISH);
+				GameFinish(0, GFF_DISSMISS_FINISH);
 			}
 			else
 			{
 				m_VecAgreeUserID.push_back(pUserInfo->m_UserData.dwUserID);
 				VipDeskDismissAgreeRes tAgreeData;
-				tAgreeData.bAgree=true;
-				tAgreeData.iUserID=pUserInfo->m_UserData.dwUserID;
-				for(int i=0;i<m_bMaxPeople;i++)
+				tAgreeData.bAgree = true;
+				tAgreeData.iUserID = pUserInfo->m_UserData.dwUserID;
+				for (int i = 0; i < m_bMaxPeople; i++)
 				{
-					if(!m_pUserInfo[i])
+					if (!m_pUserInfo[i])
 					{
 						continue;
 					}
-					m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex,&tAgreeData,sizeof(tAgreeData),MDM_GR_DESKRUNOUT,ASS_GR_DISSMISS_AGREE,0,0);
+					m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex, &tAgreeData, sizeof(tAgreeData), MDM_GR_DESKRUNOUT, ASS_GR_DISSMISS_AGREE, 0, 0);
 				}
 			}
 		}
-		else 
+		else
 		{
 			m_iDissmissAgreePeople--;
 		}
@@ -3012,7 +3404,7 @@ BYTE CGameDesk::UserLeftDesk(BYTE bDeskStation, CGameUserInfo * pUserInfo)
 		MasterLeave.iDeskID = m_bDeskIndex;
 		MasterLeave.iUserID = pUserInfo->m_UserData.dwUserID;
 
-		m_pDataManage->m_SQLDataManage.PushLine(&MasterLeave.DataBaseHead, sizeof(MasterLeave), DTK_GR_MASTER_LEAVE, 0, 0);	
+		m_pDataManage->m_SQLDataManage.PushLine(&MasterLeave.DataBaseHead, sizeof(MasterLeave), DTK_GR_MASTER_LEAVE, 0, 0);
 	}
 
 	if (m_pDataManage->IsQueueGameRoom() && m_bQueueReset)
@@ -3027,13 +3419,13 @@ BYTE CGameDesk::UserLeftDesk(BYTE bDeskStation, CGameUserInfo * pUserInfo)
 				if (p && p != pUserInfo)
 				{
 					UINT uSocketIndex = p->m_uSocketIndex;
-					m_pDataManage->m_TCPSocket.SendData(uSocketIndex,&p->m_UserData.dwUserID,sizeof(int),MDM_GR_ROOM,ASS_GR_ROOM_QUEUE_READY, 0, 0);
+					m_pDataManage->m_TCPSocket.SendData(uSocketIndex, &p->m_UserData.dwUserID, sizeof(int), MDM_GR_ROOM, ASS_GR_ROOM_QUEUE_READY, 0, 0);
 
 					m_bLeave = false;
-					UserLeftDesk(p->m_UserData.bDeskStation,p);
+					UserLeftDesk(p->m_UserData.bDeskStation, p);
 					m_bLeave = true;
 
-					if((m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST) || (m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST))
+					if ((m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST) || (m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST))
 					{
 						//ÖØÖÃ¸Ã×À×ÓµÄ×´Ì¬
 						/*m_pUserInfo[i]->m_UserData.bDeskNO=255;
@@ -3061,40 +3453,40 @@ BYTE CGameDesk::UserLeftDesk(BYTE bDeskStation, CGameUserInfo * pUserInfo)
 BYTE CGameDesk::WatchUserSitDesk(MSG_GR_S_UserSit* pUserSit, CGameUserInfo * pUserInfo)
 {
 	//Ð§ÑéÊý¾Ý 
-	if (pUserInfo==NULL) return ERR_GR_ERROR_UNKNOW;
+	if (pUserInfo == NULL) return ERR_GR_ERROR_UNKNOW;
 	//²»ÔÊÐíÅÔ¹Û
-	if(m_pDataManage->m_InitData.dwRoomRule&GRR_UNENABLE_WATCH)
+	if (m_pDataManage->m_InitData.dwRoomRule&GRR_UNENABLE_WATCH)
 		return ERR_GR_UNENABLE_WATCH;
 
 	//Ñ°ÕÒÅÔ¹ÛÎ»ÖÃ
 	UINT dwWatchStation;
-	for (dwWatchStation=0;dwWatchStation<(UINT)m_WatchUserPtr.GetCount();dwWatchStation++)
+	for (dwWatchStation = 0; dwWatchStation < (UINT)m_WatchUserPtr.GetCount(); dwWatchStation++)
 	{
-		if (m_WatchUserPtr.GetAt(dwWatchStation)==NULL)	break;
+		if (m_WatchUserPtr.GetAt(dwWatchStation) == NULL)	break;
 	}
 
 	//ÃÜÂëÐ§Ñé
-	if (m_bLock==true)
+	if (m_bLock == true)
 	{
-		if (lstrcmp(m_szLockPass,pUserSit->szPassword)!=0)//20081205
+		if (lstrcmp(m_szLockPass, pUserSit->szPassword) != 0)//20081205
 			return ERR_GR_PASS_ERROR;
 	}
 
 	//ÉèÖÃÊý¾Ý
-	pUserInfo->m_UserData.bDeskNO=m_bDeskIndex;
-	pUserInfo->m_UserData.bDeskStation=pUserSit->bDeskStation;
-	pUserInfo->m_UserData.bUserState=USER_WATCH_GAME;
-	m_WatchUserPtr.SetAtGrow(dwWatchStation,pUserInfo);
+	pUserInfo->m_UserData.bDeskNO = m_bDeskIndex;
+	pUserInfo->m_UserData.bDeskStation = pUserSit->bDeskStation;
+	pUserInfo->m_UserData.bUserState = USER_WATCH_GAME;
+	m_WatchUserPtr.SetAtGrow(dwWatchStation, pUserInfo);
 
 	//·¢ËÍ´óÌüÏûÏ¢
 	MSG_GR_R_UserSit UserWatchSit;
-	UserWatchSit.bLock=m_bLock;
-	UserWatchSit.bDeskIndex=m_bDeskIndex;
-	UserWatchSit.bDeskStation=pUserSit->bDeskStation;
-	UserWatchSit.bUserState=USER_WATCH_GAME;
-	UserWatchSit.dwUserID=pUserInfo->m_UserData.dwUserID;
-	UserWatchSit.bDeskMaster=false;//·¿Ö÷
-	m_pDataManage->m_TCPSocket.SendDataBatch(&UserWatchSit,sizeof(UserWatchSit),MDM_GR_USER_ACTION,ASS_GR_WATCH_SIT,ERR_GR_SIT_SUCCESS);
+	UserWatchSit.bLock = m_bLock;
+	UserWatchSit.bDeskIndex = m_bDeskIndex;
+	UserWatchSit.bDeskStation = pUserSit->bDeskStation;
+	UserWatchSit.bUserState = USER_WATCH_GAME;
+	UserWatchSit.dwUserID = pUserInfo->m_UserData.dwUserID;
+	UserWatchSit.bDeskMaster = false;//·¿Ö÷
+	m_pDataManage->m_TCPSocket.SendDataBatch(&UserWatchSit, sizeof(UserWatchSit), MDM_GR_USER_ACTION, ASS_GR_WATCH_SIT, ERR_GR_SIT_SUCCESS);
 
 	return ERR_GR_SIT_SUCCESS;
 }
@@ -3103,31 +3495,31 @@ BYTE CGameDesk::WatchUserSitDesk(MSG_GR_S_UserSit* pUserSit, CGameUserInfo * pUs
 BYTE CGameDesk::WatchUserLeftDesk(BYTE bDeskStation, CGameUserInfo * pUserInfo)
 {
 	//Ð§ÑéÊý¾Ý 
-	if (pUserInfo==NULL) return ERR_GR_ERROR_UNKNOW;
+	if (pUserInfo == NULL) return ERR_GR_ERROR_UNKNOW;
 	UINT dwWatchStation;
 	//Ñ°ÕÒÅÔ¹ÛÎ»ÖÃ
-	for (dwWatchStation=0;dwWatchStation<(UINT)m_WatchUserPtr.GetCount();dwWatchStation++)
+	for (dwWatchStation = 0; dwWatchStation < (UINT)m_WatchUserPtr.GetCount(); dwWatchStation++)
 	{
-		CGameUserInfo * pWatchUserInfo=(CGameUserInfo *)m_WatchUserPtr.GetAt(dwWatchStation);
-		if (pWatchUserInfo==pUserInfo) break;
+		CGameUserInfo * pWatchUserInfo = (CGameUserInfo *)m_WatchUserPtr.GetAt(dwWatchStation);
+		if (pWatchUserInfo == pUserInfo) break;
 	}
-	if (dwWatchStation==m_WatchUserPtr.GetCount()) return ERR_GR_ERROR_UNKNOW;
+	if (dwWatchStation == m_WatchUserPtr.GetCount()) return ERR_GR_ERROR_UNKNOW;
 
 	//·¢ËÍ´óÌüÏûÏ¢
 	MSG_GR_R_UserSit UserWatchUp;
-	UserWatchUp.bLock=m_bLock;
-	UserWatchUp.bDeskIndex=m_bDeskIndex;
-	UserWatchUp.bDeskStation=bDeskStation;
-	UserWatchUp.bUserState=USER_LOOK_STATE;
-	UserWatchUp.dwUserID=pUserInfo->m_UserData.dwUserID;
-	UserWatchUp.bDeskMaster=false;//·¿Ö÷
-	m_pDataManage->m_TCPSocket.SendDataBatch(&UserWatchUp,sizeof(UserWatchUp),MDM_GR_USER_ACTION,ASS_GR_WATCH_UP,ERR_GR_SIT_SUCCESS);
+	UserWatchUp.bLock = m_bLock;
+	UserWatchUp.bDeskIndex = m_bDeskIndex;
+	UserWatchUp.bDeskStation = bDeskStation;
+	UserWatchUp.bUserState = USER_LOOK_STATE;
+	UserWatchUp.dwUserID = pUserInfo->m_UserData.dwUserID;
+	UserWatchUp.bDeskMaster = false;//·¿Ö÷
+	m_pDataManage->m_TCPSocket.SendDataBatch(&UserWatchUp, sizeof(UserWatchUp), MDM_GR_USER_ACTION, ASS_GR_WATCH_UP, ERR_GR_SIT_SUCCESS);
 
 	//ÉèÖÃÊý¾Ý
-	pUserInfo->m_UserData.bDeskNO=255;
-	pUserInfo->m_UserData.bDeskStation=255;
-	pUserInfo->m_UserData.bUserState=USER_LOOK_STATE;
-	m_WatchUserPtr.SetAt(dwWatchStation,NULL);
+	pUserInfo->m_UserData.bDeskNO = 255;
+	pUserInfo->m_UserData.bDeskStation = 255;
+	pUserInfo->m_UserData.bUserState = USER_LOOK_STATE;
+	m_WatchUserPtr.SetAt(dwWatchStation, NULL);
 
 	return ERR_GR_SIT_SUCCESS;
 }
@@ -3135,79 +3527,79 @@ BYTE CGameDesk::WatchUserLeftDesk(BYTE bDeskStation, CGameUserInfo * pUserInfo)
 //ÓÃ»§Í¬Òâ¿ªÊ¼
 bool CGameDesk::UserAgreeGame(BYTE bDeskStation)
 {
-	if (m_pUserInfo[bDeskStation]!=NULL
-		&&m_pUserInfo[bDeskStation]->m_UserData.i64Money < m_pDataManage->m_InitData.uLessPoint
+	if (m_pUserInfo[bDeskStation] != NULL
+		&& m_pUserInfo[bDeskStation]->m_UserData.i64Money < m_pDataManage->m_InitData.uLessPoint
 		&&m_pDataManage->m_InitData.uComType == TY_MONEY_GAME
 		&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY) && !(m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST))
 	{
-		UserLeftDesk(bDeskStation,m_pUserInfo[bDeskStation]);
+		UserLeftDesk(bDeskStation, m_pUserInfo[bDeskStation]);
 		return true;
 	}
-	HNLOG_G(55,"ASS_GM_AGREE_GAME DeskPass:%s UserID:%d",m_szDeskPassWord,m_pUserInfo[bDeskStation]?m_pUserInfo[bDeskStation]->m_UserData.dwUserID:0);
-    //ÅÅ¶Ó»ú³¡ÈËÊý²»¹»Ê±ÐëÖØÐÂ²ÎÓëÅÅ¶Ó
-    if(m_pDataManage->IsQueueGameRoom())
-    {
+	HNLOG_G(55, "ASS_GM_AGREE_GAME DeskPass:%s UserID:%d", m_szDeskPassWord, m_pUserInfo[bDeskStation] ? m_pUserInfo[bDeskStation]->m_UserData.dwUserID : 0);
+	//ÅÅ¶Ó»ú³¡ÈËÊý²»¹»Ê±ÐëÖØÐÂ²ÎÓëÅÅ¶Ó
+	if (m_pDataManage->IsQueueGameRoom())
+	{
 		char cKey[10];
-		CString sPath=CBcfFile::GetAppPath();
+		CString sPath = CBcfFile::GetAppPath();
 		CBcfFile fsr(sPath + "SpecialRule.bcf");
 		sprintf(cKey, "%d", m_pDataManage->m_KernelData.uNameID);
-		int HaveZhuang = fsr.GetKeyVal (_T("IsHaveZhuang"), cKey, 0);
-		if(
+		int HaveZhuang = fsr.GetKeyVal(_T("IsHaveZhuang"), cKey, 0);
+		if (
 			///·ÇÁ¬×¯ÓÎÏ·ÔÚÓÎÏ·ÖÐÊÕµ½Í¬ÒâÏûÏ¢£¬½âÉ¢´Ë×À
-			(m_pUserInfo[bDeskStation] != NULL && (HaveZhuang == 0) && 
+			(m_pUserInfo[bDeskStation] != NULL && (HaveZhuang == 0) &&
 			(m_pUserInfo[bDeskStation]->m_UserData.bUserState == USER_PLAY_GAME ||
-			m_pUserInfo[bDeskStation]->m_UserData.bUserState == USER_SITTING))  || 
-			(GetDeskPlayerNum() <= m_bMaxPeople && m_pUserInfo[bDeskStation] != NULL)
+				m_pUserInfo[bDeskStation]->m_UserData.bUserState == USER_SITTING)) ||
+				(GetDeskPlayerNum() <= m_bMaxPeople && m_pUserInfo[bDeskStation] != NULL)
 			)
-        {
+		{
 
 			//ÉèÖÃÊý¾Ý
-			m_pUserInfo[bDeskStation]->m_UserData.bUserState=USER_ARGEE;
+			m_pUserInfo[bDeskStation]->m_UserData.bUserState = USER_ARGEE;
 
 			//ÏÈ·¢ËÍÓÎÏ·Í¬ÒâÏûÏ¢, ÅäºÏÅÅ¶Ó»ú×Ô¶¯½øÈëÅÅ¶Ó
 
 			MSG_GR_R_UserAgree UserAgree;
-			UserAgree.bAgreeGame=TRUE;
-			UserAgree.bDeskNO=m_bDeskIndex;
-			UserAgree.bDeskStation=bDeskStation;
+			UserAgree.bAgreeGame = TRUE;
+			UserAgree.bDeskNO = m_bDeskIndex;
+			UserAgree.bDeskStation = bDeskStation;
 			UINT uSocketIndex = m_pUserInfo[bDeskStation]->m_uSocketIndex;
 
 			//ÅÐ¶ÏÊÇ·ñ¿ÉÒÔ¿ªÊ¼
-			if (CanBeginGame()==true) 
+			if (CanBeginGame() == true)
 			{
 				GameBegin(0);
 				return true;
 			}
 
-			m_pDataManage->m_TCPSocket.SendDataBatch(&UserAgree,sizeof(UserAgree),MDM_GR_ROOM,ASS_GR_USER_AGREE,0);
+			m_pDataManage->m_TCPSocket.SendDataBatch(&UserAgree, sizeof(UserAgree), MDM_GR_ROOM, ASS_GR_USER_AGREE, 0);
 
-            return true;
-        }
-    }
+			return true;
+		}
+	}
 
-	if (m_pUserInfo[bDeskStation]!=NULL)
+	if (m_pUserInfo[bDeskStation] != NULL)
 	{
 		//ÉèÖÃÊý¾Ý
-		m_pUserInfo[bDeskStation]->m_UserData.bUserState=USER_ARGEE;
+		m_pUserInfo[bDeskStation]->m_UserData.bUserState = USER_ARGEE;
 
 		//·¢ËÍÓÎÏ·Í¬ÒâÏûÏ¢
 		MSG_GR_R_UserAgree UserAgree;
-		UserAgree.bAgreeGame=TRUE;
-		UserAgree.bDeskNO=m_bDeskIndex;
-		UserAgree.bDeskStation=bDeskStation;
+		UserAgree.bAgreeGame = TRUE;
+		UserAgree.bDeskNO = m_bDeskIndex;
+		UserAgree.bDeskStation = bDeskStation;
 
-		m_pDataManage->m_TCPSocket.SendDataBatch(&UserAgree,sizeof(UserAgree),MDM_GR_ROOM,ASS_GR_USER_AGREE,0);
+		m_pDataManage->m_TCPSocket.SendDataBatch(&UserAgree, sizeof(UserAgree), MDM_GR_ROOM, ASS_GR_USER_AGREE, 0);
 
 		if (m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY)
 		{
-			if ((m_bPositionCheck || m_bIPCheck) && !IsBuyDeskPlaying() && CanBeginGame()==true)
+			if ((m_bPositionCheck || m_bIPCheck) && !IsBuyDeskPlaying() && CanBeginGame() == true)
 			{
 				onCheckPrevent();
 				return true;
 			}
 			else
 			{
-				if (!m_pDataManage->IsQueueGameRoom() && CanBeginGame()==true) 
+				if (!m_pDataManage->IsQueueGameRoom() && CanBeginGame() == true)
 				{
 					GameBegin(0);
 					return true;
@@ -3218,7 +3610,7 @@ bool CGameDesk::UserAgreeGame(BYTE bDeskStation)
 		else
 		{
 			//ÅÐ¶ÏÊÇ·ñ¿ÉÒÔ¿ªÊ¼
-			if (!m_pDataManage->IsQueueGameRoom() && CanBeginGame()==true) 
+			if (!m_pDataManage->IsQueueGameRoom() && CanBeginGame() == true)
 			{
 				GameBegin(0);
 				return true;
@@ -3240,31 +3632,31 @@ bool CGameDesk::SendGameStation(BYTE bDeskStation, UINT uSocketID, bool bWatchUs
 	}
 
 	//»ñÈ¡ÓÎÏ·ÐÅÏ¢
-	UINT uSendSize=0;
+	UINT uSendSize = 0;
 	MSG_GM_S_GameInfo GameInfo;
-	GameInfo.bGameStation=m_bGameStation;///< ÓÎÏ·×´Ì¬
-	GameInfo.bWatchOther=((m_bEnableWatch&(1<<bDeskStation))!=0);
-	GameInfo.bWaitTime=m_bWaitTime;
-	GameInfo.bReserve=FALSE;
-	if (m_pDataManage->m_szMsgGameLogon[0]!=0)
+	GameInfo.bGameStation = m_bGameStation;///< ÓÎÏ·×´Ì¬
+	GameInfo.bWatchOther = ((m_bEnableWatch&(1 << bDeskStation)) != 0);
+	GameInfo.bWaitTime = m_bWaitTime;
+	GameInfo.bReserve = FALSE;
+	if (m_pDataManage->m_szMsgGameLogon[0] != 0)
 	{
-		lstrcpy(GameInfo.szMessage,m_pDataManage->m_szMsgGameLogon);
-		uSendSize=sizeof(GameInfo)-sizeof(GameInfo.szMessage)+(lstrlen(m_pDataManage->m_szMsgGameLogon)+1)*sizeof(char);
+		lstrcpy(GameInfo.szMessage, m_pDataManage->m_szMsgGameLogon);
+		uSendSize = sizeof(GameInfo) - sizeof(GameInfo.szMessage) + (lstrlen(m_pDataManage->m_szMsgGameLogon) + 1) * sizeof(char);
 	}
-	else 
+	else
 	{
-		GameInfo.szMessage[0]=0;
-		uSendSize=sizeof(GameInfo)-sizeof(GameInfo.szMessage);
+		GameInfo.szMessage[0] = 0;
+		uSendSize = sizeof(GameInfo) - sizeof(GameInfo.szMessage);
 	}
 
 	//·¢ËÍÓÎÏ·ÐÅÏ¢
 
-	if (bWatchUser==false) SendGameData(bDeskStation,&GameInfo,uSendSize,MDM_GM_GAME_FRAME,ASS_GM_GAME_INFO,0);
-	else SendWatchDataByID(uSocketID,&GameInfo,uSendSize,MDM_GM_GAME_FRAME,ASS_GM_GAME_INFO,0);
+	if (bWatchUser == false) SendGameData(bDeskStation, &GameInfo, uSendSize, MDM_GM_GAME_FRAME, ASS_GM_GAME_INFO, 0);
+	else SendWatchDataByID(uSocketID, &GameInfo, uSendSize, MDM_GM_GAME_FRAME, ASS_GM_GAME_INFO, 0);
 
 	//·¢ËÍÓÎÏ·×´Ì¬
-	if (bWatchUser==false) SendGameData(bDeskStation,pStationData,uSize,MDM_GM_GAME_FRAME,ASS_GM_GAME_STATION,0);
-	else SendWatchDataByID(uSocketID,pStationData,uSize,MDM_GM_GAME_FRAME,ASS_GM_GAME_STATION,0);
+	if (bWatchUser == false) SendGameData(bDeskStation, pStationData, uSize, MDM_GM_GAME_FRAME, ASS_GM_GAME_STATION, 0);
+	else SendWatchDataByID(uSocketID, pStationData, uSize, MDM_GM_GAME_FRAME, ASS_GM_GAME_STATION, 0);
 
 	/// ÅÅ¶Ó»úÓÎÏ·ÊÇ·ñ¿ÉÒÔ¿ªÊ¼
 	if (m_pDataManage->IsQueueGameRoom()/* && CanBeginGame()*/)
@@ -3275,9 +3667,9 @@ bool CGameDesk::SendGameStation(BYTE bDeskStation, UINT uSocketID, bool bWatchUs
 
 		if (!(m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST) && !(m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST))
 		{
-			for (BYTE i=0; i<m_bMaxPeople; i++)
+			for (BYTE i = 0; i < m_bMaxPeople; i++)
 			{
-				if (m_pUserInfo[i]!=NULL)
+				if (m_pUserInfo[i] != NULL)
 				{
 					if (!m_bConnect[m_pUserInfo[i]->m_UserData.bDeskStation])
 					{
@@ -3294,66 +3686,66 @@ bool CGameDesk::SendGameStation(BYTE bDeskStation, UINT uSocketID, bool bWatchUs
 //ÓÎÏ·¿ªÊ¼
 bool CGameDesk::GameBegin(BYTE bBeginFlag)
 {
-	if ((m_pDataManage->m_InitData.uLessPoint!=0)&&(m_pDataManage->m_InitData.uComType==TY_MONEY_GAME))
+	if ((m_pDataManage->m_InitData.uLessPoint != 0) && (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME))
 	{
-		bool quit=false;
-		for (BYTE i=0;i<m_bMaxPeople;i++)
+		bool quit = false;
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
 		{
 			if (m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST || m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY)
 				break;
-			if (m_pUserInfo[i]!=NULL
-				&&((m_pUserInfo[i]->m_UserData.i64Money < (int)m_pDataManage->m_InitData.uLessPoint
-				&&m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
-				||m_pDataManage->m_InitData.uComType != TY_MONEY_GAME))
+			if (m_pUserInfo[i] != NULL
+				&& ((m_pUserInfo[i]->m_UserData.i64Money < (int)m_pDataManage->m_InitData.uLessPoint
+					&&m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
+					|| m_pDataManage->m_InitData.uComType != TY_MONEY_GAME))
 			{
 				UINT SocketIndex = m_pUserInfo[i]->m_uSocketIndex;
 				MakeUserOffLine(i);
 				m_pDataManage->m_TCPSocket.SendData(SocketIndex, MDM_GR_ROOM, ASS_GR_MONEY_NOTENOUGH, 0, 0);
-				quit=true;
+				quit = true;
 			}
 		}
-		if(quit) return false;
+		if (quit) return false;
 	}
 
 	//ÉèÖÃÊý¾Ý
 	m_bPlayGame = true;
-	m_dwBeginTime=(long int)time(NULL);
-	m_dwTax=0;
-	memset(m_bCutGame,0,sizeof(m_bCutGame));
-	memset(m_uCutTime,0,sizeof(m_uCutTime));
-	memset(m_bBreakCount,0,sizeof(m_bBreakCount));
-	memset(m_dwChangePoint,0,sizeof(m_dwChangePoint));
-	memset(m_dwChangeMoney,0,sizeof(m_dwChangeMoney));
-	memset(m_dwTaxCom,0,sizeof(m_dwTaxCom));
+	m_dwBeginTime = (long int)time(NULL);
+	m_dwTax = 0;
+	memset(m_bCutGame, 0, sizeof(m_bCutGame));
+	memset(m_uCutTime, 0, sizeof(m_uCutTime));
+	memset(m_bBreakCount, 0, sizeof(m_bBreakCount));
+	memset(m_dwChangePoint, 0, sizeof(m_dwChangePoint));
+	memset(m_dwChangeMoney, 0, sizeof(m_dwChangeMoney));
+	memset(m_dwTaxCom, 0, sizeof(m_dwTaxCom));
 
 	m_byDoublePointEffect = 0;
 	m_bAllRobot = true;
 
 	//¼ÇÂ¼ÓÎÏ·
-	for (BYTE i=0;i<m_bMaxPeople;i++)
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
-		if (m_pUserInfo[i]!=NULL)
+		if (m_pUserInfo[i] != NULL)
 		{
 			CString str;
-			m_dwGameUserID[i]=m_pUserInfo[i]->m_UserData.dwUserID;
-//			m_dwScrPoint[i]=m_pUserInfo[i]->m_UserData.dwPoint;
-			m_pUserInfo[i]->m_UserData.bUserState=USER_PLAY_GAME;
+			m_dwGameUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID;
+			//			m_dwScrPoint[i]=m_pUserInfo[i]->m_UserData.dwPoint;
+			m_pUserInfo[i]->m_UserData.bUserState = USER_PLAY_GAME;
 			if (m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY)
-				m_GameUserInfo[i]=m_pUserInfo[i]->m_UserData.dwUserID;
+				m_GameUserInfo[i] = m_pUserInfo[i]->m_UserData.dwUserID;
 
 			if (m_pUserInfo[i]->m_UserData.isVirtual == false)
 				m_bAllRobot = false;
 		}
 		else
 		{
-			m_dwScrPoint[i]=0L;
-			m_dwGameUserID[i]=0L;
+			m_dwScrPoint[i] = 0L;
+			m_dwGameUserID[i] = 0L;
 		}
 	}
 
 	m_tBeginTime = CTime::GetCurrentTime();
 	//·¢ËÍ´óÌüÏûÏ¢
-	m_pDataManage->m_TCPSocket.SendDataBatch(NULL,0,MDM_GR_ROOM,ASS_GR_GAME_BEGIN,m_bDeskIndex);
+	m_pDataManage->m_TCPSocket.SendDataBatch(NULL, 0, MDM_GR_ROOM, ASS_GR_GAME_BEGIN, m_bDeskIndex);
 
 	//ÖØÖÃ»Ö¸´·¿¼ä±êÊ¶
 	m_bReturnDesk = false;
@@ -3362,92 +3754,92 @@ bool CGameDesk::GameBegin(BYTE bBeginFlag)
 	{
 		//¼ÇÂ¼ÓÎÏ·×´Ì¬
 		DL_GR_I_CutNetRecordStart input_net;
-		input_net.bStart=true;
-		input_net.byDeskIndex=m_bDeskIndex;
-		input_net.iRoomID=m_pDataManage->m_InitData.uRoomID;
-		input_net.iUserID=m_iDeskMaster;
+		input_net.bStart = true;
+		input_net.byDeskIndex = m_bDeskIndex;
+		input_net.iRoomID = m_pDataManage->m_InitData.uRoomID;
+		input_net.iUserID = m_iDeskMaster;
 		m_pDataManage->m_SQLDataManage.PushLine(&input_net.DataBaseHead, sizeof(input_net), DTK_GR_CUTNETRECORDSTART, 0, 0);
 
-		if (DESK_TYPE_BJL!=m_uDeskType)
+		if (DESK_TYPE_BJL != m_uDeskType)
 		{
 			DL_GR_I_CutNetRecord _data;
-			strcpy_s(_data.szDeskPass,m_szDeskPassWord);
+			strcpy_s(_data.szDeskPass, m_szDeskPassWord);
 			_data.iPeopleCount = m_bMaxPeople;
-			for (int i=0;i<m_bMaxPeople;i++)
+			for (int i = 0; i < m_bMaxPeople; i++)
 			{
-				if (m_pUserInfo[i]!=NULL)
+				if (m_pUserInfo[i] != NULL)
 				{
-					_data.iUserID[i]=m_pUserInfo[i]->m_UserData.dwUserID;
+					_data.iUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID;
 				}
 			}
 			m_pDataManage->m_SQLDataManage.PushLine(&_data.DataBaseHead, sizeof(_data), DTK_GR_CUTNETRECORD, 0, 0);
 		}
 
-        if (m_iClubID != 0 && m_iRunGameCount==0)		// ¾ãÀÖ²¿·¿¼äÍ¨Öª¾ãÀÖ²¿Íæ¼Ò
-        {
-            MSG_GP_O_Club_RoomChange  _outdata;
-            _outdata.bCreate = false;
-            _outdata.iClub = m_iClubID;
-            strcpy_s(_outdata._data.szDeskPass,m_szDeskPassWord);
+		if (m_iClubID != 0 && m_iRunGameCount == 0)		// ¾ãÀÖ²¿·¿¼äÍ¨Öª¾ãÀÖ²¿Íæ¼Ò
+		{
+			MSG_GP_O_Club_RoomChange  _outdata;
+			_outdata.bCreate = false;
+			_outdata.iClub = m_iClubID;
+			strcpy_s(_outdata._data.szDeskPass, m_szDeskPassWord);
 
-            _outdata._data.bIsPlay = true;
-            if(M_bMidEnter==0)		// ¾ãÀÖ²¿·¿¼äÍ¨Öª¾ãÀÖ²¿Íæ¼Ò
-            {//  ²»ÔÊÐí¼ÓÈë
-                _outdata._data.bAllowEnter = false;
-            }
-            else
-            { 
-                if(GetDeskPlayerNum() >= m_bPlayerNum && m_bPlayerNum != 0)
-                {
-                    _outdata._data.bAllowEnter = false;
-                }
-                else if(GetDeskPlayerNum() >= m_bMaxPeople && m_bPlayerNum == 0)
-                {
-                    _outdata._data.bAllowEnter = false;
-                }
-                else
-                {
-                    _outdata._data.bAllowEnter = true;
-                }
-            }
+			_outdata._data.bIsPlay = true;
+			if (M_bMidEnter == 0)		// ¾ãÀÖ²¿·¿¼äÍ¨Öª¾ãÀÖ²¿Íæ¼Ò
+			{//  ²»ÔÊÐí¼ÓÈë
+				_outdata._data.bAllowEnter = false;
+			}
+			else
+			{
+				if (GetDeskPlayerNum() >= m_bPlayerNum && m_bPlayerNum != 0)
+				{
+					_outdata._data.bAllowEnter = false;
+				}
+				else if (GetDeskPlayerNum() >= m_bMaxPeople && m_bPlayerNum == 0)
+				{
+					_outdata._data.bAllowEnter = false;
+				}
+				else
+				{
+					_outdata._data.bAllowEnter = true;
+				}
+			}
 
-            m_pDataManage->m_pMainServerSocket->SendData(&_outdata,sizeof(_outdata),MDM_MG_CLUB,ASS_MG_CLUB_CLEARDESK,0);
-        }
+			m_pDataManage->m_pMainServerSocket->SendData(&_outdata, sizeof(_outdata), MDM_MG_CLUB, ASS_MG_CLUB_CLEARDESK, 0);
+		}
 
-        if(m_iRunGameCount == 0)
-        {
-            m_iBuyMinutesDeskBeginTime = COleDateTime::GetCurrentTime();
-            DL_GR_I_UpdateBeginTime _data;
-            _data.iRoomID = m_pDataManage->m_InitData.uRoomID;
-            _data.iDeskID = m_bDeskIndex;
-            memcpy(_data.szDeskPass, m_szDeskPassWord, sizeof(_data.szDeskPass));
-            m_pDataManage->m_SQLDataManage.PushLine(&_data.DataBaseHead, sizeof(_data), DTK_GR_UPDATEBEGINTIME, 0, 0);
-            if(m_bFinishCondition == 3)
-            {// Ê±Ð§·¿¼ä
-                SetTimer(IDT_DESKRUNOUT_TIMER, m_iBuyMinutes * 60 * 1000);
-            }
-        }
+		if (m_iRunGameCount == 0)
+		{
+			m_iBuyMinutesDeskBeginTime = COleDateTime::GetCurrentTime();
+			DL_GR_I_UpdateBeginTime _data;
+			_data.iRoomID = m_pDataManage->m_InitData.uRoomID;
+			_data.iDeskID = m_bDeskIndex;
+			memcpy(_data.szDeskPass, m_szDeskPassWord, sizeof(_data.szDeskPass));
+			m_pDataManage->m_SQLDataManage.PushLine(&_data.DataBaseHead, sizeof(_data), DTK_GR_UPDATEBEGINTIME, 0, 0);
+			if (m_bFinishCondition == 3)
+			{// Ê±Ð§·¿¼ä
+				SetTimer(IDT_DESKRUNOUT_TIMER, m_iBuyMinutes * 60 * 1000);
+			}
+		}
 
 		VipDeskInfoResult outdata;
 		outdata.byDeskIndex = m_bDeskIndex;
 		outdata.iMasterID = m_iDeskMaster;
 		outdata.iPlayCount = m_iVipGameCount;
 		outdata.iNowCount = m_iRunGameCount + 1;
-        outdata.iType = m_bFinishCondition;
+		outdata.iType = m_bFinishCondition;
 		strcpy_s(outdata.szPassWord, m_szDeskPassWord);
 		strcpy_s(outdata.szGameName, m_pDataManage->m_szGameName);
-        
 
-        COleDateTime nowTime = COleDateTime::GetCurrentTime();
-        int iDay  = m_iBuyMinutes / (60*24);
-        int iHour = (m_iBuyMinutes - iDay * 60 * 24) / 60;
-        int iMinutes = (m_iBuyMinutes - iDay * 60 * 24 - iHour * 60);
-        COleDateTimeSpan timespan( iDay, iHour, iMinutes, 0 );
-        COleDateTimeSpan tmDiff = (m_iBuyMinutesDeskBeginTime + timespan - nowTime);
 
-        outdata.iSeconds = (long)tmDiff.GetTotalSeconds();
-        if(outdata.iSeconds < 0) outdata.iSeconds = 1;
-        outdata.bTimeKeeper = 1;
+		COleDateTime nowTime = COleDateTime::GetCurrentTime();
+		int iDay = m_iBuyMinutes / (60 * 24);
+		int iHour = (m_iBuyMinutes - iDay * 60 * 24) / 60;
+		int iMinutes = (m_iBuyMinutes - iDay * 60 * 24 - iHour * 60);
+		COleDateTimeSpan timespan(iDay, iHour, iMinutes, 0);
+		COleDateTimeSpan tmDiff = (m_iBuyMinutesDeskBeginTime + timespan - nowTime);
+
+		outdata.iSeconds = (long)tmDiff.GetTotalSeconds();
+		if (outdata.iSeconds < 0) outdata.iSeconds = 1;
+		outdata.bTimeKeeper = 1;
 
 		for (int i = 0; i < m_bMaxPeople; i++)
 		{
@@ -3482,9 +3874,9 @@ bool CGameDesk::GameBegin(BYTE bBeginFlag)
 			if (m_pDataManage->m_InitData.bLockMaster == 0)
 			{
 				bool isMasterExist = false;//·¿Ö÷ÊÇ·ñÔÚ×À×Ó
-				for (int i=0;i<m_bMaxPeople;i++)
+				for (int i = 0; i < m_bMaxPeople; i++)
 				{
-					if(m_pUserInfo[i]!=NULL)
+					if (m_pUserInfo[i] != NULL)
 					{
 						if (m_pUserInfo[i]->m_UserData.dwUserID == m_iDeskMaster)
 						{
@@ -3509,13 +3901,13 @@ bool CGameDesk::GameBegin(BYTE bBeginFlag)
 	}
 	if (!m_bAllRobot)
 	{
-		memset(m_GameSN,0,sizeof(m_GameSN));
+		memset(m_GameSN, 0, sizeof(m_GameSN));
 		CreateGameSN();
 	}
-	
+
 	return true;
 }
-  
+
 //ÓÎÏ·½áÊø
 bool CGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 {
@@ -3523,20 +3915,20 @@ bool CGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 	{
 		return GameFinishContest(bDeskStation, bCloseFlag);
 	}
-	
+
 	//ÉèÖÃÊý¾Ý
-	m_bPlayGame=false;
-	m_dwBeginTime=(long int)time(NULL);
+	m_bPlayGame = false;
+	m_dwBeginTime = (long int)time(NULL);
 	//m_iDissmissAgreePeople=0;
-	if((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY) && m_bIsBuy)
+	if ((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY) && m_bIsBuy)
 	{
-		if((m_iRunGameCount>=m_iVipGameCount && 0 == m_bFinishCondition) || GFF_DISSMISS_FINISH == bCloseFlag)//¹ºÂò×À×ÓÒÑµ½ÆÚ
+		if ((m_iRunGameCount >= m_iVipGameCount && 0 == m_bFinishCondition) || GFF_DISSMISS_FINISH == bCloseFlag)//¹ºÂò×À×ÓÒÑµ½ÆÚ
 		{
 			m_pDataManage->OnClearDesk(m_bDeskIndex);
 		}
 	}
 	//·¢ËÍ½áÊøÏûÏ¢
-	for (BYTE i=0;i<m_bMaxPeople;i++)
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
 		if (m_pUserInfo[i] == NULL)
 		{
@@ -3549,7 +3941,7 @@ bool CGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 		}
 		// Èç¹ûÍæ¼ÒÒÑ¾­Ã»Ç®ÁË£¬ÔòÂíÉÏÀë¿ª×À×Ó
 		if ((m_pUserInfo[i]->m_UserData.i64Money < (int)m_pDataManage->m_InitData.uLessPoint)
-			&&(m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
+			&& (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
 			&& !(m_pDataManage->m_InitData.dwRoomRule&GRR_GAME_BUY))
 		{
 			if (!m_pDataManage->IsQueueGameRoom())
@@ -3564,14 +3956,14 @@ bool CGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 		{
 			m_pUserInfo[i]->m_UserData.bUserState = USER_SITTING;
 		}
-	}	
+	}
 	//·¢ËÍ´óÌüÏûÏ¢
-	m_pDataManage->m_TCPSocket.SendDataBatch(NULL,0,MDM_GR_ROOM,ASS_GR_GAME_END,m_bDeskIndex);
+	m_pDataManage->m_TCPSocket.SendDataBatch(NULL, 0, MDM_GR_ROOM, ASS_GR_GAME_END, m_bDeskIndex);
 	//ÇåÀí¶ÏÏß×ÊÁÏ
 	if (!m_bIsBuy || GFF_DISSMISS_FINISH == bCloseFlag)
 		CleanCutGameInfo();
 	//Çå³þÖÐÍ¾¼ÓÈë±êÖ¾
-	memset(m_bIsMidEnter,0,sizeof(m_bIsMidEnter));
+	memset(m_bIsMidEnter, 0, sizeof(m_bIsMidEnter));
 	return true;
 }
 
@@ -3579,10 +3971,10 @@ bool CGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 bool CGameDesk::GameFinishContest(BYTE bDeskStation, BYTE bCloseFlag)
 {
 	//ÉèÖÃÊý¾Ý
-	m_bPlayGame=false;
-	m_dwBeginTime=(long int)time(NULL);
-	m_pDataManage->m_TCPSocket.SendDataBatch(NULL,0,MDM_GR_ROOM,ASS_GR_GAME_END,m_bDeskIndex);
-	for (BYTE i=0;i<m_bMaxPeople;i++)
+	m_bPlayGame = false;
+	m_dwBeginTime = (long int)time(NULL);
+	m_pDataManage->m_TCPSocket.SendDataBatch(NULL, 0, MDM_GR_ROOM, ASS_GR_GAME_END, m_bDeskIndex);
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
 		if (m_pUserInfo[i] == NULL)
 		{
@@ -3593,12 +3985,12 @@ bool CGameDesk::GameFinishContest(BYTE bDeskStation, BYTE bCloseFlag)
 			m_pDataManage->AutoAllotDeskDeleteUser(m_pUserInfo[i]);
 		}
 	}
-	
+
 	//¸ù¾ÝÄ¿Ç°ÔÚÏßÈËÊýÅÐ¶Ï±ÈÈüÊÇ·ñ½áÊø
 	bool _bfinish = m_pDataManage->IsContestGameOver();
 
 	//·¢ËÍ½áÊøÏûÏ¢
-	for (BYTE i=0;i<m_bMaxPeople;i++)
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
 		if (m_pUserInfo[i] == NULL)
 		{
@@ -3606,20 +3998,20 @@ bool CGameDesk::GameFinishContest(BYTE bDeskStation, BYTE bCloseFlag)
 		}
 		if (m_pUserInfo[i]->m_UserData.i64ContestScore < (int)m_pDataManage->m_InitData.i64LowChip && !_bfinish)
 		{
-			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex, MDM_GR_ROOM, ASS_GR_CONTEST_KICK, m_bDeskIndex, 0);	
+			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex, MDM_GR_ROOM, ASS_GR_CONTEST_KICK, m_bDeskIndex, 0);
 		}
 		else if (!_bfinish)
 		{
 			MSG_GR_R_UserSit UserSit;
-			UserSit.bLock=m_bLock;
-			UserSit.bDeskIndex=m_bDeskIndex;
-			UserSit.bDeskStation=bDeskStation;
-			UserSit.bUserState=USER_LOOK_STATE;
-			UserSit.dwUserID=m_pUserInfo[i]->m_UserData.dwUserID;
-			UserSit.bIsDeskOwner=(m_dwOwnerUserID==m_pUserInfo[i]->m_UserData.dwUserID);
+			UserSit.bLock = m_bLock;
+			UserSit.bDeskIndex = m_bDeskIndex;
+			UserSit.bDeskStation = bDeskStation;
+			UserSit.bUserState = USER_LOOK_STATE;
+			UserSit.dwUserID = m_pUserInfo[i]->m_UserData.dwUserID;
+			UserSit.bIsDeskOwner = (m_dwOwnerUserID == m_pUserInfo[i]->m_UserData.dwUserID);
 			UserSit.bLeave = false;
-			UserSit.bDeskMaster=(m_bIsBuy&&m_iDeskMaster==m_pUserInfo[i]->m_UserData.dwUserID);//·¿Ö÷
-			m_pDataManage->m_TCPSocket.SendDataBatch(&UserSit,sizeof(UserSit),MDM_GR_USER_ACTION,ASS_GR_USER_UP,ERR_GR_SIT_SUCCESS);
+			UserSit.bDeskMaster = (m_bIsBuy&&m_iDeskMaster == m_pUserInfo[i]->m_UserData.dwUserID);//·¿Ö÷
+			m_pDataManage->m_TCPSocket.SendDataBatch(&UserSit, sizeof(UserSit), MDM_GR_USER_ACTION, ASS_GR_USER_UP, ERR_GR_SIT_SUCCESS);
 		}
 		else if (_bfinish)
 		{
@@ -3627,13 +4019,13 @@ bool CGameDesk::GameFinishContest(BYTE bDeskStation, BYTE bCloseFlag)
 			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex, MDM_GR_ROOM, ASS_GR_CONTEST_WAIT_GAMEOVER, m_bDeskIndex, 0);
 		}
 		//ÖØÖÃ¸Ã×À×ÓµÄ×´Ì¬
-		m_pUserInfo[i]->m_UserData.bDeskNO=255;
-		m_pUserInfo[i]->m_UserData.bDeskStation=255;
-		m_pUserInfo[i]->m_UserData.bUserState=USER_LOOK_STATE;
+		m_pUserInfo[i]->m_UserData.bDeskNO = 255;
+		m_pUserInfo[i]->m_UserData.bDeskStation = 255;
+		m_pUserInfo[i]->m_UserData.bUserState = USER_LOOK_STATE;
 
-		m_uCutTime[i]=0L;
-		m_bConnect[i]=false;
-		m_pUserInfo[i]=NULL;
+		m_uCutTime[i] = 0L;
+		m_bConnect[i] = false;
+		m_pUserInfo[i] = NULL;
 
 
 	}
@@ -3652,15 +4044,15 @@ bool CGameDesk::OnTimer(UINT uTimerID)
 		m_pDataManage->OnReleaseDesk(m_bDeskIndex);
 		//if(IsPlayingByGameStation())
 		{
-			GameFinish(0,GFF_FORCE_FINISH);
+			GameFinish(0, GFF_FORCE_FINISH);
 		}
 		return true;
 	}
 	else if (IDT_DISMISS_TIMEOUT == uTimerID)
 	{
 		KillTimer(IDT_DISMISS_TIMEOUT);
-		
-		GameFinish(0,GFF_DISSMISS_FINISH);
+
+		GameFinish(0, GFF_DISSMISS_FINISH);
 		return true;
 	}
 	else if (IDT_CONTEST_SIT_TIMEOUT == uTimerID)
@@ -3673,23 +4065,23 @@ bool CGameDesk::OnTimer(UINT uTimerID)
 		}
 		return true;
 	}
-    else if(IDT_DESKRUNOUT_TIMER == uTimerID)
-    {
+	else if (IDT_DESKRUNOUT_TIMER == uTimerID)
+	{
 		KillTimer(IDT_DESKRUNOUT_TIMER);
-        if(m_iRunGameCount == 0 && !m_bPlayGame)
-        {
-            return true;
-        }
-        if(!m_bPlayGame)
-        {
-            GameFinish(0, GFF_DISSMISS_FINISH);
-        }
-        else
-        {
-            SetTimer(IDT_DESKRUNOUT_TIMER, 1000);
-        }
-        return true;
-    }
+		if (m_iRunGameCount == 0 && !m_bPlayGame)
+		{
+			return true;
+		}
+		if (!m_bPlayGame)
+		{
+			GameFinish(0, GFF_DISSMISS_FINISH);
+		}
+		else
+		{
+			SetTimer(IDT_DESKRUNOUT_TIMER, 1000);
+		}
+		return true;
+	}
 
 	return false;
 }
@@ -3697,206 +4089,208 @@ bool CGameDesk::OnTimer(UINT uTimerID)
 //ÓÎÏ·Êý¾Ý°ü´¦Àíº¯Êý
 bool CGameDesk::HandleFrameMessage(BYTE bDeskStation, NetMessageHead * pNetHead, void * pData, UINT uSize, UINT uSocketID, bool bWatchUser)
 {
-	if (bDeskStation>=m_bMaxPeople|| m_pUserInfo[bDeskStation] == NULL)
+	if (bDeskStation >= m_bMaxPeople || m_pUserInfo[bDeskStation] == NULL)
 	{
 		return true;
 	}
-	ASSERT(pNetHead->bMainID==MDM_GM_GAME_FRAME);
+	ASSERT(pNetHead->bMainID == MDM_GM_GAME_FRAME);
 	switch (pNetHead->bAssistantID)
 	{
 	case ASS_GM_GAME_INFO:		//ÓÎÏ·×´Ì¬
+	{
+		//Ð§ÑéÊý¾Ý
+		if (uSize != sizeof(MSG_GM_S_ClientInfo))
 		{
-			//Ð§ÑéÊý¾Ý
-			if (uSize!=sizeof(MSG_GM_S_ClientInfo))
-			{
-				HNLOG_G(m_pDataManage->m_InitData.uRoomID,"[%d-%d]CGameDesk::HandleFrameMessage(ASS_GM_GAME_INFO)ÖÐÊý¾Ý³¤¶È²»ÕýÈ·[%dÐÐ]",
-					this->m_pDataManage->m_KernelData.uNameID,
-					this->m_pDataManage->m_InitData.uRoomID,
-					__LINE__);
-				return false;
-			}
-			MSG_GM_S_ClientInfo * pClientInfo=(MSG_GM_S_ClientInfo *)pData;
-			if ((!bWatchUser) && (m_bConnect[bDeskStation]))
-			{
-				/// µ±¿ìËÙ»»×ÀµÄÊ±ºò£¬»á³öÏÖÕâÖÖÇé¿ö£¬Îª±ÜÃâ×Ü¶ÏÏßµÄÇé¿ö£¬·µ»Øtrue¡¡
-				HNLOG_G(m_pDataManage->m_InitData.uRoomID,"[%d-%d]CGameDesk::HandleFrameMessage(ASS_GM_GAME_INFO)ÖÐ£¬Á¬½Ó¹ýÁËÔÙ´ÎÁ¬½Ó[%dÐÐ]",
-					this->m_pDataManage->m_KernelData.uNameID,
-					this->m_pDataManage->m_InitData.uRoomID,
-					__LINE__);
-				return true;
-			}
-
-			//´¦ÀíÊý¾Ý
-			if (bWatchUser==false)
-			{
-				m_bConnect[bDeskStation]=true;
-				if (((m_pDataManage->m_InitData.dwRoomRule&GRR_ENABLE_WATCH)==0)&&
-					((m_pDataManage->m_InitData.dwRoomRule&GRR_UNENABLE_WATCH)==0))
-				{
-					if (pClientInfo->bEnableWatch) m_bEnableWatch|=(1<<bDeskStation);
-					else m_bEnableWatch&=~(1<<bDeskStation);
-				}
-			}
-			//Ïò¿Í»§¶Ë·¢ËÍÊÓÆµ·þÎñÆ÷µØÖ·
-			send_video_ip(bDeskStation);
-			//·¢ËÍÓÃ»§ÓÎÏ·×´Ì¬
-			bool bRet = OnGetGameStation(bDeskStation,uSocketID,bWatchUser);
-
-			//²¶Óã±È½ÏÌØÊâ  ÔÝÊ±ÕâÑù´¦Àí  
-			for (int i = 0;i< 10;++i)
-			{
-				if (m_pDataManage->m_uNameID == m_dwFishGamesNameID[i])
-				{
-					m_dwBeginTime=(long int)time(NULL);
-					break;
-				}
-			}
-			if (!bRet)
-			{
-				HNLOG_G(m_pDataManage->m_InitData.uRoomID,"[%d-%d]CGameDesk::HandleFrameMessage(ASS_GM_GAME_INFO)ÖÐOnGetGameStation()·µ»Øfalse[%dÐÐ]",
-					this->m_pDataManage->m_KernelData.uNameID,
-					this->m_pDataManage->m_InitData.uRoomID,
-					__LINE__);
-			}
-			return bRet;
+			HNLOG_G(m_pDataManage->m_InitData.uRoomID, "[%d-%d]CGameDesk::HandleFrameMessage(ASS_GM_GAME_INFO)ÖÐÊý¾Ý³¤¶È²»ÕýÈ·[%dÐÐ]",
+				this->m_pDataManage->m_KernelData.uNameID,
+				this->m_pDataManage->m_InitData.uRoomID,
+				__LINE__);
+			return false;
 		}
+		MSG_GM_S_ClientInfo * pClientInfo = (MSG_GM_S_ClientInfo *)pData;
+		if ((!bWatchUser) && (m_bConnect[bDeskStation]))
+		{
+			/// µ±¿ìËÙ»»×ÀµÄÊ±ºò£¬»á³öÏÖÕâÖÖÇé¿ö£¬Îª±ÜÃâ×Ü¶ÏÏßµÄÇé¿ö£¬·µ»Øtrue¡¡
+			HNLOG_G(m_pDataManage->m_InitData.uRoomID, "[%d-%d]CGameDesk::HandleFrameMessage(ASS_GM_GAME_INFO)ÖÐ£¬Á¬½Ó¹ýÁËÔÙ´ÎÁ¬½Ó[%dÐÐ]",
+				this->m_pDataManage->m_KernelData.uNameID,
+				this->m_pDataManage->m_InitData.uRoomID,
+				__LINE__);
+			return true;
+		}
+
+		//´¦ÀíÊý¾Ý
+		if (bWatchUser == false)
+		{
+			m_bConnect[bDeskStation] = true;
+			if (((m_pDataManage->m_InitData.dwRoomRule&GRR_ENABLE_WATCH) == 0) &&
+				((m_pDataManage->m_InitData.dwRoomRule&GRR_UNENABLE_WATCH) == 0))
+			{
+				if (pClientInfo->bEnableWatch) m_bEnableWatch |= (1 << bDeskStation);
+				else m_bEnableWatch &= ~(1 << bDeskStation);
+			}
+		}
+		//Ïò¿Í»§¶Ë·¢ËÍÊÓÆµ·þÎñÆ÷µØÖ·
+		send_video_ip(bDeskStation);
+		//·¢ËÍÓÃ»§ÓÎÏ·×´Ì¬
+		bool bRet = OnGetGameStation(bDeskStation, uSocketID, bWatchUser);
+
+		//²¶Óã±È½ÏÌØÊâ  ÔÝÊ±ÕâÑù´¦Àí  
+		for (int i = 0; i < 10; ++i)
+		{
+			if (m_pDataManage->m_uNameID == m_dwFishGamesNameID[i])
+			{
+				m_dwBeginTime = (long int)time(NULL);
+				break;
+			}
+		}
+		if (!bRet)
+		{
+			HNLOG_G(m_pDataManage->m_InitData.uRoomID, "[%d-%d]CGameDesk::HandleFrameMessage(ASS_GM_GAME_INFO)ÖÐOnGetGameStation()·µ»Øfalse[%dÐÐ]",
+				this->m_pDataManage->m_KernelData.uNameID,
+				this->m_pDataManage->m_InitData.uRoomID,
+				__LINE__);
+		}
+		return bRet;
+	}
 	case ASS_GM_FORCE_QUIT:		//Ç¿ÐÐÍË³ö//°²È«ÍË³ö
+	{
+		if (bWatchUser == true) return true;
+		if (pNetHead->bHandleCode == 0)//Ç¿ÐÐÍË³ö
 		{
-			if (bWatchUser==true) return true;
-			if(pNetHead->bHandleCode==0)//Ç¿ÐÐÍË³ö
-			{
-				if (IsPlayGame(bDeskStation)==true) GameFinish(bDeskStation,GFF_FORCE_FINISH);
-			}
-			else if(pNetHead->bHandleCode==1)//°²È«ÍË³ö
-			{
-				if (IsPlayGame(bDeskStation)==true) GameFinish(bDeskStation,GFF_SAFE_FINISH);
-			}
-			return true;
+			if (IsPlayGame(bDeskStation) == true) GameFinish(bDeskStation, GFF_FORCE_FINISH);
 		}
+		else if (pNetHead->bHandleCode == 1)//°²È«ÍË³ö
+		{
+			if (IsPlayGame(bDeskStation) == true) GameFinish(bDeskStation, GFF_SAFE_FINISH);
+		}
+		return true;
+	}
 	case ASS_GM_NORMAL_TALK:	//ÆÕÍ¨ÁÄÌì
+	{
+		//²»ÔÊÐíÆÕÍ¨ÁÄÌì
+		if (m_pDataManage->m_InitData.dwRoomRule & GRR_FORBID_GAME_TALK)
+			return false;
+		//Ð§ÑéÊý¾Ý 
+		MSG_GR_RS_NormalTalk * pNormalTalk = (MSG_GR_RS_NormalTalk *)pData;
+
+		//´¦ÀíÊý¾Ý
+		CGameUserInfo * pUserInfo = m_pDataManage->m_UserManage.GetOnLineUserInfo(uSocketID);
+		if (pUserInfo == NULL) return false;
+
+		/// Èç¹û½ûÑÔÊ±¼äÓÐÐ§£¬Ôò²»·¢ËÍ  
+		CString strTime;
+		strTime.Format("%d", CTime::GetCurrentTime());
+		int curTime = atoi(strTime);
+		//			if (pUserInfo->m_UserData.userInfoEx2 > curTime)
 		{
-			//²»ÔÊÐíÆÕÍ¨ÁÄÌì
-			if(m_pDataManage->m_InitData.dwRoomRule & GRR_FORBID_GAME_TALK)
-				return false;
-			//Ð§ÑéÊý¾Ý 
-			MSG_GR_RS_NormalTalk * pNormalTalk=(MSG_GR_RS_NormalTalk *)pData;
-
-			//´¦ÀíÊý¾Ý
-			CGameUserInfo * pUserInfo=m_pDataManage->m_UserManage.GetOnLineUserInfo(uSocketID);
-			if (pUserInfo==NULL) return false;
-
-			/// Èç¹û½ûÑÔÊ±¼äÓÐÐ§£¬Ôò²»·¢ËÍ  
-			CString strTime;
-			strTime.Format("%d",CTime::GetCurrentTime());
-			int curTime=atoi(strTime);
-//			if (pUserInfo->m_UserData.userInfoEx2 > curTime)
-			{
-//				return true;
-			}
-
-			//Èº·¢Êý¾Ý
-			pNormalTalk->dwSendID=pUserInfo->m_UserData.dwUserID;
-
-			string str_temp(pNormalTalk->szMessage);
-			m_pDataManage->m_HNFilter.censor(str_temp,false);
-			strcpy(pNormalTalk->szMessage,str_temp.c_str());
-			pNormalTalk->iLength = strlen(pNormalTalk->szMessage) + 1;
-			pNormalTalk->szMessage[pNormalTalk->iLength]=0;
-
-			SendGameData(m_bMaxPeople,pNormalTalk,sizeof(MSG_GR_RS_NormalTalk),MDM_GM_GAME_FRAME,ASS_GM_NORMAL_TALK,0);
-			SendWatchData(m_bMaxPeople,pNormalTalk,sizeof(MSG_GR_RS_NormalTalk),MDM_GM_GAME_FRAME,ASS_GM_NORMAL_TALK,0);
-
-			return true;
+			//				return true;
 		}
-	case ASS_GM_WATCH_SET:		//ÅÔ¹ÛÉèÖÃ
-		{
-			//Ð§ÑéÊý¾Ý
-			if (uSize!=sizeof(MSG_GM_WatchSet)) return false;
-			MSG_GM_WatchSet * pWatchSet=(MSG_GM_WatchSet *)pData;
-			if (bWatchUser==true) return false;
 
-			//´¦ÀíÊý¾Ý
-			if (((m_pDataManage->m_InitData.dwRoomRule&GRR_ENABLE_WATCH)==0)&&
-				((m_pDataManage->m_InitData.dwRoomRule&GRR_UNENABLE_WATCH)==0))
+		//Èº·¢Êý¾Ý
+		pNormalTalk->dwSendID = pUserInfo->m_UserData.dwUserID;
+
+		string str_temp(pNormalTalk->szMessage);
+		m_pDataManage->m_HNFilter.censor(str_temp, false);
+		strcpy(pNormalTalk->szMessage, str_temp.c_str());
+		pNormalTalk->iLength = strlen(pNormalTalk->szMessage) + 1;
+		pNormalTalk->szMessage[pNormalTalk->iLength] = 0;
+
+		SendGameData(m_bMaxPeople, pNormalTalk, sizeof(MSG_GR_RS_NormalTalk), MDM_GM_GAME_FRAME, ASS_GM_NORMAL_TALK, 0);
+		SendWatchData(m_bMaxPeople, pNormalTalk, sizeof(MSG_GR_RS_NormalTalk), MDM_GM_GAME_FRAME, ASS_GM_NORMAL_TALK, 0);
+
+		return true;
+	}
+	case ASS_GM_WATCH_SET:		//ÅÔ¹ÛÉèÖÃ
+	{
+		//Ð§ÑéÊý¾Ý
+		if (uSize != sizeof(MSG_GM_WatchSet)) return false;
+		MSG_GM_WatchSet * pWatchSet = (MSG_GM_WatchSet *)pData;
+		if (bWatchUser == true) return false;
+
+		//´¦ÀíÊý¾Ý
+		if (((m_pDataManage->m_InitData.dwRoomRule&GRR_ENABLE_WATCH) == 0) &&
+			((m_pDataManage->m_InitData.dwRoomRule&GRR_UNENABLE_WATCH) == 0))
+		{
+			if (pWatchSet->dwUserID != 0L)
 			{
-				if (pWatchSet->dwUserID!=0L)
+				//µ¥Ò»ÓÃ»§
+				for (INT_PTR i = 0; i < m_WatchUserPtr.GetCount(); i++)
 				{
-					//µ¥Ò»ÓÃ»§
-					for (INT_PTR i=0;i<m_WatchUserPtr.GetCount();i++)
+					CGameUserInfo * pUserInfo = (CGameUserInfo *)m_WatchUserPtr.GetAt(i);
+					if (((pUserInfo != NULL) && (pUserInfo->m_UserData.dwUserID == pWatchSet->dwUserID)) && (pUserInfo->m_UserData.bDeskStation == bDeskStation))
 					{
-						CGameUserInfo * pUserInfo=(CGameUserInfo *)m_WatchUserPtr.GetAt(i);
-						if (((pUserInfo!=NULL)&&(pUserInfo->m_UserData.dwUserID==pWatchSet->dwUserID))&&(pUserInfo->m_UserData.bDeskStation==bDeskStation))
-						{
-							m_pDataManage->m_TCPSocket.SendData(pUserInfo->m_uSocketIndex,MDM_GM_GAME_FRAME,ASS_GM_WATCH_SET,
-								pNetHead->bHandleCode,pUserInfo->m_dwHandleID);
-							break;
-						}
+						m_pDataManage->m_TCPSocket.SendData(pUserInfo->m_uSocketIndex, MDM_GM_GAME_FRAME, ASS_GM_WATCH_SET,
+							pNetHead->bHandleCode, pUserInfo->m_dwHandleID);
+						break;
 					}
 				}
-				else 
-				{
-					//Èº·¢ÓÃ»§
-					if (pNetHead->bHandleCode==TRUE) m_bEnableWatch|=(1<<bDeskStation);
-					else m_bEnableWatch&=~(1<<bDeskStation);
-					SendWatchData(bDeskStation,MDM_GM_GAME_FRAME,ASS_GM_WATCH_SET,pNetHead->bHandleCode);
-				}
-
-				//Í¨Öª±ä»¯
-				OnWatchSetChange(bDeskStation,pWatchSet->dwUserID,pNetHead->bHandleCode==TRUE);
+			}
+			else
+			{
+				//Èº·¢ÓÃ»§
+				if (pNetHead->bHandleCode == TRUE) m_bEnableWatch |= (1 << bDeskStation);
+				else m_bEnableWatch &= ~(1 << bDeskStation);
+				SendWatchData(bDeskStation, MDM_GM_GAME_FRAME, ASS_GM_WATCH_SET, pNetHead->bHandleCode);
 			}
 
-			return true;
+			//Í¨Öª±ä»¯
+			OnWatchSetChange(bDeskStation, pWatchSet->dwUserID, pNetHead->bHandleCode == TRUE);
 		}
-    case ASS_GM_USE_KICK_PROP:      // Ê¹ÓÃÌßÈË¿¨
-        {
-            // Ð§ÑéÊý¾Ý 
-            if(uSize != sizeof(MSG_GR_RS_KickProp)) return false;
-            MSG_GR_RS_KickProp* pKickProp = (MSG_GR_RS_KickProp* )pData;
 
-            CGameUserInfo * pUserInfo=m_pDataManage->m_UserManage.GetOnLineUserInfo(uSocketID);
-            if (pUserInfo==NULL) return false;
+		return true;
+	}
+	case ASS_GM_USE_KICK_PROP:      // Ê¹ÓÃÌßÈË¿¨
+	{
+		// Ð§ÑéÊý¾Ý 
+		if (uSize != sizeof(MSG_GR_RS_KickProp)) return false;
+		MSG_GR_RS_KickProp* pKickProp = (MSG_GR_RS_KickProp*)pData;
 
-            try
-            {
-                DL_GR_I_UseKickProp DU_KickProp;
-                memset(&DU_KickProp, 0, sizeof(DU_KickProp));
-                DU_KickProp.dwUserID = pKickProp->dwUserID;
-                DU_KickProp.iPropID = pKickProp->iPropID;
+		CGameUserInfo * pUserInfo = m_pDataManage->m_UserManage.GetOnLineUserInfo(uSocketID);
+		if (pUserInfo == NULL) return false;
 
-                m_pDataManage->m_SQLDataManage.PushLine(&DU_KickProp.DataBaseHead,sizeof(DU_KickProp),DTK_GR_USE_KICK_PROP,
-                                                        pUserInfo->m_uSocketIndex, pUserInfo->m_dwHandleID);
-            }
-            catch(...)
-            {TRACE("CATCH:%s with %s\n",__FILE__,__FUNCTION__);
-            }
+		try
+		{
+			DL_GR_I_UseKickProp DU_KickProp;
+			memset(&DU_KickProp, 0, sizeof(DU_KickProp));
+			DU_KickProp.dwUserID = pKickProp->dwUserID;
+			DU_KickProp.iPropID = pKickProp->iPropID;
 
-            return true;
-        }
-    case ASS_GM_USE_ANTI_KICK_PROP: // Ê¹ÓÃ·ÀÌß¿¨
-        {
-            // Ð§ÑéÊý¾Ý 
-            if(uSize != sizeof(MSG_GR_RS_KickProp)) return false;
-            MSG_GR_RS_KickProp* pKickProp = (MSG_GR_RS_KickProp* )pData;
+			m_pDataManage->m_SQLDataManage.PushLine(&DU_KickProp.DataBaseHead, sizeof(DU_KickProp), DTK_GR_USE_KICK_PROP,
+				pUserInfo->m_uSocketIndex, pUserInfo->m_dwHandleID);
+		}
+		catch (...)
+		{
+			TRACE("CATCH:%s with %s\n", __FILE__, __FUNCTION__);
+		}
 
-            CGameUserInfo * pUserInfo=m_pDataManage->m_UserManage.GetOnLineUserInfo(uSocketID);
-            if (pUserInfo==NULL) return false;
+		return true;
+	}
+	case ASS_GM_USE_ANTI_KICK_PROP: // Ê¹ÓÃ·ÀÌß¿¨
+	{
+		// Ð§ÑéÊý¾Ý 
+		if (uSize != sizeof(MSG_GR_RS_KickProp)) return false;
+		MSG_GR_RS_KickProp* pKickProp = (MSG_GR_RS_KickProp*)pData;
 
-            try
-            {
-                DL_GR_I_UseKickProp DU_KickProp;
-                memset(&DU_KickProp, 0, sizeof(DU_KickProp));
-                DU_KickProp.dwUserID = pKickProp->dwUserID;
-                DU_KickProp.iPropID = pKickProp->iPropID;
+		CGameUserInfo * pUserInfo = m_pDataManage->m_UserManage.GetOnLineUserInfo(uSocketID);
+		if (pUserInfo == NULL) return false;
 
-                m_pDataManage->m_SQLDataManage.PushLine(&DU_KickProp.DataBaseHead,sizeof(DU_KickProp),DTK_GR_USE_ANTI_KICK_PROP,
-                                                        pUserInfo->m_uSocketIndex, pUserInfo->m_dwHandleID);
-            }
-            catch(...)
-            {TRACE("CATCH:%s with %s\n",__FILE__,__FUNCTION__);
-            }
+		try
+		{
+			DL_GR_I_UseKickProp DU_KickProp;
+			memset(&DU_KickProp, 0, sizeof(DU_KickProp));
+			DU_KickProp.dwUserID = pKickProp->dwUserID;
+			DU_KickProp.iPropID = pKickProp->iPropID;
 
-            return true;
-        }
+			m_pDataManage->m_SQLDataManage.PushLine(&DU_KickProp.DataBaseHead, sizeof(DU_KickProp), DTK_GR_USE_ANTI_KICK_PROP,
+				pUserInfo->m_uSocketIndex, pUserInfo->m_dwHandleID);
+		}
+		catch (...)
+		{
+			TRACE("CATCH:%s with %s\n", __FILE__, __FUNCTION__);
+		}
+
+		return true;
+	}
 	}
 	return false;
 }
@@ -3904,16 +4298,16 @@ bool CGameDesk::HandleFrameMessage(BYTE bDeskStation, NetMessageHead * pNetHead,
 //ÓÎÏ·Êý¾Ý°ü´¦Àíº¯Êý
 bool CGameDesk::HandleNotifyMessage(BYTE bDeskStation, NetMessageHead * pNetHead, void * pData, UINT uSize, UINT uSocketID, bool bWatchUser)
 {
-	ASSERT(pNetHead->bMainID==MDM_GM_GAME_NOTIFY);
+	ASSERT(pNetHead->bMainID == MDM_GM_GAME_NOTIFY);
 	switch (pNetHead->bAssistantID)
 	{
 	case ASS_GM_AGREE_GAME:		//ÓÃ»§Í¬Òâ
-		{
-			//Ð§ÑéÊý¾Ý
-			if (bWatchUser==true)
-				return false;
-			return UserAgreeGame(bDeskStation);					
-		}
+	{
+		//Ð§ÑéÊý¾Ý
+		if (bWatchUser == true)
+			return false;
+		return UserAgreeGame(bDeskStation);
+	}
 	}
 	return false;
 }
@@ -3922,64 +4316,65 @@ bool CGameDesk::HandleNotifyMessage(BYTE bDeskStation, NetMessageHead * pNetHead
 
 //mark
 //¼´Ê±¸üÐÂÊý¾Ý¿â
-BOOL CGameDesk::UpdateUserDB(LONG dwUserID,int dwChangeMoney,int dwChangePoint)
+BOOL CGameDesk::UpdateUserDB(LONG dwUserID, int dwChangeMoney, int dwChangePoint)
 {
-	if(dwChangeMoney == 0 && dwChangePoint == 0)
+	if (dwChangeMoney == 0 && dwChangePoint == 0)
 		return TRUE;
 
-	CGameUserInfo* UserInfo=m_pDataManage->m_UserManage.FindOnLineUser(dwUserID);
+	CGameUserInfo* UserInfo = m_pDataManage->m_UserManage.FindOnLineUser(dwUserID);
 
-	if(UserInfo==NULL)
+	if (UserInfo == NULL)
 		UserInfo = m_pDataManage->m_UserManage.FindNetCutUser(dwUserID);
 
-	if(UserInfo!=NULL)
+	if (UserInfo != NULL)
 	{
 		//return TRUE;	
 //		UserInfo->m_UserData.dwPoint += dwChangePoint ;
 		//´¦Àí¸º½ð±ÒÇé¿ö
-		if(UserInfo->m_UserData.i64Money + dwChangeMoney < 0)
+		if (UserInfo->m_UserData.i64Money + dwChangeMoney < 0)
 		{
 			dwChangeMoney = 0;
 			UserInfo->m_UserData.i64Money = 0;
 		}
 		else
-			UserInfo->m_UserData.i64Money += dwChangeMoney; 
+			UserInfo->m_UserData.i64Money += dwChangeMoney;
 	}
 	//¸üÐÂÊý¾Ý¿â
 	try
 	{
 		DL_GR_Update_InstantMoney DT_InstantMoney;
-		memset(&DT_InstantMoney,0,sizeof(DT_InstantMoney));
+		memset(&DT_InstantMoney, 0, sizeof(DT_InstantMoney));
 		DT_InstantMoney.dwChangeMoney = dwChangeMoney;
-		DT_InstantMoney.dwChangePoint =dwChangePoint;
+		DT_InstantMoney.dwChangePoint = dwChangePoint;
 		DT_InstantMoney.dwUserID = dwUserID;
 		DT_InstantMoney.bCutValue = 0;
-		m_pDataManage->m_SQLDataManage.PushLine(&DT_InstantMoney.DataBaseHead,sizeof(DT_InstantMoney),DTK_GR_UPDATE_INSTANT_MONEY,0,0);
+		m_pDataManage->m_SQLDataManage.PushLine(&DT_InstantMoney.DataBaseHead, sizeof(DT_InstantMoney), DTK_GR_UPDATE_INSTANT_MONEY, 0, 0);
 	}
-	catch(...)
-	{TRACE("CATCH:%s with %s\n",__FILE__,__FUNCTION__);
+	catch (...)
+	{
+		TRACE("CATCH:%s with %s\n", __FILE__, __FUNCTION__);
 	}
 	//Í¨Öª¿Í»§¶Ë
 	MSG_GR_R_InstantUpdate InstantUpdate;
 	InstantUpdate.dwUserID = dwUserID;
 	InstantUpdate.dwMoney = dwChangeMoney;
 	InstantUpdate.dwPoint = dwChangePoint;
-	m_pDataManage->m_TCPSocket.SendDataBatch(&InstantUpdate,sizeof(InstantUpdate),MDM_GR_ROOM,ASS_GR_INSTANT_UPDATE,0);
+	m_pDataManage->m_TCPSocket.SendDataBatch(&InstantUpdate, sizeof(InstantUpdate), MDM_GR_ROOM, ASS_GR_INSTANT_UPDATE, 0);
 	return true;
 }
 
 //µÀ¾ã
-bool CGameDesk::UserUseProp(BYTE bsendDeskStation,BYTE brecvDeskStation,_TAG_PROP_MOIVE_USE * propMoive)
+bool CGameDesk::UserUseProp(BYTE bsendDeskStation, BYTE brecvDeskStation, _TAG_PROP_MOIVE_USE * propMoive)
 {
-	if(!m_pUserInfo[bsendDeskStation])
+	if (!m_pUserInfo[bsendDeskStation])
 		return true;
 
-	if(!m_pUserInfo[brecvDeskStation])
+	if (!m_pUserInfo[brecvDeskStation])
 		return true;
-	
-	for(int i = 0; i < m_bMaxPeople; i ++)
-		SendGameData(i,propMoive,sizeof(_TAG_PROP_MOIVE_USE),MDM_GM_GAME_NOTIFY,ASS_PROP,0);
-	SendWatchData(m_bMaxPeople,propMoive,sizeof(_TAG_PROP_MOIVE_USE),MDM_GM_GAME_NOTIFY,ASS_PROP,0);
+
+	for (int i = 0; i < m_bMaxPeople; i++)
+		SendGameData(i, propMoive, sizeof(_TAG_PROP_MOIVE_USE), MDM_GM_GAME_NOTIFY, ASS_PROP, 0);
+	SendWatchData(m_bMaxPeople, propMoive, sizeof(_TAG_PROP_MOIVE_USE), MDM_GM_GAME_NOTIFY, ASS_PROP, 0);
 	return true;
 }
 
@@ -4012,7 +4407,7 @@ void CGameDesk::GetGRM_SET_KEY(TCHAR key[])
 		return;
 	}
 
-	CopyMemory(m_GRM_Key,key,sizeof(m_GRM_Key));
+	CopyMemory(m_GRM_Key, key, sizeof(m_GRM_Key));
 	return;
 }
 
@@ -4024,7 +4419,7 @@ void CGameDesk::GetGRM_SET_KEY_Win(TCHAR key[])
 		return;
 	}
 
-	CopyMemory(m_GRM_Key_win,key,sizeof(m_GRM_Key_win));
+	CopyMemory(m_GRM_Key_win, key, sizeof(m_GRM_Key_win));
 	return;
 }
 
@@ -4036,29 +4431,29 @@ void CGameDesk::GetGRM_SET_KEY_Los(TCHAR key[])
 		return;
 	}
 
-	CopyMemory(m_GRM_Key_los,key,sizeof(m_GRM_Key_los));
+	CopyMemory(m_GRM_Key_los, key, sizeof(m_GRM_Key_los));
 	return;
 }
 
 //·¢ËÍ½âÉ¢ÉêÇëÏûÏ¢
 void CGameDesk::SendDissmissingData(int SocketID)
 {
-	if (m_bInDissmissing && m_iDissmissUserID!=0 && DESK_TYPE_BJL!=m_uDeskType)
+	if (m_bInDissmissing && m_iDissmissUserID != 0 && DESK_TYPE_BJL != m_uDeskType)
 	{
-		CGameUserInfo * pUserInfo=m_pDataManage->m_UserManage.GetOnLineUserInfo(SocketID);
-		auto ite = find(m_VecAgreeUserID.begin(),m_VecAgreeUserID.end(),pUserInfo->m_UserData.dwUserID);
-		if (ite == m_VecAgreeUserID.end() && 1==M_bMidEnter)	//ÖÐÍ¾¼ÓÈëµÄÍæ¼ÒÃ»ÓÐÍ¬Òâ»ò¾Ü¾ø½âÉ¢µÄÈ¨ÏÞ
+		CGameUserInfo * pUserInfo = m_pDataManage->m_UserManage.GetOnLineUserInfo(SocketID);
+		auto ite = find(m_VecAgreeUserID.begin(), m_VecAgreeUserID.end(), pUserInfo->m_UserData.dwUserID);
+		if (ite == m_VecAgreeUserID.end() && 1 == M_bMidEnter)	//ÖÐÍ¾¼ÓÈëµÄÍæ¼ÒÃ»ÓÐÍ¬Òâ»ò¾Ü¾ø½âÉ¢µÄÈ¨ÏÞ
 		{
 			m_iDissmissAgreePeople++;
 		}
 
 		NetCutDismissNotify desk_notify;
-		desk_notify.iUserID=m_iDissmissUserID;
+		desk_notify.iUserID = m_iDissmissUserID;
 		desk_notify.iAgreeNum = m_iDissmissAgreePeople;
 
 		int i = 0;
-		for(vector<int>::iterator it = m_VecAgreeUserID.begin();
-			it != m_VecAgreeUserID.end() && i<20;
+		for (vector<int>::iterator it = m_VecAgreeUserID.begin();
+			it != m_VecAgreeUserID.end() && i < 20;
 			it++)
 		{
 			desk_notify.iUserAgreeID[i] = *it;
@@ -4068,11 +4463,11 @@ void CGameDesk::SendDissmissingData(int SocketID)
 		COleDateTime nowTime = COleDateTime::GetCurrentTime();
 		COleDateTimeSpan tmDiff = (nowTime - m_DismissTime);
 		long lsec = (long)tmDiff.GetTotalSeconds();
-		desk_notify.iTimeCount = (TIME_DISMISS_TIMEOUT/1000 - lsec);
+		desk_notify.iTimeCount = (TIME_DISMISS_TIMEOUT / 1000 - lsec);
 
-		m_pDataManage->m_TCPSocket.SendData(SocketID,&desk_notify,sizeof(desk_notify),MDM_GR_DESKRUNOUT,ASS_GR_DISSMISS_NETCUT,0,0);
+		m_pDataManage->m_TCPSocket.SendData(SocketID, &desk_notify, sizeof(desk_notify), MDM_GR_DESKRUNOUT, ASS_GR_DISSMISS_NETCUT, 0, 0);
 	}
-	
+
 	return;
 }
 
@@ -4080,20 +4475,20 @@ void CGameDesk::CreateGameSN()
 {
 	DL_GR_I_CREATE_GAMESN _p;
 	_p.iDeskID = m_bDeskIndex;
-	_p.iRoomID=m_pDataManage->m_InitData.uRoomID;
+	_p.iRoomID = m_pDataManage->m_InitData.uRoomID;
 
 	m_pDataManage->m_SQLDataManage.PushLine(&_p.DataBaseHead, sizeof(DL_GR_I_CREATE_GAMESN), DTK_GR_CREATE_GAMESN, 0, 0);
 
 	return;
 }
 
-void CGameDesk::ReleaseRoom(int UserID,void* szUserGameInfo,int iSize)
+void CGameDesk::ReleaseRoom(int UserID, void* szUserGameInfo, int iSize)
 {
 	DL_GR_I_RECORD_GAMEINFO _p;
-	_p.iUserID=UserID;
+	_p.iUserID = UserID;
 	_p.iSize = iSize;
-	memcpy_s(_p.GameInfo,sizeof(_p.GameInfo),szUserGameInfo,iSize);
-	memcpy_s(_p.szPass,sizeof(_p.szPass),m_szDeskPassWord,sizeof(m_szDeskPassWord));
+	memcpy_s(_p.GameInfo, sizeof(_p.GameInfo), szUserGameInfo, iSize);
+	memcpy_s(_p.szPass, sizeof(_p.szPass), m_szDeskPassWord, sizeof(m_szDeskPassWord));
 
 	m_pDataManage->m_SQLDataManage.PushLine(&_p.DataBaseHead, sizeof(DL_GR_I_RECORD_GAMEINFO), DTK_GR_RELEASERECORD, 0, 0);
 
@@ -4101,25 +4496,25 @@ void CGameDesk::ReleaseRoom(int UserID,void* szUserGameInfo,int iSize)
 }
 void CGameDesk::SendReturnInfo(UINT uIndex)
 {
-	if ((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY) && m_bReturnDesk&&3!=m_pDataManage->m_InitData.iLockType)    //·¢ËÍ·¿¼äÊý¾Ý
+	if ((m_pDataManage->m_InitData.dwRoomRule & GRR_GAME_BUY) && m_bReturnDesk && 3 != m_pDataManage->m_InitData.iLockType)    //·¢ËÍ·¿¼äÊý¾Ý
 	{
 		vector<MSG_GM_S_ReturnGameInfo>::iterator iterReturnInfo = m_pReturnInfo.begin();
 		for (iterReturnInfo; iterReturnInfo != m_pReturnInfo.end(); iterReturnInfo++)
 		{
 			if (iterReturnInfo->iUserID != 0)
 			{
-				CGameUserInfo * pGameUserInfo=m_pDataManage->m_UserManage.FindOnLineUser(iterReturnInfo->iUserID);
-				if (pGameUserInfo!=NULL)
+				CGameUserInfo * pGameUserInfo = m_pDataManage->m_UserManage.FindOnLineUser(iterReturnInfo->iUserID);
+				if (pGameUserInfo != NULL)
 				{
 					continue;
 				}
 				else
 				{
-					pGameUserInfo=m_pDataManage->m_UserManage.FindNetCutUser(iterReturnInfo->iUserID);
-					if (pGameUserInfo!=NULL)
+					pGameUserInfo = m_pDataManage->m_UserManage.FindNetCutUser(iterReturnInfo->iUserID);
+					if (pGameUserInfo != NULL)
 					{
 						iterReturnInfo->iUserState = 2;
-						if(m_pDataManage->m_InitData.uComType==TY_MONEY_GAME && (m_pDataManage->m_InitData.dwRoomRule & GRR_EXPERCISE_ROOM))
+						if (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME && (m_pDataManage->m_InitData.dwRoomRule & GRR_EXPERCISE_ROOM))
 						{
 							pGameUserInfo->m_UserData.i64Money = iterReturnInfo->i64Score;
 						}
@@ -4130,7 +4525,7 @@ void CGameDesk::SendReturnInfo(UINT uIndex)
 					}
 				}
 				iterReturnInfo->bDeskID = m_bDeskIndex;
-				m_pDataManage->m_TCPSocket.SendData(uIndex,&(*iterReturnInfo),sizeof(MSG_GM_S_ReturnGameInfo),MDM_GR_RETURNDESK,ASS_GR_RETURNDESK,0,0);
+				m_pDataManage->m_TCPSocket.SendData(uIndex, &(*iterReturnInfo), sizeof(MSG_GM_S_ReturnGameInfo), MDM_GR_RETURNDESK, ASS_GR_RETURNDESK, 0, 0);
 			}
 		}
 	}
@@ -4158,52 +4553,52 @@ int CGameDesk::SavePlayBackFile()
 	char ExistFile[256];
 	char NewFile[256];
 
-	for (int i=0;i<m_bMaxPeople;i++)
+	for (int i = 0; i < m_bMaxPeople; i++)
 	{
-		sprintf_s(ExistFile,"%s%s%02d.txt",m_pDataManage->m_InitData.szPlayBackTemp,m_GameSN,i);
-		sprintf_s(NewFile,"%s%s%02d.txt",m_pDataManage->m_szPlayBackURL,m_GameSN,i);
+		sprintf_s(ExistFile, "%s%s%02d.txt", m_pDataManage->m_InitData.szPlayBackTemp, m_GameSN, i);
+		sprintf_s(NewFile, "%s%s%02d.txt", m_pDataManage->m_szPlayBackURL, m_GameSN, i);
 
-		if (!MoveFileA(ExistFile, NewFile))  
-		{  
-			DWORD getlasterror;  
-			getlasterror=GetLastError();
-		}  
+		if (!MoveFileA(ExistFile, NewFile))
+		{
+			DWORD getlasterror;
+			getlasterror = GetLastError();
+		}
 	}
 
 	return 1;
 }
 
-void CGameDesk::UpdateRunCount(int iPlayCount) 
-{ 
+void CGameDesk::UpdateRunCount(int iPlayCount)
+{
 	m_iRunGameCount = iPlayCount;
 }
 
 void CGameDesk::onCheckPrevent()
 {
 	onCheckIP_Location();
-	if ((m_bPositionCheck||m_bIPCheck) && m_pDistance.size()>0)
+	if ((m_bPositionCheck || m_bIPCheck) && m_pDistance.size() > 0)
 	{
 		m_bInLocation = true;
 		m_iLocationAgreeNum = 0;
 		m_bAllAgreeLocation = false;
 		char bBuffer[MAX_SEND_SIZE];
-		memset(bBuffer,0,sizeof(bBuffer));
+		memset(bBuffer, 0, sizeof(bBuffer));
 		int count = 0;
-		while(count<m_pDistance.size())
+		while (count < m_pDistance.size())
 		{
-			if ((count+1)*sizeof(MSG_GR_S_Position_Notice)>MAX_SEND_SIZE)
+			if ((count + 1) * sizeof(MSG_GR_S_Position_Notice) > MAX_SEND_SIZE)
 			{
 				break;
 			}
-			memcpy_s(bBuffer+count*sizeof(MSG_GR_S_Position_Notice),sizeof(MSG_GR_S_Position_Notice),&m_pDistance[count],sizeof(MSG_GR_S_Position_Notice));
+			memcpy_s(bBuffer + count * sizeof(MSG_GR_S_Position_Notice), sizeof(MSG_GR_S_Position_Notice), &m_pDistance[count], sizeof(MSG_GR_S_Position_Notice));
 			count++;
 		}
 
-		for (int i=0;i<m_bMaxPeople;i++)
+		for (int i = 0; i < m_bMaxPeople; i++)
 		{
 			if (m_pUserInfo[i] == nullptr) continue;
 
-			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->GetSocketIndex(), bBuffer, count*sizeof(MSG_GR_S_Position_Notice),MDM_GR_DESKRUNOUT,ASS_GR_GETDISTANCEINFO, 0, 0);
+			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->GetSocketIndex(), bBuffer, count * sizeof(MSG_GR_S_Position_Notice), MDM_GR_DESKRUNOUT, ASS_GR_GETDISTANCEINFO, 0, 0);
 		}
 	}
 	else
@@ -4215,7 +4610,7 @@ void CGameDesk::onCheckPrevent()
 
 	if (m_bAllAgreeLocation)
 	{
-		if (!m_pDataManage->IsQueueGameRoom() && CanBeginGame()==true) 
+		if (!m_pDataManage->IsQueueGameRoom() && CanBeginGame() == true)
 		{
 			GameBegin(0);
 			return;
@@ -4227,16 +4622,16 @@ void CGameDesk::onCheckGameBegin()
 {
 	if (m_bAllAgreeLocation)
 	{
-		for(int i=0;i<m_bMaxPeople;i++)
+		for (int i = 0; i < m_bMaxPeople; i++)
 		{
-			if(!m_pUserInfo[i])
+			if (!m_pUserInfo[i])
 			{
 				continue;
 			}
-			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex,MDM_GR_DESKRUNOUT,ASS_GR_DISTANCE_ALLAGREE,0,0);
+			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex, MDM_GR_DESKRUNOUT, ASS_GR_DISTANCE_ALLAGREE, 0, 0);
 		}
-		
-		if (!m_pDataManage->IsQueueGameRoom() && CanBeginGame()==true) 
+
+		if (!m_pDataManage->IsQueueGameRoom() && CanBeginGame() == true)
 		{
 			GameBegin(0);
 			return;
@@ -4246,16 +4641,16 @@ void CGameDesk::onCheckGameBegin()
 
 void CGameDesk::onCheckIP_Location()
 {
-	if (m_bIsBuy && (m_bPositionCheck || m_bIPCheck))	
+	if (m_bIsBuy && (m_bPositionCheck || m_bIPCheck))
 	{
 		int temp_distance = 0;
 		m_pDistance.clear();
-		for (BYTE i=0;i<m_bMaxPeople-1;i++)
+		for (BYTE i = 0; i < m_bMaxPeople - 1; i++)
 		{
-			if (m_pUserInfo[i]==NULL) continue;
-			for (BYTE j=(i+1);j<m_bMaxPeople;j++)
+			if (m_pUserInfo[i] == NULL) continue;
+			for (BYTE j = (i + 1); j < m_bMaxPeople; j++)
 			{
-				if (m_pUserInfo[j]==NULL) continue;
+				if (m_pUserInfo[j] == NULL) continue;
 				if (m_pUserInfo[i]->m_UserData.dwUserID == m_pUserInfo[j]->m_UserData.dwUserID) continue;
 
 				MSG_GR_S_Position_Notice DistanceInfo;
@@ -4264,7 +4659,7 @@ void CGameDesk::onCheckIP_Location()
 
 				if (m_bPositionCheck)	//¼ÓÈë¹ý½üÍæ¼ÒÐÅÏ¢
 				{
-					temp_distance = m_pUserInfo[i]->GetDistance(m_pUserInfo[j]->m_UserData.flat,m_pUserInfo[j]->m_UserData.flnt);
+					temp_distance = m_pUserInfo[i]->GetDistance(m_pUserInfo[j]->m_UserData.flat, m_pUserInfo[j]->m_UserData.flnt);
 					if (temp_distance < m_pDataManage->m_InitData.iPositionLimit)
 					{
 						DistanceInfo.iDistance = temp_distance;
@@ -4298,7 +4693,7 @@ void CGameDesk::onCheckIP_Location()
 					DistanceInfo.bSameIP = false;
 				}
 
-				if(DistanceInfo.bSameIP || DistanceInfo.bDistance)
+				if (DistanceInfo.bSameIP || DistanceInfo.bDistance)
 				{
 					m_pDistance.push_back(DistanceInfo);
 				}
@@ -4312,19 +4707,19 @@ void CGameDesk::UserNotAgreePrevent(int UserID)
 	if (m_bIsBuy && m_bInLocation)
 	{
 		m_bInLocation = false;
-		m_iLocationAgreeNum=0;
+		m_iLocationAgreeNum = 0;
 		m_bAllAgreeLocation = false;
 
 		VipDeskDismissAgreeRes tAgreeData;
-		tAgreeData.bAgree=false;
-		tAgreeData.iUserID=UserID;
-		for(int i=0;i<m_bMaxPeople;i++)
+		tAgreeData.bAgree = false;
+		tAgreeData.iUserID = UserID;
+		for (int i = 0; i < m_bMaxPeople; i++)
 		{
-			if(!m_pUserInfo[i])
+			if (!m_pUserInfo[i])
 			{
 				continue;
 			}
-			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex,&tAgreeData,sizeof(tAgreeData),MDM_GR_DESKRUNOUT,ASS_GR_DISTANCE_AGREE,0,0);
+			m_pDataManage->m_TCPSocket.SendData(m_pUserInfo[i]->m_uSocketIndex, &tAgreeData, sizeof(tAgreeData), MDM_GR_DESKRUNOUT, ASS_GR_DISTANCE_AGREE, 0, 0);
 		}
 	}
 }
@@ -4334,9 +4729,9 @@ void CGameDesk::SendDeskUserInfo(int iSocketID)
 {
 	char bBuffer[MAX_SEND_SIZE];
 	int count = 0;
-	int iMaxCount = MAX_SEND_SIZE/sizeof(UserInfoStruct);
+	int iMaxCount = MAX_SEND_SIZE / sizeof(UserInfoStruct);
 
-	for (BYTE i=0;i<m_bMaxPeople;i++)
+	for (BYTE i = 0; i < m_bMaxPeople; i++)
 	{
 		if (!m_pUserInfo[i])
 		{
@@ -4345,9 +4740,9 @@ void CGameDesk::SendDeskUserInfo(int iSocketID)
 
 		if (count >= iMaxCount)
 		{
-			m_pDataManage->m_TCPSocket.SendData(iSocketID,bBuffer,count*sizeof(UserInfoStruct),MDM_GR_USER_LIST,ASS_GR_ONLINE_USER,ERR_GR_LIST_PART,0);
+			m_pDataManage->m_TCPSocket.SendData(iSocketID, bBuffer, count * sizeof(UserInfoStruct), MDM_GR_USER_LIST, ASS_GR_ONLINE_USER, ERR_GR_LIST_PART, 0);
 			count = 0;
-			memset(bBuffer,0,sizeof(bBuffer));
+			memset(bBuffer, 0, sizeof(bBuffer));
 		}
 
 		if (m_bCutGame[i])
@@ -4355,11 +4750,11 @@ void CGameDesk::SendDeskUserInfo(int iSocketID)
 			m_pUserInfo[i]->m_UserData.bUserState = USER_CUT_GAME;
 		}
 
-		memcpy_s(bBuffer+count*sizeof(UserInfoStruct),sizeof(UserInfoStruct),&m_pUserInfo[i]->m_UserData,sizeof(UserInfoStruct));
+		memcpy_s(bBuffer + count * sizeof(UserInfoStruct), sizeof(UserInfoStruct), &m_pUserInfo[i]->m_UserData, sizeof(UserInfoStruct));
 
 		count++;
 	}
-	m_pDataManage->m_TCPSocket.SendData(iSocketID,bBuffer,count*sizeof(UserInfoStruct),MDM_GR_USER_LIST,ASS_GR_ONLINE_USER,ERR_GR_LIST_FINISH,0);
+	m_pDataManage->m_TCPSocket.SendData(iSocketID, bBuffer, count * sizeof(UserInfoStruct), MDM_GR_USER_LIST, ASS_GR_ONLINE_USER, ERR_GR_LIST_FINISH, 0);
 }
 
 void CGameDesk::PlayerNetCutContest(BYTE bDeskStation)
@@ -4367,11 +4762,11 @@ void CGameDesk::PlayerNetCutContest(BYTE bDeskStation)
 	if (!IsPlayGame(0))
 		UserAgreeGame(bDeskStation);
 
-	return ;
+	return;
 }
 
 
-bool CGameDesk::ChangeStation(BYTE bDeskStationA,BYTE bDeskStationB)
+bool CGameDesk::ChangeStation(BYTE bDeskStationA, BYTE bDeskStationB)
 {
 	if (!m_pUserInfo[bDeskStationA] || !m_pUserInfo[bDeskStationB])
 	{
@@ -4407,14 +4802,14 @@ bool CGameDesk::ChangeStation(BYTE bDeskStationA,BYTE bDeskStationB)
 	CGameUserInfo *pUserInfo = m_pDataManage->m_UserManage.FindOnLineUser(m_pUserInfo[bDeskStationA]->m_UserData.dwUserID);	//ÐÞ¸ÄAµÄ×ùÎ»ºÅ
 	if (pUserInfo)
 	{
-		pUserInfo->m_UserData.bDeskStation=bDeskStationA;
+		pUserInfo->m_UserData.bDeskStation = bDeskStationA;
 	}
 	else
 	{
 		pUserInfo = m_pDataManage->m_UserManage.FindNetCutUser(m_pUserInfo[bDeskStationA]->m_UserData.dwUserID);
 		if (pUserInfo)
 		{
-			pUserInfo->m_UserData.bDeskStation=bDeskStationA;
+			pUserInfo->m_UserData.bDeskStation = bDeskStationA;
 		}
 	}
 
@@ -4422,14 +4817,14 @@ bool CGameDesk::ChangeStation(BYTE bDeskStationA,BYTE bDeskStationB)
 	pUserInfo = m_pDataManage->m_UserManage.FindOnLineUser(m_pUserInfo[bDeskStationB]->m_UserData.dwUserID);  //ÐÞ¸ÄBµÄ×ùÎ»ºÅ
 	if (pUserInfo)
 	{
-		pUserInfo->m_UserData.bDeskStation=bDeskStationB;
+		pUserInfo->m_UserData.bDeskStation = bDeskStationB;
 	}
 	else
 	{
 		pUserInfo = m_pDataManage->m_UserManage.FindNetCutUser(m_pUserInfo[bDeskStationB]->m_UserData.dwUserID);
 		if (pUserInfo)
 		{
-			pUserInfo->m_UserData.bDeskStation=bDeskStationB;
+			pUserInfo->m_UserData.bDeskStation = bDeskStationB;
 		}
 	}
 
@@ -4440,44 +4835,43 @@ bool CGameDesk::ChangeStation(BYTE bDeskStationA,BYTE bDeskStationB)
 	_out.bUserBNewStation = bDeskStationB;
 	_out.iUserIDB = m_pUserInfo[bDeskStationB]->m_UserData.dwUserID;
 
-	m_pDataManage->m_TCPSocket.SendDataBatch(&_out,sizeof(MSG_GR_O_ChangeUserStation),MDM_GR_ROOM,ASS_GR_CHANGE_USERSTATION,0);
+	m_pDataManage->m_TCPSocket.SendDataBatch(&_out, sizeof(MSG_GR_O_ChangeUserStation), MDM_GR_ROOM, ASS_GR_CHANGE_USERSTATION, 0);
 
 	//
 	if (m_bIsBuy)
 	{
 		DL_GR_I_ChangeUserStation _p;
-		strcpy_s(_p.szDeskPass,m_szDeskPassWord);
-		memcpy_s(&_p._data,sizeof(_p._data),&_out,sizeof(_out));
+		strcpy_s(_p.szDeskPass, m_szDeskPassWord);
+		memcpy_s(&_p._data, sizeof(_p._data), &_out, sizeof(_out));
 
 		m_pDataManage->m_SQLDataManage.PushLine(&_p.DataBaseHead, sizeof(DL_GR_I_ChangeUserStation), DTK_GR_CHANGE_USERSTATION, 0, 0);
 	}
-	
+
 	return true;
 }
 
 void CGameDesk::SetDynamicInfo(BYTE szDynamicInfo1[128])
 {
-    if(!m_pDataManage->m_bSetDynamiced)
-    {
-        m_pDataManage->m_bSetDynamiced = true;
-        memcpy(m_pDataManage->m_szDynamicPlayingMethod1, szDynamicInfo1, sizeof(m_pDataManage->m_szDynamicPlayingMethod1));
-    }
+	if (!m_pDataManage->m_bSetDynamiced)
+	{
+		m_pDataManage->m_bSetDynamiced = true;
+		memcpy(m_pDataManage->m_szDynamicPlayingMethod1, szDynamicInfo1, sizeof(m_pDataManage->m_szDynamicPlayingMethod1));
+	}
 }
 
 void CGameDesk::SetSPGameInfo(BYTE bDeskInfo[128])
 {
-    if(!m_pDataManage->m_bSetRoomDynamiced)
-    {
-        m_pDataManage->m_bSetRoomDynamiced = true;
-        memcpy(m_pDataManage->m_szDynaminRoomInfo, bDeskInfo, sizeof(m_pDataManage->m_szDynaminRoomInfo));
-    }
+	if (!m_pDataManage->m_bSetRoomDynamiced)
+	{
+		m_pDataManage->m_bSetRoomDynamiced = true;
+		memcpy(m_pDataManage->m_szDynaminRoomInfo, bDeskInfo, sizeof(m_pDataManage->m_szDynaminRoomInfo));
+	}
 }
 
 
 void CGameDesk::setEffectivebet()
 {
 	test.Connect();
-
 	test.setString("linux", "fuckVS2010");
 	test.disConnect();
 

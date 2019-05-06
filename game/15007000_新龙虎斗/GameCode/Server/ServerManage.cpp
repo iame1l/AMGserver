@@ -188,10 +188,14 @@ void CServerGameDesk::SpuerExamine(BYTE byDeskStation)
 }
 
 //游戏记录用
-void CServerGameDesk::gameinfo()
+void CServerGameDesk::gameinfo(__int64 *chip)
 {
-	//todo change可以尝试传入有效数据
+	//改为存入有效投注数据
 	__int64 change[PLAY_COUNT] = { 0 };
+	for (int i = 0; i < PLAY_COUNT; ++i)
+	{
+		change[i] = chip[i];
+	}
 	__super::RecoderGameInfo(change);
 }
 

@@ -10,6 +10,9 @@ using namespace std;
 
 #include "msgbase.h"
 
+
+
+
 //定时器 ID
 #define IDT_USER_CUT				1L										//断线定时器 ID
 
@@ -402,6 +405,7 @@ private:
 
 	//20190409 eil 配牌器重写,修复bug
 private:
+	CUpGradeGameLogic log;
 	//卡牌查重
 	bool isnormalCardList();
 	//重新发牌,除了输入玩家位置

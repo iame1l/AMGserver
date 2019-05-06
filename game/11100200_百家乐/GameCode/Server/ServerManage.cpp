@@ -2296,6 +2296,8 @@ void	CServerGameDesk::CountFen()
 	UserPlayResult	TUserPlayResult;
 	memset(&TUserPlayResult,0,sizeof(TUserPlayResult));
 	
+	__int64 e_Effectivebet[PLAY_COUNT] = { 0 };
+
 	//标记
 	bool flag[PLAY_COUNT];
 	memset(flag, 0, sizeof(flag));
@@ -2313,6 +2315,9 @@ void	CServerGameDesk::CountFen()
 		for(int j=0; j<BET_ARES; j++)
 		{
 			i64Sum += m_i64UserXiaZhuData[i][j];
+
+			//20190504 有效投注
+			e_Effectivebet[i] += m_i64UserXiaZhuData[i][j];
 		}
 
 		//mark
@@ -2373,8 +2378,8 @@ void	CServerGameDesk::CountFen()
 	*/
 
 
-	
-	__super::RecoderGameInfo(m_i64UserMoney);
+	//20190504 有效投注
+	__super::RecoderGameInfo(e_Effectivebet);
 
 
 	//记录玩家输赢情况

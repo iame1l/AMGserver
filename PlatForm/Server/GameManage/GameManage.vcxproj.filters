@@ -34,7 +34,6 @@
     <ClInclude Include="..\..\..\SDK\include\ServerCommon\HNHandleMSMessage.h">
       <Filter>处理M服务器消息</Filter>
     </ClInclude>
-    <ClInclude Include="win32fixes.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GameManage.rc" />

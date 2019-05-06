@@ -339,6 +339,9 @@ bool CServerGameDesk::HandleNotifyMessage(BYTE bDeskStation, NetMessageHead * pN
 	{
 	case ASS_BEGIN_TIME:
 		{
+		FILE *fp = fopen("ddzlog.txt", "a");
+		fprintf(fp, "Station:%d\n");
+		fclose(fp);
 			BeginTime time;
 			time.bDeskStaion = bDeskStation;
 			time.bTime = CMyGetTickCount::GetTime() - m_RecordTime[bDeskStation];

@@ -635,6 +635,7 @@ bool CServerGameDesk::OnGetGameStation(BYTE bDeskStation, UINT uSocketID, bool b
 			GameStation.iDeskBasePoint = GetDeskBasePoint();	//桌子倍数
 			GameStation.iRoomBasePoint = GetRoomMul();		    //房间倍数
 			GameStation.iRunPublish = GetRunPublish();			//逃跑扣分
+			GameStation.iGameMutiple = 1000;
 			//GameStation.gameMoneyLimit=m_gameMoney;
 //			GameStation.iZamaNum = m_iZamaNum;					//创建玩法
 			GameStation.bMastOutBlackThree = m_bFirstUserOut;	//是否是黑桃3先出

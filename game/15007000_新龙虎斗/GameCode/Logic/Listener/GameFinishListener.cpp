@@ -34,6 +34,11 @@ bool GameFinishListener::countScore()
  	DataManage::sGameUserInf userinf;
  	__int64 i_ChangePoint[PLAY_COUNT] = {0};
 	__int64 i_WinPoint[PLAY_COUNT] = {0};
+
+	//20190506 修复中奖扣税为最高优先级
+	__int64 i_LosePoint[PLAY_COUNT] = { 0 };
+
+	__int64 e_Effectivebet[PLAY_COUNT] = { 0 };
  	for(int i=0; i<PLAY_COUNT; i++)
  	{
  		if(!exDataMgr->getUserInfo(i,userinf))continue;
@@ -43,6 +48,9 @@ bool GameFinishListener::countScore()
  			//userinf.iScore = userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2];
 			userinf.iScore = userinf.i64UserXiaZhuData[2]*8-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[1]/2-userinf.i64UserXiaZhuData[0]/2;
 			i_WinPoint[i] = userinf.i64UserXiaZhuData[2]*8;
+			//统计输区域的钱
+			i_LosePoint[i] = userinf.i64UserXiaZhuData[2] + userinf.i64UserXiaZhuData[1] / 2 + userinf.i64UserXiaZhuData[0] / 2;
+
  			if (userinf.i64UserXiaZhuData[0] == 0 && userinf.i64UserXiaZhuData[1] == 0)
  			{
  				if(userinf.iScore > 0)
@@ -63,6 +71,7 @@ bool GameFinishListener::countScore()
  		{
  			userinf.iScore = userinf.i64UserXiaZhuData[0]*2-userinf.i64UserXiaZhuData[1]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[0];
 			i_WinPoint[i] = userinf.i64UserXiaZhuData[0]*2;
+			i_LosePoint[i]= userinf.i64UserXiaZhuData[1] + userinf.i64UserXiaZhuData[2] + userinf.i64UserXiaZhuData[0];
  			if (userinf.i64UserXiaZhuData[1] == 0 && userinf.i64UserXiaZhuData[2] == 0)
  			{
  				if(userinf.i64UserXiaZhuData[0] > 0)
@@ -83,6 +92,7 @@ bool GameFinishListener::countScore()
  		{
  			userinf.iScore = userinf.i64UserXiaZhuData[1]*2-userinf.i64UserXiaZhuData[0]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[1];
 			i_WinPoint[i] = userinf.i64UserXiaZhuData[1]*2;
+			i_LosePoint[i] = userinf.i64UserXiaZhuData[0] + userinf.i64UserXiaZhuData[2] + userinf.i64UserXiaZhuData[1];
  			if (userinf.i64UserXiaZhuData[2] == 0 && userinf.i64UserXiaZhuData[0] == 0)
  			{
  				if(userinf.i64UserXiaZhuData[1] > 0)
@@ -101,7 +111,7 @@ bool GameFinishListener::countScore()
  		}
  		exDataMgr->alterUserInfo(i, userinf);
 
-
+		e_Effectivebet[i] = userinf.i64UserXiaZhuData[0] + userinf.i64UserXiaZhuData[1] + userinf.i64UserXiaZhuData[2];
 
  	}
  	S_C_GameResult Noti;
@@ -123,18 +133,22 @@ bool GameFinishListener::countScore()
 	//给Mserver统计
  	//m_Context->GetGameDesk()->ChangeUserPointint64(i_ChangePoint, temp_cut);
 
-	m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin(i_ChangePoint, temp_cut, flag);//newnew
-	m_Context->GetGameDesk()->gameinfo();
+	//m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin(i_ChangePoint, temp_cut, flag);//newnew
+	//20190506 百人游戏中将扣税为优先级
+	m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin_hunderd(i_WinPoint, temp_cut, flag, i_LosePoint);
+	
+	FILE * fp = fopen("tax.txt", "a");
+	fprintf(fp, "%d\n", i_WinPoint[0]);
+	fclose(fp);
 
 
-	//FILE *fp = fopen("lhd.txt", "a");
-	//fprintf(fp, "finish\n");
-	//fclose(fp);
+	// 20190504 改为有效投注数据
+	m_Context->GetGameDesk()->gameinfo(e_Effectivebet);
+
+
+
 
 	
-
-	//20190503  下注金额写入db
-	m_Context->GetGameDesk()->setEffectivebet();
 
  	exDataMgr->updateUserMoney();
  	exDataMgr->updateDataMoney();
@@ -169,6 +183,7 @@ bool GameFinishListener::countScore()
 	}
 
 	return true;
+
 }
 
 void GameFinishListener::OnReconnect( uchar playerPos, uint socketID, bool isWatchUser )

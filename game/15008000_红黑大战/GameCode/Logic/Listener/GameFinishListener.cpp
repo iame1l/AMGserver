@@ -32,6 +32,12 @@ bool GameFinishListener::countScore()
  	OBJ_GET_EXT(m_Context,DataManage,exDataMgr);
  	DataManage::sGameUserInf userinf;
  	__int64 i_ChangePoint[PLAY_COUNT] = {0};
+	__int64 e_Effectivebet[PLAY_COUNT] = { 0 };
+
+	__int64 i_winpoint[PLAY_COUNT] = { 0 };
+	__int64 i_losepoint[PLAY_COUNT] = { 0 };
+
+
  	for(int i=0; i<PLAY_COUNT; i++)
  	{
  		if(!exDataMgr->getUserInfo(i,userinf))continue;
@@ -56,6 +62,8 @@ bool GameFinishListener::countScore()
  		if(exDataMgr->byWinQuYu == 1)		//红
  		{
  			userinf.iScore = userinf.i64UserXiaZhuData[0]*2-userinf.i64UserXiaZhuData[1]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[0];
+			i_winpoint[i] = userinf.i64UserXiaZhuData[0] * 2;
+			i_losepoint[i] = userinf.i64UserXiaZhuData[1] + userinf.i64UserXiaZhuData[2] + userinf.i64UserXiaZhuData[0];
 			if (exDataMgr->WinUserShape > UG_DAN_ZHANG)
 			{
 				userinf.iScore += userinf.i64UserXiaZhuData[2] * exDataMgr->getbeilv(exDataMgr->WinUserShape);
@@ -80,6 +88,8 @@ bool GameFinishListener::countScore()
 		if(exDataMgr->byWinQuYu == 2)//黑
  		{
  			userinf.iScore = userinf.i64UserXiaZhuData[1]*2-userinf.i64UserXiaZhuData[0]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[1];
+			i_winpoint[i] = userinf.i64UserXiaZhuData[0] * 2;
+			i_losepoint[i] = userinf.i64UserXiaZhuData[1] + userinf.i64UserXiaZhuData[2] + userinf.i64UserXiaZhuData[0];
 			if (exDataMgr->WinUserShape > UG_DAN_ZHANG)
 			{
 				userinf.iScore += userinf.i64UserXiaZhuData[2] * exDataMgr->getbeilv(exDataMgr->WinUserShape);
@@ -102,6 +112,8 @@ bool GameFinishListener::countScore()
  		}
 
  		exDataMgr->alterUserInfo(i, userinf);
+		//20190504 有效投注
+		e_Effectivebet[i] = userinf.i64UserXiaZhuData[0] + userinf.i64UserXiaZhuData[1] + userinf.i64UserXiaZhuData[2];
  	}
  	S_C_GameResult Noti;
 	//是否有玩的标记
@@ -126,9 +138,16 @@ bool GameFinishListener::countScore()
 	
  	//m_Context->GetGameDesk()->ChangeUserPointint64(i_ChangePoint, temp_cut);
 	//标记用到是否扣费问题
-	m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin(i_ChangePoint, temp_cut, flag);
-	
-	m_Context->GetGameDesk()->gameinfo();
+	//m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin(i_ChangePoint, temp_cut, flag);
+
+
+	//20190506 扣税方式改变
+	m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin_hunderd(i_winpoint, temp_cut, flag,i_losepoint);
+	//有效投注的
+	m_Context->GetGameDesk()->gameinfo(e_Effectivebet);
+
+
+
  	exDataMgr->updateUserMoney();
  	exDataMgr->updateDataMoney();
  	exDataMgr->ProcessData(Noti.userMaxMoney);

@@ -65,7 +65,7 @@ public:
 	virtual bool CanNetCut(uchar bDeskStation);
 
 public:
-	void gameinfo();
+	void gameinfo(__int64 *chip);
 	//获取游戏状态信息
 	virtual bool OnGetGameStation(uchar bDeskStation, uint uSocketID, bool bWatchUser);
 

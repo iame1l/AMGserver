@@ -187,9 +187,13 @@ void CServerGameDesk::SpuerExamine(BYTE byDeskStation)
 	}
 }
 //游戏记录用
-void CServerGameDesk::gameinfo()
+void CServerGameDesk::gameinfo(__int64 *chip)
 {
 	__int64 change[PLAY_COUNT] = { 0 };
+	for (int i = 0; i < PLAY_COUNT; ++i)
+	{
+		change[i] = chip[i];
+	}
 	__super::RecoderGameInfo(change);
 }
 //获取游戏状态信息

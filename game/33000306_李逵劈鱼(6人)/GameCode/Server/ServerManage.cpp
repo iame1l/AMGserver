@@ -1432,6 +1432,9 @@ CServerGameDesk::CServerGameDesk(void):CGameDesk(FULL_BEGIN)
 	kBuildFishSiTraceElasped			=	90 + 17;//大四喜鱼出现时长
 	kBuildFishKingTraceElasped			=	34;//鱼王出现时长
 
+	//有效投注
+	memset(e_Effectivebet, 0, sizeof(e_Effectivebet));
+
 	//加载游戏配置
 	LoadConfig();
 	LoadIni();
@@ -1916,11 +1919,14 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 					memset(temp_point,0,sizeof(temp_point));
 					memset(iChangeMoney,0,sizeof(iChangeMoney));
 					memset(temp_cut,0,sizeof(temp_cut));
+					
 
 					temp_point[i] = (fish_score_[i] - exchange_fish_score_[i]) * exchange_ratio_userscore_ / exchange_ratio_fishscore_;
-
 					ChangeUserPointint64(temp_point,temp_cut);
-					__super::RecoderGameInfo(iChangeMoney);
+					//mark
+					__super::RecoderGameInfo(e_Effectivebet);
+					
+					e_Effectivebet[i] = 0;
 				}
 			}
 		}
@@ -2679,7 +2685,11 @@ void CServerGameDesk::CalcScore(BYTE bDeskStation)
 	temp_point[bDeskStation] = (fish_score_[bDeskStation] - exchange_fish_score_[bDeskStation]) * exchange_ratio_userscore_ / exchange_ratio_fishscore_;
 	temp_cut[bDeskStation] = 1;
 	ChangeUserPointint64(temp_point,temp_cut,bDeskStation/*,1*/);
-	__super::RecoderGameInfo(iChangeMoney);
+
+
+	__super::RecoderGameInfo(e_Effectivebet);
+	e_Effectivebet[bDeskStation] = 0;
+
 	SaveIni();
 	//数据清零
 	fish_score_[bDeskStation] = 0;
@@ -3313,6 +3323,10 @@ bool CServerGameDesk::OnSubUserFire(BYTE bDeskStation, BulletKind bullet_kind, f
 	{
 			return true;
 	}
+
+	//20190504 有效投注写入
+	e_Effectivebet[chair_id] += bullet_mul;
+
 
 	fish_score_[chair_id] -= bullet_mul;
 

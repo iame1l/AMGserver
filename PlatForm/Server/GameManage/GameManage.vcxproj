@@ -132,7 +132,6 @@
     <ClInclude Include="GameManage.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="win32fixes.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GameManage.rc" />

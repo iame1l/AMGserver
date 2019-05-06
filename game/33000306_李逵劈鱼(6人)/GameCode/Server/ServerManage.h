@@ -454,6 +454,10 @@ private:
 
 	__int64 GetUserMoney(BYTE bdeskStation);
 	bool IsRobot(BYTE bdeskStation);
+
+//ÓÐÐ§Í¶×¢
+private:
+	__int64 e_Effectivebet[PLAY_COUNT];
 };
 
 /******************************************************************************************************/
