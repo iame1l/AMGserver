@@ -2239,7 +2239,11 @@ void	CServerGameDesk::CountFen()
 	memset(m_i64UserFen,0,sizeof(m_i64UserFen));
 	memset(m_i64UserAreasFen,0,sizeof(m_i64UserAreasFen));
 
-	
+
+	__int64 i_winPoint[PLAY_COUNT];
+	__int64 i_losePoint[PLAY_COUNT];
+	memset(i_winPoint, 0, sizeof(i_winPoint));
+	memset(i_losePoint, 0, sizeof(i_losePoint));
 
 	//统计每个玩家各区域的输赢情况
 	for(int i=0; i<PLAY_COUNT; i++)
@@ -2272,17 +2276,32 @@ void	CServerGameDesk::CountFen()
 			if (m_i64UserXiaZhuData[i][j] > 0)
 			{
 				if (isFlat && (j == 0 || j == 3))    continue;
-				if (m_iWinQuYu[j] > 0)
+				if (m_iWinQuYu[j] > 0)//m_iWunQuYu 存的倍率
 				{
 					m_i64UserAreasFen[i][j] = m_i64UserXiaZhuData[i][j]*(m_iWinQuYu[j]-1);
+
 					//庄家得分
 					m_i64UserAreasFen[m_iNowNtStation][j]-= m_i64UserAreasFen[i][j];
+
+					//20190507税率设为优先级//庄家不用税优先
+					i_winPoint[i] += m_i64UserXiaZhuData[i][j] * m_iWinQuYu[j] ;
+
+					i_winPoint[m_iNowNtStation] -= m_i64UserAreasFen[i][j];
+					//上面的已经有本金在了
+					i_losePoint[i] += m_i64UserXiaZhuData[i][j];
+					//FILE *fp = fopen("bjl.txt", "a");
+					//fprintf(fp, "i_winPoint[%d]:%d", i, i_winPoint[i]);
+					//fclose(fp);
 				}
 				else
 				{
 					m_i64UserAreasFen[i][j] = -m_i64UserXiaZhuData[i][j];
 					//庄家得分
 					m_i64UserAreasFen[m_iNowNtStation][j] += m_i64UserXiaZhuData[i][j];
+
+					//20190507税率设为优先级
+					i_losePoint[i] += m_i64UserXiaZhuData[i][j];
+					i_winPoint[m_iNowNtStation] += m_i64UserXiaZhuData[i][j];
 				}
 			}
 			else
@@ -2290,6 +2309,7 @@ void	CServerGameDesk::CountFen()
 				m_i64UserAreasFen[i][j] = 0;
 			}
 		}
+
 	}
 
 	//记录玩家的输赢和下注情况
@@ -2327,10 +2347,10 @@ void	CServerGameDesk::CountFen()
 			flag[i] = true;
 		}
 		
-		if (0 == i64Sum && i != m_iNowNtStation)
-		{
-			continue;
-		}
+		//if (0 == i64Sum && i != m_iNowNtStation)
+		//{
+		//	continue;
+		//}
 		for(int j=0; j<BET_ARES; j++)
 		{
 			m_i64UserFen[i] += m_i64UserAreasFen[i][j];
@@ -2358,9 +2378,13 @@ void	CServerGameDesk::CountFen()
 	bool temp_cut[PLAY_COUNT];
 	memset(&temp_cut, 0, sizeof(temp_cut)); //庄家列表总的庄家位置
 	//有下注就交费
-	//Eil 庄没结算
-	ChangeUserPointint64_IsJoin(m_i64UserFen, temp_cut, flag);
+	//ChangeUserPointint64_IsJoin(m_i64UserFen, temp_cut, flag);
 	
+
+	//20190507 税率设为优先级
+	ChangeUserPointint64_IsJoin_hunderd(i_winPoint, temp_cut, flag,i_losePoint);
+
+
 	/*
 	if (m_iNtTax == 0)				//是否只扣庄家的税
 	{

@@ -1906,7 +1906,6 @@ bool CGameDesk::ChangeUserPointint64_IsJoin_hunderd(__int64 *arPoint, bool *bCut
 	/// 更新m_pInfo里各玩家数据，供游戏中读取到正确的值
 	/// 统一把所有玩家的结算结果存入数据库
 	/// 发送消息到客户端，表示有人输钱或赢钱了
-	FILE *fp = fopen("taxLog.txt", "a");
 	if (m_pDataManage->m_InitData.dwRoomRule & GRR_CONTEST || m_pDataManage->m_InitData.dwRoomRule & GRR_TIMINGCONTEST)
 	{
 		return ChangeUserPointContest(arPoint, bCut, nTaxIndex);
@@ -1937,7 +1936,6 @@ bool CGameDesk::ChangeUserPointint64_IsJoin_hunderd(__int64 *arPoint, bool *bCut
 	int nTotalPlayerCount = 0;
 	/// 断线玩家是哪个
 	BYTE bCutDeskStation = 255;
-	fprintf(fp, "init\n");
 
 	for (i = 0; i < m_bMaxPeople; ++i)
 	{
@@ -1982,9 +1980,6 @@ bool CGameDesk::ChangeUserPointint64_IsJoin_hunderd(__int64 *arPoint, bool *bCut
 		m_pDataManage->m_nRate = 100;
 	}
 
-	fprintf(fp, "m_nRate:%d\n", m_pDataManage->m_nRate);
-	fprintf(fp, "m_InitData.uComType:%d\n", m_pDataManage->m_InitData.uComType);
-	//fclose(fp);
 	/// 金币场才需要计算，
 	/// 根据应输积分，计算应输玩家应输的钱，同时考虑身上的钱是否够支付
 	if (m_pDataManage->m_InitData.uComType == TY_MONEY_GAME)
@@ -2029,9 +2024,6 @@ bool CGameDesk::ChangeUserPointint64_IsJoin_hunderd(__int64 *arPoint, bool *bCut
 		}
 	}
 
-	fprintf(fp, "bTaxMain%d\n", bTaxMain);
-	fprintf(fp, "bIsAllNeedTax:%d\n", bIsAllNeedTax);
-	//fclose(fp);
 	/// 所有输家该输的金币都已经确定，可以开始计算赢家的收入了
 	for (i = 0; i < m_bMaxPeople; ++i)
 	{
