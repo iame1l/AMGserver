@@ -968,8 +968,8 @@ bool CGameDesk::RecoderGameInfo(__int64 *ChangeMoney)
 {
 	if ((m_pDataManage->m_InitData.dwRoomRule&GRR_RECORD_GAME) != 0L/* && !m_bAllRobot*/)
 	{
-		//20190504 改为有效投注
-		//memset(ChangeMoney,0,sizeof(ChangeMoney));
+		//todelete
+		memset(ChangeMoney,0,sizeof(ChangeMoney));
 		//定义数据
 		DL_GR_I_GameRecord GameRecord;
 		memset(&GameRecord, 0, sizeof(GameRecord));
@@ -986,15 +986,16 @@ bool CGameDesk::RecoderGameInfo(__int64 *ChangeMoney)
 			if (m_pUserInfo[i] == NULL)
 				continue;
 
-			//ChangeMoney[i]=m_dwChangeMoney[i];
+			//todelete
+			ChangeMoney[i]=m_dwChangeMoney[i];
 
 			{
 				GameRecord.dwUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID;
 				GameRecord.dwScrPoint[i] = m_dwScrPoint[i] + m_dwChangePoint[i];
 				GameRecord.dwTaxCom[i] = m_dwTaxCom[i];
-				//GameRecord.dwChangePoint[i]=m_dwChangePoint[i];
+				GameRecord.dwChangePoint[i]=m_dwChangePoint[i];
 				//20190504有效投注
-				GameRecord.dwChangePoint[i] = ChangeMoney[i];
+				//GameRecord.dwChangePoint[i] = ChangeMoney[i];
 				//
 				GameRecord.dwChangeMoney[i] = m_dwChangeMoney[i];
 
@@ -1011,6 +1012,58 @@ bool CGameDesk::RecoderGameInfo(__int64 *ChangeMoney)
 	}
 	return true;
 }
+
+bool CGameDesk::RecoderGameInfo_Effectivebet(__int64 *ChangeMoney)
+{
+	if ((m_pDataManage->m_InitData.dwRoomRule&GRR_RECORD_GAME) != 0L/* && !m_bAllRobot*/)
+	{
+		//todelete
+		//memset(ChangeMoney, 0, sizeof(ChangeMoney));
+		//定义数据
+		DL_GR_I_GameRecord GameRecord;
+		memset(&GameRecord, 0, sizeof(GameRecord));
+
+		//写入数据
+		GameRecord.dwTax = m_dwTax;//每局所有玩家总实缴税收
+		GameRecord.bDeskIndex = m_bDeskIndex;
+		GameRecord.uRoomID = m_pDataManage->m_InitData.uRoomID;
+		GameRecord.dwBeginTime = m_dwBeginTime;
+
+		int iCount = 0;
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
+		{
+			if (m_pUserInfo[i] == NULL)
+				continue;
+
+			//todelete
+			//ChangeMoney[i] = m_dwChangeMoney[i];
+
+			{
+				GameRecord.dwUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID;
+				//20190508 有效投注
+				//GameRecord.dwScrPoint[i] = m_dwScrPoint[i] + m_dwChangePoint[i];
+				GameRecord.dwScrPoint[i] = ChangeMoney[i];
+				//
+				GameRecord.dwTaxCom[i] = m_dwTaxCom[i];
+				GameRecord.dwChangePoint[i] = m_dwChangePoint[i];
+				
+				GameRecord.dwChangeMoney[i] = m_dwChangeMoney[i];
+
+				GameRecord.i64ScrMoney[i] = m_pUserInfo[i]->m_UserData.i64Money;
+
+
+				iCount++;
+			}
+		}
+		if (iCount > 0)
+		{
+			return m_pDataManage->m_SQLDataManage.PushLine(&GameRecord.DataBaseHead, sizeof(GameRecord), DTK_GR_RECORD_GAME, 0, 0);
+		}
+	}
+	return true;
+}
+
+
 
 /// 赠送游戏币,20把
 /// param void
@@ -2038,7 +2091,6 @@ bool CGameDesk::ChangeUserPointint64_IsJoin_hunderd(__int64 *arPoint, bool *bCut
 		{
 			
 			//fprintf(fp, "bSomeOneNoEnoughMoney:%d\n", bSomeOneNoEnoughMoney);
-			fclose(fp);
 			/// 判断是否有玩家不够钱，若有，则赢不了这么多钱
 			if (bSomeOneNoEnoughMoney)
 			{
@@ -2075,7 +2127,6 @@ bool CGameDesk::ChangeUserPointint64_IsJoin_hunderd(__int64 *arPoint, bool *bCut
 					//mark
 					arTaxCount[i] = i64Tmp * arLoseMoney[i] * m_pDataManage->m_InitData.uTax / m_pDataManage->m_nRate;
 					arLoseMoney[i] -= arTaxCount[i];
-					//20190506传出值 //mark
 
 				}
 			}

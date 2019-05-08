@@ -554,8 +554,15 @@ int CDataBaseHandle::execSQL(LPCTSTR sql, bool returnValue)
 	{
 		return -3;
 	}
-
-	return m_pDataBaseManage->m_pEngineSink->execSQL(sql, returnValue);
+	//mark Ö¸Õë´íÎóµã
+	try
+	{
+		return m_pDataBaseManage->m_pEngineSink->execSQL(sql, returnValue);
+	}
+	catch(...)
+	{
+		return -3;
+	}
 }
 int CDataBaseHandle::execStoredProc()
 {

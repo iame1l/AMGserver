@@ -137,9 +137,7 @@ bool GameFinishListener::countScore()
 	//20190506 百人游戏中将扣税为优先级
 	m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin_hunderd(i_WinPoint, temp_cut, flag, i_LosePoint);
 	
-	FILE * fp = fopen("tax.txt", "a");
-	fprintf(fp, "%d\n", i_WinPoint[0]);
-	fclose(fp);
+
 
 
 	// 20190504 改为有效投注数据

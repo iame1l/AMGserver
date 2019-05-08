@@ -412,6 +412,13 @@ private:
 	void restartSendCard(int userSatation);
 	//移除牌选用//从UpGradeLogic里提取的
 	int removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCardList[], int iCardCount);
+
+	//20190508
+private:
+	bool sendCardGrouptoAI(const int cardCardGroupCount);
+
+	//字符串分割
+	vector<string> Esplit(const string src,const string seperator);
 };
 
 /******************************************************************************************************/

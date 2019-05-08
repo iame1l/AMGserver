@@ -2289,9 +2289,7 @@ void	CServerGameDesk::CountFen()
 					i_winPoint[m_iNowNtStation] -= m_i64UserAreasFen[i][j];
 					//上面的已经有本金在了
 					i_losePoint[i] += m_i64UserXiaZhuData[i][j];
-					//FILE *fp = fopen("bjl.txt", "a");
-					//fprintf(fp, "i_winPoint[%d]:%d", i, i_winPoint[i]);
-					//fclose(fp);
+			
 				}
 				else
 				{
@@ -2403,8 +2401,10 @@ void	CServerGameDesk::CountFen()
 
 
 	//20190504 有效投注
-	__super::RecoderGameInfo(e_Effectivebet);
+	//__super::RecoderGameInfo(e_Effectivebet);
 
+	__super::RecoderGameInfo(m_i64UserMoney);
+	
 
 	//记录玩家输赢情况
 	for(int i=0;i<PLAY_COUNT;i++)

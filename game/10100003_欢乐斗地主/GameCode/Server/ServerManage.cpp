@@ -1796,24 +1796,24 @@ void CServerGameDesk::LoadPeiPai()
 			m_iBackCard[i-1] = ucTemp;
 		}
 	}
-	else if(2 == isOpen)
+	else if (2 == isOpen)
 	{
 		int userStation = -1;
-		for(int i = 0; i < PLAY_COUNT; ++i)
+		for (int i = 0; i < PLAY_COUNT; ++i)
 		{
-			if(m_pUserInfo[i] == nullptr) continue;
+			if (m_pUserInfo[i] == nullptr) continue;
 			int userID = m_pUserInfo[i]->m_UserData.dwUserID;
 			char nameBuf[256];
 			sprintf(nameBuf, "Card_%d", userID);
-			CString cardListStr = f.GetKeyVal(key,nameBuf,"");
-			if(cardListStr.GetLength() > 0)
+			CString cardListStr = f.GetKeyVal(key, nameBuf, "");
+			if (cardListStr.GetLength() > 0)
 			{
-				for(int j = 1; j <= 17; j++)
+				for (int j = 1; j <= 17; j++)
 				{
-					m_iUserCard[i][j-1] = GetCardValue(cardListStr, j-1);
+					m_iUserCard[i][j - 1] = GetCardValue(cardListStr, j - 1);
 					//记录一下座位号
 					userStation = i;
-					
+
 				}
 				/// 门牌  
 				for (int i = 1; i <= m_iBackCount; i++)
@@ -1830,24 +1830,90 @@ void CServerGameDesk::LoadPeiPai()
 			}
 		}
 
-			///// 门牌  
-			//for (int i = 1; i <= m_iBackCount; i++)
-			//{
-			//	CString str;
-			//	unsigned char ucTemp;
-			//	str.Format("Backpai%02d", i);
-			//	ucTemp = f.GetKeyVal(key, str, 255);
-			//	if (255 != ucTemp)
-			//	{
-			//		m_iBackCard[i - 1] = ucTemp;
-			//	}
-			//}
-		//20190409 修复乱发牌的情况
+		///// 门牌  
+		//for (int i = 1; i <= m_iBackCount; i++)
+		//{
+		//	CString str;
+		//	unsigned char ucTemp;
+		//	str.Format("Backpai%02d", i);
+		//	ucTemp = f.GetKeyVal(key, str, 255);
+		//	if (255 != ucTemp)
+		//	{
+		//		m_iBackCard[i - 1] = ucTemp;
+		//	}
+		//}
+	//20190409 修复乱发牌的情况
 		if (!isnormalCardList())
 		{
 			//需要输入座位号
 			restartSendCard(userStation);
 		}
+	}
+	//20190507 配牌
+	else if (3 == isOpen)
+	{
+		FILE *fp = fopen("cardGroup.txt", "a");
+
+
+	    //先获取到要配牌的值
+		int cardGroupCount = f.GetKeyVal("peipai", "cardGroup", -1);
+		if (cardGroupCount < 1) return ;
+		fprintf(fp, "cardGroupCount:%d\n", cardGroupCount);
+
+
+		vector<CString> groupList;
+		for (int i = 0; i < cardGroupCount; ++i)
+		{
+			CString tmp;
+			tmp.Format("cardGroup[%d]", i);
+
+			CString list = f.GetKeyVal("peipai", tmp, "");
+			groupList.push_back(list);
+		}
+
+		
+		
+		fprintf(fp, "%s", groupList[0].GetBuffer());
+
+
+		fclose(fp);
+
+
+		//map<string, int> cardGroup;
+		//vector<map<string, int>> cardGroupList;
+		//for (int i = 0; i < cardGroupCount; ++i)
+		//{
+		//	CString strtmp;
+		//	strtmp.Format("cardGroup[%d]", i);
+		//	CString list = f.GetKeyVal("peipai", strtmp, "");
+		//	if (list.GetLength() < 1) continue;
+
+		//	vector<string> keyTmp = Esplit(list.GetBuffer(), ",");
+
+		//	for (int j = 0; j < keyTmp.size(); ++j)
+		//	{
+		//		strtmp.Append(keyTmp[j].c_str());
+		//		int valueTmp = f.GetKeyVal("peipai", strtmp, -1);
+
+		//		if (valueTmp < 1) continue;
+
+		//		cardGroup.insert(std::make_pair(keyTmp[j], valueTmp));
+
+		//	}
+		//}
+
+	
+
+
+		//int xxx = 0;
+		//for (auto it = cardGroup.begin(); it != cardGroup.end(); ++it)
+		//{
+		//	fprintf(fp, "key[%d]-value[%d]=%s-%d\n", xxx, xxx, it->first, it->second);
+		//	xxx++;
+		//}
+
+		//fclose(fp);
+
 	}
 	else
 	{
@@ -4077,4 +4143,100 @@ int CServerGameDesk::removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCard
 
 	return iDeleteCount;
 
+}
+
+//20190507 封装
+bool CServerGameDesk::sendCardGrouptoAI(const int cardCardGroupCount)
+{
+	if (cardCardGroupCount < 1) return false;
+
+	CString nid;
+	nid.Format("%d", NAME_ID);
+	CString s = CINIFile::GetAppPath();/////本地路径
+	CINIFile f(s + nid + "_s.ini");
+	CString key = TEXT("peipai");
+
+	string tmp = "W2AKQJT9876543";
+	map<string, int> cardGroup;
+	vector<map<string, int>> cardGroupList;
+	for (int i = 0; i < cardCardGroupCount; ++i)
+	{
+		CString str;
+		str.Format("cardGroup[%d]", i);
+		CString list = f.GetKeyVal(key, str, "");
+		if (list.GetLength() < 1) continue;
+		vector<string> keyTmp = Esplit(list.GetBuffer(), ",");
+
+		for (int j = 0; j < keyTmp.size(); ++j)
+		{
+			str.Append(keyTmp[0].c_str());
+			int valueTmp = f.GetKeyVal(key, str, -1);
+
+			if (valueTmp < 1) continue;
+
+			cardGroup.insert(std::make_pair(keyTmp[j], valueTmp));
+
+		}
+	}
+
+	FILE *fp = fopen("cardGroup.txt", "a");
+
+
+	int xxx = 0;
+	for (auto it = cardGroup.begin(); it != cardGroup.end(); ++it)
+	{
+		fprintf(fp, "key[%d]-value[%d]=%s-%d\n", xxx, xxx, it->first, it->second);
+		xxx++;
+	}
+
+	fclose(fp);
+
+
+	return false;
+}
+
+
+vector<string> CServerGameDesk::Esplit(const string src, const string seperator)
+{
+	vector<string> result;
+	typedef string::size_type string_size;
+	string_size i = 0;
+
+	while (i != src.size())
+	{
+		//找到字符串中首个不等于分隔符的字母；
+		int flag = 0;
+		while (i != src.size() && flag == 0)
+		{
+			flag = 1;
+			for (string_size x = 0; x < seperator.size(); ++x)
+				if (src[i] == seperator[x])
+				{
+					++i;
+					flag = 0;
+					break;
+				}
+		}
+
+		//找到又一个分隔符，将两个分隔符之间的字符串取出；
+		flag = 0;
+		string_size j = i;
+		while (j != src.size() && flag == 0)
+		{
+			for (string_size x = 0; x < seperator.size(); ++x)
+				if (src[j] == seperator[x])
+				{
+					flag = 1;
+					break;
+				}
+			if (flag == 0)
+				++j;
+		}
+		if (i != j)
+		{
+			result.push_back(src.substr(i, j - i));
+			i = j;
+		}
+	}
+	return result;
 }

@@ -196,7 +196,8 @@ void CServerGameDesk::gameinfo(__int64 *chip)
 	{
 		change[i] = chip[i];
 	}
-	__super::RecoderGameInfo(change);
+	//__super::RecoderGameInfo(change);
+	__super::RecoderGameInfo_Effectivebet(change);
 }
 
 //获取游戏状态信息
