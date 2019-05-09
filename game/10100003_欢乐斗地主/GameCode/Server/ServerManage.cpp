@@ -1858,61 +1858,59 @@ void CServerGameDesk::LoadPeiPai()
 	    //先获取到要配牌的值
 		int cardGroupCount = f.GetKeyVal("peipai", "cardGroup", -1);
 		if (cardGroupCount < 1) return ;
-		fprintf(fp, "cardGroupCount:%d\n", cardGroupCount);
+		//fprintf(fp, "cardGroupCount:%d\n", cardGroupCount);
 
 
 		vector<CString> groupList;
+		vector<map<CString, int>> allgroupList;
 		for (int i = 0; i < cardGroupCount; ++i)
 		{
 			CString tmp;
-			tmp.Format("cardGroup[%d]", i);
+			tmp.Format("cardGroup%d", i);
 
 			CString list = f.GetKeyVal("peipai", tmp, "");
-			groupList.push_back(list);
+			
+			if (list.GetLength() < 1) continue;
+			CString szSplit =_T(",");
+
+			CStringArray abc;
+			this->SplitString(list, szSplit, abc, false);
+			//list = _T(list.GetBuffer());
+			
+			map<CString, int>KV;
+			for (int j = 0; j < abc.GetSize(); ++j)
+			{
+				
+				CString x = abc.GetAt(j);
+				tmp.Format("cardGroup[%d]%s", i, x);
+				int valuetmp = f.GetKeyVal("peipai", tmp, -1);
+				
+				KV.insert(map<CString, int>::value_type(abc.GetAt(j), valuetmp));
+				//fprintf(fp, "key:%s value:%d\n", abc.GetAt(j), valuetmp);
+
+				
+			}
+			exchangeCardValue(KV);
+			//allgroupList.push_back(KV);
+			//groupList.push_back(list);
+
+			//for (auto it = KV.begin(); it != KV.end(); ++it)
+			//{
+			//	fprintf(fp, "key:%s value:%d\n", it->first, it->second);
+			//}
 		}
 
 		
+
+
 		
-		fprintf(fp, "%s", groupList[0].GetBuffer());
+		
+		//fprintf(fp, "%s\n\n", groupList[0].GetBuffer());
 
 
 		fclose(fp);
 
 
-		//map<string, int> cardGroup;
-		//vector<map<string, int>> cardGroupList;
-		//for (int i = 0; i < cardGroupCount; ++i)
-		//{
-		//	CString strtmp;
-		//	strtmp.Format("cardGroup[%d]", i);
-		//	CString list = f.GetKeyVal("peipai", strtmp, "");
-		//	if (list.GetLength() < 1) continue;
-
-		//	vector<string> keyTmp = Esplit(list.GetBuffer(), ",");
-
-		//	for (int j = 0; j < keyTmp.size(); ++j)
-		//	{
-		//		strtmp.Append(keyTmp[j].c_str());
-		//		int valueTmp = f.GetKeyVal("peipai", strtmp, -1);
-
-		//		if (valueTmp < 1) continue;
-
-		//		cardGroup.insert(std::make_pair(keyTmp[j], valueTmp));
-
-		//	}
-		//}
-
-	
-
-
-		//int xxx = 0;
-		//for (auto it = cardGroup.begin(); it != cardGroup.end(); ++it)
-		//{
-		//	fprintf(fp, "key[%d]-value[%d]=%s-%d\n", xxx, xxx, it->first, it->second);
-		//	xxx++;
-		//}
-
-		//fclose(fp);
 
 	}
 	else
@@ -4146,97 +4144,89 @@ int CServerGameDesk::removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCard
 }
 
 //20190507 封装
-bool CServerGameDesk::sendCardGrouptoAI(const int cardCardGroupCount)
+bool CServerGameDesk::sendCardGrouptoAI(const vector<map<CString, int>> allgroupList)
 {
-	if (cardCardGroupCount < 1) return false;
+	if (allgroupList.empty()) return false;
 
-	CString nid;
-	nid.Format("%d", NAME_ID);
-	CString s = CINIFile::GetAppPath();/////本地路径
-	CINIFile f(s + nid + "_s.ini");
-	CString key = TEXT("peipai");
+	FILE *fp = fopen("tmp666666.txt", "a");
 
-	string tmp = "W2AKQJT9876543";
-	map<string, int> cardGroup;
-	vector<map<string, int>> cardGroupList;
-	for (int i = 0; i < cardCardGroupCount; ++i)
+
+	for (int i = 0; i < allgroupList.size(); ++i)
 	{
-		CString str;
-		str.Format("cardGroup[%d]", i);
-		CString list = f.GetKeyVal(key, str, "");
-		if (list.GetLength() < 1) continue;
-		vector<string> keyTmp = Esplit(list.GetBuffer(), ",");
-
-		for (int j = 0; j < keyTmp.size(); ++j)
+		for (auto it = allgroupList[i].begin(); it != allgroupList[i].end(); ++it)
 		{
-			str.Append(keyTmp[0].c_str());
-			int valueTmp = f.GetKeyVal(key, str, -1);
-
-			if (valueTmp < 1) continue;
-
-			cardGroup.insert(std::make_pair(keyTmp[j], valueTmp));
-
+			fprintf(fp, "key:%s value:%d\n", it->first, it->second);
 		}
 	}
-
-	FILE *fp = fopen("cardGroup.txt", "a");
-
-
-	int xxx = 0;
-	for (auto it = cardGroup.begin(); it != cardGroup.end(); ++it)
-	{
-		fprintf(fp, "key[%d]-value[%d]=%s-%d\n", xxx, xxx, it->first, it->second);
-		xxx++;
-	}
-
-	fclose(fp);
 
 
 	return false;
 }
 
-
-vector<string> CServerGameDesk::Esplit(const string src, const string seperator)
+int CServerGameDesk::SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray& rArrString, BOOL bAllowNullString)
 {
-	vector<string> result;
-	typedef string::size_type string_size;
-	string_size i = 0;
-
-	while (i != src.size())
+	rArrString.RemoveAll();
+	CString szStr = lpszStr;
+	szStr.TrimLeft();
+	szStr.TrimRight();
+	if (szStr.GetLength() == 0)
 	{
-		//找到字符串中首个不等于分隔符的字母；
-		int flag = 0;
-		while (i != src.size() && flag == 0)
-		{
-			flag = 1;
-			for (string_size x = 0; x < seperator.size(); ++x)
-				if (src[i] == seperator[x])
-				{
-					++i;
-					flag = 0;
-					break;
-				}
-		}
-
-		//找到又一个分隔符，将两个分隔符之间的字符串取出；
-		flag = 0;
-		string_size j = i;
-		while (j != src.size() && flag == 0)
-		{
-			for (string_size x = 0; x < seperator.size(); ++x)
-				if (src[j] == seperator[x])
-				{
-					flag = 1;
-					break;
-				}
-			if (flag == 0)
-				++j;
-		}
-		if (i != j)
-		{
-			result.push_back(src.substr(i, j - i));
-			i = j;
-		}
+		return 0;
 	}
-	return result;
+	CString szSplit = lpszSplit;
+	if (szSplit.GetLength() == 0)
+	{
+		rArrString.Add(szStr);
+		return 1;
+	}
+	CString s;
+	int n;
+	do {
+		n = szStr.Find(szSplit);
+		if (n > 0)
+		{
+			rArrString.Add(szStr.Left(n));
+			szStr = szStr.Right(szStr.GetLength() - n - szSplit.GetLength());
+			szStr.TrimLeft();
+		}
+		else if (n == 0)
+		{
+			if (bAllowNullString)
+				rArrString.Add(_T(""));
+			szStr = szStr.Right(szStr.GetLength() - szSplit.GetLength());
+			szStr.TrimLeft();
+		}
+		else
+		{
+			if ((szStr.GetLength() > 0) || bAllowNullString)
+				rArrString.Add(szStr);
+			break;
+		}
+	} while (1);
+	return rArrString.GetSize();
+
+}
+
+
+BYTE* CServerGameDesk::exchangeCardValue(const map<CString, int>& cardGroup)
+{
+
+	if (cardGroup.empty()) return nullptr;
+
+
+	string key = "W2AKQJT9876543";
+	//转义
+	FILE *fp = fopen("VALUE.txt","a");
+	for (auto it = cardGroup.begin(); it != cardGroup.end(); ++it)
+	{
+		//fprintf(fp, "key:%s value:%d\n", it->first, it->second);
+
+		BYTE firstTmp=it->first.GetAt(0);
+
+		BYTE secondTmp = it->first.GetAt(1);
+
+		fprintf(fp, "%c %c\n", firstTmp, secondTmp);
+	}
+	fclose(fp);
+	return nullptr;
 }

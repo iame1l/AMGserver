@@ -415,10 +415,16 @@ private:
 
 	//20190508
 private:
-	bool sendCardGrouptoAI(const int cardCardGroupCount);
+	bool sendCardGrouptoAI(const vector<map<CString,int>> allgroupList);
 
 	//×Ö·û´®·Ö¸î
-	vector<string> Esplit(const string src,const string seperator);
+	int SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray& rArrString, BOOL bAllowNullString);
+
+	//×ª»»
+	BYTE* exchangeCardValue(const map<CString,int> &cardGroup);
+
+
+	//BYTE* getKeyValue()
 };
 
 /******************************************************************************************************/
