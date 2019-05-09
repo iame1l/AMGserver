@@ -2403,8 +2403,9 @@ void	CServerGameDesk::CountFen()
 	//20190504 有效投注
 	//__super::RecoderGameInfo(e_Effectivebet);
 
-	__super::RecoderGameInfo(m_i64UserMoney);
+	//__super::RecoderGameInfo(m_i64UserMoney);
 	
+	__super::RecoderGameInfo_Effectivebet(m_i64UserMoney,e_Effectivebet);
 
 	//记录玩家输赢情况
 	for(int i=0;i<PLAY_COUNT;i++)

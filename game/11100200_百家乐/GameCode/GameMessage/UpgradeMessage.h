@@ -448,6 +448,7 @@ struct SuperUserSetData
 #define S_C_NOTICE_XIA_ZHU			101		/// 通知下注消息
 #define S_C_SEND_CARD				102		//发牌消息
 #define S_C_SHOW_WINAREA			104		//显示中奖区域消息
+//mark
 #define S_C_GAME_END				105		//游戏结束
 
 

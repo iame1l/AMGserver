@@ -212,7 +212,7 @@ protected:
 	///记录游戏信息
 	bool RecoderGameInfo(__int64 *ChangeMoney);
 
-	bool RecoderGameInfo_Effectivebet(__int64 *ChangeMoney);
+	bool RecoderGameInfo_Effectivebet(__int64 *ChangeMoney, __int64 *Effectivebet);
 
 	///得到双倍积分卡有效信息
 	BYTE GetDoublePointEffect(){return m_byDoublePointEffect;};

@@ -192,12 +192,9 @@ void CServerGameDesk::gameinfo(__int64 *chip)
 {
 	//改为存入有效投注数据
 	__int64 change[PLAY_COUNT] = { 0 };
-	for (int i = 0; i < PLAY_COUNT; ++i)
-	{
-		change[i] = chip[i];
-	}
+
 	//__super::RecoderGameInfo(change);
-	__super::RecoderGameInfo_Effectivebet(change);
+	__super::RecoderGameInfo_Effectivebet(change, chip);
 }
 
 //获取游戏状态信息

@@ -190,11 +190,11 @@ void CServerGameDesk::SpuerExamine(BYTE byDeskStation)
 void CServerGameDesk::gameinfo(__int64 *chip)
 {
 	__int64 change[PLAY_COUNT] = { 0 };
-	for (int i = 0; i < PLAY_COUNT; ++i)
-	{
-		change[i] = chip[i];
-	}
-	__super::RecoderGameInfo(change);
+
+	//20190509 todelete
+	//__super::RecoderGameInfo(chip,change);
+
+	__super::RecoderGameInfo_Effectivebet(change, chip);
 }
 //获取游戏状态信息
 bool CServerGameDesk::OnGetGameStation(uchar bDeskStation, uint uSocketID, bool bWatchUser)

@@ -285,6 +285,9 @@ struct DL_GR_I_GameRecord
 	__int64								i64ScrMoney[MAX_PEOPLE];			//用户当前金币
 	__int64								dwTaxCom[MAX_PEOPLE];				//每人税收
 	long int							dwBeginTime;						//开始时间
+
+	//20190508
+	//long int                            effectiveBet[MAX_PEOPLE];
 };
 
 //权限更改请求

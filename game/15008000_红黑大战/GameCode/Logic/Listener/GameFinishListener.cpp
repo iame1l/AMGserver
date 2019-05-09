@@ -143,9 +143,9 @@ bool GameFinishListener::countScore()
 
 	//20190506 扣税方式改变
 	m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin_hunderd(i_winpoint, temp_cut, flag,i_losepoint);
-	//有效投注的
-	m_Context->GetGameDesk()->gameinfo(e_Effectivebet);
 
+	//20190509 有效投注方式
+	m_Context->GetGameDesk()->gameinfo(e_Effectivebet);
 
 
  	exDataMgr->updateUserMoney();

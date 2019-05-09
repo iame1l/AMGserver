@@ -1923,8 +1923,12 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 
 					temp_point[i] = (fish_score_[i] - exchange_fish_score_[i]) * exchange_ratio_userscore_ / exchange_ratio_fishscore_;
 					ChangeUserPointint64(temp_point,temp_cut);
-					//mark
-					__super::RecoderGameInfo(e_Effectivebet);
+
+					//20190509 有效投注
+					__super::RecoderGameInfo_Effectivebet(iChangeMoney, e_Effectivebet);
+
+					//todelete
+					//__super::RecoderGameInfo(e_Effectivebet);
 					
 					e_Effectivebet[i] = 0;
 				}
@@ -2686,8 +2690,12 @@ void CServerGameDesk::CalcScore(BYTE bDeskStation)
 	temp_cut[bDeskStation] = 1;
 	ChangeUserPointint64(temp_point,temp_cut,bDeskStation/*,1*/);
 
+	//20190509 todelete
+	//__super::RecoderGameInfo(e_Effectivebet);
 
-	__super::RecoderGameInfo(e_Effectivebet);
+	//20190509 有效投注
+	__super::RecoderGameInfo_Effectivebet(iChangeMoney, e_Effectivebet);
+
 	e_Effectivebet[bDeskStation] = 0;
 
 	SaveIni();

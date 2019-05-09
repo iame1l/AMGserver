@@ -540,7 +540,13 @@ void CServerGameDesk::OnHandleBibei(BYTE byStation,void * pData, UINT uSize)
 
 	//mark2//押大小的结果处理//有记录
 	__int64 bet = iBibeiMoney;//有效投注
-	__super::RecoderGameInfo(&bet);
+
+	//20190509 todelete
+	//__super::RecoderGameInfo(iChangeMoney);
+
+	//20190509 有效投注
+	__super::RecoderGameInfo_Effectivebet(iChangeMoney, &bet);
+
 	ChangeUserPointint64(iTurePoint, temp_cut);
 
 	///*--------------------------------------------------------------------------*/
@@ -970,7 +976,13 @@ void CServerGameDesk::OnHandleStartRoll(BYTE byStation,void * pData, UINT uSize)
 	__int64		iChangeMoney[PLAY_COUNT];				//玩家金币
 	memset(iChangeMoney, 0 , sizeof(iChangeMoney));
 	//mark1//灯滚动的消息
-	__super::RecoderGameInfo(e_Effectivebet);
+	
+	//20190509 todelete
+	//__super::RecoderGameInfo(e_Effectivebet);
+
+	//20190509有效投注
+	__super::RecoderGameInfo_Effectivebet(iChangeMoney, e_Effectivebet);
+
 	ChangeUserPointint64(iTurePoint, temp_cut);
 
 

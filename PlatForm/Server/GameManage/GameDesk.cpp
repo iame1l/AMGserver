@@ -1013,12 +1013,11 @@ bool CGameDesk::RecoderGameInfo(__int64 *ChangeMoney)
 	return true;
 }
 
-bool CGameDesk::RecoderGameInfo_Effectivebet(__int64 *ChangeMoney)
+bool CGameDesk::RecoderGameInfo_Effectivebet(__int64 *ChangeMoney,__int64 *Effectivebet)
 {
 	if ((m_pDataManage->m_InitData.dwRoomRule&GRR_RECORD_GAME) != 0L/* && !m_bAllRobot*/)
 	{
-		//todelete
-		//memset(ChangeMoney, 0, sizeof(ChangeMoney));
+		memset(ChangeMoney, 0, sizeof(ChangeMoney));
 		//定义数据
 		DL_GR_I_GameRecord GameRecord;
 		memset(&GameRecord, 0, sizeof(GameRecord));
@@ -1035,23 +1034,25 @@ bool CGameDesk::RecoderGameInfo_Effectivebet(__int64 *ChangeMoney)
 			if (m_pUserInfo[i] == NULL)
 				continue;
 
-			//todelete
-			//ChangeMoney[i] = m_dwChangeMoney[i];
+			ChangeMoney[i] = m_dwChangeMoney[i];
 
 			{
 				GameRecord.dwUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID;
-				//20190508 有效投注
-				//GameRecord.dwScrPoint[i] = m_dwScrPoint[i] + m_dwChangePoint[i];
-				GameRecord.dwScrPoint[i] = ChangeMoney[i];
-				//
-				GameRecord.dwTaxCom[i] = m_dwTaxCom[i];
-				GameRecord.dwChangePoint[i] = m_dwChangePoint[i];
+			
+				GameRecord.dwScrPoint[i] = m_dwScrPoint[i] + m_dwChangePoint[i];
 				
+				//20190509 todelete
+				//GameRecord.dwChangePoint[i] = m_dwChangePoint[i];
+				//
+
+				//20190509 有效投注
+				GameRecord.dwChangePoint[i] = Effectivebet[i];
+
 				GameRecord.dwChangeMoney[i] = m_dwChangeMoney[i];
 
 				GameRecord.i64ScrMoney[i] = m_pUserInfo[i]->m_UserData.i64Money;
 
-
+				//20190508
 				iCount++;
 			}
 		}
