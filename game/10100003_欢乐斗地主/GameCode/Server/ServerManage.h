@@ -6,6 +6,7 @@
 #include <afxmt.h>
 #include<string>
 #include <fstream>
+#include <algorithm>
 using namespace std;
 
 #include "msgbase.h"
@@ -421,10 +422,10 @@ private:
 	int SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray& rArrString, BOOL bAllowNullString);
 
 	//×ª»»
-	BYTE* exchangeCardValue(const map<CString,int> &cardGroup);
+	vector<BYTE> exchangeCardValue(const map<CString,int> &cardGroup);
 
 
-	//BYTE* getKeyValue()
+	BYTE getKeyValue(BYTE src);
 };
 
 /******************************************************************************************************/
