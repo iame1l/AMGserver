@@ -247,6 +247,7 @@ bool GetSpecifiedCard(long int userID, unsigned char *Card,int jCardNum)
 	CString key;
 	key = TEXT("SuperSet");
 	int setcard = f.GetKeyVal(key,"SetCard",0);
+	//todo 
 	if (setcard <= 0)
 	{
 		return false;
@@ -256,45 +257,62 @@ bool GetSpecifiedCard(long int userID, unsigned char *Card,int jCardNum)
 		UserDrawnCardCount[userID] = 0;
 	}
 
-	char nameBuf[256];
-	sprintf(nameBuf,"Card_%d", userID);
-	CString cardListStr = f.GetKeyVal(key,nameBuf,"");
 
-	unsigned char ret = Card[jCardNum];
-	int cnt = UserDrawnCardCount[userID];
-	UserDrawnCardCount[userID] = cnt + 1;
-
-	if(cardListStr.GetLength() > 0)
+	if (1 == setcard)
 	{
-		int foundPos = 0;
-		int lastPos = 0;
-		int i = 0;
-		while(i <= cnt && foundPos >= 0)
+		char nameBuf[256];
+		sprintf(nameBuf, "Card_%d", userID);
+		CString cardListStr = f.GetKeyVal(key, nameBuf, "");
+
+		unsigned char ret = Card[jCardNum];
+		int cnt = UserDrawnCardCount[userID];
+		UserDrawnCardCount[userID] = cnt + 1;
+
+		if (cardListStr.GetLength() > 0)
 		{
-			++i;
-			foundPos = cardListStr.Find(',', foundPos);
-			if(i <= cnt && foundPos >= 0)
+			int foundPos = 0;
+			int lastPos = 0;
+			int i = 0;
+			while (i <= cnt && foundPos >= 0)
 			{
-				foundPos += 1;
-				lastPos = foundPos;
+				++i;
+				foundPos = cardListStr.Find(',', foundPos);
+				if (i <= cnt && foundPos >= 0)
+				{
+					foundPos += 1;
+					lastPos = foundPos;
+				}
+			}
+
+			if (i > cnt)
+			{
+				// 存在第i张牌
+				if (foundPos < 0)
+				{
+					// 第i张牌是最后一张(没有以逗号结束的)
+					foundPos = cardListStr.GetLength();
+				}
+				ret = _ttoi(cardListStr.Mid(lastPos, foundPos - lastPos));
 			}
 		}
-
-		if(i > cnt)
+		if (ret != Card[jCardNum])
 		{
-			// 存在第i张牌
-			if(foundPos < 0)
-			{
-				// 第i张牌是最后一张(没有以逗号结束的)
-				foundPos = cardListStr.GetLength();
-			}
-			ret = _ttoi(cardListStr.Mid(lastPos, foundPos - lastPos));
+			Card[jCardNum] = ret;
+			return true;
 		}
 	}
-	if(ret != Card[jCardNum])
-	{
-		Card[jCardNum] = ret;
-		return true;
-	}
+
+	//else if (2 == setcard)
+	//{
+	//	int cardGroupSum = f.GetKeyVal(key, "cardGroup", -1);
+	//	if (cardGroupSum < 1) return false;
+
+	//	//todo 换成梅林的来获取随机数
+	//	srand((unsigned int)time(0));
+	//	int randnum = rand() % cardGroupSum;
+
+
+	//}
+
 	return false;
 }

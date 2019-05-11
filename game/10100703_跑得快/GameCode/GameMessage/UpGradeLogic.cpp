@@ -3026,9 +3026,7 @@ int CUpGradeGameLogic::CheckHaveCard(BYTE byCard[], int outCardCount, BYTE card 
 
 bool  CUpGradeGameLogic::makefeiji(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
 {
-	FILE *fp = fopen("fei.txt", "a");
-	fprintf(fp, "feiji");
-	fclose(fp);
+
 	memset(iResultCard, 0, sizeof(BYTE) * iResultCardCount);
 	iResultCardCount = 0;
 
@@ -3099,9 +3097,7 @@ bool  CUpGradeGameLogic::makefeiji(BYTE iHandCard[], int iHandCardCount, BYTE iR
 }
 bool  CUpGradeGameLogic::makeliandui(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
 {
-	FILE *fp = fopen("liandui.txt", "a");
-	fprintf(fp, "liandui");
-	fclose(fp);
+
 	memset(iResultCard, 0, sizeof(BYTE) * iResultCardCount);
 	iResultCardCount = 0;
 	bool tmp = false;
@@ -3152,9 +3148,7 @@ bool  CUpGradeGameLogic::makesandaiX(BYTE iHandCard[], int iHandCardCount, BYTE 
 }
 bool  CUpGradeGameLogic::makeshunzi(BYTE iHandCard[], int iHandCardCount, BYTE iResultCard[], int & iResultCardCount)
 {
-	FILE *fp = fopen("shunzi.txt", "a");
-	fprintf(fp, "shunzi");
-	fclose(fp);
+
 	bool tmp = false;
 	for(int i = 16;i>5;--i)
 	{

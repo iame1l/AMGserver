@@ -887,8 +887,30 @@ bool	CServerGameDesk::GameBegin(BYTE bBeginFlag)
 		m_iMonkeyPlayMultiple[i] = 1;
 		::CopyMemory(m_iUserCard[i],&iCardArray[m_iUserCount*i],sizeof(BYTE)*m_iUserCount);
 	}
-	//fixme //上面是洗牌 需要查重
-	IniTestSetHandPai(); //读取配牌
+	//fixme //上面是洗牌 需要查重//废掉
+	//IniTestSetHandPai(); //读取配牌
+	
+	//20190511 发指定的牌给AI
+	dealerSendCardToAI();
+
+	//开局要找黑桃3先出牌 
+	if (-1 == m_iWinPeople)
+	{
+		for (int i = 0; i < PLAY_COUNT; i++)
+		{
+			BYTE bCardBuf[8];
+			int ht3cnt = 0;
+			int count = m_Logic.TackOutBySpecifyCard(m_iUserCard[i], m_iUserCardCount[i], bCardBuf, ht3cnt, m_FirstNecessaryCard);
+			if (count)
+			{
+				m_iFirstOutPeople = i;
+				m_bFirstUserOut = true;
+				break;
+			}
+		}
+	}
+
+	//直接增加一个吧
 	OutputDebugStringA("PDK::======================================================================A");
 	for(int i = 0;i < PLAY_COUNT;i ++)
 	{
@@ -1040,7 +1062,7 @@ BOOL	CServerGameDesk::BeginPlay()
 
 	m_iFirstOutPeople = m_iWinPeople;
 	m_bFirstUserOut = false;
-	//开局要找红桃3先出牌 
+	//开局要找黑桃3先出牌 
 	if(-1 == m_iWinPeople)
 	{
 		for (int i = 0; i < PLAY_COUNT; i ++) 
@@ -2429,3 +2451,400 @@ void  CServerGameDesk::WriteLog(CString csMessage)
 		return ;  
 	} 
 } 
+
+bool CServerGameDesk::dealerSendCardToAI()
+{
+	//确保桌上有需要换牌的目标
+	int changeCardAIStation = -1;
+	for (int i = 0; i < PLAY_COUNT; ++i)
+	{
+		if (!m_pUserInfo[i]->m_UserData.isVirtual) continue;
+
+		else
+		{
+			changeCardAIStation = i;
+			break;
+		}
+	}
+	if (changeCardAIStation == -1) return true;
+
+
+
+	CString s = CINIFile::GetAppPath();/////本地路径
+	CString nid;
+	nid.Format("%d", NAME_ID);
+	CINIFile f(s + nid + _T("_s.ini"));
+	CString key;
+	key = TEXT("SuperSet");
+	int setcard = f.GetKeyVal(key, "SetCard", 0);
+	//todo 
+	if (setcard <= 0)
+	{
+		return false;
+	}
+
+
+	if (2 == setcard)
+	{
+		//todelete
+		FILE *fp = fopen("cardgroup.txt", "a");
+
+		int cardGroupSum = f.GetKeyVal(key, "cardGroup", -1);
+		if (cardGroupSum < 1) return false;
+
+		//todo 换成梅林的来获取随机数
+		srand((unsigned int)time(0));
+		int randnum = rand() % cardGroupSum;
+		fprintf(fp, "randnum:%d\n ", randnum);
+		
+		//获取key值链表
+		CString keyTmp;
+		keyTmp.Format("cardGroup%d", randnum);
+		CString keyList = f.GetKeyVal(key, keyTmp,"");
+		if (keyList.GetLength() < 1) return false;
+		CString separator = _T(",");
+		fprintf(fp, "keyList:%s\n ", keyList);
+
+		//切割字符串,获取每个key值
+		CStringArray keyListArr;
+		this->SplitString(keyList, separator, keyListArr, false);
+
+		//找到key-value
+		map<CString, int> KV;
+		for (int i = 0; i < keyListArr.GetSize(); ++i)
+		{
+			keyTmp.Format("cardGroup[%d]%s", randnum, keyListArr.GetAt(i));
+			int valueTmp = f.GetKeyVal(key, keyTmp, -1);
+			KV.insert(map<CString, int>::value_type(keyListArr.GetAt(i), valueTmp));
+		}
+		//转换出需要的牌
+		vector<BYTE> handcard=this->exchangeCardValue(KV);
+		if (handcard.size() != 16) return false;
+
+		for (int i = 0; i < handcard.size(); ++i)
+		{
+			m_iUserCard[changeCardAIStation][i] = handcard[i];
+		}
+
+
+
+		//查重
+		if (!isnormalCardList())
+		{
+			restartSendCard(changeCardAIStation);
+		}
+
+		//todelete
+		fclose(fp);
+	}
+	
+	return true;
+}
+
+vector<BYTE> CServerGameDesk::exchangeCardValue(const map<CString, int> &KV)
+{
+	//最终手牌
+	vector<BYTE> handCard;
+
+	if (KV.empty()) return handCard;
+
+
+
+	FILE *fp = fopen("VALUE.txt", "a");
+
+	//跑得快 48张牌
+	const BYTE m_byBaseCards[48] =
+	{
+		 0x02 ,0x12, 0x22, 0x32, //3
+		 0x03 ,0x13, 0x23, 0x33, //4
+		 0x04 ,0x14, 0x24, 0x34, //5
+		 0x05 ,0x15, 0x25, 0x35, //6
+		 0x06 ,0x16, 0x26, 0x36, //7
+		 0x07 ,0x17, 0x27, 0x37, //8
+		 0x08 ,0x18, 0x28, 0x38, //9
+		 0x09 ,0x19, 0x29, 0x39, //10
+		 0x0A ,0x1A, 0x2A, 0x3A, //J
+		 0x0B ,0x1B, 0x2B, 0x3B, //Q
+		 0x0C ,0x1C, 0x2C, 0x3C, //K
+		 0x0D ,0x1D, 0x2D, /*0x3D,*/ //A
+		 /*0x01 ,0x11, 0x21,*/ 0x31, //2
+		 //0x4E, 0x4F				 //joker															
+	};
+
+	//转义
+	vector<BYTE> list;
+
+	//FILE *fp = fopen("VALUE.txt","a");
+	srand((unsigned int)time(0));
+
+	for (auto it = KV.begin(); it != KV.end(); ++it)
+	{
+		list.clear();
+
+		//fprintf(fp, "key:%s value:%d\n", it->first, it->second);
+		int firstStation = 0;
+		int secondStation = 0;
+		BYTE firstTmp = getKeyValue(it->first.GetAt(0));
+
+		BYTE secondTmp = getKeyValue(it->first.GetAt(1));
+
+		for (int i = 0; i < sizeof(m_byBaseCards) / sizeof(BYTE); ++i)
+		{
+			if (m_byBaseCards[i] == firstTmp) firstStation = i;
+			if (m_byBaseCards[i] == secondTmp) secondStation = i;
+		}
+		int count = firstStation - secondStation;
+		//fprintf(fp, "count:%d firstTmp:%02X secondTmp:%02X\n", count, firstTmp, secondTmp);
+		//fprintf(fp, "firstStation:%d secondStation:%d\n", firstStation, secondStation);
+		//fprintf(fp, "one:%c two:%c\n", it->first.GetAt(0), it->first.GetAt(1));
+
+		if (count == 0)
+		{
+			if (firstStation == 47)  
+				list.push_back(m_byBaseCards[firstStation]);
+			else if (firstStation == 44)
+			{
+				list.push_back(m_byBaseCards[firstStation]);
+				list.push_back(m_byBaseCards[firstStation + 1]);
+				list.push_back(m_byBaseCards[firstStation + 2]);
+			}
+			else
+			{
+				list.push_back(m_byBaseCards[firstStation]);
+				list.push_back(m_byBaseCards[firstStation + 1]);
+				list.push_back(m_byBaseCards[firstStation + 2]);
+				list.push_back(m_byBaseCards[firstStation + 3]);
+			}
+		}
+		else
+		{
+			if (firstStation == 47) count += 1;
+			else if (firstStation == 44) count += 3;
+			else count += 4;
+
+			for (int i = 0; i < count; ++i)
+			{
+				list.push_back(m_byBaseCards[secondStation + i]);
+			}
+		}
+
+		//乱序
+		random_shuffle(list.begin(), list.end());
+
+		//存入该存的牌的数目
+		for (int i = 0; i < it->second; ++i)
+		{
+			handCard.push_back(list[i]);
+		}
+
+	}
+
+
+
+	for (int i = 0; i < handCard.size(); ++i)
+	{
+		fprintf(fp, "%02X ", handCard[i]);
+	}
+	fprintf(fp, "\n");
+	fclose(fp);
+
+	if (handCard.size() != 16)
+		handCard.clear();
+
+	return handCard;
+
+
+
+}
+
+
+
+int CServerGameDesk::SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray& rArrString, BOOL bAllowNullString)
+{
+	rArrString.RemoveAll();
+	CString szStr = lpszStr;
+	szStr.TrimLeft();
+	szStr.TrimRight();
+	if (szStr.GetLength() == 0)
+	{
+		return 0;
+	}
+	CString szSplit = lpszSplit;
+	if (szSplit.GetLength() == 0)
+	{
+		rArrString.Add(szStr);
+		return 1;
+	}
+	CString s;
+	int n;
+	do {
+		n = szStr.Find(szSplit);
+		if (n > 0)
+		{
+			rArrString.Add(szStr.Left(n));
+			szStr = szStr.Right(szStr.GetLength() - n - szSplit.GetLength());
+			szStr.TrimLeft();
+		}
+		else if (n == 0)
+		{
+			if (bAllowNullString)
+				rArrString.Add(_T(""));
+			szStr = szStr.Right(szStr.GetLength() - szSplit.GetLength());
+			szStr.TrimLeft();
+		}
+		else
+		{
+			if ((szStr.GetLength() > 0) || bAllowNullString)
+				rArrString.Add(szStr);
+			break;
+		}
+	} while (1);
+	return rArrString.GetSize();
+
+}
+
+BYTE CServerGameDesk::getKeyValue(BYTE src)
+{
+	switch (src)
+	{
+		//case 'W': return 0x4E;
+	case '2': return 0x31;//只有黑桃2
+	case 'A': return 0x0D;//没有黑桃A
+	case 'K': return 0x0C;
+	case 'Q': return 0x0B;
+	case 'J': return 0x0A;
+	case 'T': return 0x09;
+	case '9': return 0x08;
+	case '8': return 0x07;
+	case '7': return 0x06;
+	case '6': return 0x05;
+	case '5': return 0x04;
+	case '4': return 0x03;
+	case '3': return 0x02;
+	default:  return 0x00;
+	}
+}
+
+bool CServerGameDesk::isnormalCardList()
+{
+	vector<BYTE> cardlist;
+	for (int i = 0; i < PLAY_COUNT; ++i)
+	{
+		for (int j = 0; j < 16; ++j)
+			cardlist.push_back(m_iUserCard[i][j]);
+	}
+
+
+	//排列
+	sort(cardlist.begin(), cardlist.end());
+	//查找相邻的两个元素,是否相同
+	auto tmp = adjacent_find(cardlist.begin(), cardlist.end());
+	if (tmp != cardlist.end()) return false;
+
+
+	return true;
+}
+
+void CServerGameDesk::restartSendCard(int userSatation)
+{
+	if (userSatation < 0) return;
+
+	BYTE Cards[48] =
+	{
+		 0x02 ,0x12, 0x22, 0x32, //3
+		 0x03 ,0x13, 0x23, 0x33, //4
+		 0x04 ,0x14, 0x24, 0x34, //5
+		 0x05 ,0x15, 0x25, 0x35, //6
+		 0x06 ,0x16, 0x26, 0x36, //7
+		 0x07 ,0x17, 0x27, 0x37, //8
+		 0x08 ,0x18, 0x28, 0x38, //9
+		 0x09 ,0x19, 0x29, 0x39, //10
+		 0x0A ,0x1A, 0x2A, 0x3A, //J
+		 0x0B ,0x1B, 0x2B, 0x3B, //Q
+		 0x0C ,0x1C, 0x2C, 0x3C, //K
+		 0x0D ,0x1D, 0x2D, /*0x3D,*/ //A
+		 /*0x01 ,0x11, 0x21,*/ 0x31, //2
+		 //0x4E, 0x4F				 //joker	
+	};
+	//获取到卡牌数目
+	int cardCount = sizeof(Cards) / sizeof(BYTE);
+	//除去配牌玩家的牌和配牌的底牌
+	cardCount -= removeCard(m_iUserCard[userSatation],16, Cards, cardCount);
+
+
+	BYTE iSend = 0, iStation = 0, iCardList[48];
+	srand(GetTickCount() + userSatation);
+
+	//洗牌,将洗好的牌放到iCardList里
+	do
+	{
+		iStation = rand() % (cardCount - iSend);
+		iCardList[iSend] = Cards[iStation];
+		iSend++;
+		Cards[iStation] = Cards[cardCount - iSend];
+	} while (iSend < cardCount);
+
+	//分发扑克牌
+	int tmp = 0;
+	for (int j = 0; j < 16; j++)
+	{
+		for (int i = 0; i < PLAY_COUNT; i++)
+		{
+			//跳过需要配牌的人
+			if (i == userSatation) continue;
+
+			if (NULL == m_pUserInfo[i])
+			{
+				m_iUserCardCount[i] = 0;
+				memset(&m_iUserCard[i], 0, sizeof(m_iUserCard[i]));
+			}
+			else
+			{
+				m_iUserCardCount[i] = 16;
+				m_iUserCard[i][j] = iCardList[tmp++];
+			}
+		}
+	}
+
+
+	return;
+}
+
+int CServerGameDesk::removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCardList[], int iCardCount)
+{
+	if (iRemoveCount > iCardCount) return 0;
+
+	int iRecount = 0;
+	int iDeleteCount = 0; //把要删除的牌置零
+
+	for (int i = 0; i < iRemoveCount; i++)
+	{
+		for (int j = 0; j < iCardCount; j++)
+		{
+			if (iRemoveCard[i] == iCardList[j])
+			{
+				iDeleteCount++;
+				iCardList[j] = 0;
+				break;
+			}
+		}
+	}
+
+	//清除标记位是0的
+	int index = 0;
+	for (int i = 0; i < iCardCount; i++)
+	{
+		if (iCardList[i] != 0)
+		{
+			iCardList[index++] = iCardList[i];
+		}
+		else
+		{
+			iRecount++;
+		}
+	}
+	if (iDeleteCount != iRecount)
+		return 0;
+
+	return iDeleteCount;
+}

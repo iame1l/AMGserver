@@ -318,6 +318,24 @@ public:
 	void  WriteLog(CString csMessage) ;//log
 
 	size_t GetDeskId();
+
+//20190511 读取套牌
+private:
+	bool dealerSendCardToAI();
+
+	int SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray& rArrString, BOOL bAllowNullString);
+
+	vector<BYTE> exchangeCardValue(const map<CString, int> &KV);
+
+	// 转换成对应的字节
+	BYTE getKeyValue(BYTE src);
+
+	//卡牌查重
+	bool isnormalCardList();
+	//重新发牌,除了输入玩家位置
+	void restartSendCard(int userSatation);
+	//移除牌选用//从UpGradeLogic里提取的
+	int removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCardList[], int iCardCount);
 };
 
 /******************************************************************************************************/
