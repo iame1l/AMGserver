@@ -334,7 +334,10 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 
 			// 扣所有赢家税
 			ChangeUserPointint64(i_ChangePoint, temp_cut);
-			__super::RecoderGameInfo(i_ChangeMoney);
+			//__super::RecoderGameInfo(i_ChangeMoney);
+
+			//20190513 有效投注修改m_iBaseMoney
+			__super::RecoderGameInfo_Effectivebet(i_ChangeMoney, m_iBaseMoney);
 
 			//扣税后获得的金币
 			for(int i=0;i<PLAY_COUNT;++i)

@@ -165,6 +165,7 @@ struct  GameMutipleStruct
 	{
 		int  iBombMutiple = pow(2.0 , sBombCount) ; 
 
+		//                     基本分*底牌分数*炸弹倍数*春天*牌型(暂无)*抢地主倍数*名牌
 		float  iGameMutiple  = sBaseMutiple*sBackCardMutiple*iBombMutiple*sSprintMutiple*sCardShapeMutiple*GetRobNtMutiple()*GetMingMaxMutiple()/100 ;
 			
 		return iGameMutiple ; 

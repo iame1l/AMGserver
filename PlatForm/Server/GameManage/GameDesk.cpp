@@ -1064,7 +1064,57 @@ bool CGameDesk::RecoderGameInfo_Effectivebet(__int64 *ChangeMoney,__int64 *Effec
 	return true;
 }
 
+bool CGameDesk::RecoderGameInfo_Effectivebet(__int64 *ChangeMoney, __int64 Effectivebet)
+{
+	if ((m_pDataManage->m_InitData.dwRoomRule&GRR_RECORD_GAME) != 0L/* && !m_bAllRobot*/)
+	{
+		memset(ChangeMoney, 0, sizeof(ChangeMoney));
+		//定义数据
+		DL_GR_I_GameRecord GameRecord;
+		memset(&GameRecord, 0, sizeof(GameRecord));
 
+		//写入数据
+		GameRecord.dwTax = m_dwTax;//每局所有玩家总实缴税收
+		GameRecord.bDeskIndex = m_bDeskIndex;
+		GameRecord.uRoomID = m_pDataManage->m_InitData.uRoomID;
+		GameRecord.dwBeginTime = m_dwBeginTime;
+
+		int iCount = 0;
+		for (BYTE i = 0; i < m_bMaxPeople; i++)
+		{
+			if (m_pUserInfo[i] == NULL)
+				continue;
+
+			ChangeMoney[i] = m_dwChangeMoney[i];
+
+			{
+				GameRecord.dwUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID;
+
+				GameRecord.dwScrPoint[i] = m_dwScrPoint[i] + m_dwChangePoint[i];
+
+
+				//20190509 对战类的 有效投注
+				if (m_dwChangeMoney[i] < 0)
+					GameRecord.dwChangePoint[i] = abs(m_dwChangeMoney[i]);
+				else if (m_dwChangeMoney[i] >= 0)
+					GameRecord.dwChangePoint[i] = Effectivebet;
+				//
+
+				GameRecord.dwChangeMoney[i] = m_dwChangeMoney[i];
+
+				GameRecord.i64ScrMoney[i] = m_pUserInfo[i]->m_UserData.i64Money;
+
+				//20190508
+				iCount++;
+			}
+		}
+		if (iCount > 0)
+		{
+			return m_pDataManage->m_SQLDataManage.PushLine(&GameRecord.DataBaseHead, sizeof(GameRecord), DTK_GR_RECORD_GAME, 0, 0);
+		}
+	}
+	return true;
+}
 
 /// 赠送游戏币,20把
 /// param void

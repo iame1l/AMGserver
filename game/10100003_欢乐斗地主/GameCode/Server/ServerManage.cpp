@@ -1868,7 +1868,7 @@ void CServerGameDesk::LoadPeiPai()
 		if (changeCardAIStation == -1) return;
 
 		//todelete
-		FILE *fp = fopen("cardGroup.txt", "a");
+		//FILE *fp = fopen("cardGroup.txt", "a");
 
 		//配牌得到的值
 		vector<BYTE> handcard;
@@ -1926,23 +1926,23 @@ void CServerGameDesk::LoadPeiPai()
 			m_iUserCard[changeCardAIStation][i] = handcard[i];
 		}
 
-		for (int i = 0; i < PLAY_COUNT; ++i)
-		{
-			if (!m_pUserInfo[i]->m_UserData.isVirtual)
-			{
-				fprintf(fp, "AI:");
-			}
-			for (int j = 0; j < 17; ++j)
-			{
-				fprintf(fp, "%02X ", m_iUserCard[i][j]);
-			}
-			fprintf(fp, "\n");
-		}
+		//for (int i = 0; i < PLAY_COUNT; ++i)
+		//{
+		//	if (!m_pUserInfo[i]->m_UserData.isVirtual)
+		//	{
+		//		fprintf(fp, "AI:");
+		//	}
+		//	for (int j = 0; j < 17; ++j)
+		//	{
+		//		fprintf(fp, "%02X ", m_iUserCard[i][j]);
+		//	}
+		//	fprintf(fp, "\n");
+		//}
 		
 		//fprintf(fp, "%s\n\n", groupList[0].GetBuffer());
 
 		//todelete
-		fclose(fp);
+		//fclose(fp);
 		if (!isnormalCardList())
 		{
 			//需要输入座位号
@@ -3143,17 +3143,23 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 			///任务完成情况
 			GameEnd.bFinishTask = m_Logic.IsFinishTask() ; 
 
+			//是否春天
 			if(GetNoOutCard())
 			{
 				m_GameMutiple.sSprintMutiple = 2 ;
 			}
 
+			//游戏任务相关设置的倍数(暂无)
 			m_GameMutiple.sCardShapeMutiple = m_Logic.GetTaskMutiple(GameEnd.bFinishTask) ;
 
+			//游戏里倍数的全部获取
 			GameEnd.gameMutiple = m_GameMutiple ;  ///任务中的事件全部获得
 
+			//低分(炸弹,春天都已算在内)
 			float  iTurePoint = m_GameMutiple.GetPublicMutiple() ;
-			//是谁胜
+
+
+			//是谁胜//以地主出发
 			if(m_iUserCardCount[m_iUpGradePeople] == 0)	
 			{
 				iTurePoint = iTurePoint;
@@ -3163,17 +3169,20 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 				iTurePoint = -iTurePoint;
 			}
 
+			//倍数限制(暂无)
 			if(m_iLimitPoint >0 && abs(iTurePoint) <m_iLimitPoint)  //公共倍数限制
 			{				
 				iTurePoint = iTurePoint >0 ?(m_iLimitPoint):(-m_iLimitPoint); 				
 			}
-														
+			
+			//庄家位置记录
 			GameEnd.iUpGradeStation = m_iUpGradePeople;
 		
 			memcpy(&GameEnd.iUserCard,&m_iUserCard,sizeof(GameEnd.iUserCard));
 
 			memcpy(&GameEnd.iUserCardCount,&m_iUserCardCount,sizeof(m_iUserCardCount));
 
+			//加倍
 			int  iNtMutiple = m_GameMutiple.sAddGameMutiple[m_iUpGradePeople] >0 ?2:1 ; 
 
 			for(int i = 0; i < PLAY_COUNT; i++)
@@ -3189,6 +3198,7 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 					GameEnd.iTurePoint[i] =-iTurePoint*iNtMutiple*iMyMutiple;//加棒
 				}
 
+				//庄家减去这倍数
 				GameEnd.iTurePoint[m_iUpGradePeople]-= GameEnd.iTurePoint[i];
 			}
 
@@ -3250,7 +3260,11 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 			memset(temp_cut,0,sizeof(temp_cut));
 
 			ChangeUserPointint64(GameEnd.iTurePoint,temp_cut);
-			__super::RecoderGameInfo(GameEnd.iChangeMoney);
+			//__super::RecoderGameInfo(GameEnd.iChangeMoney);
+
+		
+			//20190513 有效投注对战类
+			__super::RecoderGameInfo_Effectivebet(GameEnd.iChangeMoney, m_iBaseMult);
 
 			for (int i = 0; i < PLAY_COUNT; i++)
 			{
@@ -4379,3 +4393,6 @@ BYTE CServerGameDesk::getKeyValue(BYTE src)
 		
 	}
 }
+
+
+

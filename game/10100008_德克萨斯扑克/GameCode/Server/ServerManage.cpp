@@ -728,8 +728,21 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 				memcpy(tagResult.iTotalMoney, m_TotalMoney, sizeof(tagResult.iTotalMoney));
 			}*/
 
+
+			__int64 effectiveBet[PLAY_COUNT] = { 0 };
+			for (int i = 0; i < PLAY_COUNT; ++i)
+			{
+				for (int j = 0; j < 8; ++j)
+				{
+					effectiveBet[i] += m_GameData.m_nBetMoney[i][j];
+				}
+			}
+
 			// 获取扣税后金币
-			__super::RecoderGameInfo(tagResult.nMoney);
+			//__super::RecoderGameInfo(tagResult.nMoney);
+
+			//20190513 有效投注
+			__super::RecoderGameInfo_Effectivebet(tagResult.nMoney, effectiveBet);
 			
 			if (m_bAIWinAndLostAutoCtrl)
 			{

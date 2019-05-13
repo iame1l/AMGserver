@@ -212,7 +212,10 @@ protected:
 	///记录游戏信息
 	bool RecoderGameInfo(__int64 *ChangeMoney);
 
+	//多人游戏pve类的
 	bool RecoderGameInfo_Effectivebet(__int64 *ChangeMoney, __int64 *Effectivebet);
+	//对战游戏pvp类的
+	bool RecoderGameInfo_Effectivebet(__int64 *ChangeMoney, __int64 Effectivebet);
 
 	///得到双倍积分卡有效信息
 	BYTE GetDoublePointEffect(){return m_byDoublePointEffect;};

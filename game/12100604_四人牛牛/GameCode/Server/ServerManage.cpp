@@ -1706,7 +1706,10 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 
 			if (bHaveUser)
 			{
-				__super::RecoderGameInfo(TGameEnd.iChangeMoney);
+				//__super::RecoderGameInfo(TGameEnd.iChangeMoney);
+				__int64 Effectivebet = GetRoomBasePoint();
+				//20190513 对战类有效投注
+				__super::RecoderGameInfo_Effectivebet(TGameEnd.iChangeMoney, Effectivebet);
 			}
 			
 

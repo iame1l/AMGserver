@@ -1852,7 +1852,9 @@ bool	CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 			memset(temp_cut,0,sizeof(temp_cut));
 		
 			ChangeUserPointint64(TGameEnd.i64UserScore, temp_cut);
-			__super::RecoderGameInfo(TGameEnd.i64ChangeMoney);
+			//__super::RecoderGameInfo(TGameEnd.i64ChangeMoney);
+			//20190513 有效投注记录
+			__super::RecoderGameInfo_Effectivebet(TGameEnd.i64ChangeMoney, m_TGameData.m_i64XiaZhuData);
 
 			//奖池记录
 			if (m_bAIWinAndLostAutoCtrl)

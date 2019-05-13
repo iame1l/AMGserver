@@ -228,7 +228,7 @@ struct GameStation_base
 	__int64				iRunPublish;					//逃跑扣分
 	int					iZamaNum;						//玩家所选择的游戏规则
 	bool                bMastOutBlackThree;             //是否是黑桃3先出
-	int             iGameMutiple;                //游戏中的倍数   chris
+	//int             iGameMutiple;                //游戏中的倍数   chris
 	//游戏信息
 	GameStation_base()
 	{

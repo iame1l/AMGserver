@@ -635,12 +635,15 @@ bool CServerGameDesk::OnGetGameStation(BYTE bDeskStation, UINT uSocketID, bool b
 			GameStation.iDeskBasePoint = GetDeskBasePoint();	//桌子倍数
 			GameStation.iRoomBasePoint = GetRoomMul();		    //房间倍数
 			GameStation.iRunPublish = GetRunPublish();			//逃跑扣分
-			GameStation.iGameMutiple = 1000;
+			//GameStation.iGameMutiple = 1000;
 			//GameStation.gameMoneyLimit=m_gameMoney;
 //			GameStation.iZamaNum = m_iZamaNum;					//创建玩法
 			GameStation.bMastOutBlackThree = m_bFirstUserOut;	//是否是黑桃3先出
 			memcpy(GameStation.bUserReady ,m_bUserReady , sizeof(GameStation.bUserReady ));
 			SendGameStation(bDeskStation,uSocketID,bWatchUser,&GameStation,sizeof(GameStation));
+
+			//20190511
+			//GameStation.iGameMutiple = m_iBasePoint;
 			return TRUE;
 		}
 	case GS_SEND_CARD:		//发牌状态
@@ -1630,6 +1633,9 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
   			ChangeUserPointint64(GameEnd.iTurePoint,temp_cut);
   			__super::RecoderGameInfo(GameEnd.iChangeMoney);
 
+			//20190513//有效投注
+			__super::RecoderGameInfo_Effectivebet(GameEnd.iChangeMoney, m_iBasePoint);
+
 			//不用手游修改，这边把服务端计算金币和平台处理的金币交换下。不影响后面大结算的数据统计
 			__int64	iTurePointTmp[3]={0};	//玩家金币
 			memcpy(iTurePointTmp, GameEnd.iTurePoint, sizeof(iTurePointTmp));
@@ -1901,7 +1907,9 @@ int CServerGameDesk::GetRunPublish(BYTE bDeskStation)
 //游戲基礎倍數
 int CServerGameDesk::GetRoomMul()
 {
-	return m_pDataManage->m_InitData.uBasePoint; // 倍数
+	
+	//return m_pDataManage->m_InitData.uBasePoint; // 倍数
+	return m_iBasePoint;
 }
 
 //桌子倍数
