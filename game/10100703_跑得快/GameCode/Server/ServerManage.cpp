@@ -1631,7 +1631,7 @@ bool CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
   			memset(temp_cut,0,sizeof(temp_cut));
   
   			ChangeUserPointint64(GameEnd.iTurePoint,temp_cut);
-  			__super::RecoderGameInfo(GameEnd.iChangeMoney);
+  			//__super::RecoderGameInfo(GameEnd.iChangeMoney);
 
 			//20190513//ÓÐÐ§Í¶×¢
 			__super::RecoderGameInfo_Effectivebet(GameEnd.iChangeMoney, m_iBasePoint);

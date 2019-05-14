@@ -391,7 +391,7 @@ bool CServerGameDesk::GameFinish(BYTE byDeskStation, BYTE bCloseFlag)
 			//清空数据
 			ServerInit();
 			//启动下一轮开始计时器
-			SetTimer(ID_TIMER_GAME_NEW_GAME,(m_iFreeTime+5)*1000);
+			SetTimer(ID_TIMER_GAME_NEW_GAME,(m_iFreeTime)*1000);
 			break;
 		}
 	case GF_SAFE:

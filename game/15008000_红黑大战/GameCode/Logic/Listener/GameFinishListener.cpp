@@ -88,7 +88,7 @@ bool GameFinishListener::countScore()
 		if(exDataMgr->byWinQuYu == 2)//ºÚ
  		{
  			userinf.iScore = userinf.i64UserXiaZhuData[1]*2-userinf.i64UserXiaZhuData[0]-userinf.i64UserXiaZhuData[2]-userinf.i64UserXiaZhuData[1];
-			i_winpoint[i] = userinf.i64UserXiaZhuData[0] * 2;
+			i_winpoint[i] = userinf.i64UserXiaZhuData[1] * 2;
 			i_losepoint[i] = userinf.i64UserXiaZhuData[1] + userinf.i64UserXiaZhuData[2] + userinf.i64UserXiaZhuData[0];
 			if (exDataMgr->WinUserShape > UG_DAN_ZHANG)
 			{
