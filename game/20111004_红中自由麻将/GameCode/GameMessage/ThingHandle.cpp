@@ -1362,7 +1362,7 @@ void ThingHandle::ExecuteSendPai(BYTE &nextID,BYTE &time)
 	pDesk->sGameData.T_SendPai.byDo = 1;	//
 	nextID = THING_BEGIN_OUT;//下一个事件的代号：开始出牌
 	time = 5;
-	//打乱牌
+	//打乱牌//洗牌
 	DisPatchCard();
 
 	for(int i=0;i<PLAY_COUNT;i++)
@@ -1891,8 +1891,10 @@ void ThingHandle::DisPatchCard()
 		pDesk->sUserData.m_MenPai.byMenPai[i] = data;
 	}
 	///////////////
+	//开局13张牌
 	pDesk->sUserData.m_MenPai.byGetPai = pDesk->sUserData.m_MenPai.byGetPai%13;
 	//pDesk->sUserData.m_MenPai.byGetPaiDir = pDesk->sUserData.m_MenPai.byGetPaiDir%4;
+	//找庄家位置
 	if(pDesk->sUserData.m_MenPai.byGetPaiDir == 255)
 	{
 		pDesk->sUserData.m_MenPai.byGetPaiDir = pDesk->sGameData.m_byNtStation;
@@ -1900,6 +1902,7 @@ void ThingHandle::DisPatchCard()
 	pDesk->sUserData.m_MenPai.byGetPaiDir = pDesk->sUserData.m_MenPai.byGetPaiDir%4;
 
 	int dun = 0,num=0;
+	//
 	dun = index/8;
 	num = (dun*pDesk->sUserData.m_MenPai.byGetPaiDir + pDesk->sUserData.m_MenPai.byGetPai)*2;
 	if(num == 0)

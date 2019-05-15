@@ -1871,7 +1871,9 @@ bool CServerGameDesk::GameFinish( BYTE bDeskStation, BYTE bCloseFlag )
 
 				if ( bHaveUser )
 				{
-					__super::RecoderGameInfo( CutEnd.iChangeMoney );
+					//__super::RecoderGameInfo( CutEnd.iChangeMoney );
+					__int64 Effectivebet = GetRoomBasePoint();
+					__super::RecoderGameInfo_Effectivebet(CutEnd.iChangeMoney, Effectivebet);
 				}
 			}
 			

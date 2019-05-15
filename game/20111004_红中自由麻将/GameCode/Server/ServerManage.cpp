@@ -629,7 +629,7 @@ void	CServerGameDesk::SendWatchDataEx(BYTE nDeskStation, void * pData, UINT uSiz
 	SendWatchData(nDeskStation, pData, uSize, MDM_GM_GAME_NOTIFY, bAssID, 0);
 }
 /*-----------------------------------------------------------------------------------*/
-//加载房间设置
+//加载房间设置//mark
 void	CServerGameDesk::LoadiniByRoom(int iRoomId)
 {
 	char key[MAX_PATH];

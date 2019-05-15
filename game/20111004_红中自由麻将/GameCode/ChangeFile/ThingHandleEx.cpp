@@ -78,6 +78,7 @@ bool ThingHandleEx::GetGameStaton(BYTE bDeskStation, UINT uSocketID, bool bWatch
 			return true;
 		}
 	
+		//mark
 	case GS_SEND_CARD:		//发牌状态(还未发牌)
 		{
 			//发送数据

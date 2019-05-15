@@ -378,6 +378,7 @@ bool CGameLogonManage::OnSocketRead(NetMessageHead * pNetHead, void * pData, UIN
 		}
 		return true;
 	}
+	//转盘的逻辑
     else if(MDM_GP_LUCKDRAW == pNetHead->bMainID)
     {
         if(pNetHead->bAssistantID == ASS_GP_LUCK_DRAW_CONFIG)
@@ -1445,6 +1446,7 @@ bool CGameLogonManage::OnDataBaseResult(DataBaseResultLine * pResultData)
             DL_O_HALL_LUCK_DRAW_CONFIG *pLuckConfig = (DL_O_HALL_LUCK_DRAW_CONFIG*)pResultData;
             m_TCPSocket.SendData(pResultData->uIndex, &pLuckConfig->_data, sizeof(pLuckConfig->_data), MDM_GP_LUCKDRAW, ASS_GP_LUCK_DRAW_CONFIG, pResultData->uHandleRusult, pResultData->dwHandleID);
         }break;
+		//转盘数据从数据库返回
     case DTK_GP_LUCK_DRAW_DO:
         {
             DL_O_HALL_LUCK_DRAW_DO *pLuckDo = (DL_O_HALL_LUCK_DRAW_DO*)pResultData;
