@@ -1963,11 +1963,11 @@ BYTE ThingHandle::GetPai(int station,bool head,BYTE type,BYTE *pIndex)
 		pDesk->sUserData.DelleteAHandPai(station,pDesk->sUserData.GetLastHandPai(station));
 		//return 255;
 	}
-
+	//从后抓牌还是从前抓牌
 	BYTE card = GetCard(head, pIndex);
 	if(pDesk->m_pUserInfo[station])
 	{
-		// 换牌
+		// 换牌//换牌的点
 		card = GetSpecifiedCard(pDesk->m_pUserInfo[station]->m_UserData.dwUserID, card, 
 			pDesk->sUserData.m_MenPai.byMenPai, 
 			sizeof(pDesk->sUserData.m_MenPai.byMenPai) / sizeof(pDesk->sUserData.m_MenPai.byMenPai[0]),

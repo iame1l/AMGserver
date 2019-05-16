@@ -1854,7 +1854,19 @@ bool	CServerGameDesk::GameFinish(BYTE bDeskStation, BYTE bCloseFlag)
 			ChangeUserPointint64(TGameEnd.i64UserScore, temp_cut);
 			//__super::RecoderGameInfo(TGameEnd.i64ChangeMoney);
 			//20190513 有效投注记录
-			__super::RecoderGameInfo_Effectivebet(TGameEnd.i64ChangeMoney, m_TGameData.m_i64XiaZhuData);
+
+			__int64 effectiveBet[PLAY_COUNT] = { 0 };
+
+			for (int i = 0; i < PLAY_COUNT; ++i)
+			{
+				if (i == iWiner)
+					effectiveBet[i] = abs(m_TGameData.m_i64ZongXiaZhu - TGameEnd.i64UserScore[i]);
+				else
+					effectiveBet[i] = abs(m_TGameData.m_i64XiaZhuData[i]);
+				
+			}
+
+			__super::RecoderGameInfo_Effectivebet(TGameEnd.i64ChangeMoney, effectiveBet);
 
 			//奖池记录
 			if (m_bAIWinAndLostAutoCtrl)

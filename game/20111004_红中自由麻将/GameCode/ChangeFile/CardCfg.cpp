@@ -40,7 +40,7 @@ unsigned char GetCardValue(const CString &cardListStr, int cnt, unsigned char or
 	return ret;
 }
 
-// 修改指定玩家的牌
+// 修改指定玩家的牌//mark
 unsigned char GetSpecifiedCard(long int userID, unsigned char oriCard, unsigned char toBeReplace[], int length, bool reset, bool enabled)
 {
 	if(!enabled) return oriCard;
