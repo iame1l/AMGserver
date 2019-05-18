@@ -1373,6 +1373,9 @@ void ThingHandle::ExecuteSendPai(BYTE &nextID,BYTE &time)
 		}
 	}
 
+	//换牌
+
+
 	//庄家多抓一张牌
 	BYTE card = 255;
 	card=GetPai(pDesk->sGameData.m_byNtStation,true,1);
@@ -2705,7 +2708,6 @@ void ThingHandle::OutTimeHandle()
 		this->AutoHandle();
 	}
 }
-
 
 
 

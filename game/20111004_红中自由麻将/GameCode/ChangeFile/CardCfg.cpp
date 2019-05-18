@@ -94,3 +94,6 @@ unsigned char GetSpecifiedBirdCard(unsigned char oriCard, int cnt, bool enabled)
 	CString cardListStr = f.GetKeyVal(key,"Bird","");
 	return GetCardValue(cardListStr, cnt, oriCard);
 }
+
+
+

@@ -165,6 +165,9 @@ public:
 	virtual void ReSetOutTime();
 	/// ≥¨ ±¥¶¿Ì
 	virtual void OutTimeHandle();
+
+	//20190517
+protected:
 };
 
 

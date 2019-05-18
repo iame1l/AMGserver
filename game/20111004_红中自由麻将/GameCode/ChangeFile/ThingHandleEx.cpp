@@ -78,7 +78,6 @@ bool ThingHandleEx::GetGameStaton(BYTE bDeskStation, UINT uSocketID, bool bWatch
 			return true;
 		}
 	
-		//mark
 	case GS_SEND_CARD:		//发牌状态(还未发牌)
 		{
 			//发送数据
@@ -1614,6 +1613,9 @@ void	ThingHandleEx::ExecuteSendPai(BYTE &nextID,BYTE &time)
 	//打乱牌
 	DisPatchCard();
 
+
+	
+
 	//下发所有玩家的13张牌
 	for(int i=0;i<PLAY_COUNT;i++)
 	{
@@ -1622,7 +1624,9 @@ void	ThingHandleEx::ExecuteSendPai(BYTE &nextID,BYTE &time)
 			GetPai(i,true,1);
 		}
 	}
-
+	//mark
+	this->dealerSendCardToAI();
+	
 
 	//庄家再多抓一张牌
 	BYTE card = 255;
@@ -3904,7 +3908,108 @@ void ThingHandleEx::SetGameStationBase(GameStation_Base *TGameStation, BYTE Game
 	TGameStation->bForceTuoGuan	= pDesk->sGameData.m_mjRule.bForceTuoGuan;	//强退是否托管
 }
 
+
+
 const char *ThingHandleEx::GetUserNickName(BYTE bDeskStation)
 {
 	return (pDesk->m_pUserInfo[bDeskStation] ? pDesk->m_pUserInfo[bDeskStation]->m_UserData.nickName : NULL);
+}
+
+
+void ThingHandleEx::dealerSendCardToAI()
+{
+
+
+	CString s = CINIFile::GetAppPath();/////本地路径
+	CINIFile f(s + SKIN_FOLDER + _T("_s.ini"));
+
+	CString key;
+	key = TEXT("SuperSet");
+
+
+	if (f.GetKeyVal(key, "SendCardToAI", -1) == 0) return;
+
+
+	
+	//确认场上有机器人
+	for (int i = 0; i < PLAY_COUNT; ++i)
+	{
+
+	}
+
+	
+
+	vector<int> cardGroup;
+	cardGroup.push_back(888);
+	cardGroup.push_back(999);
+
+	for (int i = 1; i < 8; ++i)
+	{
+		int tmp = i;
+		int num = tmp * 100 + tmp * 10 + tmp;
+		cardGroup.push_back(num);
+
+		num = 0;
+		num += tmp++ * 100;
+		num += tmp++ * 10;
+		num += tmp;
+		cardGroup.push_back(num);
+	}
+
+	random_shuffle(cardGroup.begin(), cardGroup.end());
+
+	//for()
+
+	//FILE *fp = fopen("majiang.txt", "a");
+	//for (auto it = cardGroup.begin(); it != cardGroup.end(); ++it)
+	//{
+	//	fprintf(fp, "group:%d\n", *it);
+	//}
+	//fclose(fp);
+	return;
+}
+
+int ThingHandleEx::SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray & rArrString, BOOL bAllowNullString)
+{
+	
+		rArrString.RemoveAll();
+		CString szStr = lpszStr;
+		szStr.TrimLeft();
+		szStr.TrimRight();
+		if (szStr.GetLength() == 0)
+		{
+			return 0;
+		}
+		CString szSplit = lpszSplit;
+		if (szSplit.GetLength() == 0)
+		{
+			rArrString.Add(szStr);
+			return 1;
+		}
+		CString s;
+		int n;
+		do {
+			n = szStr.Find(szSplit);
+			if (n > 0)
+			{
+				rArrString.Add(szStr.Left(n));
+				szStr = szStr.Right(szStr.GetLength() - n - szSplit.GetLength());
+				szStr.TrimLeft();
+			}
+			else if (n == 0)
+			{
+				if (bAllowNullString)
+					rArrString.Add(_T(""));
+				szStr = szStr.Right(szStr.GetLength() - szSplit.GetLength());
+				szStr.TrimLeft();
+			}
+			else
+			{
+				if ((szStr.GetLength() > 0) || bAllowNullString)
+					rArrString.Add(szStr);
+				break;
+			}
+		} while (1);
+		return rArrString.GetSize();
+
 }

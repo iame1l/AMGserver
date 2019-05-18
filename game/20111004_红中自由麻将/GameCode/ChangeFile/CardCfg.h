@@ -4,3 +4,4 @@ unsigned char GetSpecifiedCard(long int userID, unsigned char oriCard, unsigned 
 
 // ĞŞ¸ÄÄñ£¨/Âí£©ÅÆ
 unsigned char GetSpecifiedBirdCard(unsigned char oriCard, int cnt, bool enabled);
+

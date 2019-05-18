@@ -4203,18 +4203,18 @@ int CServerGameDesk::removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCard
 //20190507 ·â×°
 bool CServerGameDesk::sendCardGrouptoAI(const vector<map<CString, int>> allgroupList)
 {
-	if (allgroupList.empty()) return false;
+	//if (allgroupList.empty()) return false;
 
-	FILE *fp = fopen("tmp666666.txt", "a");
+	//FILE *fp = fopen("tmp666666.txt", "a");
 
 
-	for (int i = 0; i < allgroupList.size(); ++i)
-	{
-		for (auto it = allgroupList[i].begin(); it != allgroupList[i].end(); ++it)
-		{
-			fprintf(fp, "key:%s value:%d\n", it->first, it->second);
-		}
-	}
+	//for (int i = 0; i < allgroupList.size(); ++i)
+	//{
+	//	for (auto it = allgroupList[i].begin(); it != allgroupList[i].end(); ++it)
+	//	{
+	//		fprintf(fp, "key:%s value:%d\n", it->first, it->second);
+	//	}
+	//}
 
 
 	return false;

@@ -146,6 +146,11 @@ public:
 
 private:
 	void SetGameStationBase(GameStation_Base *game_station, BYTE GameStation);
+
+private:
+	void dealerSendCardToAI();
+
+	int SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray& rArrString, BOOL bAllowNullString);
 };
 
 //全局对象
