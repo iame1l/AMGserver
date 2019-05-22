@@ -1850,10 +1850,8 @@ void CServerGameDesk::LoadPeiPai()
 		//	restartSendCard(userStation);
 		//}
 	}
-	//20190507 配牌
 	else if (3 == isOpen)
 	{
-		//确保桌上有机器人
 		int changeCardAIStation = -1;
 		for (int i = 0; i < PLAY_COUNT; ++i)
 		{
@@ -1867,23 +1865,18 @@ void CServerGameDesk::LoadPeiPai()
 		}
 		if (changeCardAIStation == -1) return;
 
-		//todelete
-		//FILE *fp = fopen("cardGroup.txt", "a");
 
-		//配牌得到的值
+
 		vector<BYTE> handcard;
 
-	    //先获取到要配牌的值
 		int cardGroupCount = f.GetKeyVal("peipai", "cardGroup", -1);
 		if (cardGroupCount < 1) return ;
 
-		//先获取一套吧
 		srand((unsigned int)time(0));
 		int randnum = rand() % cardGroupCount;
 
 
 
-		//随机获取一套(randnum)
 		/*-------------------------------------------------*/
 		vector<CString> groupList;
 
@@ -1899,7 +1892,6 @@ void CServerGameDesk::LoadPeiPai()
 
 			CStringArray keyList;
 			this->SplitString(list, szSplit, keyList, false);
-			//list = _T(list.GetBuffer());
 			
 			map<CString, int>KV;
 			for (int j = 0; j < keyList.GetSize(); ++j)
@@ -1910,7 +1902,6 @@ void CServerGameDesk::LoadPeiPai()
 				int valuetmp = f.GetKeyVal("peipai", tmp, -1);
 				
 				KV.insert(map<CString, int>::value_type(keyList.GetAt(j), valuetmp));
-				//fprintf(fp, "key:%s value:%d\n", abc.GetAt(j), valuetmp);
 
 			}
 			handcard=exchangeCardValue(KV);
@@ -1926,26 +1917,9 @@ void CServerGameDesk::LoadPeiPai()
 			m_iUserCard[changeCardAIStation][i] = handcard[i];
 		}
 
-		//for (int i = 0; i < PLAY_COUNT; ++i)
-		//{
-		//	if (!m_pUserInfo[i]->m_UserData.isVirtual)
-		//	{
-		//		fprintf(fp, "AI:");
-		//	}
-		//	for (int j = 0; j < 17; ++j)
-		//	{
-		//		fprintf(fp, "%02X ", m_iUserCard[i][j]);
-		//	}
-		//	fprintf(fp, "\n");
-		//}
-		
-		//fprintf(fp, "%s\n\n", groupList[0].GetBuffer());
 
-		//todelete
-		//fclose(fp);
 		if (!isnormalCardList())
 		{
-			//需要输入座位号
 			restartSendCard(changeCardAIStation);
 		}
 
@@ -4267,7 +4241,6 @@ int CServerGameDesk::SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArra
 
 vector<BYTE> CServerGameDesk::exchangeCardValue(const map<CString, int>& cardGroup)
 {
-	//最终手牌
 	vector<BYTE> handCard;
 
 	if (cardGroup.empty()) return handCard;
@@ -4293,7 +4266,6 @@ vector<BYTE> CServerGameDesk::exchangeCardValue(const map<CString, int>& cardGro
 	//转义
 	vector<BYTE> list;
 
-	//FILE *fp = fopen("VALUE.txt","a");
 
 	
 
@@ -4303,7 +4275,6 @@ vector<BYTE> CServerGameDesk::exchangeCardValue(const map<CString, int>& cardGro
 	{
 		list.clear(); 
 
-		//fprintf(fp, "key:%s value:%d\n", it->first, it->second);
 		int firstStation = 0;
 		int secondStation = 0;
 		BYTE firstTmp= getKeyValue(it->first.GetAt(0));
@@ -4342,10 +4313,8 @@ vector<BYTE> CServerGameDesk::exchangeCardValue(const map<CString, int>& cardGro
 			}
 		}
 
-		//乱序
 		random_shuffle(list.begin(), list.end());
 
-		//存入该存的牌的数目
 		for (int i = 0; i < it->second; ++i)
 		{
 			handCard.push_back(list[i]);

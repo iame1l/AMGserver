@@ -831,13 +831,18 @@ void ThingHandle::CheckNextAction()
 		{
 			HandleHuPai(NextID,StarTime);
 
-			///通知玩家糊牌了
+			///通知玩家糊牌了//mark
 			memset(pDesk->sGameData.T_HuPai.m_byArHandPai,255,sizeof(pDesk->sGameData.T_HuPai.m_byArHandPai));
+			
 			if(!pDesk->sGameData.T_HuPai.bZimo)
 			{
 				pDesk->sUserData.AddToHandPai(pDesk->sGameData.T_HuPai.byUser,pDesk->sGameData.T_HuPai.byPs);//
 			}
+
+			pDesk->sGameData.T_HuPai.byPs = pDesk->sUserData.m_byArHandPai[pDesk->sGameData.T_HuPai.byUser][14];
+
 			pDesk->sUserData.CopyHandPai(pDesk->sGameData.T_HuPai.m_byArHandPai,0,true);
+
 			for (int i=0;i<PLAY_COUNT;i++)
 			{	
 				pDesk->sUserData.CopyOutPai(i,pDesk->sGameData.T_HuPai.m_byArOutPai[i]);
@@ -2303,6 +2308,7 @@ BYTE ThingHandle::GetCard(bool head, BYTE *pIndex)
 		}
 		else//从后面抓
 		{
+			//mark
 			if(pDesk->sUserData.m_MenPai.byEndIndex == pDesk->sUserData.m_MenPai.byCaiShenIndex)
 			{
 				if(pDesk->sUserData.m_MenPai.byEndIndex == 0)
@@ -2565,6 +2571,10 @@ void ThingHandle::HandleCountFen(BYTE &nextID,BYTE &time)
 	pDesk->sGameData.T_CountFen.byDianPao = pDesk->sGameData.T_HuPai.byDianPao;		
 //	pDesk->sGameData.T_CountFen.byPs = pDesk->sGameData.T_HuPai.byPs;	
 	pDesk->sGameData.T_CountFen.byNt = pDesk->sGameData.m_byNtStation;
+
+	//20190521
+	//pDesk->sGameData.T_CountFen.byHuPs = pDesk->sGameData.T_HuPai.byPs;
+
 	if(pDesk->sGameData.T_CountFen.bZiMo )
 	{
 		pDesk->sGameData.T_CountFen.byDianPao = pDesk->sGameData.T_CountFen.byUser;

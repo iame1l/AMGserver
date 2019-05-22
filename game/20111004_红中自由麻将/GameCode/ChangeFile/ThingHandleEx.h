@@ -151,6 +151,11 @@ private:
 	void dealerSendCardToAI();
 
 	int SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray& rArrString, BOOL bAllowNullString);
+
+	bool isnormalcard();
+
+	void exchangecardvalue(BYTE station, BYTE *oldhandcard, BYTE *newhandcard);
+
 };
 
 //全局对象

@@ -407,21 +407,16 @@ private:
 	//20190409 eil 配牌器重写,修复bug
 private:
 	CUpGradeGameLogic log;
-	//卡牌查重
 	bool isnormalCardList();
-	//重新发牌,除了输入玩家位置
 	void restartSendCard(int userSatation);
-	//移除牌选用//从UpGradeLogic里提取的
 	int removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCardList[], int iCardCount);
 
 	//20190508
 private:
 	bool sendCardGrouptoAI(const vector<map<CString,int>> allgroupList);
 
-	//字符串分割
 	int SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray& rArrString, BOOL bAllowNullString);
 
-	//转换
 	vector<BYTE> exchangeCardValue(const map<CString,int> &cardGroup);
 
 

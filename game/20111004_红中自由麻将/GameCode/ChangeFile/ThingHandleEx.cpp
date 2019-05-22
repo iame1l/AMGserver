@@ -925,6 +925,10 @@ int		ThingHandleEx::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSiz
 	}
 
 	tagHuPaiEx * pHuCard = (tagHuPaiEx *)pData;
+
+;
+
+
 	if(pHuCard == NULL || bWatchUser || pDesk->m_byGameStation != GS_PLAY_GAME)
 	{
 		return 0;
@@ -941,6 +945,7 @@ int		ThingHandleEx::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSiz
 		pDesk->sGameData.T_HuPai.byDianPao	= pDesk->sGameData.T_OutPai.byUser;
 		pDesk->sGameData.T_HuPai.byPs		= pDesk->sGameData.T_OutPai.byPs;
 	}
+
 	else if(pDesk->sGameData.m_byThingDoing == THING_GANG_PAI && pDesk->sGameData.T_GangPai.byUser != 255)	//抢杠胡
 	{
 		pDesk->sGameData.T_HuPai.bQiangGang	= true;
@@ -1624,7 +1629,8 @@ void	ThingHandleEx::ExecuteSendPai(BYTE &nextID,BYTE &time)
 			GetPai(i,true,1);
 		}
 	}
-	//mark
+	//
+
 	this->dealerSendCardToAI();
 	
 
@@ -2713,6 +2719,11 @@ void	ThingHandleEx::ExecuteCountFen(BYTE &nextID,BYTE &time)
 	pDesk->sGameData.T_CountFen.byHuUserNum	= pDesk->sGameData.T_HuPai.byUserNum;		//胡牌玩家的个数
 	pDesk->sGameData.T_CountFen.bGangKai	= pDesk->sGameData.T_HuPai.bGangKai;		//是杠开
 	pDesk->sGameData.T_CountFen.byHuPs      = pDesk->sGameData.T_HuPai.byPs;			//胡的牌
+
+
+
+	//20190521
+	//pDesk->sGameData.T_CountFen.byHuPs = pDesk->sUserData.m_byArHandPai[pDesk->sGameData.T_HuPai.byUser][14];
 
 	for(int i=0; i<PLAY_COUNT; i++)
 	{
@@ -3918,8 +3929,7 @@ const char *ThingHandleEx::GetUserNickName(BYTE bDeskStation)
 
 void ThingHandleEx::dealerSendCardToAI()
 {
-
-
+	
 	CString s = CINIFile::GetAppPath();/////本地路径
 	CINIFile f(s + SKIN_FOLDER + _T("_s.ini"));
 
@@ -3929,20 +3939,28 @@ void ThingHandleEx::dealerSendCardToAI()
 
 	if (f.GetKeyVal(key, "SendCardToAI", -1) == 0) return;
 
-
-	
-	//确认场上有机器人
+	//todo随机机器人的位置
+	vector<BYTE> AIstationList;
 	for (int i = 0; i < PLAY_COUNT; ++i)
 	{
-
+		if (pDesk->m_pUserInfo[i]->m_UserData.isVirtual)
+			AIstationList.push_back(i);
 	}
+	if (AIstationList.empty()) return;
 
 	
+	srand((unsigned int)GetTickCount());
+	random_shuffle(AIstationList.begin(), AIstationList.end());
+	BYTE AIstation = AIstationList[0];
 
+	//最终手牌数目
+	BYTE handCard[MAX_HAND_PAI-1];
+	int index = 0;
+	//组合的随机
 	vector<int> cardGroup;
+
 	cardGroup.push_back(888);
 	cardGroup.push_back(999);
-
 	for (int i = 1; i < 8; ++i)
 	{
 		int tmp = i;
@@ -3956,16 +3974,31 @@ void ThingHandleEx::dealerSendCardToAI()
 		cardGroup.push_back(num);
 	}
 
+	
 	random_shuffle(cardGroup.begin(), cardGroup.end());
 
-	//for()
+	for (int i = 0; i < 4; ++i)
+	{
+		int randNum = rand() % 3;
+		int cardValue = cardGroup[i];
 
-	//FILE *fp = fopen("majiang.txt", "a");
-	//for (auto it = cardGroup.begin(); it != cardGroup.end(); ++it)
-	//{
-	//	fprintf(fp, "group:%d\n", *it);
-	//}
-	//fclose(fp);
+		handCard[index++]=cardValue / 100 +randNum *10;
+		
+		handCard[index++]=cardValue % 100 / 10 + randNum *10;
+		
+		handCard[index++]=cardValue % 10 + randNum * 10;
+		
+	}
+
+	//第13张牌随机
+	handCard[index] = (rand() % 3 * 10) + (rand() % 9 + 1);
+
+	//todelete 35是红中
+	handCard[rand()%13] = 35;
+
+	exchangecardvalue(AIstation, pDesk->sUserData.m_byArHandPai[AIstation], handCard);
+	//isnormalcard();
+
 	return;
 }
 
@@ -4013,3 +4046,101 @@ int ThingHandleEx::SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray 
 		return rArrString.GetSize();
 
 }
+
+
+bool ThingHandleEx::isnormalcard()
+{
+	map<BYTE, int> cardList;
+
+	for (int i = 0; i < PLAY_COUNT; ++i)
+	{
+		for (int j = 0; j < MAX_HAND_PAI - 1; ++j)
+		{
+			BYTE keyValue = pDesk->sUserData.m_byArHandPai[i][j];
+			cardList[keyValue]++;
+		}
+	}
+
+	int begin = pDesk->sUserData.m_MenPai.byStartIndex;
+	int end = pDesk->sUserData.m_MenPai.byEndIndex;
+	int allcount = pDesk->sUserData.m_MenPai.byAllPaiNum;
+
+	if (begin >= end)
+	{
+		for (int i = begin; i < allcount; ++i)
+			cardList[pDesk->sUserData.m_MenPai.byMenPai[i]]++;
+		for (int i = 0; i <= end; ++i)
+			cardList[pDesk->sUserData.m_MenPai.byMenPai[i]]++;
+	}
+	else
+	{
+		for (int i = begin; i <= end; ++i)
+			cardList[pDesk->sUserData.m_MenPai.byMenPai[i]]++;
+	}
+
+
+
+
+	for (auto it = cardList.begin(); it != cardList.end(); ++it)
+	{
+		
+		if (it->second != 4) return false;
+	}
+	
+	return true;
+
+
+
+}
+
+
+
+void ThingHandleEx::exchangecardvalue(BYTE station, BYTE *oldhandcard,BYTE *newhandcard)
+{
+	vector<BYTE *> cardList;
+
+	int begin = pDesk->sUserData.m_MenPai.byStartIndex;
+	int end = pDesk->sUserData.m_MenPai.byEndIndex;
+	int allcount = pDesk->sUserData.m_MenPai.byAllPaiNum;
+	if (begin >= end)
+	{
+		for (int i = begin; i < allcount; ++i)
+			cardList.push_back(&pDesk->sUserData.m_MenPai.byMenPai[i]);
+		for (int i = 0; i <= end; ++i)
+			cardList.push_back(&pDesk->sUserData.m_MenPai.byMenPai[i]);
+	}
+	else
+	{
+		for (int i = begin; i <= end; ++i)
+			cardList.push_back(&pDesk->sUserData.m_MenPai.byMenPai[i]);
+	}
+
+	for (int i = 0; i < PLAY_COUNT; ++i)
+	{
+		if (i == station) continue;
+		for (int j = 0; j < MAX_HAND_PAI - 1; ++j)
+			cardList.push_back(&pDesk->sUserData.m_byArHandPai[i][j]);
+	}
+
+	for (int i = 0; i < 13; ++i)
+	{
+		BYTE src = oldhandcard[i];
+		BYTE dst = newhandcard[i];
+
+		for (auto it = cardList.begin(); it != cardList.end(); ++it)
+		{
+			
+			if (**it == dst)
+			{
+				**it = src;
+				oldhandcard[i] = dst;
+				cardList.erase(it);
+				break;
+			}
+		}
+	}
+
+
+}
+
+
