@@ -2720,10 +2720,13 @@ void	ThingHandleEx::ExecuteCountFen(BYTE &nextID,BYTE &time)
 	pDesk->sGameData.T_CountFen.bGangKai	= pDesk->sGameData.T_HuPai.bGangKai;		//ÊÇ¸Ü¿ª
 	pDesk->sGameData.T_CountFen.byHuPs      = pDesk->sGameData.T_HuPai.byPs;			//ºúµÄÅÆ
 
-
+	//mark
 
 	//20190521
-	//pDesk->sGameData.T_CountFen.byHuPs = pDesk->sUserData.m_byArHandPai[pDesk->sGameData.T_HuPai.byUser][14];
+	if(pDesk->sGameData.T_HuPai.byUser != 255)
+		pDesk->sGameData.T_CountFen.byHuPs = pDesk->sUserData.m_byArHandPai[pDesk->sGameData.T_HuPai.byUser][14];
+
+
 
 	for(int i=0; i<PLAY_COUNT; i++)
 	{

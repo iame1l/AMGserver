@@ -660,6 +660,7 @@ int ThingHandle::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSize, 
 		//发送糊牌通知
 		///通知玩家糊牌了
 		memset(pDesk->sGameData.T_HuPai.m_byArHandPai,255,sizeof(pDesk->sGameData.T_HuPai.m_byArHandPai));
+		//mark 
 		pDesk->sUserData.CopyHandPai(pDesk->sGameData.T_HuPai.m_byArHandPai,0,true);
 		for (int i=0;i<PLAY_COUNT;i++)
 		{	
@@ -838,6 +839,8 @@ void ThingHandle::CheckNextAction()
 			{
 				pDesk->sUserData.AddToHandPai(pDesk->sGameData.T_HuPai.byUser,pDesk->sGameData.T_HuPai.byPs);//
 			}
+
+
 
 			pDesk->sGameData.T_HuPai.byPs = pDesk->sUserData.m_byArHandPai[pDesk->sGameData.T_HuPai.byUser][14];
 
