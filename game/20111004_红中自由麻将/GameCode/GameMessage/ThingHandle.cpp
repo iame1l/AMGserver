@@ -606,6 +606,7 @@ int ThingHandle::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSize, 
 	{//不合法动作
 		return 0;
 	}
+;
 
 	if(pDesk->sUserData.m_byApplyMaxAction < ACTION_HU)
 	{
@@ -616,6 +617,8 @@ int ThingHandle::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSize, 
 	{
 		pDesk->sGameData.T_HuPai.bZimo = true;
 	}
+
+
 	pDesk->sGameData.T_HuPai.byDianPao = pHuCard->byDianPao;
 	pDesk->sGameData.T_HuPai.bHaveHu[pHuCard->byUser] = true;
 	pDesk->sGameData.T_HuPai.byUserNum++;
@@ -660,7 +663,6 @@ int ThingHandle::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSize, 
 		//发送糊牌通知
 		///通知玩家糊牌了
 		memset(pDesk->sGameData.T_HuPai.m_byArHandPai,255,sizeof(pDesk->sGameData.T_HuPai.m_byArHandPai));
-		//mark 
 		pDesk->sUserData.CopyHandPai(pDesk->sGameData.T_HuPai.m_byArHandPai,0,true);
 		for (int i=0;i<PLAY_COUNT;i++)
 		{	
@@ -832,7 +834,7 @@ void ThingHandle::CheckNextAction()
 		{
 			HandleHuPai(NextID,StarTime);
 
-			///通知玩家糊牌了//mark
+			///通知玩家糊牌了//
 			memset(pDesk->sGameData.T_HuPai.m_byArHandPai,255,sizeof(pDesk->sGameData.T_HuPai.m_byArHandPai));
 			
 			if(!pDesk->sGameData.T_HuPai.bZimo)
@@ -2575,7 +2577,6 @@ void ThingHandle::HandleCountFen(BYTE &nextID,BYTE &time)
 //	pDesk->sGameData.T_CountFen.byPs = pDesk->sGameData.T_HuPai.byPs;	
 	pDesk->sGameData.T_CountFen.byNt = pDesk->sGameData.m_byNtStation;
 
-	//20190521
 	//pDesk->sGameData.T_CountFen.byHuPs = pDesk->sGameData.T_HuPai.byPs;
 
 	if(pDesk->sGameData.T_CountFen.bZiMo )

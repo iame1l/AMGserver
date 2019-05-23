@@ -919,6 +919,7 @@ int		ThingHandleEx::ReceiveUserTingCard(BYTE bDeskStation, void * pData, UINT uS
 // 用户糊牌消息
 int		ThingHandleEx::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSize, bool bWatchUser)
 {
+	//mark
 	if(uSize != sizeof(tagHuPaiEx))
 	{
 		return 0;
@@ -926,7 +927,10 @@ int		ThingHandleEx::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSiz
 
 	tagHuPaiEx * pHuCard = (tagHuPaiEx *)pData;
 
-;
+	FILE * fp = fopen("XXX.txt", "a");
+	fprintf(fp, "weizhi:%d\n", pHuCard->byUser);
+	fprintf(fp, "paizhi:%d\n", pDesk->sUserData.m_byArHandPai[pHuCard->byUser][14]);
+	fclose(fp);
 
 
 	if(pHuCard == NULL || bWatchUser || pDesk->m_byGameStation != GS_PLAY_GAME)
@@ -985,11 +989,15 @@ int		ThingHandleEx::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSiz
 		}
 		
 	}
+	//自摸的点
 	else if((pDesk->sGameData.m_byThingDoing == THING_ZHUA_PAI) || (pDesk->sGameData.m_byThingDoing == THING_ONE_BUHUA) || (pDesk->sGameData.m_byThingDoing == THING_BEGIN_OUT))	//自摸
 	{
 		pDesk->sGameData.T_HuPai.bZimo = true;
 		pDesk->sGameData.T_HuPai.byDianPao = 255;
 		pDesk->sGameData.T_HuPai.byPs = pHuCard->byPs;
+
+		//20190523
+		//pDesk->sGameData.T_HuPai.byPs = pDesk->sGameData.T_ZhuaPai.byPs;
 		//是否杠开
 		if(pDesk->sGameData.m_bGangState[pHuCard->byUser])
 		{
@@ -1000,6 +1008,8 @@ int		ThingHandleEx::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSiz
 	}
 	//胡牌玩家的位置
 	pDesk->sGameData.T_HuPai.byUser = pHuCard->byUser;
+
+
 
 	//标识该玩家胡牌了
 	pDesk->sGameData.T_HuPai.bHaveHu[pHuCard->byUser] = true;
@@ -2701,34 +2711,35 @@ void	ThingHandleEx::ExecuteOneBuHua(BYTE &nextID,BYTE &time)
 }
 /*--------------------------------------------------------------------------------------------------*/
 ///算分事件
-void	ThingHandleEx::ExecuteCountFen(BYTE &nextID,BYTE &time)
-{	
+void	ThingHandleEx::ExecuteCountFen(BYTE &nextID, BYTE &time)
+{
 
 	char str[800];
-	sprintf(str,"HZMJEX8:------***++66666+++**--THING_COUNT_FEN-------");
+	sprintf(str, "HZMJEX8:------***++66666+++**--THING_COUNT_FEN-------");
 	OutputDebugString(str);
 	//记录正在执行的事件
 	pDesk->sGameData.m_byThingDoing = THING_COUNT_FEN;
 
-	pDesk->sGameData.T_CountFen.bIsLiuJu	= pDesk->sGameData.T_HuPai.bIsLiuJu;		//是否流局
-	pDesk->sGameData.T_CountFen.bZiMo		= pDesk->sGameData.T_HuPai.bZimo;			//是否自摸
-	pDesk->sGameData.T_CountFen.byUser		= pDesk->sGameData.T_HuPai.byUser;			//糊牌玩家位置
-	pDesk->sGameData.T_CountFen.byUserNum	= pDesk->sGameData.T_HuPai.byUserNum;		//糊牌玩家的个数	
-	pDesk->sGameData.T_CountFen.byDianPao	= pDesk->sGameData.T_HuPai.byDianPao;		//点炮玩家的位置
-	pDesk->sGameData.T_CountFen.bQiangGang	= pDesk->sGameData.T_HuPai.bQiangGang;		//是否抢杠
-	pDesk->sGameData.T_CountFen.byHuUserNum	= pDesk->sGameData.T_HuPai.byUserNum;		//胡牌玩家的个数
-	pDesk->sGameData.T_CountFen.bGangKai	= pDesk->sGameData.T_HuPai.bGangKai;		//是杠开
-	pDesk->sGameData.T_CountFen.byHuPs      = pDesk->sGameData.T_HuPai.byPs;			//胡的牌
+	pDesk->sGameData.T_CountFen.bIsLiuJu = pDesk->sGameData.T_HuPai.bIsLiuJu;		//是否流局
+	pDesk->sGameData.T_CountFen.bZiMo = pDesk->sGameData.T_HuPai.bZimo;			//是否自摸
+	pDesk->sGameData.T_CountFen.byUser = pDesk->sGameData.T_HuPai.byUser;			//糊牌玩家位置
+	pDesk->sGameData.T_CountFen.byUserNum = pDesk->sGameData.T_HuPai.byUserNum;		//糊牌玩家的个数	
+	pDesk->sGameData.T_CountFen.byDianPao = pDesk->sGameData.T_HuPai.byDianPao;		//点炮玩家的位置
+	pDesk->sGameData.T_CountFen.bQiangGang = pDesk->sGameData.T_HuPai.bQiangGang;		//是否抢杠
+	pDesk->sGameData.T_CountFen.byHuUserNum = pDesk->sGameData.T_HuPai.byUserNum;		//胡牌玩家的个数
+	pDesk->sGameData.T_CountFen.bGangKai = pDesk->sGameData.T_HuPai.bGangKai;		//是杠开
+	pDesk->sGameData.T_CountFen.byHuPs = pDesk->sGameData.T_HuPai.byPs;			//胡的牌
 
-	//mark
 
 	//20190521
-	if(pDesk->sGameData.T_HuPai.byUser != 255)
-		pDesk->sGameData.T_CountFen.byHuPs = pDesk->sUserData.m_byArHandPai[pDesk->sGameData.T_HuPai.byUser][14];
+	for (int i = 0; i < PLAY_COUNT; ++i)
+	{
+		if (pDesk->sUserData.m_byArHandPaiCount[i] == 14)
+			pDesk->sGameData.T_CountFen.byHuPs = pDesk->sUserData.m_byArHandPai[i][14];
+	}
 
 
-
-	for(int i=0; i<PLAY_COUNT; i++)
+	for (int i = 0; i < PLAY_COUNT; i++)
 	{
 		//明楼情况
 		pDesk->sGameData.T_CountFen.bMingPai[i] = pDesk->sUserData.m_bTing[i];
@@ -2739,7 +2750,7 @@ void	ThingHandleEx::ExecuteCountFen(BYTE &nextID,BYTE &time)
 		{
 			pDesk->sGameData.T_CountFen.byHuType[i][j] = pDesk->sGameData.T_HuPai.byHuType[i][j];
 		}
-
+		
 		//吃碰杠的牌
 		//拷贝拦牌数据
 		pDesk->sUserData.CopyGCPData(i, pDesk->sGameData.T_CountFen.tagUserGCPData[i]);
