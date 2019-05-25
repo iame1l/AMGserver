@@ -1591,6 +1591,9 @@ bool	CServerGameDesk::GameBegin(BYTE bBeginFlag)
 	/*ReSetGameState(GF_SAFE);*/
     for( int i=0; i < PLAY_COUNT; i++)
 	     KillTimer(TIME_LEAVE + i);
+
+	this->AIStation = 255;
+
     m_icountleave = 0;
 	m_iSendCardPos = 0;
 	m_bySendFinishCount = 0 ;  
@@ -1662,6 +1665,7 @@ bool	CServerGameDesk::GameBegin(BYTE bBeginFlag)
 		//随机一个任务
 		m_Logic.GetRandTask(m_bDeskIndex) ; 
 	}
+
 
 	GamePrepare();
 
@@ -1852,7 +1856,7 @@ void CServerGameDesk::LoadPeiPai()
 	}
 	else if (3 == isOpen)
 	{
-		int changeCardAIStation = -1;
+		BYTE changeCardAIStation = -1;
 		for (int i = 0; i < PLAY_COUNT; ++i)
 		{
 			if (!m_pUserInfo[i]->m_UserData.isVirtual) continue;
@@ -1864,7 +1868,7 @@ void CServerGameDesk::LoadPeiPai()
 			}
 		}
 		if (changeCardAIStation == -1) return;
-
+		else this->AIStation = changeCardAIStation;
 
 
 		vector<BYTE> handcard;
@@ -1987,23 +1991,50 @@ BOOL	CServerGameDesk::SendAllCard()//mark
 	//发送数据
 	int iPos = 0;
 	int iTempPos = 0 ;
+	//mark
 	for(int i = 0;i < PLAY_COUNT; i ++)
 	{
-		int iTempPos = 0 ;
-		for(int  j  = 0  ; j < PLAY_COUNT  ;j++)
+		//给玩家的
+		if (!m_pUserInfo[i]->m_UserData.isVirtual)
 		{
-			if(i == j ||m_GameMutiple.sMingPaiMutiple[j] > 0)
+			int iTempPos = 0;
+			for (int j = 0; j < PLAY_COUNT; j++)
 			{
-				::CopyMemory(&TSendAll.iUserCardList[iTempPos],m_iUserCard[j],sizeof(BYTE)*m_iUserCardCount[j]);
+				if (i == j || m_GameMutiple.sMingPaiMutiple[j] > 0)
+				{
+					::CopyMemory(&TSendAll.iUserCardList[iTempPos], m_iUserCard[j], sizeof(BYTE)*m_iUserCardCount[j]);
+				}
+
+				iTempPos += m_iUserCardCount[j];
 			}
 
-			iTempPos += m_iUserCardCount[j] ; 
+			iPos += m_iUserCardCount[i];
+			SendGameDataEx(i, &TSendAll, sizeof(TSendAll), MDM_GM_GAME_NOTIFY, ASS_SEND_ALL_CARD, 0);
+			SendWatchData(i, &TSendAll, sizeof(TSendAll), MDM_GM_GAME_NOTIFY, ASS_SEND_ALL_CARD, 0);
+			::ZeroMemory(&TSendAll.iUserCardList, sizeof(TSendAll.iUserCardList));
 		}
-	
-		iPos += m_iUserCardCount[i];
-		SendGameDataEx(i,&TSendAll,sizeof(TSendAll),MDM_GM_GAME_NOTIFY,ASS_SEND_ALL_CARD,0);
-		SendWatchData(i,&TSendAll,sizeof(TSendAll),MDM_GM_GAME_NOTIFY,ASS_SEND_ALL_CARD,0);
-		::ZeroMemory(&TSendAll.iUserCardList, sizeof(TSendAll.iUserCardList));
+		//20190523给机器人的
+		else
+		{
+			int iTempPos = 0;
+			for (int j = 0; j < PLAY_COUNT; j++)
+			{
+				::CopyMemory(&TSendAll.iUserCardList[iTempPos], m_iUserCard[j], sizeof(BYTE)*m_iUserCardCount[j]);
+				iTempPos += m_iUserCardCount[j];
+			}
+			//把底牌也发过去
+			::CopyMemory(&TSendAll.iUserCardList[iTempPos], m_iBackCard, sizeof(BYTE)*3);
+
+			//todo将配牌机器人的位置发送给队友知道.不引起乱抢地主的问题(todelete)
+			TSendAll.iUserCardList[107] = 255;
+			if (this->AIStation != 255) TSendAll.iUserCardList[107] = AIStation;
+
+
+			SendGameDataEx(i, &TSendAll, sizeof(TSendAll), MDM_GM_GAME_NOTIFY, ASS_SEND_ALL_CARD, 0);
+			SendWatchData(i, &TSendAll, sizeof(TSendAll), MDM_GM_GAME_NOTIFY, ASS_SEND_ALL_CARD, 0);
+			::ZeroMemory(&TSendAll.iUserCardList, sizeof(TSendAll.iUserCardList));
+		}
+
 	}
 
 
@@ -4174,25 +4205,7 @@ int CServerGameDesk::removeCard(BYTE iRemoveCard[], int iRemoveCount, BYTE iCard
 
 }
 
-//20190507 封装
-bool CServerGameDesk::sendCardGrouptoAI(const vector<map<CString, int>> allgroupList)
-{
-	//if (allgroupList.empty()) return false;
 
-	//FILE *fp = fopen("tmp666666.txt", "a");
-
-
-	//for (int i = 0; i < allgroupList.size(); ++i)
-	//{
-	//	for (auto it = allgroupList[i].begin(); it != allgroupList[i].end(); ++it)
-	//	{
-	//		fprintf(fp, "key:%s value:%d\n", it->first, it->second);
-	//	}
-	//}
-
-
-	return false;
-}
 
 int CServerGameDesk::SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray& rArrString, BOOL bAllowNullString)
 {

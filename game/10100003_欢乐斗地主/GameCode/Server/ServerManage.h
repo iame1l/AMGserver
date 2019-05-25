@@ -413,7 +413,6 @@ private:
 
 	//20190508
 private:
-	bool sendCardGrouptoAI(const vector<map<CString,int>> allgroupList);
 
 	int SplitString(LPCTSTR lpszStr, LPCTSTR lpszSplit, CStringArray& rArrString, BOOL bAllowNullString);
 
@@ -422,7 +421,9 @@ private:
 
 	BYTE getKeyValue(BYTE src);
 
-
+	//20190525
+private:
+	BYTE AIStation;
 };
 
 /******************************************************************************************************/

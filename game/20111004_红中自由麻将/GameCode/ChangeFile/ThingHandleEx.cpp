@@ -996,8 +996,8 @@ int		ThingHandleEx::ReceiveUserHuCard(BYTE bDeskStation, void * pData, UINT uSiz
 		pDesk->sGameData.T_HuPai.byDianPao = 255;
 		pDesk->sGameData.T_HuPai.byPs = pHuCard->byPs;
 
-		//20190523
-		//pDesk->sGameData.T_HuPai.byPs = pDesk->sGameData.T_ZhuaPai.byPs;
+		//20190523//ºúÅÆÖµbug
+		pDesk->sGameData.T_HuPai.byPs = pDesk->sGameData.T_ZhuaPai.byPs;
 		//ÊÇ·ñ¸Ü¿ª
 		if(pDesk->sGameData.m_bGangState[pHuCard->byUser])
 		{

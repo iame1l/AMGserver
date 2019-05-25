@@ -107,6 +107,6 @@ private:
 
 //20190501
 private:
-	unsigned char *getbackCard();
+	BYTE AIStation;
 };
 

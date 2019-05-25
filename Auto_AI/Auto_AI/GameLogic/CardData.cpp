@@ -119,5 +119,7 @@ void CPlayerCardMgr::ClearDeskCard()
 
 void CPlayerCardMgr::SetBackCard(const Card * pCardList, int nCardCount)
 {
+	if (pCardList == nullptr || nCardCount != 3) return;
+	this->m_backCard.clear();
 	m_backCard.assign(pCardList, pCardList + nCardCount);
 }
