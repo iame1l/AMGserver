@@ -285,6 +285,7 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 		return true;
 	case ASS_SEND_ALL_CARD://发完牌了,存入到自己的手牌中
 		{
+			//mark
 			if (uDataSize!=sizeof(SendAllStruct)) return false;
 			SendAllStruct * pSendAll=(SendAllStruct *)pNetData;
 			OBJ_GET_EXT(m_pExt, CPlayerCardMgr, cardMgr);
@@ -294,6 +295,12 @@ bool CClientGameDlg::HandleGameMessage(NetMessageHead * pNetHead, void * pNetDat
 				cardMgr->SetHandCard( i, &pSendAll->iUserCardList[nPos], pSendAll->iUserCardCount[i]);
 				nPos += pSendAll->iUserCardCount[i];
 			}
+			//底牌 20190525
+			cardMgr->SetBackCard(&pSendAll->iUserCardList[nPos], 3);
+			//给配牌机器人的位置 20190525
+			this->AIStation = pSendAll->iUserCardList[107] != 255 ? pSendAll->iUserCardList[107] : 255;
+			
+
 		}
 		return true;
 	case ASS_CALL_SCORE:			//叫分
@@ -1026,25 +1033,47 @@ void CClientGameDlg::PreDealing(UINT uTimeID, int& iChoice)
 	if (uTimeID == TID_ROB_NT)
 	{
 
+		//FILE *hfp = fopen("shoupai.txt", "a");
+		//for (int i = 0; i < nHandCardCount; ++i)
+		//{
+		//	fprintf(hfp, "%04X ", pHandCard[i]);
+		//}
+		//fprintf(hfp, "\n");
+		//fclose(hfp);
 
-
-		FILE *hfp = fopen("shoupai.txt", "a");
-		for (int i = 0; i < nHandCardCount; ++i)
+		int handcount[3] = { 0 };
+		vector<const Card *> forbackCard;
+		for (int i = 0; i < PLAY_COUNT; ++i)
 		{
-			fprintf(hfp, "%04X ", pHandCard[i]);
+			forbackCard.push_back(cardMgr->GetHandCard(i, &handcount[i]));
 		}
-		fprintf(hfp, "\n");
-		fclose(hfp);
+
+
+
+		//FILE *fp = fopen("zkkp.txt", "a");
+
+		//for (int i = 0; i<cardMgr->m_backCard.size(); ++i)
+		//{
+		//	fprintf(fp, "%02X ", cardMgr->m_backCard[i]);
+		//}
+
+		//fclose(fp);
+		
 	}
+	
 	//
-	std::vector<T_C2S_PLAY_CARD_REQ>  tPlayCardList; 
+	std::vector<T_C2S_PLAY_CARD_REQ>  tPlayCardList;
 	HN::CardArrayBase HandCard;
-	for(int i = 0; i < nHandCardCount; ++i)
+	for (int i = 0; i < nHandCardCount; ++i)
 	{
 		BYTE byCard = pHandCard[i];
 		logic->CardAdapter(byCard, true);
 		HandCard.push_back(byCard);
 	}
+	//20190524 加入底牌再算权值
+	if (TID_ROB_NT == uTimeID)
+		for (int i = 0; i < cardMgr->m_backCard.size(); ++i)
+			HandCard.push_back(cardMgr->m_backCard[i]);
 
 
 	switch( uTimeID )
@@ -1052,6 +1081,15 @@ void CClientGameDlg::PreDealing(UINT uTimeID, int& iChoice)
 	case TID_CALL_SCORE:
 	case TID_ROB_NT:
 	case TID_ADD_DOUBLE:
+
+		//20190525
+
+		if (uTimeID== TID_ROB_NT && nMyStation != AIStation && AIStation !=255)
+		{
+			iChoice = Choice_Not;
+			return;
+		}
+
 		if(logic->HaveKingBomb(pHandCard, nHandCardCount))									iChoice = Choice_OK;
 		if(logic->GetOneCardCount(pHandCard, nHandCardCount, Value_A) >= 4)					iChoice = Choice_OK;
 		if(logic->GetOneCardCount(pHandCard, nHandCardCount, Value_2) >= 3)					iChoice = Choice_OK;

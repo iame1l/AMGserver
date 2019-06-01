@@ -90,8 +90,7 @@ bool CGameUserInfo::ChangePoint(__int64 dwPoint, __int64 dwTaxCom,bool bWin, boo
 		i64Tmp = m_ChangePoint.dwTaxCom;
 		i64Tmp +=dwTaxCom;
 
-		//20190529 桌子的总税不需要
-		i64Tmp = dwTaxCom;
+		i64Tmp += dwTaxCom;
 		m_ChangePoint.dwTaxCom = I64ToInt(i64Tmp);
 
 		//设置分数

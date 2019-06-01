@@ -1038,9 +1038,9 @@ bool CGameDesk::RecoderGameInfo_Effectivebet(__int64 *ChangeMoney,__int64 *Effec
 
 			{
 				GameRecord.dwUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID;
-			
-				GameRecord.dwScrPoint[i] = m_dwScrPoint[i] + m_dwChangePoint[i];
 				
+				GameRecord.dwScrPoint[i] = m_dwScrPoint[i] + m_dwChangePoint[i];
+				GameRecord.dwTaxCom[i] = m_dwTaxCom[i];
 				//20190509 todelete
 				//GameRecord.dwChangePoint[i] = m_dwChangePoint[i];
 				//
