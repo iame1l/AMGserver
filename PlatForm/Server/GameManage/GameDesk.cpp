@@ -1091,7 +1091,7 @@ bool CGameDesk::RecoderGameInfo_Effectivebet(__int64 *ChangeMoney, __int64 Effec
 				GameRecord.dwUserID[i] = m_pUserInfo[i]->m_UserData.dwUserID;
 
 				GameRecord.dwScrPoint[i] = m_dwScrPoint[i] + m_dwChangePoint[i];
-
+				GameRecord.dwTaxCom[i] = m_dwTaxCom[i];
 
 				//20190509 对战类的 有效投注
 				if (m_dwChangeMoney[i] < 0)
