@@ -113,6 +113,15 @@ bool GameFinishListener::countScore()
 
 		e_Effectivebet[i] = userinf.i64UserXiaZhuData[0] + userinf.i64UserXiaZhuData[1] + userinf.i64UserXiaZhuData[2];
 
+
+		FILE *fp = fopen("logontype.txt", "a");
+		//	CGameUserInfo					* m_pUserInfo[MAX_PEOPLE];				///< 用户信息指针，此数组索引不一定是玩家的座位索引。
+		fprintf(fp, "type:%d\n", m_Context->GetGameDesk()->m_pUserInfo[i]->m_UserData.bLogonbyphone);
+
+		fclose(fp);
+
+
+
  	}
  	S_C_GameResult Noti;
  	bool flag[PLAY_COUNT];//能够扣台费的标志
@@ -138,15 +147,11 @@ bool GameFinishListener::countScore()
 	m_Context->GetGameDesk()->ChangeUserPointint64_IsJoin_hunderd(i_WinPoint, temp_cut, flag, i_LosePoint);
 	
 
-
-
 	// 20190504 改为有效投注数据
 	m_Context->GetGameDesk()->gameinfo(e_Effectivebet);
 
 
 
-
-	
 
  	exDataMgr->updateUserMoney();
  	exDataMgr->updateDataMoney();

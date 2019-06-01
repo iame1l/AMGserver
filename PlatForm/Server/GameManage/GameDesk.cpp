@@ -2294,6 +2294,9 @@ bool CGameDesk::ChangeUserPointint64_IsJoin_hunderd(__int64 *arPoint, bool *bCut
 		pUpdateUserInfo[nIndex].dwChangeMoney = arLoseMoney[i];
 		pUpdateUserInfo[nIndex].dwChangeTaxCom = m_dwTaxCom[i];
 
+		//20190529
+		//pUpdateUserInfo[nIndex].dwChangeTaxCom = arTaxCount[i];
+
 		if (arPoint[i] == 0)
 		{
 			pUpdateUserInfo[nIndex].uMidCount = 1;

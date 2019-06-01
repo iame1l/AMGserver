@@ -305,7 +305,7 @@ BOOL	CServerGameDesk::LoadIni()
 	G_i64Pond = f.GetKeyVal(key,"PondMoney",1000);
 	m_iAreaBetLimit=f.GetKeyVal(key,"AreaBetLimit",10);
 
-	if(m_iAreaBetLimit<10)
+	if(m_iAreaBetLimit>99)
 	{
 		m_iAreaBetLimit=10;
 	}

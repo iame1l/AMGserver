@@ -184,14 +184,14 @@ BOOL CAuto_AIDlg::OnInitDialog()
 	SetTimer(TIMER_UPDATE_USERSTATUS, 5000, NULL);
 
 	int argc = __argc;
-	if(argc >= 2)
-	{//添加命令行参数 1 方便脚本启动时登陆
-		CString str = __argv[1];	
-		if(str == "1")
-		{
-			OnBnClickedButtonLogin();
-		}
-	}
+	//if(argc >= 2)
+	//{//添加命令行参数 1 方便脚本启动时登陆
+	//	CString str = __argv[1];	
+	//	if(str == "1")
+	//	{
+	//		OnBnClickedButtonLogin();
+	//	}
+	//}
 	GLOBALDATA->bLoginEnable = false;
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -224,6 +224,9 @@ void CAuto_AIDlg::OnPaint()
 	{
 		CDialog::OnPaint();
 	}
+
+	//20190531 默认启动
+	OnBnClickedButtonLogin();
 }
 
 //当用户拖动最小化窗口时系统调用此函数取得光标显示。
@@ -280,7 +283,6 @@ void	CAuto_AIDlg::OnStartRobot()
 	GLOBALDATA->bConnectToWitchServer = 0;
 
 	m_ShowBeginNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo);
-	//Eil @ 修复
 	//m_ShowEndNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo + 10);
 	m_ShowEndNo.Format("%s%d", GLOBALDATA->CurDynamicConfig.strRobotPreName, GLOBALDATA->CurDynamicConfig.nBeginSequenceNo + GLOBALDATA->CurDynamicConfig.nLogonCount);
 
@@ -326,7 +328,7 @@ void CAuto_AIDlg::OnStopRobot()
 }
 
 
-//连接AServer
+//连接AServer//mark
 void CAuto_AIDlg::OnConnectToCenterServer()
 {
 	KillTimer(TIME_CONNECT_ASERVER);
@@ -471,6 +473,7 @@ bool CAuto_AIDlg::OnSocketConnectEvent(UINT uErrorCode, CTCPClientSocket * pClie
 			CString str;
 			str.Format("连接AServer成功 %s:%d", PLATCONFIG->CenterServerIPAddr, PLATCONFIG->CenterServerPort);
 			GetDlgItem(IDC_STATIC_LOGINSTATUS)->SetWindowText(str);
+
 		}
 		else
 		{
