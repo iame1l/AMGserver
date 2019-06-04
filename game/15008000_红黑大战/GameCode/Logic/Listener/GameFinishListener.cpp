@@ -67,6 +67,7 @@ bool GameFinishListener::countScore()
 			if (exDataMgr->WinUserShape > UG_DAN_ZHANG)
 			{
 				userinf.iScore += userinf.i64UserXiaZhuData[2] * exDataMgr->getbeilv(exDataMgr->WinUserShape);
+				i_winpoint[i] += userinf.i64UserXiaZhuData[2] * exDataMgr->getbeilv(exDataMgr->WinUserShape);
 			}
 			if (userinf.i64UserXiaZhuData[1] == 0)
  			{
@@ -93,6 +94,7 @@ bool GameFinishListener::countScore()
 			if (exDataMgr->WinUserShape > UG_DAN_ZHANG)
 			{
 				userinf.iScore += userinf.i64UserXiaZhuData[2] * exDataMgr->getbeilv(exDataMgr->WinUserShape);
+				i_winpoint[i] += userinf.i64UserXiaZhuData[2] * exDataMgr->getbeilv(exDataMgr->WinUserShape);
 			}
 			if (userinf.i64UserXiaZhuData[0] == 0)		//ÇøÓò0´ú±íºì
  			{
