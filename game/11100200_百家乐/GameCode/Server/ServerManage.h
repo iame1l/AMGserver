@@ -201,6 +201,7 @@ private:
 	__int64			m_i64NtWin;            					/**< 当前庄家赢的金币*/
 	bool			m_bXiaZhuang;							/**< 当前庄家申请下庄*/	
 	deque<BYTE>		m_qZhuangList;							///抢庄列表
+	//mark
 	deque<LuziData>	m_DqLuziData;							//路子数据只保存50局
 
 	deque<UserPlayResult> m_dqUserPlayResult;				//玩家玩游戏的详细记录  用于统计命中率	

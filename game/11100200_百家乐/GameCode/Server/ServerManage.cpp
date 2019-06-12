@@ -2504,6 +2504,7 @@ void	CServerGameDesk::RecordLuziData()
 	TLuziTmp.byZPoint = m_iZPaiXing[1];
 	TLuziTmp.byXpoint = m_iXPaiXing[1];
 	//记录赢得区域 
+	/*
 	if (m_iWinQuYu[6] > 0)	//和了
 	{
 		TLuziTmp.byWinResult = 2;
@@ -2516,7 +2517,36 @@ void	CServerGameDesk::RecordLuziData()
 	{
 		TLuziTmp.byWinResult = 1;
 	}
-	 
+	 */
+	int zhuangisdui = m_iZPaiXing[3];
+	int xianisdui = m_iXPaiXing[3];
+	if (m_iWinQuYu[6] > 0)//和//不判断庄闲是否对子
+	{
+		TLuziTmp.byWinResult = 3;
+	}
+	else if (!zhuangisdui && !xianisdui)//庄闲都不是是对子
+	{
+		if (m_iWinQuYu[0] > 0) TLuziTmp.byWinResult = 1;
+		else if (m_iWinQuYu[3] > 0) TLuziTmp.byWinResult = 2;
+	}
+	else if(!zhuangisdui && xianisdui)//闲是对子
+	{
+		if (m_iWinQuYu[0] > 0) TLuziTmp.byWinResult = 4;
+		else if (m_iWinQuYu[3] > 0) TLuziTmp.byWinResult = 7;
+	}
+	else if (zhuangisdui && !xianisdui)//庄家是对子
+	{
+		if (m_iWinQuYu[0] > 0) TLuziTmp.byWinResult = 5;
+		else if (m_iWinQuYu[3] > 0) TLuziTmp.byWinResult = 6;
+
+	}
+	else if (zhuangisdui && xianisdui)//庄闲都是对子
+	{
+		if (m_iWinQuYu[0] > 0) TLuziTmp.byWinResult = 8;
+		else if (m_iWinQuYu[3] > 0) TLuziTmp.byWinResult = 9;
+	}
+
+
 
 	if (m_DqLuziData.size()<MAXCOUNT)
 	{

@@ -51,7 +51,7 @@
 
 
 //游戏记录把数
-#define MAXCOUNT						50            
+#define MAXCOUNT						80            
 
 
 const	int	BET_ARES = 8;	//8个下注区域
